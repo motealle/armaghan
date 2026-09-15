@@ -1,9 +1,10 @@
 name: FTP Smoke Test
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   ftp-smoke-test:
@@ -37,11 +38,9 @@ jobs:
           ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
           print("FTP authentication: OK")
           print("FTP starting directory:", ftp.pwd())
-
           ftp.cwd("public_html")
           print("public_html: FOUND")
           print("public_html current directory:", ftp.pwd())
-
           ftp.cwd("..")
           print("Returned to FTP starting directory:", ftp.pwd())
           ftp.quit()
