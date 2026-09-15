@@ -1,0 +1,49 @@
+name: FTP Smoke Test
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  ftp-smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test FTP authentication and public_html scope
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import os
+          from ftplib import FTP
+          from urllib.parse import urlparse
+
+          raw = os.environ["FTP_SERVER"].strip()
+          if "://" in raw:
+              parsed = urlparse(raw)
+              host = parsed.hostname
+              port = parsed.port or 21
+          else:
+              host = raw
+              port = 21
+
+          if not host:
+              raise SystemExit("FTP_SERVER is empty or invalid")
+
+          ftp = FTP()
+          ftp.connect(host, port, timeout=20)
+          ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
+          print("FTP authentication: OK")
+          print("FTP starting directory:", ftp.pwd())
+
+          ftp.cwd("public_html")
+          print("public_html: FOUND")
+          print("public_html current directory:", ftp.pwd())
+
+          ftp.cwd("..")
+          print("Returned to FTP starting directory:", ftp.pwd())
+          ftp.quit()
+          print("FTP smoke test: PASS (no files created, changed, or deleted)")
+          PY
