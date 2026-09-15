@@ -1,0 +1,227 @@
+name: FTP Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Deployment target"
+        required: true
+        default: "auto"
+        type: choice
+        options:
+          - auto
+          - root
+          - t
+          - both
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ftp-deploy-main
+  cancel-in-progress: false
+
+env:
+  FTP_TARGET_ROOT: /public_html
+  FTP_TARGET_T: /public_html/t
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      root: ${{ steps.plan.outputs.root }}
+      t: ${{ steps.plan.outputs.t }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Determine deployment scope
+        id: plan
+        shell: bash
+        run: |
+          root=false
+          t=false
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            case "${{ inputs.target }}" in
+              root) root=true ;;
+              t) t=true ;;
+              both) root=true; t=true ;;
+              auto)
+                if git rev-parse HEAD^ >/dev/null 2>&1; then
+                  files="$(git diff --name-only HEAD^ HEAD)"
+                  grep -qx 'index.html' <<< "$files" && root=true || true
+                  grep -qx 'logo.png' <<< "$files" && root=true || true
+                  grep -q '^t/' <<< "$files" && t=true || true
+                else
+                  root=true
+                fi
+                ;;
+            esac
+          else
+            files="$(git diff --name-only HEAD^ HEAD)"
+            grep -qx 'index.html' <<< "$files" && root=true || true
+            grep -qx 'logo.png' <<< "$files" && root=true || true
+            grep -q '^t/' <<< "$files" && t=true || true
+          fi
+
+          echo "root=$root" >> "$GITHUB_OUTPUT"
+          echo "t=$t" >> "$GITHUB_OUTPUT"
+          echo "Deploy root: $root"
+          echo "Deploy /t: $t"
+
+  smoke-test:
+    needs: plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify FTP connection and target scope
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import os
+          from ftplib import FTP
+          from urllib.parse import urlparse
+
+          raw = os.environ["FTP_SERVER"].strip()
+          if "://" in raw:
+              parsed = urlparse(raw)
+              host = parsed.hostname
+              port = parsed.port or 21
+          else:
+              host = raw
+              port = 21
+
+          if not host:
+              raise SystemExit("FTP_SERVER is empty or invalid")
+
+          ftp = FTP()
+          ftp.connect(host, port, timeout=20)
+          ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
+          print("FTP authentication: OK")
+          print("FTP starting directory:", ftp.pwd())
+          ftp.cwd("public_html")
+          print("/public_html: FOUND")
+          print("Target directory:", ftp.pwd())
+          ftp.cwd("..")
+          if ftp.pwd() != "/":
+              raise SystemExit("Safety check failed: FTP root is not '/'")
+          ftp.quit()
+          print("FTP scope check: PASS")
+          PY
+
+  deploy-root:
+    needs: [plan, smoke-test]
+    if: needs.plan.outputs.root == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy only root landing files to /public_html
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import os
+          from ftplib import FTP
+          from urllib.parse import urlparse
+
+          raw = os.environ["FTP_SERVER"].strip()
+          if "://" in raw:
+              parsed = urlparse(raw)
+              host = parsed.hostname
+              port = parsed.port or 21
+          else:
+              host = raw
+              port = 21
+
+          ftp = FTP()
+          ftp.connect(host, port, timeout=20)
+          ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
+          ftp.cwd("public_html")
+
+          for filename in ("index.html", "logo.png"):
+              if not os.path.isfile(filename):
+                  raise SystemExit(f"Required deployment file missing: {filename}")
+              with open(filename, "rb") as fh:
+                  ftp.storbinary(f"STOR {filename}", fh)
+              print(f"Uploaded /public_html/{filename}")
+
+          ftp.quit()
+          print("Root deployment complete. No remote files were deleted.")
+          PY
+
+  deploy-t:
+    needs: [plan, smoke-test]
+    if: needs.plan.outputs.t == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy repository t/ directory to /public_html/t only
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import os
+          import posixpath
+          from ftplib import FTP
+          from urllib.parse import urlparse
+
+          raw = os.environ["FTP_SERVER"].strip()
+          if "://" in raw:
+              parsed = urlparse(raw)
+              host = parsed.hostname
+              port = parsed.port or 21
+          else:
+              host = raw
+              port = 21
+
+          if not os.path.isdir("t"):
+              raise SystemExit("t/ directory is required for /public_html/t deployment")
+
+          ftp = FTP()
+          ftp.connect(host, port, timeout=20)
+          ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
+          ftp.cwd("public_html")
+
+          try:
+              ftp.cwd("t")
+          except Exception:
+              ftp.mkd("t")
+              ftp.cwd("t")
+
+          for root, dirs, files in os.walk("t"):
+              rel_dir = os.path.relpath(root, "t")
+              if rel_dir == ".":
+                  remote_dir = "."
+              else:
+                  remote_dir = rel_dir.replace(os.sep, "/")
+                  for part in remote_dir.split("/"):
+                      ftp.cwd(part)
+                  remote_dir = "."
+
+              for filename in files:
+                  local_path = os.path.join(root, filename)
+                  with open(local_path, "rb") as fh:
+                      ftp.storbinary(f"STOR {filename}", fh)
+                  print("Uploaded /public_html/t/" + ("" if rel_dir == "." else rel_dir.replace(os.sep, "/") + "/") + filename)
+
+              if rel_dir != ".":
+                  ftp.cwd("/public_html/t")
+
+          ftp.quit()
+          print("/t deployment complete. No remote files were deleted.")
+          PY
