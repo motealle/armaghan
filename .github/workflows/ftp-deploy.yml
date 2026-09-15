@@ -176,7 +176,6 @@ jobs:
         run: |
           python - <<'PY'
           import os
-          import posixpath
           from ftplib import FTP
           from urllib.parse import urlparse
 
@@ -195,7 +194,7 @@ jobs:
           ftp = FTP()
           ftp.connect(host, port, timeout=20)
           ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
-          ftp.cwd("public_html")
+          ftp.cwd("/public_html")
 
           try:
               ftp.cwd("t")
@@ -203,24 +202,27 @@ jobs:
               ftp.mkd("t")
               ftp.cwd("t")
 
+          base_remote = "/public_html/t"
+
           for root, dirs, files in os.walk("t"):
               rel_dir = os.path.relpath(root, "t")
-              if rel_dir == ".":
-                  remote_dir = "."
-              else:
-                  remote_dir = rel_dir.replace(os.sep, "/")
-                  for part in remote_dir.split("/"):
-                      ftp.cwd(part)
-                  remote_dir = "."
+              remote_dir = base_remote if rel_dir == "." else base_remote + "/" + rel_dir.replace(os.sep, "/")
+
+              # Create every local subdirectory remotely if it does not exist.
+              ftp.cwd(base_remote)
+              if rel_dir != ".":
+                  for part in rel_dir.replace(os.sep, "/").split("/"):
+                      try:
+                          ftp.cwd(part)
+                      except Exception:
+                          ftp.mkd(part)
+                          ftp.cwd(part)
 
               for filename in files:
                   local_path = os.path.join(root, filename)
                   with open(local_path, "rb") as fh:
                       ftp.storbinary(f"STOR {filename}", fh)
-                  print("Uploaded /public_html/t/" + ("" if rel_dir == "." else rel_dir.replace(os.sep, "/") + "/") + filename)
-
-              if rel_dir != ".":
-                  ftp.cwd("/public_html/t")
+                  print("Uploaded " + remote_dir + "/" + filename)
 
           ftp.quit()
           print("/t deployment complete. No remote files were deleted.")
