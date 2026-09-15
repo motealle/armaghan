@@ -1,52 +1,752 @@
-<!--
-Test 01
-Title: Unified Request Builder
-Purpose: Test whether all 6 B2B request paths can be unified into one simple inquiry flow.
-Hypothesis: Guest-first integrated inquiry builder will be clearer and faster than profile-based separated paths.
-Main UX Pattern: Product-first catalog + shared inquiry builder + WhatsApp preview.
--->
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#090B18">
-  <title>ارمغان — کاتالوگ B2B</title>
-  <link rel="stylesheet" href="./assets/app.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ارمغان | تولید و صادرات پوشاک — تست ۰۱ (الگوی پایه مشتری)</title>
+<!--
+Test 01
+Title: Customer Baseline Pattern
+Purpose: تست ذائقه روی الگوی پایه پیشنهادی مشتری با حداکثر تشابه بصری
+Hypothesis: با حفظ ساختار مشتری، تجمیع سبک مسیرها در «لیست استعلام» پذیرفته می‌شود
+Paths: relative only
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#141C4C;--navy2:#1B2560;--brand:#151DAB;--green:#1F9D55;--green2:#178C4A;
+  --gold:#FFC629;--peach:#FFF3EA;--peach2:#FDE3CF;--orange:#E8792B;
+  --mint:#EAF2EE;--bg:#F5F6F8;--card:#fff;--text:#182034;--muted:#6E7893;--line:#E7EAF0;
+  --red:#D8385A;--redbg:#FDEBEF;--r:14px;--sh:0 2px 10px rgba(20,28,76,.06);
+  --sh2:0 10px 30px rgba(20,28,76,.12);--max:1180px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:Vazirmatn,system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.8;padding-bottom:74px}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+img,svg{max-width:100%;display:block}
+.container{max-width:var(--max);margin:0 auto;padding:0 14px}
+.ic{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ic.s{width:16px;height:16px}.ic.l{width:26px;height:26px}
+
+/* ---------- HEADER ---------- */
+.topbar{background:var(--navy);color:#fff;position:sticky;top:0;z-index:60}
+.tb-in{max-width:var(--max);margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:16px}
+.logo{display:flex;flex-direction:column;line-height:1;flex:0 0 auto}
+.logo b{font-size:21px;font-weight:800;letter-spacing:.5px}
+.logo span{font-size:9px;letter-spacing:3px;color:#C9CFEA;margin-top:3px}
+.mainnav{display:flex;gap:22px;flex:0 0 auto}
+.mainnav a{font-size:13.5px;color:#DDE2F3;padding:6px 0;border-bottom:2px solid transparent}
+.mainnav a.on{color:#fff;border-color:var(--gold);font-weight:600}
+.search{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:8px 12px;color:var(--muted);min-width:120px}
+.search input{border:0;outline:0;flex:1;background:transparent;font-size:12.5px}
+.tb-tools{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.tbtn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  color:#fff;border-radius:10px;padding:7px 11px;font-size:12.5px;cursor:pointer}
+.tbtn:hover{background:rgba(255,255,255,.16)}
+.burger{display:none;background:none;border:0;color:#fff;cursor:pointer;padding:4px}
+.msearch{display:none;background:var(--navy);padding:0 14px 12px}
+.mdrawer{display:none;background:var(--navy2);border-top:1px solid rgba(255,255,255,.1)}
+.mdrawer.open{display:block}
+.mdrawer a{display:block;padding:12px 18px;color:#E2E6F6;border-bottom:1px solid rgba(255,255,255,.06);font-size:13.5px}
+
+/* ---------- SHARED ---------- */
+.crumb{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px;padding:14px 0 10px}
+.crumb b{color:var(--text);font-weight:600}
+.sec{padding:22px 0}
+.sec-h{text-align:center;margin-bottom:18px}
+.sec-h h2{margin:0;font-size:20px;font-weight:800;color:var(--brand)}
+.sec-h p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
+.tag{position:absolute;inset-inline-start:14px;top:14px;background:var(--navy);color:#fff;font-size:11px;
+  padding:3px 10px;border-radius:8px;z-index:2}
+.box{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);position:relative;overflow:hidden}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;
+  padding:11px 18px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-g{background:var(--green);color:#fff}.btn-g:hover{background:var(--green2)}
+.btn-o{background:#fff;color:var(--text);border:1px solid var(--line)}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-gold{background:var(--gold);color:#2A2200}
+.ph{background:linear-gradient(135deg,#DDE3EA,#C4CEDA);display:grid;place-items:center;color:#fff;position:relative}
+.ph svg{opacity:.55;width:44%;height:44%}
+.ph.g1{background:linear-gradient(135deg,#F3E7D8,#E2D2BC)}
+.ph.g2{background:linear-gradient(135deg,#E5EDE7,#CBDCD1)}
+.ph.g3{background:linear-gradient(135deg,#E7E9F5,#CED3EC)}
+.ph.g4{background:linear-gradient(135deg,#FAE6E0,#EFCFC4)}
+.ph.g5{background:linear-gradient(135deg,#E9E9EC,#CFCFD6)}
+.ph.g6{background:linear-gradient(135deg,#DFE9F2,#C3D6E6)}
+
+/* ---------- HOME ---------- */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;background:var(--mint);border-radius:var(--r);
+  overflow:hidden;box-shadow:var(--sh);position:relative;margin-top:14px}
+.hero-txt{padding:34px 30px}
+.hero-txt h1{margin:0 0 14px;font-size:31px;font-weight:800;line-height:1.45}
+.hero-txt h1 i{font-style:normal;color:var(--green);display:block}
+.hr-line{width:64px;height:4px;background:var(--gold);border-radius:4px;margin:0 0 16px}
+.hero ul{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:9px}
+.hero ul li{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:500}
+.hero ul li svg{color:var(--green);flex:0 0 auto}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap}
+.hero-img{background:linear-gradient(140deg,#F1EDE6,#E3E9E5);position:relative;min-height:280px}
+.hero-img svg{position:absolute;inset:0;width:100%;height:100%}
+.hero-badge{position:absolute;bottom:16px;right:16px;background:#fff;border-radius:14px;padding:10px 14px;
+  box-shadow:var(--shadow);font-size:12px;display:flex;align-items:center;gap:9px}
+.hero-badge b{font-size:13px;color:var(--navy)}
+.hero-badge i{width:30px;height:30px;border-radius:9px;background:var(--mint);display:grid;place-items:center;color:var(--green)}
+
+/* ───── Stats ───── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:-20px;position:relative;z-index:3}
+.stat{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:15px 10px;text-align:center}
+.stat b{display:block;font-size:21px;font-weight:800;color:var(--navy)}
+.stat span{font-size:11.5px;color:var(--muted)}
+
+/* ───── Sections ───── */
+section{padding:28px 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.sec-head h2{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.sec-head p{font-size:12.5px;color:var(--muted);margin-top:6px}
+.link-more{font-size:13px;color:var(--green);font-weight:600;display:inline-flex;align-items:center;gap:5px;flex:0 0 auto}
+
+/* ───── Chips / filters ───── */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none;-ms-overflow-style:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;height:36px;padding:0 14px;border-radius:999px;background:#fff;border:1px solid var(--line);
+  font-size:12.5px;display:inline-flex;align-items:center;gap:6px;color:#3C4F61;transition:.15s}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip small{opacity:.65;font-size:11px}
+
+/* ───── Category cards ───── */
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.cat{background:#fff;border-radius:var(--r-card);box-shadow:var(--shadow);overflow:hidden;transition:.2s}
+.cat:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.cat .ph{aspect-ratio:4/3}
+.cat .t{padding:12px 14px;display:flex;align-items:center;justify-content:space-between}
+.cat .t b{font-size:14px;font-weight:700}
+.cat .t span{font-size:11.5px;color:var(--muted)}
+
+/* ───── Product card ───── */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:var(--card);border-radius:var(--r-card);box-shadow:var(--shadow);overflow:hidden;
+  display:flex;flex-direction:column;transition:.2s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.thumb{position:relative;aspect-ratio:1/1;background:#F1EDE6;overflow:hidden}
+.thumb svg{width:100%;height:100%;display:block}
+.tag{position:absolute;top:10px;right:10px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;
+  background:#FFFFFFEE;color:var(--navy);backdrop-filter:blur(4px)}
+.tag.out{background:var(--rose);color:#fff}
+.fav{position:absolute;top:8px;left:8px;width:32px;height:32px;border-radius:50%;background:#FFFFFFE6;
+  display:grid;place-items:center;color:#8494A3;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.fav.on{color:var(--rose)}
+.fav.on .icon{fill:var(--rose)}
+.cbody{padding:11px 11px 12px;display:flex;flex-direction:column;gap:9px;flex:1}
+.ctitle{font-size:13.5px;font-weight:600;line-height:1.7}
+.cmeta{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+.cmeta b{color:var(--navy);font-weight:600}
+.cact{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:auto}
+.act{height:38px;border-radius:10px;display:grid;place-items:center;border:1px solid var(--line);
+  background:#fff;color:#44586B;transition:.15s}
+.act:active{transform:scale(.94)}
+.act.p{background:var(--green);color:#fff;border-color:transparent}
+.act.p.in{background:var(--navy)}
+.act.w{background:#25D366;color:#fff;border-color:transparent}
+
+/* ───── Bottom sheet ───── */
+.sheet-wrap{position:fixed;inset:0;z-index:70;display:none}
+.sheet-wrap.open{display:block}
+.backdrop{position:absolute;inset:0;background:rgba(10,22,35,.45);animation:fade .2s ease}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;
+  padding:8px 16px calc(20px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto;
+  animation:up .26s cubic-bezier(.2,.8,.3,1)}
+@media(min-width:761px){.sheet{max-width:440px;margin:0 auto;border-radius:22px;bottom:24px;left:16px;right:16px}}
+@keyframes up{from{transform:translateY(100%)}}
+@keyframes fade{from{opacity:0}}
+.handle{width:42px;height:4px;border-radius:4px;background:#D9E1E7;margin:6px auto 14px}
+.sheet-head{display:flex;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.sheet-head .mini{width:58px;height:58px;border-radius:13px;overflow:hidden;background:#F1EDE6;flex:0 0 auto}
+.sheet-head b{font-size:14.5px;display:block}
+.sheet-head span{font-size:12px;color:var(--muted)}
+.rowbtn{display:flex;align-items:center;gap:12px;width:100%;padding:11px;border-radius:13px;
+  border:1px solid var(--line);background:#fff;margin-bottom:8px;text-align:right;transition:.15s}
+.rowbtn:active{background:#F7FAFB}
+.rowbtn .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+  background:var(--mint);color:var(--navy);flex:0 0 auto}
+.rowbtn .tx{flex:1;min-width:0}
+.rowbtn b{font-size:13.5px;font-weight:600;display:block}
+.rowbtn small{font-size:11.5px;color:var(--muted)}
+.rowbtn .ch{color:#B6C3CE}
+
+/* ───── Order list rows ───── */
+.lrow{display:flex;gap:12px;align-items:center;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:10px;margin-bottom:10px}
+.lrow .ph{width:64px;height:64px;border-radius:12px;overflow:hidden;background:#F1EDE6;flex:0 0 auto}
+.lrow .tx{flex:1;min-width:0}
+.lrow .tx b{font-size:13.5px;display:block}
+.lrow .tx span{font-size:11.5px;color:var(--muted)}
+.qty{display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:10px;padding:2px}
+.qty button{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;color:var(--navy);font-size:16px}
+.qty b{min-width:34px;text-align:center;font-size:13px}
+.del{color:#B6C3CE;padding:6px}
+
+/* ───── Misc ───── */
+.empty{background:#fff;border-radius:var(--r-card);box-shadow:var(--shadow);padding:44px 20px;text-align:center}
+.empty .ic{width:64px;height:64px;border-radius:20px;background:var(--mint);display:grid;place-items:center;margin:0 auto 14px;color:var(--navy)}
+.empty b{font-size:15px;display:block;margin-bottom:6px}
+.empty p{font-size:12.5px;color:var(--muted);line-height:2;margin-bottom:16px}
+.panel{background:#fff;border-radius:var(--r-card);box-shadow:var(--shadow);padding:18px}
+.field{margin-bottom:12px}
+.field label{font-size:12.5px;color:#43586B;display:block;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;height:44px;border:1px solid var(--line);border-radius:var(--r-btn);
+  padding:0 12px;font-family:inherit;font-size:13.5px;outline:none;background:#FBFCFD;color:var(--text)}
+.field textarea{height:96px;padding:10px 12px;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:var(--green);background:#fff}
+.summary{display:flex;justify-content:space-between;font-size:13px;padding:10px 0;border-top:1px dashed var(--line)}
+.toast{position:fixed;z-index:90;bottom:calc(var(--nav-h) + 18px);left:50%;transform:translate(-50%,20px);
+  background:var(--navy);color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;opacity:0;
+  transition:.25s;pointer-events:none;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:761px){.toast{bottom:26px}}
+
+/* ───── Bottom nav ───── */
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:1px solid var(--line);
+  display:none;padding-bottom:env(safe-area-inset-bottom)}
+.bottomnav .in{display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav-h)}
+.nav-i{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  font-size:10.5px;color:#93A3B1;position:relative}
+.nav-i.on{color:var(--green);font-weight:600}
+.badge{position:absolute;top:9px;right:calc(50% - 20px);background:var(--rose);color:#fff;font-size:9.5px;
+  min-width:17px;height:17px;border-radius:9px;display:grid;place-items:center;padding:0 4px;font-weight:700}
+
+/* ───── Footer ───── */
+footer.ft{background:var(--navy);color:#C3D2E0;margin-top:20px;padding:34px 0 26px}
+footer.ft .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:24px}
+footer.ft h4{color:#fff;font-size:14px;margin-bottom:12px}
+footer.ft p,footer.ft li{font-size:12.5px;line-height:2.2;list-style:none}
+.copy{border-top:1px solid #ffffff1f;margin-top:24px;padding-top:16px;font-size:11.5px;text-align:center;color:#8FA6BC}
+
+@media(max-width:1024px){
+  .grid,.cats{grid-template-columns:repeat(3,1fr)}
+  .hero h1{font-size:28px}
+}
+@media(max-width:760px){
+  .mainnav,.topact,.search{display:none}
+  .topbar .container{justify-content:space-between}
+  .hero-in{grid-template-columns:1fr}
+  .hero-img{min-height:190px;order:-1}
+  .hero h1{font-size:23px}
+  .hero-txt{padding:20px 18px 24px}
+  .grid,.cats{grid-template-columns:repeat(2,1fr);gap:12px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .bottomnav{display:block}
+  body{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+  footer.ft .cols{grid-template-columns:1fr 1fr}
+  .sec-head h2{font-size:17px}
+}
+@media(max-width:360px){
+  .cact{gap:4px}.act{height:36px}.ctitle{font-size:12.5px}
+}
+</style>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <a class="brand" href="../index.htm" aria-label="آزمایش‌ها"><img src="../../logo.png" alt="ارمغان"><span><b>ارمغان</b><small>B2B CATALOG</small></span></a>
-      <div class="top-actions"><button class="icon-btn" id="themeToggle" type="button" aria-label="تغییر تم">☾</button><button class="icon-btn" id="searchToggle" type="button" aria-label="جستجو">⌕</button></div>
-    </header>
 
-    <div class="search-panel" id="searchPanel"><input id="searchInput" type="search" placeholder="جستجو در محصولات…" aria-label="جستجوی محصول"><span>ESC</span></div>
-
-    <main>
-      <section class="hero">
-        <div class="hero-copy"><span class="eyebrow">ARMAGHAN TRADING · WHOLESALE</span><h1>کاتالوگ پوشاک<br><strong>برای همکاری جدی.</strong></h1><p>محصول را انتخاب کنید، نیازتان را مشخص کنید و درخواست ساختاریافته را مستقیم برای تیم فروش بفرستید.</p><div class="hero-actions"><button class="btn primary" data-scroll="products">مشاهده محصولات</button><button class="btn ghost" id="openInquiry">ساخت استعلام <span id="heroCount">۰</span></button></div></div><div class="hero-card"><span>مدل همکاری</span><strong>Wholesale / Export</strong><div class="hero-stat"><b>۳</b><small>گروه محصول</small><b>۶</b><small>مسیر درخواست</small></div></div>
-      </section>
-
-      <section class="section" id="categories"><div class="section-head"><div><span class="eyebrow">EXPLORE</span><h2>دسته‌بندی‌ها</h2></div><span class="muted">انتخاب سریع</span></div><div class="category-grid"><button class="category active" data-category="all"><span>همه</span><b>۸ مدل</b></button><button class="category" data-category="نوزادی"><span>نوزادی</span><b>۳ مدل</b></button><button class="category" data-category="بچگانه"><span>بچگانه</span><b>۳ مدل</b></button><button class="category" data-category="زنانه"><span>زنانه</span><b>۲ مدل</b></button></div></section>
-
-      <section class="section" id="products"><div class="section-head"><div><span class="eyebrow">CATALOG</span><h2>محصولات منتخب</h2></div><span class="muted" id="productCount">۸ محصول</span></div><div class="product-grid" id="productGrid"></div></section>
-
-      <section class="section services"><div class="section-head"><div><span class="eyebrow">SERVICES</span><h2>فقط محصول نیست.</h2></div><span class="muted">سفارشی‌سازی</span></div><div class="service-grid"><button class="service" data-service="custom"><span class="service-icon">✦</span><b>تولید سفارشی</b><small>مدل، تیراژ و مشخصات موردنظر شما</small></button><button class="service" data-service="brand"><span class="service-icon">◇</span><b>برند اختصاصی</b><small>لیبل، تگ، چاپ، گلدوزی و لوگو</small></button><button class="service" data-service="packaging"><span class="service-icon">▣</span><b>بسته‌بندی اختصاصی</b><small>متریال، ابعاد، رنگ و چاپ</small></button></div></section>
-
-      <section class="trust"><div><span>چرا ارمغان؟</span><b>برای خرید عمده، مسیر باید کوتاه باشد.</b></div><div class="trust-items"><span>✓ تولید عمده</span><span>✓ کنترل کیفیت</span><span>✓ آماده صادرات</span><span>✓ اسناد تجاری</span></div></section>
-    </main>
-
-    <footer><div><b>ارمغان</b><span>تجارت پوشاک برای همکاری بلندمدت.</span></div><a href="https://wa.me/989000000000">واتساپ فروش</a></footer>
-
-    <nav class="bottom-nav"><button class="nav-item active" data-scroll="top">⌂<span>خانه</span></button><button class="nav-item" data-scroll="products">▦<span>محصولات</span></button><button class="nav-item inquiry-nav" id="navInquiry">≡<span>استعلام</span><i id="navCount">۰</i></button><button class="nav-item" data-scroll="services">✦<span>خدمات</span></button><a class="nav-item" href="https://wa.me/989000000000">◉<span>واتساپ</span></a></nav>
+<!-- ═════════ HEADER ═════════ -->
+<header class="topbar">
+  <div class="container">
+    <a class="brand" href="#/">
+      <span class="mark">ا</span>
+      <span><b>ارمغان</b><small>ARMAGHAN</small></span>
+    </a>
+    <nav class="mainnav" id="mainnav">
+      <a href="#/" data-nav="home">خانه</a>
+      <a href="#/products" data-nav="products">محصولات</a>
+      <a href="#/inquiry" data-nav="inquiry">استعلام قیمت</a>
+      <a href="#/about" data-nav="about">درباره ما</a>
+    </nav>
+    <label class="search">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" placeholder="جست‌وجوی کد یا نام محصول…">
+    </label>
+    <div class="topact">
+      <a class="it" href="#/orderlist"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H2"/></svg><span>لیست سفارش (<span id="cntTop">۰</span>)</span></a>
+      <a class="it" href="#/account"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1-4 4-5.5 7-5.5S18 16 19 20"/></svg><span>پنل مشتری</span></a>
+    </div>
   </div>
+</header>
 
-  <div class="backdrop" id="backdrop"></div>
-  <aside class="sheet" id="productSheet" aria-hidden="true"><div class="sheet-grab"></div><button class="close" data-close="productSheet">×</button><div id="productDetail"></div></aside>
-  <aside class="sheet inquiry-sheet" id="inquirySheet" aria-hidden="true"><div class="sheet-grab"></div><button class="close" data-close="inquirySheet">×</button><div id="inquiryContent"></div></aside>
-  <aside class="sheet preview-sheet" id="previewSheet" aria-hidden="true"><div class="sheet-grab"></div><button class="close" data-close="previewSheet">×</button><div id="previewContent"></div></aside>
-  <div class="toast" id="toast"></div>
-  <script src="./assets/app.js"></script>
+<main id="app"></main>
+
+<!-- ═════════ FOOTER ═════════ -->
+<footer class="ft">
+  <div class="container">
+    <div class="cols">
+      <div>
+        <h4>ارمغان</h4>
+        <p>تولیدکننده و صادرکننده پوشاک نوزادی، بچگانه و تی‌شرت زنانه. تولید انبوه با استانداردهای صادراتی.</p>
+      </div>
+      <div><h4>دسترسی سریع</h4><ul>
+        <li><a href="#/products">کاتالوگ محصولات</a></li>
+        <li><a href="#/inquiry">استعلام قیمت</a></li>
+        <li><a href="#/orderlist">لیست سفارش</a></li>
+        <li><a href="#/account">پنل مشتری</a></li></ul></div>
+      <div><h4>گروه‌ها</h4><ul>
+        <li>پوشاک نوزادی</li><li>بچگانه پسرانه</li><li>بچگانه دخترانه</li><li>تی‌شرت زنانه</li></ul></div>
+      <div><h4>تماس</h4><ul>
+        <li>واتساپ: ۰۹۱۲۰۰۰۰۰۰۰</li><li>ایمیل: info@armaghan.example</li><li>تهران، ایران</li></ul></div>
+    </div>
+    <div class="copy">© ۱۴۰۵ ارمغان — نسخه آزمایشی ۰۱ (ذائقه‌سنجی)</div>
+  </div>
+</footer>
+
+<!-- ═════════ BOTTOM NAV ═════════ -->
+<nav class="bottomnav">
+  <div class="in">
+    <a class="nav-i" href="#/" data-nav="home"><svg class="icon" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>خانه</a>
+    <a class="nav-i" href="#/products" data-nav="products"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>محصولات</a>
+    <a class="nav-i" href="#/orderlist" data-nav="orderlist"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H2"/></svg><span class="badge hide" id="navBadge">۰</span>لیست سفارش</a>
+    <a class="nav-i" href="#/favorites" data-nav="favorites"><svg class="icon" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.2A4 4 0 0 1 12 8a4 4 0 0 1 7 2.8C19 15.6 12 20 12 20z"/></svg>علاقه‌مندی</a>
+    <a class="nav-i" href="#/account" data-nav="account"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1-4 4-5.5 7-5.5S18 16 19 20"/></svg>پنل</a>
+  </div>
+</nav>
+
+<!-- ═════════ SHEET + TOAST ═════════ -->
+<div class="sheet-wrap" id="sheetWrap">
+  <div class="backdrop" data-close></div>
+  <div class="sheet" id="sheet"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════ ابزارها ═══════════ */
+const FA='۰۱۲۳۴۵۶۷۸۹';
+const fa=n=>String(n).replace(/\d/g,d=>FA[d]);
+const $=s=>document.querySelector(s);
+const WA='989120000000';
+const LS={
+  get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))
+};
+let ORDER=LS.get('ag_orderlist',{});   // {code:qty}
+let FAVS =LS.get('ag_favs',[]);
+
+/* ═══════════ داده نمونه ═══════════ */
+const G=['#F1EDE6','#E7EFF3','#F4EAEC','#EAF2E9','#EFEDF6','#F6F1E3'];
+const GROUPS=[
+  {k:'baby',  t:'نوزادی',          sub:['سرهمی','بادی آستین‌بلند','ست سه‌تکه']},
+  {k:'boy',   t:'بچگانه پسرانه',   sub:['تی‌شرت و شلوارک','بلوز شلوار','ست اسپرت']},
+  {k:'girl',  t:'بچگانه دخترانه',  sub:['پیراهن','ست تاپ و شلوار','سارافون']},
+  {k:'woman', t:'تی‌شرت زنانه',    sub:['تی‌شرت پنبه','تاپ نخی','تی‌شرت اورسایز']}
+];
+const PRODUCTS=(()=>{
+  const out=[];let i=0;
+  GROUPS.forEach(g=>g.sub.forEach(sub=>{
+    for(let k=0;k<2;k++,i++){
+      const code='AG-'+(1200+i*7);
+      const st=(i%9===4)?'out':'in';
+      out.push({
+        code:code, g:g.k, gt:g.t, sub:sub, st:st, tone:G[i%6],
+        title:sub+' — کد '+code,
+        moq:[50,100,150,200][i%4],
+        colors:[3,4,5,6][i%4],
+        sizes:['۰–۶ ماه تا ۲۴ ماه','۲ تا ۱۰ سال','S تا XXL'][i%3]
+      });
+    }
+  }));
+  return out;
+})();
+
+/* ═══════════ Placeholder SVG ═══════════ */
+function ph(p,big){
+  const t=p.tone||'#F1EDE6';
+  return `<svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <rect width="300" height="300" fill="${t}"/>
+    <g fill="none" stroke="#0F2942" stroke-opacity=".17" stroke-width="5" stroke-linejoin="round">
+      <path d="M108 78h84l30 26-20 24-14-11v96a8 8 0 0 1-8 8h-60a8 8 0 0 1-8-8v-96l-14 11-20-24z"/>
+      <path d="M124 78c0 14 11 22 26 22s26-8 26-22"/>
+    </g>
+    ${big?`<text x="150" y="268" text-anchor="middle" font-family="Vazirmatn,sans-serif" font-size="15" fill="#0F2942" fill-opacity=".45">${p.code}</text>`:''}
+  </svg>`;
+}
+
+/* ═══════════ وضعیت ═══════════ */
+function persist(){LS.set('ag_orderlist',ORDER);LS.set('ag_favs',FAVS);syncCounts()}
+function orderCount(){return Object.values(ORDER).reduce((a,b)=>a+b,0)}
+function syncCounts(){
+  const c=orderCount(), b=$('#navBadge');
+  $('#cntTop').textContent=fa(c);
+  b.textContent=fa(c); b.classList.toggle('hide',c===0);
+}
+function toast(msg,ok=true){
+  const t=$('#toast');
+  t.innerHTML=`<svg class="icon" viewBox="0 0 24 24" style="stroke:${ok?'#4ADE80':'#FCA5A5'}">${ok?'<path d="m5 13 4 4 10-10"/>':'<path d="M12 7v6M12 17h.01"/><circle cx="12" cy="12" r="9"/>'}</svg><span>${msg}</span>`;
+  t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+/* ═══════════ اکشن‌ها ═══════════ */
+function addToOrder(code){
+  const p=PRODUCTS.find(x=>x.code===code);
+  if(p.st==='out'){toast('این محصول فعلاً موجود نیست',false);return}
+  ORDER[code]=(ORDER[code]||0)+p.moq; persist();
+  toast('به لیست سفارش اضافه شد · '+fa(p.moq)+' عدد'); render();
+}
+function setQty(code,d){
+  const p=PRODUCTS.find(x=>x.code===code);
+  ORDER[code]=(ORDER[code]||0)+d*p.moq;
+  if(ORDER[code]<=0) delete ORDER[code];
+  persist(); render();
+}
+function removeOrder(code){delete ORDER[code];persist();toast('از لیست حذف شد');render()}
+function toggleFav(code){
+  const i=FAVS.indexOf(code);
+  i>-1?FAVS.splice(i,1):FAVS.push(code);
+  persist(); toast(i>-1?'از علاقه‌مندی حذف شد':'به علاقه‌مندی افزوده شد'); render();
+}
+function wa(code){
+  const p=PRODUCTS.find(x=>x.code===code);
+  const msg=`سلام؛ درخواست استعلام و سفارش:\n• محصول: ${p.sub}\n• کد: ${p.code}\n• گروه: ${p.gt}\n• حداقل سفارش: ${p.moq} عدد\n\nلطفاً قیمت و زمان تحویل را اعلام کنید.`;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function waOrderList(){
+  const items=Object.entries(ORDER);
+  if(!items.length){toast('لیست سفارش خالی است',false);return}
+  const lines=items.map(([c,q],i)=>{const p=PRODUCTS.find(x=>x.code===c);return `${i+1}. ${p.sub} | کد ${c} | ${q} عدد`}).join('\n');
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent('سلام؛ درخواست استعلام برای اقلام زیر:\n\n'+lines)}`,'_blank');
+}
+
+/* ═══════════ Bottom sheet (مرکز اقدام) ═══════════ */
+function openSheet(code){
+  const p=PRODUCTS.find(x=>x.code===code);
+  const isFav=FAVS.includes(code);
+  $('#sheet').innerHTML=`
+    <div class="handle"></div>
+    <div class="sheet-head">
+      <div class="mini">${ph(p)}</div>
+      <div><b>${p.sub}</b><span>کد ${p.code} · ${p.gt} · حداقل سفارش ${fa(p.moq)} عدد</span></div>
+    </div>
+    ${row('cart','افزودن به لیست سفارش','ثبت در سبد استعلام بدون قیمت',`addToOrder('${code}');closeSheet()`)}
+    ${row('heart',isFav?'حذف از علاقه‌مندی':'افزودن به علاقه‌مندی','ذخیره روی همین دستگاه',`toggleFav('${code}');closeSheet()`)}
+    ${row('wa','سفارش سریع واتساپ','پیام آماده با کد محصول',`wa('${code}');closeSheet()`)}
+    ${row('down','دانلود فایل محصول','تصاویر با کیفیت و دیتاشیت',`toast('در نسخه نهایی فایل دانلود می‌شود');closeSheet()`)}
+    ${row('doc','استعلام قیمت / کاتالوگ','تکمیل فرم درخواست',`location.hash='#/inquiry';closeSheet()`)}
+    ${row('user','پیگیری در پنل مشتری','سفارش‌ها و اسناد صادراتی',`location.hash='#/account';closeSheet()`)}
+    <button class="btn btn-ghost" style="width:100%;margin-top:6px" onclick="closeSheet()">بستن</button>`;
+  $('#sheetWrap').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(){$('#sheetWrap').classList.remove('open');document.body.style.overflow=''}
+$('#sheetWrap').addEventListener('click',e=>{if(e.target.hasAttribute('data-close'))closeSheet()});
+
+const ICONS={
+  cart:'<path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H2"/>',
+  heart:'<path d="M12 20s-7-4.4-7-9.2A4 4 0 0 1 12 8a4 4 0 0 1 7 2.8C19 15.6 12 20 12 20z"/>',
+  wa:'<path d="M20 12a8 8 0 0 1-11.9 7L4 20l1-4.1A8 8 0 1 1 20 12z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5"/>',
+  down:'<path d="M12 4v10m0 0 4-4m-4 4-4-4"/><path d="M5 19h14"/>',
+  doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+  user:'<circle cx="12" cy="8" r="3.4"/><path d="M5 20c1-4 4-5.5 7-5.5S18 16 19 20"/>',
+  dots:'<circle cx="12" cy="5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="12" cy="19" r="1.4"/>'
+};
+const ic=(k,cls='icon')=>`<svg class="${cls}" viewBox="0 0 24 24">${ICONS[k]}</svg>`;
+const row=(i,t,s,fn)=>`<button class="rowbtn" onclick="${fn}"><span class="ic">${ic(i)}</span>
+  <span class="tx"><b>${t}</b><small>${s}</small></span><span class="ch">‹</span></button>`;
+
+/* ═══════════ کارت محصول ═══════════ */
+function card(p){
+  const inList=!!ORDER[p.code], isFav=FAVS.includes(p.code);
+  return `<article class="card">
+    <div class="thumb">
+      ${ph(p,true)}
+      <span class="tag ${p.st==='out'?'out':''}">${p.st==='out'?'ناموجود':p.gt}</span>
+      <button class="fav ${isFav?'on':''}" onclick="toggleFav('${p.code}')" aria-label="علاقه‌مندی">${ic('heart')}</button>
+    </div>
+    <div class="cbody">
+      <div class="ctitle">${p.sub}</div>
+      <div class="cmeta"><span>کد <b>${p.code}</b></span><span>MOQ ${fa(p.moq)} عدد</span></div>
+      <div class="cact">
+        <button class="act p ${inList?'in':''}" onclick="addToOrder('${p.code}')" title="افزودن به لیست سفارش">${ic('cart')}</button>
+        <button class="act w" onclick="wa('${p.code}')" title="سفارش سریع واتساپ">${ic('wa')}</button>
+        <button class="act" onclick="openSheet('${p.code}')" title="اقدامات بیشتر">${ic('dots')}</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+/* ═══════════ فیلتر ═══════════ */
+let FILTER='all', QUERY='';
+$('#q').addEventListener('input',e=>{QUERY=e.target.value.trim();if(!location.hash.startsWith('#/products'))location.hash='#/products';render()});
+function filtered(){
+  return PRODUCTS.filter(p=>(FILTER==='all'||p.g===FILTER)&&
+    (!QUERY||(p.code+p.sub+p.gt).includes(QUERY)));
+}
+function setFilter(k){FILTER=k;render()}
+
+/* ═══════════ ویوها ═══════════ */
+function vHome(){
+  const feat=PRODUCTS.slice(0,8);
+  return `
+  <div class="hero"><div class="container">
+    <div class="hero-in">
+      <div class="hero-txt">
+        <h1>تولید و صادرات <span>پوشاک باکیفیت</span><br>نوزادی، بچگانه و زنانه</h1>
+        <div class="rulebar"></div>
+        <ul class="ul">
+          <li><span class="tick"><svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10"/></svg></span>بیش از ۴۷۰ مدل فعال در کاتالوگ</li>
+          <li><span class="tick"><svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10"/></svg></span>تولید انبوه با استاندارد صادراتی</li>
+          <li><span class="tick"><svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10"/></svg></span>پارچه پنبه‌ای درجه یک و رنگ ثابت</li>
+          <li><span class="tick"><svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10"/></svg></span>همراهی کامل در اسناد و حمل صادراتی</li>
+        </ul>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#/products">${ic('cart')} مشاهده کاتالوگ</a>
+          <a class="btn btn-ghost" href="#/inquiry">${ic('doc')} استعلام قیمت</a>
+        </div>
+      </div>
+      <div class="hero-img">
+        ${ph({tone:'#EDE7DC'},false)}
+        <div class="hero-badge"><i>${ic('doc')}</i><span><b>کاتالوگ ۱۴۰۵</b><br><small style="color:#6B7C8C">آماده دانلود</small></span></div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>${fa(470)}+</b><span>مدل فعال</span></div>
+      <div class="stat"><b>${fa(12)}</b><span>کشور مقصد صادرات</span></div>
+      <div class="stat"><b>${fa(8)}</b><span>سال تجربه تولید</span></div>
+      <div class="stat"><b>${fa(98)}٪</b><span>رضایت مشتریان</span></div>
+    </div>
+  </div></div>
+
+  <section class="container">
+    <div class="sec-head">
+      <div><h2>گروه‌های محصول</h2><p>انتخاب سریع بر اساس دسته‌بندی</p></div>
+      <a class="link-more" href="#/products">همه محصولات
+        <svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="m15 18-6-6 6-6"/></svg>
+      </a>
+    </div>
+    <div class="cats">
+      ${GROUPS.map(g=>{
+        const count=PRODUCTS.filter(p=>p.g===g.k).length;
+        const sample=PRODUCTS.find(p=>p.g===g.k);
+        return `<a class="cat" href="#/products/${g.k}">
+          <div class="ph">${ph(sample)}</div>
+          <div class="t"><b>${g.t}</b><span>${fa(count)} مدل</span></div>
+        </a>`;
+      }).join('')}
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="sec-head">
+      <div><h2>جدیدترین محصولات</h2><p>آخرین طرح‌های اضافه‌شده به کاتالوگ</p></div>
+      <a class="link-more" href="#/products">مشاهده همه
+        <svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="m15 18-6-6 6-6"/></svg>
+      </a>
+    </div>
+    <div class="grid">${feat.map(card).join('')}</div>
+  </section>
+
+  <section class="container">
+    <div class="panel" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+      <div>
+        <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">دنبال محصول خاصی هستید؟</h2>
+        <p style="font-size:13px;color:var(--muted)">استعلام قیمت بدهید یا مستقیم واتساپ پیام بفرستید.</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn btn-primary" href="#/inquiry">${ic('doc')} استعلام قیمت</a>
+        <button class="btn btn-ghost" onclick="waOrderList()" style="background:#25D366;color:#fff;border-color:transparent">${ic('wa')} واتساپ</button>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ───── Products ───── */
+function vProducts(cat){
+  if(cat) FILTER=cat;
+  const items=filtered();
+  return `
+  <section class="container">
+    <div class="sec-head" style="margin-bottom:12px">
+      <div><h2>کاتالوگ محصولات</h2><p>${fa(items.length)} محصول</p></div>
+    </div>
+    <div class="chips">
+      <button class="chip ${FILTER==='all'?'on':''}" onclick="setFilter('all')">همه <small>${fa(PRODUCTS.length)}</small></button>
+      ${GROUPS.map(g=>{
+        const c=PRODUCTS.filter(p=>p.g===g.k).length;
+        return `<button class="chip ${FILTER===g.k?'on':''}" onclick="setFilter('${g.k}')">${g.t} <small>${fa(c)}</small></button>`;
+      }).join('')}
+    </div>
+    ${items.length?`<div class="grid">${items.map(card).join('')}</div>`
+      :`<div class="empty"><div class="ic">${ic('cart')}</div><b>محصولی یافت نشد</b><p>عبارت دیگری جستجو کنید یا فیلتر را تغییر دهید.</p></div>`}
+  </section>`;
+}
+
+/* ───── Inquiry ───── */
+function vInquiry(){
+  const items=Object.entries(ORDER);
+  return `
+  <section class="container">
+    <div class="sec-head" style="margin-bottom:12px">
+      <div><h2>استعلام قیمت</h2><p>فرم را پر کنید یا از لیست سفارش ارسال کنید</p></div>
+    </div>
+    <div class="panel">
+      <div class="field"><label>نام و نام خانوادگی *</label><input id="fName" placeholder="مثلاً علی احمدی"></div>
+      <div class="field"><label>شماره تماس *</label><input id="fPhone" placeholder="۰۹۱۲..."></div>
+      <div class="field"><label>کشور / شهر مقصد</label><input id="fDest" placeholder="مثلاً عراق – بغداد"></div>
+      <div class="field"><label>توضیحات</label><textarea id="fNote" placeholder="توضیح اضافی درباره سفارش، تعداد، رنگ و..."></textarea></div>
+      ${items.length?`
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:8px">اقلام لیست سفارش (${fa(items.length)} قلم):</p>
+      ${items.map(([c,q])=>{const p=PRODUCTS.find(x=>x.code===c);
+        return `<div class="summary"><span>${p.sub} · کد ${c}</span><b>${fa(q)} عدد</b></div>`;}).join('')}`
+      :`<p style="font-size:12.5px;color:var(--muted);margin-bottom:8px">لیست سفارش خالی است. از صفحه محصولات اضافه کنید.</p>`}
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="submitInquiry()">
+        ${ic('doc')} ارسال استعلام از طریق واتساپ
+      </button>
+    </div>
+  </section>`;
+}
+function submitInquiry(){
+  const name=$('#fName').value.trim(), phone=$('#fPhone').value.trim();
+  if(!name||!phone){toast('نام و شماره تماس الزامی است',false);return}
+  const items=Object.entries(ORDER);
+  const dest=$('#fDest').value.trim(), note=$('#fNote').value.trim();
+  let lines=`سلام؛ درخواست استعلام قیمت:\nنام: ${name}\nتلفن: ${phone}\n`;
+  if(dest) lines+=`مقصد: ${dest}\n`;
+  if(items.length){
+    lines+='\nاقلام:\n'+items.map(([c,q],i)=>{const p=PRODUCTS.find(x=>x.code===c);return `${i+1}. ${p.sub} | ${c} | ${q} عدد`}).join('\n');
+  }
+  if(note) lines+='\nتوضیحات: '+note;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(lines)}`,'_blank');
+  toast('در حال انتقال به واتساپ…');
+}
+
+/* ───── Order List ───── */
+function vOrderList(){
+  const items=Object.entries(ORDER);
+  if(!items.length) return `
+  <section class="container">
+    <div class="empty">
+      <div class="ic">${ic('cart')}</div>
+      <b>لیست سفارش خالی است</b>
+      <p>از کاتالوگ محصولات، آیتم مورد نظر را اضافه کنید.</p>
+      <a class="btn btn-primary" href="#/products">${ic('cart')} مشاهده محصولات</a>
+    </div>
+  </section>`;
+  const total=orderCount();
+  return `
+  <section class="container">
+    <div class="sec-head" style="margin-bottom:12px">
+      <div><h2>لیست سفارش</h2><p>${fa(items.length)} قلم · مجموع ${fa(total)} عدد</p></div>
+    </div>
+    ${items.map(([c,q])=>{
+      const p=PRODUCTS.find(x=>x.code===c);
+      return `<div class="lrow">
+        <div class="ph">${ph(p)}</div>
+        <div class="tx"><b>${p.sub}</b><span>کد ${c} · ${p.gt}</span></div>
+        <div class="qty">
+          <button onclick="setQty('${c}',-1)">−</button>
+          <b>${fa(q)}</b>
+          <button onclick="setQty('${c}',1)">+</button>
+        </div>
+        <button class="del" onclick="removeOrder('${c}')">${ic('dots')}
+        </button>
+      </div>`;}).join('')}
+    <div class="panel" style="margin-top:12px">
+      <div class="summary"><span>مجموع اقلام</span><b>${fa(items.length)} قلم</b></div>
+      <div class="summary"><span>مجموع تعداد</span><b>${fa(total)} عدد</b></div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-primary" style="flex:1" onclick="waOrderList()">${ic('wa')} ارسال از طریق واتساپ</button>
+        <a class="btn btn-ghost" style="flex:1" href="#/inquiry">${ic('doc')} استعلام با فرم</a>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ───── Favorites ───── */
+function vFavorites(){
+  const items=PRODUCTS.filter(p=>FAVS.includes(p.code));
+  if(!items.length) return `
+  <section class="container">
+    <div class="empty">
+      <div class="ic">${ic('heart')}</div>
+      <b>لیست علاقه‌مندی خالی است</b>
+      <p>روی آیکون قلب در کارت محصولات بزنید.</p>
+      <a class="btn btn-primary" href="#/products">مشاهده محصولات</a>
+    </div>
+  </section>`;
+  return `
+  <section class="container">
+    <div class="sec-head" style="margin-bottom:12px">
+      <div><h2>علاقه‌مندی‌ها</h2><p>${fa(items.length)} محصول ذخیره‌شده</p></div>
+    </div>
+    <div class="grid">${items.map(card).join('')}</div>
+  </section>`;
+}
+
+/* ───── Account ───── */
+function vAccount(){
+  return `
+  <section class="container">
+    <div class="sec-head" style="margin-bottom:12px">
+      <div><h2>پنل مشتری</h2><p>نسخه آزمایشی — ورود واقعی در نسخه نهایی</p></div>
+    </div>
+    <div class="panel">
+      <div class="field"><label>شماره موبایل</label><input placeholder="۰۹۱۲..."></div>
+      <button class="btn btn-primary" style="width:100%" onclick="toast('در نسخه نهایی کد تأیید ارسال می‌شود')">ورود / ثبت‌نام</button>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px">دسترسی سریع</h3>
+      ${row('cart','لیست سفارش',`${fa(orderCount())} عدد در سبد`,`location.hash='#/orderlist'`)}
+      ${row('heart','علاقه‌مندی‌ها',`${fa(FAVS.length)} محصول ذخیره‌شده`,`location.hash='#/favorites'`)}
+      ${row('doc','استعلام قیمت','فرم درخواست قیمت',`location.hash='#/inquiry'`)}
+      ${row('wa','چت واتساپ','پاسخ‌گویی سریع',`waOrderList()`)}
+    </div>
+  </section>`;
+}
+
+/* ───── About ───── */
+function vAbout(){
+  return `
+  <section class="container">
+    <div class="sec-head" style="margin-bottom:12px">
+      <div><h2>درباره ارمغان</h2><p>تولید و صادرات پوشاک</p></div>
+    </div>
+    <div class="panel">
+      <p style="font-size:13.5px;line-height:2.4;color:#43586B">
+        مجموعه ارمغان با بیش از ۸ سال تجربه در تولید پوشاک نوزادی، بچگانه و تی‌شرت زنانه،
+        محصولات خود را به بیش از ۱۲ کشور صادر می‌کند.
+        تمرکز ما بر کیفیت پارچه، دوخت تمیز و تحویل به‌موقع است.
+        تمامی محصولات با پارچه پنبه‌ای درجه یک و رنگ‌های ثابت تولید می‌شوند.
+      </p>
+    </div>
+    <div class="cats" style="margin-top:14px">
+      <div class="cat"><div class="ph">${ph({tone:'#EAF2E9'})}</div><div class="t"><b>تولید انبوه</b></div></div>
+      <div class="cat"><div class="ph">${ph({tone:'#E7EFF3'})}</div><div class="t"><b>استاندارد صادراتی</b></div></div>
+      <div class="cat"><div class="ph">${ph({tone:'#F4EAEC'})}</div><div class="t"><b>رنگ ثابت</b></div></div>
+      <div class="cat"><div class="ph">${ph({tone:'#F6F1E3'})}</div><div class="t"><b>تحویل سریع</b></div></div>
+    </div>
+  </section>`;
+}
+
+/* ═══════════ Router ═══════════ */
+function route(){
+  const h=location.hash||'#/';
+  const parts=h.replace('#/','').split('/');
+  let view;
+  switch(parts[0]){
+    case 'products': view=vProducts(parts[1]||null); break;
+    case 'inquiry':  view=vInquiry();  break;
+    case 'orderlist':view=vOrderList();break;
+    case 'favorites':view=vFavorites();break;
+    case 'account':  view=vAccount();  break;
+    case 'about':    view=vAbout();    break;
+    default:         view=vHome();
+  }
+  $('#app').innerHTML=view;
+  // nav highlight
+  const key=['products','inquiry','orderlist','favorites','account','about'].includes(parts[0])?parts[0]:'home';
+  document.querySelectorAll('[data-nav]').forEach(a=>{
+    a.classList.toggle('on',a.dataset.nav===key);
+  });
+  window.scrollTo({top:0});
+}
+window.addEventListener('hashchange',route);
+route();
+syncCounts();
+</script>
 </body>
 </html>
