@@ -1,0 +1,52 @@
+<!--
+Test 01
+Title: Unified Request Builder
+Purpose: Test whether all 6 B2B request paths can be unified into one simple inquiry flow.
+Hypothesis: Guest-first integrated inquiry builder will be clearer and faster than profile-based separated paths.
+Main UX Pattern: Product-first catalog + shared inquiry builder + WhatsApp preview.
+-->
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090B18">
+  <title>ارمغان — کاتالوگ B2B</title>
+  <link rel="stylesheet" href="./assets/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="../index.htm" aria-label="آزمایش‌ها"><img src="../../logo.png" alt="ارمغان"><span><b>ارمغان</b><small>B2B CATALOG</small></span></a>
+      <div class="top-actions"><button class="icon-btn" id="themeToggle" type="button" aria-label="تغییر تم">☾</button><button class="icon-btn" id="searchToggle" type="button" aria-label="جستجو">⌕</button></div>
+    </header>
+
+    <div class="search-panel" id="searchPanel"><input id="searchInput" type="search" placeholder="جستجو در محصولات…" aria-label="جستجوی محصول"><span>ESC</span></div>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy"><span class="eyebrow">ARMAGHAN TRADING · WHOLESALE</span><h1>کاتالوگ پوشاک<br><strong>برای همکاری جدی.</strong></h1><p>محصول را انتخاب کنید، نیازتان را مشخص کنید و درخواست ساختاریافته را مستقیم برای تیم فروش بفرستید.</p><div class="hero-actions"><button class="btn primary" data-scroll="products">مشاهده محصولات</button><button class="btn ghost" id="openInquiry">ساخت استعلام <span id="heroCount">۰</span></button></div></div><div class="hero-card"><span>مدل همکاری</span><strong>Wholesale / Export</strong><div class="hero-stat"><b>۳</b><small>گروه محصول</small><b>۶</b><small>مسیر درخواست</small></div></div>
+      </section>
+
+      <section class="section" id="categories"><div class="section-head"><div><span class="eyebrow">EXPLORE</span><h2>دسته‌بندی‌ها</h2></div><span class="muted">انتخاب سریع</span></div><div class="category-grid"><button class="category active" data-category="all"><span>همه</span><b>۸ مدل</b></button><button class="category" data-category="نوزادی"><span>نوزادی</span><b>۳ مدل</b></button><button class="category" data-category="بچگانه"><span>بچگانه</span><b>۳ مدل</b></button><button class="category" data-category="زنانه"><span>زنانه</span><b>۲ مدل</b></button></div></section>
+
+      <section class="section" id="products"><div class="section-head"><div><span class="eyebrow">CATALOG</span><h2>محصولات منتخب</h2></div><span class="muted" id="productCount">۸ محصول</span></div><div class="product-grid" id="productGrid"></div></section>
+
+      <section class="section services"><div class="section-head"><div><span class="eyebrow">SERVICES</span><h2>فقط محصول نیست.</h2></div><span class="muted">سفارشی‌سازی</span></div><div class="service-grid"><button class="service" data-service="custom"><span class="service-icon">✦</span><b>تولید سفارشی</b><small>مدل، تیراژ و مشخصات موردنظر شما</small></button><button class="service" data-service="brand"><span class="service-icon">◇</span><b>برند اختصاصی</b><small>لیبل، تگ، چاپ، گلدوزی و لوگو</small></button><button class="service" data-service="packaging"><span class="service-icon">▣</span><b>بسته‌بندی اختصاصی</b><small>متریال، ابعاد، رنگ و چاپ</small></button></div></section>
+
+      <section class="trust"><div><span>چرا ارمغان؟</span><b>برای خرید عمده، مسیر باید کوتاه باشد.</b></div><div class="trust-items"><span>✓ تولید عمده</span><span>✓ کنترل کیفیت</span><span>✓ آماده صادرات</span><span>✓ اسناد تجاری</span></div></section>
+    </main>
+
+    <footer><div><b>ارمغان</b><span>تجارت پوشاک برای همکاری بلندمدت.</span></div><a href="https://wa.me/989000000000">واتساپ فروش</a></footer>
+
+    <nav class="bottom-nav"><button class="nav-item active" data-scroll="top">⌂<span>خانه</span></button><button class="nav-item" data-scroll="products">▦<span>محصولات</span></button><button class="nav-item inquiry-nav" id="navInquiry">≡<span>استعلام</span><i id="navCount">۰</i></button><button class="nav-item" data-scroll="services">✦<span>خدمات</span></button><a class="nav-item" href="https://wa.me/989000000000">◉<span>واتساپ</span></a></nav>
+  </div>
+
+  <div class="backdrop" id="backdrop"></div>
+  <aside class="sheet" id="productSheet" aria-hidden="true"><div class="sheet-grab"></div><button class="close" data-close="productSheet">×</button><div id="productDetail"></div></aside>
+  <aside class="sheet inquiry-sheet" id="inquirySheet" aria-hidden="true"><div class="sheet-grab"></div><button class="close" data-close="inquirySheet">×</button><div id="inquiryContent"></div></aside>
+  <aside class="sheet preview-sheet" id="previewSheet" aria-hidden="true"><div class="sheet-grab"></div><button class="close" data-close="previewSheet">×</button><div id="previewContent"></div></aside>
+  <div class="toast" id="toast"></div>
+  <script src="./assets/app.js"></script>
+</body>
+</html>
