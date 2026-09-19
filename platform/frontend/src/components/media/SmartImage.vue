@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { ImageOff, Shirt } from '@lucide/vue'
 
 const props = withDefaults(defineProps<{
@@ -13,6 +13,11 @@ const props = withDefaults(defineProps<{
 const loaded = ref(false)
 const failed = ref(false)
 const ratioClass = computed(() => props.aspect === 'hero' ? 'aspect-[16/9]' : props.aspect === 'square' ? 'aspect-square' : 'aspect-[4/3]')
+
+watch(() => props.src, () => {
+  loaded.value = false
+  failed.value = false
+})
 </script>
 
 <template>
@@ -29,12 +34,11 @@ const ratioClass = computed(() => props.aspect === 'hero' ? 'aspect-[16/9]' : pr
     <div v-if="src && !loaded && !failed" class="skeleton absolute inset-0 z-10" />
     <img
       v-if="src && !failed"
-      class="absolute inset-0 z-20 h-full w-full object-cover"
+      class="absolute inset-0 z-20 h-full w-full object-cover transition-opacity duration-200"
       :class="{ 'opacity-0': !loaded }"
       :src="src"
       :alt="alt"
       :loading="eager ? 'eager' : 'lazy'"
-      :fetchpriority="eager ? 'high' : 'auto'"
       @load="loaded = true"
       @error="failed = true"
     />
