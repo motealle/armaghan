@@ -2,10 +2,12 @@
 import { computed, ref, watch } from 'vue'
 import { Search } from '@lucide/vue'
 import { useRoute } from 'vue-router'
-import { categories, products } from '@/data/catalog'
+import { categories } from '@/data/catalog'
+import { useCatalogStore } from '@/stores/catalog'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
 
 const route=useRoute()
+const catalog=useCatalogStore()
 const category=ref(String(route.query.category ?? 'all'))
 const subcategory=ref('all')
 const query=ref('')
@@ -14,7 +16,7 @@ const availability=ref('all')
 watch(()=>route.query.category,(value)=>{category.value=value?String(value):'all';subcategory.value='all'})
 
 const subs=computed(()=>category.value==='all'?[]:categories.find(c=>c.code===category.value)?.subcategories ?? [])
-const filtered=computed(()=>products.filter(product=>{
+const filtered=computed(()=>catalog.items.filter(product=>{
   if(category.value!=='all'&&product.categoryCode!==category.value)return false
   if(subcategory.value!=='all'&&product.subcategoryCode!==subcategory.value)return false
   if(availability.value!=='all'&&product.availability!==availability.value)return false
