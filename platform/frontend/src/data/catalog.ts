@@ -1,11 +1,12 @@
 import type { Category, CustomerSummary, Product, ProductSpecGroup } from '@/types/domain'
+import { digikalaCategoryMedia, digikalaMediaByProductCode } from '@/data/digikalaMedia.generated'
 
 export const categories: Category[] = [
   {
     code: '1',
     name: 'نوزادی',
     subtitle: 'لباس و پتوی نوزادی',
-    image: './images/web-stock/category-baby.webp',
+    image: digikalaCategoryMedia['1'],
     subcategories: [
       { code: '11', name: 'لباس نوزادی' },
       { code: '12', name: 'پتوی نوزادی' },
@@ -15,7 +16,7 @@ export const categories: Category[] = [
     code: '2',
     name: 'بچگانه',
     subtitle: 'دخترانه و پسرانه',
-    image: './images/web-stock/category-kids.webp',
+    image: digikalaCategoryMedia['2'],
     subcategories: [
       { code: '21', name: 'دخترانه' },
       { code: '22', name: 'پسرانه' },
@@ -25,7 +26,7 @@ export const categories: Category[] = [
     code: '3',
     name: 'زنانه',
     subtitle: 'تونیک و لباس راحتی',
-    image: './images/web-stock/category-women.webp',
+    image: digikalaCategoryMedia['3'],
     subcategories: [
       { code: '31', name: 'زیرسارافون (تونیک)' },
       { code: '32', name: 'لباس راحتی (ورزشی)' },
@@ -94,6 +95,8 @@ function product(
   availability: Product['availability'],
 ): Product {
   const meta = subMeta[subcategoryCode]
+  const media = digikalaMediaByProductCode[code] ?? [meta.image, meta.image]
+  const gallery = media.length >= 2 ? media.slice(0, 2) : [media[0] ?? meta.image, meta.image]
   return {
     id,
     code,
@@ -103,8 +106,8 @@ function product(
     categoryName: meta.categoryName,
     subcategoryName: meta.subcategoryName,
     availability,
-    image: meta.image,
-    gallery: [meta.image],
+    image: gallery[0],
+    gallery,
     specs: structuredClone(meta.specs),
   }
 }
