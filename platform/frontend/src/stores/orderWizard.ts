@@ -3,10 +3,12 @@ import { computed, ref } from 'vue'
 import { categories, products } from '@/data/catalog'
 import type { RequestPath } from '@/types/domain'
 import { buildProductionMessage, whatsappUrl } from '@/services/whatsapp'
+import { useLocaleStore } from '@/stores/locale'
 
 type ProductionPath = Extract<RequestPath, 'custom' | 'brand' | 'packaging'>
 
 export const useOrderWizardStore = defineStore('order-wizard', () => {
+  const locale=useLocaleStore()
   const step = ref(0)
   const path = ref<ProductionPath | null>(null)
   const categoryCode = ref<string | null>(null)
@@ -26,6 +28,7 @@ export const useOrderWizardStore = defineStore('order-wizard', () => {
       negotiable: specSource.value.specs.negotiable,
       locked: specSource.value.specs.locked,
       note: note.value,
+      locale: locale.locale,
     })
   })
 
