@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { LogIn, ShieldCheck, UserRound, UserRoundX } from '@lucide/vue'
 import { useSessionStore } from '@/stores/session'
+import { useLocaleStore } from '@/stores/locale'
 import AdminDashboard from '@/features/admin/components/AdminDashboard.vue'
 import CustomerDashboard from '@/features/customers/components/CustomerDashboard.vue'
 
 const session=useSessionStore()
+const locale=useLocaleStore()
 const emit=defineEmits<{ login: [] }>()
 </script>
 <template>
   <section>
-    <div class="mb-4"><h1 class="text-2xl font-black">پیگیری و حساب</h1><p class="mt-1 text-sm text-slate-500">سفارشات، تایملاین، مطلوب‌ها و مدیریت مشتری.</p></div>
+    <div class="mb-4"><h1 class="text-2xl font-black">{{locale.t('account')}}</h1><p class="mt-1 text-sm text-slate-500">{{locale.t('accountHelp')}}</p></div>
     <div v-if="!session.isAuthenticated" class="rounded-3xl border border-slate-200 bg-white p-7 text-center shadow-sm">
       <div class="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-indigo-50 text-[var(--c-primary)]"><UserRound :size="25"/></div>
       <h2 class="text-xl font-black">برای پیگیری وارد شوید</h2><p class="mt-2 text-sm text-slate-500">ورود آزمایشی مدیر 1/1 و مشتری 2/2.</p>
