@@ -17,6 +17,9 @@ body{margin:0;min-width:320px;min-height:100svh;background:linear-gradient(180de
 button,a,input,textarea,select{font:inherit}
 button,a{touch-action:manipulation}
 button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid color-mix(in srgb,var(--c-primary) 30%,transparent);outline-offset:2px}
+#main-content:focus{outline:none}
+.skip-link{position:fixed;z-index:200;top:.75rem;inset-inline-start:.75rem;transform:translateY(-180%);border-radius:.75rem;background:#fff;color:#111827;padding:.7rem 1rem;font-size:.78rem;font-weight:900;box-shadow:0 12px 32px rgba(0,0,0,.2);transition:transform .15s ease}
+.skip-link:focus{transform:translateY(0)}
 
 .hero-shell{min-height:24rem;background:linear-gradient(135deg,var(--c-primary),#12184a)}
 .smart-image{background:linear-gradient(135deg,#edf3f1,#eef1f8)}
@@ -61,4 +64,4 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   .bottom-nav{left:50%;right:auto;bottom:1rem;width:min(42rem,calc(100% - 2rem));transform:translateX(-50%);border:1px solid #e1e5ed;border-radius:1.4rem;box-shadow:var(--surface-shadow);padding:.38rem}
   .hero-shell{min-height:31rem}
 }
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.skip-link{transition:none}}

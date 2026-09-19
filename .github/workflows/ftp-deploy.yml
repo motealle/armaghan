@@ -10,11 +10,7 @@ on:
         required: true
         default: "auto"
         type: choice
-        options:
-          - auto
-          - root
-          - t
-          - both
+        options: [auto, root, t, both]
 
 permissions:
   contents: read
@@ -35,37 +31,24 @@ jobs:
       t: ${{ steps.plan.outputs.t }}
       frontend: ${{ steps.plan.outputs.frontend }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
       - name: Determine deployment scope
         id: plan
         shell: bash
         run: |
-          root=false
-          t=false
-          frontend=false
-
+          root=false; t=false; frontend=false
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             case "${{ inputs.target }}" in
               root) root=true ;;
               t) t=true; frontend=true ;;
               both) root=true; t=true; frontend=true ;;
               auto)
-                if git rev-parse HEAD^ >/dev/null 2>&1; then
-                  files="$(git diff --name-only HEAD^ HEAD)"
-                  grep -qx 'index.html' <<< "$files" && root=true || true
-                  grep -qx 'logo.png' <<< "$files" && root=true || true
-                  grep -q '^t/' <<< "$files" && t=true || true
-                  if grep -q '^platform/frontend/' <<< "$files"; then
-                    frontend=true
-                    t=true
-                  fi
-                else
-                  root=true
-                fi
+                files="$(git diff --name-only HEAD^ HEAD 2>/dev/null || true)"
+                grep -qx 'index.html' <<< "$files" && root=true || true
+                grep -qx 'logo.png' <<< "$files" && root=true || true
+                grep -q '^t/' <<< "$files" && t=true || true
+                if grep -q '^platform/frontend/' <<< "$files"; then frontend=true; t=true; fi
                 ;;
             esac
           else
@@ -73,74 +56,54 @@ jobs:
             grep -qx 'index.html' <<< "$files" && root=true || true
             grep -qx 'logo.png' <<< "$files" && root=true || true
             grep -q '^t/' <<< "$files" && t=true || true
-            if grep -q '^platform/frontend/' <<< "$files"; then
-              frontend=true
-              t=true
-            fi
+            if grep -q '^platform/frontend/' <<< "$files"; then frontend=true; t=true; fi
           fi
-
           echo "root=$root" >> "$GITHUB_OUTPUT"
           echo "t=$t" >> "$GITHUB_OUTPUT"
           echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
-          echo "Deploy root: $root"
-          echo "Deploy /t: $t"
-          echo "Build Test 13 frontend: $frontend"
 
   qa:
     needs: plan
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
       - name: Protect immutable test snapshots
         run: python tests/test_immutable_snapshots.py
-
       - name: Test SQLite schema
         run: python tests/test_sqlite_schema.py
-
       - name: Test Test 11 static contract
         run: python tests/test_test11_contract.py
-
       - name: Test Test 12 regression contract
         run: python tests/test_test12_source_contract.py
-
-      - name: Test Test 13 source contract
+      - name: Test Test 13 regression contract
         run: python tests/test_test13_source_contract.py
-
+      - name: Test Test 14 accessibility contract
+        run: python tests/test_test14_accessibility_contract.py
       - name: Test web-stock provenance policy
         run: python tests/test_web_stock_policy.py
-
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
-
       - name: Check Python syntax
         run: python -m compileall -q tests platform/scripts
-
       - name: Setup Node for Vue build
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/setup-node@v4
-        with:
-          node-version: '24.15.0'
-
+        with: { node-version: '24.15.0' }
       - name: Install Vue dependencies
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm install --no-audit --no-fund
-
-      - name: Type-check, unit test and build Test 13
+      - name: Type-check, unit test and build Test 14
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm run build
-
-      - name: Upload Test 13 build artifact
+      - name: Upload Test 14 build artifact
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: test13-build
-          path: t/13
+          name: test14-build
+          path: t/14
           if-no-files-found: error
           retention-days: 1
 
@@ -158,32 +121,13 @@ jobs:
           import os
           from ftplib import FTP
           from urllib.parse import urlparse
-
-          raw = os.environ["FTP_SERVER"].strip()
-          if "://" in raw:
-              parsed = urlparse(raw)
-              host = parsed.hostname
-              port = parsed.port or 21
-          else:
-              host = raw
-              port = 21
-
-          if not host:
-              raise SystemExit("FTP_SERVER is empty or invalid")
-
-          ftp = FTP()
-          ftp.connect(host, port, timeout=20)
-          ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
-          print("FTP authentication: OK")
-          print("FTP starting directory:", ftp.pwd())
-          ftp.cwd("public_html")
-          print("/public_html: FOUND")
-          print("Target directory:", ftp.pwd())
-          ftp.cwd("..")
-          if ftp.pwd() != "/":
-              raise SystemExit("Safety check failed: FTP root is not '/'")
-          ftp.quit()
-          print("FTP scope check: PASS")
+          raw=os.environ["FTP_SERVER"].strip(); parsed=urlparse(raw) if "://" in raw else None
+          host=parsed.hostname if parsed else raw; port=(parsed.port or 21) if parsed else 21
+          if not host: raise SystemExit("FTP_SERVER is empty or invalid")
+          ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"])
+          ftp.cwd("public_html"); print("/public_html: FOUND"); ftp.cwd("..")
+          if ftp.pwd() != "/": raise SystemExit("Safety check failed: FTP root is not '/'")
+          ftp.quit(); print("FTP scope check: PASS")
           PY
 
   deploy-root:
@@ -191,9 +135,7 @@ jobs:
     if: needs.plan.outputs.root == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Deploy only root landing files to /public_html
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
@@ -204,30 +146,13 @@ jobs:
           import os
           from ftplib import FTP
           from urllib.parse import urlparse
-
-          raw = os.environ["FTP_SERVER"].strip()
-          if "://" in raw:
-              parsed = urlparse(raw)
-              host = parsed.hostname
-              port = parsed.port or 21
-          else:
-              host = raw
-              port = 21
-
-          ftp = FTP()
-          ftp.connect(host, port, timeout=20)
-          ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
-          ftp.cwd("public_html")
-
-          for filename in ("index.html", "logo.png"):
-              if not os.path.isfile(filename):
-                  raise SystemExit(f"Required deployment file missing: {filename}")
-              with open(filename, "rb") as fh:
-                  ftp.storbinary(f"STOR {filename}", fh)
-              print(f"Uploaded /public_html/{filename}")
-
-          ftp.quit()
-          print("Root deployment complete. No remote files were deleted.")
+          raw=os.environ["FTP_SERVER"].strip(); parsed=urlparse(raw) if "://" in raw else None
+          host=parsed.hostname if parsed else raw; port=(parsed.port or 21) if parsed else 21
+          ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"]); ftp.cwd("public_html")
+          for filename in ("index.html","logo.png"):
+              if not os.path.isfile(filename): raise SystemExit(f"Required deployment file missing: {filename}")
+              with open(filename,"rb") as fh: ftp.storbinary(f"STOR {filename}",fh)
+          ftp.quit(); print("Root deployment complete. No remote files were deleted.")
           PY
 
   deploy-t:
@@ -235,19 +160,15 @@ jobs:
     if: needs.plan.outputs.t == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Download Test 13 build
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - name: Download Test 14 build
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: test13-build
-          path: t/13
-
-      - name: Deploy changed /t files and generated Test 13 only
+          name: test14-build
+          path: t/14
+      - name: Deploy changed /t files and generated Test 14 only
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -255,72 +176,31 @@ jobs:
           FRONTEND_CHANGED: ${{ needs.plan.outputs.frontend }}
         run: |
           python - <<'PY'
-          import os
-          import subprocess
+          import os, subprocess
           from ftplib import FTP
           from urllib.parse import urlparse
-
-          raw = os.environ["FTP_SERVER"].strip()
-          if "://" in raw:
-              parsed = urlparse(raw)
-              host = parsed.hostname
-              port = parsed.port or 21
-          else:
-              host = raw
-              port = 21
-
-          if not os.path.isdir("t"):
-              raise SystemExit("t/ directory is required for /public_html/t deployment")
-
-          changed = subprocess.check_output(
-              ["git", "diff", "--name-only", "HEAD^", "HEAD", "--", "t/"],
-              text=True,
-          ).splitlines()
-          changed = [p for p in changed if p.startswith("t/") and os.path.isfile(p)]
-
-          if os.environ.get("FRONTEND_CHANGED") == "true":
-              if not os.path.isdir("t/13"):
-                  raise SystemExit("Generated Test 13 build is missing")
-              for root, _, files in os.walk("t/13"):
-                  for filename in files:
-                      changed.append(os.path.join(root, filename))
-
-          changed = sorted(set(changed))
-
-          ftp = FTP()
-          ftp.connect(host, port, timeout=20)
-          ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
-          ftp.cwd("/public_html")
-
-          try:
-              ftp.cwd("t")
-          except Exception:
-              ftp.mkd("t")
-              ftp.cwd("t")
-
-          base_remote = "/public_html/t"
-
+          raw=os.environ["FTP_SERVER"].strip(); parsed=urlparse(raw) if "://" in raw else None
+          host=parsed.hostname if parsed else raw; port=(parsed.port or 21) if parsed else 21
+          if not os.path.isdir("t"): raise SystemExit("t/ directory is required")
+          changed=subprocess.check_output(["git","diff","--name-only","HEAD^","HEAD","--","t/"],text=True).splitlines()
+          changed=[p for p in changed if p.startswith("t/") and os.path.isfile(p)]
+          if os.environ.get("FRONTEND_CHANGED")=="true":
+              if not os.path.isdir("t/14"): raise SystemExit("Generated Test 14 build is missing")
+              for root,_,files in os.walk("t/14"):
+                  for filename in files: changed.append(os.path.join(root,filename))
+          changed=sorted(set(changed))
+          ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"]); ftp.cwd("/public_html")
+          try: ftp.cwd("t")
+          except Exception: ftp.mkd("t"); ftp.cwd("t")
+          base_remote="/public_html/t"
           for local_path in changed:
-              rel_path = os.path.relpath(local_path, "t").replace(os.sep, "/")
-              parts = rel_path.split("/")
-              filename = parts[-1]
-              dir_parts = parts[:-1]
-
-              ftp.cwd(base_remote)
-              remote_dir = base_remote
-              for part in dir_parts:
-                  try:
-                      ftp.cwd(part)
-                  except Exception:
-                      ftp.mkd(part)
-                      ftp.cwd(part)
-                  remote_dir += "/" + part
-
-              with open(local_path, "rb") as fh:
-                  ftp.storbinary(f"STOR {filename}", fh)
-              print("Uploaded " + remote_dir + "/" + filename)
-
-          ftp.quit()
-          print(f"/t incremental deployment complete: {len(changed)} file(s).")
-          print("Frozen test folders were not re-uploaded. No remote files were deleted.")
+              rel_path=os.path.relpath(local_path,"t").replace(os.sep,"/"); parts=rel_path.split("/"); filename=parts[-1]
+              ftp.cwd(base_remote); remote_dir=base_remote
+              for part in parts[:-1]:
+                  try: ftp.cwd(part)
+                  except Exception: ftp.mkd(part); ftp.cwd(part)
+                  remote_dir += "/"+part
+              with open(local_path,"rb") as fh: ftp.storbinary(f"STOR {filename}",fh)
+              print("Uploaded "+remote_dir+"/"+filename)
+          ftp.quit(); print(f"/t incremental deployment complete: {len(changed)} file(s). No remote files were deleted.")
           PY
