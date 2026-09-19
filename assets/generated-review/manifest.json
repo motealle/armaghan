@@ -1,0 +1,6 @@
+{
+  "schema": 1,
+  "purpose": "Temporary AI-generated image review queue. Not production media storage.",
+  "source_prompt_file": "docs/pics-Prompt.md",
+  "items": []
+}
