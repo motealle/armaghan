@@ -30,7 +30,7 @@ onBeforeUnmount(stopLongPress)
     @pointerleave.passive="stopLongPress"
   >
     <div class="mx-auto flex max-w-6xl items-center gap-3 px-3 py-2.5">
-      <img class="h-10 w-10 rounded-xl bg-white/10 object-cover"  :src="'../../logo.png'" alt="ارمغان" />
+      <img class="h-10 w-10 rounded-xl bg-white/10 object-cover" :src="'../../logo.png'" alt="ارمغان" />
       <div class="min-w-0">
         <b class="block text-sm">ارمغان</b>
         <span class="block truncate text-[10px] text-white/70">تولید و صادرات پوشاک</span>
@@ -46,7 +46,8 @@ onBeforeUnmount(stopLongPress)
 
       <div v-else class="ms-auto flex items-center gap-2">
         <span class="hidden rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-xs font-bold sm:inline-flex">
-          <UserRound class="me-1" :size="17" /> {{ session.isAdmin ? 'مدیر' : 'مشتری' }}
+          <UserRound class="me-1" :size="17" />
+          {{ session.impersonatedCustomerId ? 'مدیر ← مشتری' : session.isAdmin ? 'مدیر' : 'مشتری' }}
         </span>
         <button
           class="inline-flex min-h-10 items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 text-xs font-bold"
