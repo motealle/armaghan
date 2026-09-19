@@ -7,11 +7,13 @@ import LoginSheet from '@/features/auth/components/LoginSheet.vue'
 import DesignLabSheet from '@/features/design/components/DesignLabSheet.vue'
 import { useDesignStore } from '@/stores/design'
 import { useSessionStore } from '@/stores/session'
+import { useLocaleStore } from '@/stores/locale'
 
 const loginOpen=ref(false)
 const designLabOpen=ref(false)
 const design=useDesignStore()
 const session=useSessionStore()
+const locale=useLocaleStore()
 const route=useRoute()
 
 watch(()=>route.fullPath,async()=>{
@@ -19,8 +21,9 @@ watch(()=>route.fullPath,async()=>{
   document.querySelector<HTMLElement>('#main-content')?.focus({preventScroll:true})
 })
 
-onMounted(()=>{
+onMounted(async()=>{
   design.apply()
+  await locale.initialize()
   const magic=new URLSearchParams(location.search).get('magic')
   if(magic==='customer-demo-token'){
     session.login('2','2')
