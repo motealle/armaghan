@@ -74,8 +74,26 @@ jobs:
           echo "Deploy root: $root"
           echo "Deploy /t: $t"
 
-  smoke-test:
+  qa:
     needs: plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Protect immutable test snapshots
+        run: python tests/test_immutable_snapshots.py
+
+      - name: Test SQLite schema
+        run: python tests/test_sqlite_schema.py
+
+      - name: Test Test 11 static contract
+        run: python tests/test_test11_contract.py
+
+  smoke-test:
+    needs: [plan, qa]
     runs-on: ubuntu-latest
     steps:
       - name: Verify FTP connection and target scope
@@ -117,7 +135,7 @@ jobs:
           PY
 
   deploy-root:
-    needs: [plan, smoke-test]
+    needs: [plan, qa, smoke-test]
     if: needs.plan.outputs.root == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -161,7 +179,7 @@ jobs:
           PY
 
   deploy-t:
-    needs: [plan, smoke-test]
+    needs: [plan, qa, smoke-test]
     if: needs.plan.outputs.t == 'true'
     runs-on: ubuntu-latest
     steps:
