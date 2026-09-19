@@ -5,14 +5,16 @@ import { categories } from '@/data/catalog'
 import { requestPathTitle } from '@/services/whatsapp'
 import { useOrderWizardStore } from '@/stores/orderWizard'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
+import { useLocaleStore } from '@/stores/locale'
 
 const wizard = useOrderWizardStore()
+const locale=useLocaleStore()
 const paths = [
   { id: 'custom' as const, label: 'تولید سفارشی', desc: 'تولید جدید با مشخصات قابل مذاکره', icon: WandSparkles },
   { id: 'brand' as const, label: 'تولید با برند', desc: 'محصول با برند سفارش‌دهنده', icon: Tag },
   { id: 'packaging' as const, label: 'تولید با بسته‌بندی', desc: 'بسته‌بندی متناسب با نیاز خریدار', icon: Box },
 ]
-const title = computed(() => wizard.path ? requestPathTitle(wizard.path) : 'سفارش تولید')
+const title = computed(() => wizard.path ? requestPathTitle(wizard.path,locale.locale) : 'سفارش تولید')
 </script>
 
 <template>
