@@ -117,7 +117,7 @@ jobs:
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: '22.18.0'
+          node-version: '24.15.0'
 
       - name: Install Vue dependencies
         if: needs.plan.outputs.frontend == 'true'
