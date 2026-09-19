@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
-import { products } from '@/data/catalog'
+import { useCatalogStore } from '@/stores/catalog'
 
 const KEY = 'armaghan:test12:favorites'
 
@@ -10,7 +10,8 @@ function load(): number[] {
 
 export const useFavoritesStore = defineStore('favorites', () => {
   const ids = ref<number[]>(load())
-  const items = computed(() => products.filter((product) => ids.value.includes(product.id)))
+  const catalog = useCatalogStore()
+  const items = computed(() => catalog.items.filter((product) => ids.value.includes(product.id)))
 
   function toggle(id: number): void {
     ids.value = ids.value.includes(id) ? ids.value.filter((x) => x !== id) : [...ids.value, id]
