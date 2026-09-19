@@ -62,7 +62,7 @@ onBeforeUnmount(stopLongPress)
           @pointerdown.stop
           @click.stop="emit('login')"
         >
-          <LogIn :size="17"/><span class="hidden xs:inline">{{locale.t('login')}}</span>
+          <LogIn :size="17"/><span class="hidden sm:inline">{{locale.t('login')}}</span>
         </button>
 
         <template v-else>
