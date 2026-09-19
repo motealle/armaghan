@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { products as seedProducts } from '@/data/catalog'
 import type { Product } from '@/types/domain'
 
-const KEY='armaghan:test13:products'
+const KEY='armaghan:test15:products-v2'
 
 function load(): Product[] {
   try {
