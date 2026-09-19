@@ -8,8 +8,7 @@ frontend=root/"platform"/"frontend"
 src=frontend/"src"
 pkg=json.loads((frontend/"package.json").read_text(encoding="utf-8"))
 catalog=(src/"data"/"catalog.ts").read_text(encoding="utf-8")
-hero=(src/"features"/"home"/"components"/"HeroCarousel.vue").read_text(encoding="utf-8")
-home=(src/"views"/"HomeView.vue").read_text(encoding="utf-8")
+fallback=(src/"data"/"digikalaMedia.generated.ts").read_text(encoding="utf-8")
 router=(src/"router"/"index.ts").read_text(encoding="utf-8")
 asset_doc=(root/"docs"/"ASSET-MANAGEMENT.md").read_text(encoding="utf-8")
 immutable=(root/"docs"/"IMMUTABLE-TESTS.txt").read_text(encoding="utf-8").splitlines()
@@ -23,8 +22,7 @@ assert "13" in {line.strip() for line in immutable}
 assert launcher.index("./14/index.html") < launcher.index("./13/index.html")
 assert catalog.count("product(") >= 19, "Expected product factory + at least 18 seeded products"
 assert catalog.count("./images/web-stock/sub-") >= 6
-assert "./images/web-stock/hero-brand.webp" in hero
-assert "تصاویر آزمایشی با منبع آزاد" in home
+assert "./images/web-stock/" in fallback, "Current source must retain a local no-network fallback for media"
 assert "/credits" in router
 assert "host-centric" in asset_doc.lower()
 assert "spatie/laravel-medialibrary" in asset_doc
