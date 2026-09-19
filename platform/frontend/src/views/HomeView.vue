@@ -56,6 +56,9 @@ const trustItems=[
 
     <section>
       <h2 class="mb-3 text-xl font-black">معرفی تولیدکننده</h2>
+      <div class="mb-3 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <SmartImage src="./images/web-stock/trust-fabric.webp" alt="نمونه تصویری پارچه و مواد اولیه" label="نمونه تصویری مواد اولیه" aspect="hero" />
+      </div>
       <div class="grid gap-3 md:grid-cols-3">
         <article v-for="item in trustItems" :key="item.label" class="rounded-2xl border border-slate-200 bg-[var(--c-paper)] p-4 shadow-sm">
           <div class="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><component :is="item.icon" :size="21" /></div>
