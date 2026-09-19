@@ -244,8 +244,8 @@ jobs:
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: test12-build
-          path: t/12
+          name: test13-build
+          path: t/13
 
       - name: Deploy changed /t files and generated Test 13 only
         env:
