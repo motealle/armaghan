@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { UserRole } from '@/types/domain'
 
-const STORAGE_KEY = 'armaghan:test12:role'
-const IMPERSONATION_KEY = 'armaghan:test12:impersonation'
+const STORAGE_KEY = 'armaghan:test15:role'
+const IMPERSONATION_KEY = 'armaghan:test15:impersonation'
 
 function readRole(): UserRole {
   const value = sessionStorage.getItem(STORAGE_KEY)
