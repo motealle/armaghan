@@ -5,15 +5,17 @@ import type { Product, RequestPath } from '@/types/domain'
 import { buildProductMessage, requestPathTitle, whatsappUrl } from '@/services/whatsapp'
 import BaseSheet from '@/components/ui/BaseSheet.vue'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
+import { useLocaleStore } from '@/stores/locale'
 
 const props = defineProps<{ open: boolean; product: Product | null }>()
 defineEmits<{ close: [] }>()
 
+const locale=useLocaleStore()
 const path = ref<Extract<RequestPath, 'simple' | 'available' | 'unavailable'> | null>(null)
 
 watch(() => props.open, (open) => { if (open) path.value = null })
 
-const preview = computed(() => props.product && path.value ? buildProductMessage(props.product, path.value) : '')
+const preview = computed(() => props.product && path.value ? buildProductMessage(props.product, path.value, locale.locale) : '')
 const href = computed(() => preview.value ? whatsappUrl(preview.value) : '#')
 
 const options: Array<{ id: Extract<RequestPath,'simple'|'available'|'unavailable'>; icon: typeof ShoppingBag; desc: string }> = [
@@ -41,7 +43,7 @@ const options: Array<{ id: Extract<RequestPath,'simple'|'available'|'unavailable
         >
           <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-700"><component :is="item.icon" :size="21" /></span>
           <span class="min-w-0">
-            <b class="block text-sm">{{ requestPathTitle(item.id) }}</b>
+            <b class="block text-sm">{{ requestPathTitle(item.id, locale.locale) }}</b>
             <small class="mt-0.5 block text-[11px] leading-5 text-slate-500">{{ item.desc }}</small>
           </span>
           <CheckCircle2 v-if="path === item.id" class="ms-auto text-emerald-600" :size="20" />
