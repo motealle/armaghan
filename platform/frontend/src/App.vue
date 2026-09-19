@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BottomNav from '@/components/layout/BottomNav.vue'
 import LoginSheet from '@/features/auth/components/LoginSheet.vue'
@@ -11,6 +12,12 @@ const loginOpen=ref(false)
 const designLabOpen=ref(false)
 const design=useDesignStore()
 const session=useSessionStore()
+const route=useRoute()
+
+watch(()=>route.fullPath,async()=>{
+  await nextTick()
+  document.querySelector<HTMLElement>('#main-content')?.focus({preventScroll:true})
+})
 
 onMounted(()=>{
   design.apply()
@@ -24,8 +31,9 @@ onMounted(()=>{
 
 <template>
   <div class="min-h-screen">
+    <a class="skip-link" href="#main-content">پرش به محتوای اصلی</a>
     <AppHeader @login="loginOpen=true" @designlab="designLabOpen=true"/>
-    <main class="mx-auto max-w-6xl px-3 py-4 pb-28 md:py-6">
+    <main id="main-content" tabindex="-1" class="mx-auto max-w-6xl px-3 py-4 pb-28 md:py-6">
       <RouterView v-slot="{ Component }">
         <component :is="Component" @login="loginOpen=true" />
       </RouterView>
