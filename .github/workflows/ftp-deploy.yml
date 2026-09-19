@@ -92,6 +92,12 @@ jobs:
       - name: Test Test 11 static contract
         run: python tests/test_test11_contract.py
 
+      - name: Check prototype JavaScript syntax
+        run: node --check t/11/assets/app.js
+
+      - name: Check Python test/bootstrap syntax
+        run: python -m compileall -q tests platform/scripts
+
   smoke-test:
     needs: [plan, qa]
     runs-on: ubuntu-latest
