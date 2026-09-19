@@ -1,7 +1,7 @@
 # Vue 3 Architecture — Armaghan
 
 ## Decision
-The maintainable frontend baseline is a **Vite + Vue 3 + TypeScript SPA** with Vue Single-File Components and `<script setup>`. The static validation build is Test 12. Later, the same component/domain layers move behind Laravel/Inertia without preserving prototype-only persistence.
+The maintainable frontend baseline is a **Vite + Vue 3 + TypeScript SPA** with Vue Single-File Components and `<script setup>`. The static validation build is Test 12. Later, the same component/domain layers move behind Laravel 13 / Inertia without preserving prototype-only persistence.
 
 Current stack:
 - Vue 3
@@ -106,7 +106,7 @@ Vue components remain useful. Replace:
 - mock products/customers → Eloquent/API resources,
 - browser image compression → server media pipeline.
 
-Filament remains the production admin control plane. The Vue admin screens in Test 12 are product/interaction validation, not a duplicate permanent admin framework.
+Filament 5 remains the production admin control plane. The Vue admin screens in Test 12 are product/interaction validation, not a duplicate permanent admin framework.
 
 ## SSR
 Not required now. Vue's own guidance favors the simpler Vite setup when SSR is not needed. Search/catalog pages can later gain server-rendered public landing pages in Laravel if SEO requirements justify it; do not adopt Nuxt solely for fashion.
