@@ -4,9 +4,9 @@ import { ArrowLeft, Boxes, Globe2, Sparkles } from '@lucide/vue'
 import SmartImage from '@/components/media/SmartImage.vue'
 
 const slides = [
-  { image:'./images/hero-brand-01.webp', kicker:'ARMAGHAN TRADING', title:'پوشاک برای بازار حرفه‌ای، با مسیر سفارش روشن', text:'کاتالوگ، مذاکره و ارتباط فروش در یک تجربه ساده و قابل فهم.', icon:Sparkles },
-  { image:'./images/hero-production-02.webp', kicker:'PRODUCTION', title:'از انتخاب محصول تا تولید سفارشی', text:'مشخصات ثابت را واضح ببینید و موارد قابل مذاکره را برای گفتگو آماده کنید.', icon:Boxes },
-  { image:'./images/hero-export-03.webp', kicker:'EXPORT', title:'آماده برای ارتباط تجاری بین‌المللی', text:'مسیر سریع برای محصولات، تولید با برند و بسته‌بندی سفارشی.', icon:Globe2 },
+  { image:'./images/web-stock/hero-brand.webp', kicker:'ARMAGHAN TRADING', title:'پوشاک برای بازار حرفه‌ای، با مسیر سفارش روشن', text:'کاتالوگ، مذاکره و ارتباط فروش در یک تجربه ساده و قابل فهم.', icon:Sparkles },
+  { image:'./images/web-stock/hero-production.webp', kicker:'PRODUCTION', title:'از انتخاب محصول تا تولید سفارشی', text:'مشخصات ثابت را واضح ببینید و موارد قابل مذاکره را برای گفتگو آماده کنید.', icon:Boxes },
+  { image:'./images/web-stock/hero-export.webp', kicker:'EXPORT', title:'آماده برای ارتباط تجاری بین‌المللی', text:'مسیر سریع برای محصولات، تولید با برند و بسته‌بندی سفارشی.', icon:Globe2 },
 ]
 const current=ref(0)
 let timer:number|undefined
