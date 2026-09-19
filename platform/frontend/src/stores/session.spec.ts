@@ -28,11 +28,20 @@ describe('session store',()=>{
     expect(store.role).toBe('guest')
     expect(store.impersonatedCustomerId).toBeNull()
     expect(sessionStorage.getItem('armaghan:test12:role')).toBeNull()
+    expect(sessionStorage.getItem('armaghan:test12:impersonation')).toBeNull()
   })
 
   it('supports customer demo login',()=>{
     const store=useSessionStore()
     expect(store.login('2','2')).toBe(true)
     expect(store.role).toBe('customer')
+  })
+
+  it('restores explicit admin impersonation inside the same browser session',()=>{
+    sessionStorage.setItem('armaghan:test12:role','admin')
+    sessionStorage.setItem('armaghan:test12:impersonation','7')
+    const store=useSessionStore()
+    expect(store.role).toBe('admin')
+    expect(store.impersonatedCustomerId).toBe(7)
   })
 })
