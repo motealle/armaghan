@@ -19,7 +19,7 @@ const messages = {
     productionTitle:'سفارش تولید',productionHelp:'مسیر مرحله‌ای برای انتخاب نوع تولید، دسته، زیردسته و مشخصات.',
     favoriteTitle:'مطلوب‌ها',favoriteHelp:'فهرست محصولات موردنظر شما.',emptyFavorites:'هنوز محصولی به مطلوب‌ها اضافه نشده است.',
     account:'پیگیری و حساب',accountHelp:'سفارشات، تایملاین، مطلوب‌ها و مدیریت مشتری.',
-    tapImage:'برای بزرگ‌نمایی تصویر لمس کنید',
+    tapImage:'برای بزرگ‌نمایی تصویر لمس کنید',loginTitle:'ورود به حساب',username:'نام کاربری',password:'رمز عبور',signIn:'ورود',demoHint:'آزمایشی: مدیر 1/1 · مشتری 2/2',invalidLogin:'نام کاربری یا رمز آزمایشی نادرست است.',google:'ورود با Google',magicLink:'ورود با لینک خصوصی',
   },
   ar: {
     home:'الرئيسية',products:'المنتجات',production:'طلب إنتاج',favorites:'المفضلة',tracking:'المتابعة',
@@ -35,7 +35,7 @@ const messages = {
     productionTitle:'طلب إنتاج',productionHelp:'مسار تدريجي لاختيار نوع الإنتاج والفئة والمواصفات.',
     favoriteTitle:'المفضلة',favoriteHelp:'قائمة المنتجات التي اخترتها.',emptyFavorites:'لم تضف أي منتج بعد.',
     account:'الحساب والمتابعة',accountHelp:'الطلبات والخط الزمني والمفضلة وإدارة العملاء.',
-    tapImage:'اضغط لتكبير الصورة',
+    tapImage:'اضغط لتكبير الصورة',loginTitle:'تسجيل الدخول',username:'اسم المستخدم',password:'كلمة المرور',signIn:'دخول',demoHint:'تجريبي: المدير 1/1 · العميل 2/2',invalidLogin:'اسم المستخدم أو كلمة المرور التجريبية غير صحيحة.',google:'الدخول عبر Google',magicLink:'الدخول برابط خاص',
   },
   en: {
     home:'Home',products:'Products',production:'Production',favorites:'Favorites',tracking:'Tracking',
@@ -51,7 +51,7 @@ const messages = {
     productionTitle:'Production request',productionHelp:'A guided flow for production type, category, subcategory and specifications.',
     favoriteTitle:'Favorites',favoriteHelp:'Products you want to keep for later.',emptyFavorites:'No favorite products yet.',
     account:'Account & tracking',accountHelp:'Orders, timeline, favorites and customer management.',
-    tapImage:'Tap image to enlarge',
+    tapImage:'Tap image to enlarge',loginTitle:'Sign in to your account',username:'Username',password:'Password',signIn:'Sign in',demoHint:'Demo: admin 1/1 · customer 2/2',invalidLogin:'The demo username or password is incorrect.',google:'Continue with Google',magicLink:'Sign in with private link',
   },
   ku: {
     home:'ماڵەوە',products:'بەرهەمەکان',production:'داواکاری بەرهەم',favorites:'دڵخوازەکان',tracking:'بەدواداچوون',
@@ -67,7 +67,7 @@ const messages = {
     productionTitle:'داواکاری بەرهەمهێنان',productionHelp:'ڕێگای هەنگاو بە هەنگاو بۆ جۆری بەرهەمهێنان و تایبەتمەندی.',
     favoriteTitle:'دڵخوازەکان',favoriteHelp:'لیستی بەرهەمە هەڵبژێردراوەکانت.',emptyFavorites:'هێشتا بەرهەمێکت زیاد نەکردووە.',
     account:'هەژمار و بەدواداچوون',accountHelp:'داواکاری، هێڵی کات، دڵخوازەکان و بەڕێوەبردنی کڕیار.',
-    tapImage:'بۆ گەورەکردنەوە وێنەکە بکەوە',
+    tapImage:'بۆ گەورەکردنەوە وێنەکە بکەوە',loginTitle:'چوونەژوورەوەی هەژمار',username:'ناوی بەکارهێنەر',password:'وشەی نهێنی',signIn:'چوونەژوورەوە',demoHint:'نموونە: بەڕێوەبەر 1/1 · کڕیار 2/2',invalidLogin:'ناوی بەکارهێنەر یان وشەی نهێنی هەڵەیە.',google:'چوونەژوورەوە بە Google',magicLink:'چوونەژوورەوە بە لینکی تایبەت',
   },
 } as const
 
