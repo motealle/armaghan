@@ -25,7 +25,7 @@ Binary assets are **not domain data**. Database rows keep metadata and relations
 - `customer-documents`
 - `brand-assets`
 
-Do not add a second DAM abstraction in parallel.
+For Filament 5, use the **official** `filament/spatie-laravel-media-library-plugin` so admin uploads, reordering, table previews and conversions use the same media model. Do not add a second DAM abstraction in parallel.
 
 ### Optional only when needed
 **intervention/image-laravel** is useful for bespoke editor operations not covered cleanly by Media Library conversions (manual crop editor, special compositing, watermarking). Do not add it on day one merely for resize/compression; Media Library already uses Spatie Image for conversions.
@@ -101,7 +101,7 @@ Git should contain:
 - selected review assets temporarily when required,
 - generated manifest metadata.
 
-Git should not become the long-term original-photo archive. High-resolution originals eventually move to object storage. The hourly generation task therefore writes to `assets/generated-review/` as a review queue; approved assets are later optimized/imported into the application media system.
+Git should not become the long-term original-photo archive. High-resolution originals eventually move to object storage. `assets/generated-review/` is only a temporary review queue; approved assets are later optimized/imported into the application media system.
 
 ## Naming
 Use stable semantic names, not user-facing titles:
@@ -111,3 +111,31 @@ Production storage keys should be UUID/media-ID based to avoid collisions; seman
 
 ## Deletion
 Use soft/archive semantics at the business level. Physical deletion of originals should be delayed and explicit. Product deletion must not silently delete media that is referenced by orders/snapshots.
+
+
+## Practical scope for Armaghan
+**Needed now**
+- product/category/hero image collections;
+- ordering/reordering;
+- localized alt text;
+- responsive card/gallery/hero derivatives;
+- public vs private disks;
+- upload validation;
+- queue-ready conversions;
+- archive instead of accidental destructive delete.
+
+**Useful later**
+- focal-point crop editor;
+- direct-to-object-storage upload;
+- CDN cache purge hooks;
+- media usage report;
+- bulk import/export.
+
+**Not needed yet**
+- enterprise DAM approval workflows;
+- AI auto-tagging;
+- digital-rights contract management;
+- duplicate asset licensing workflows;
+- expensive dynamic transformation SaaS.
+
+This keeps the stack professional without turning asset management into a separate product.
