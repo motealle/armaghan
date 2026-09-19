@@ -1,20 +1,24 @@
 {
   "name": "armaghan-frontend",
   "private": true,
-  "version": "0.15.0",
+  "version": "0.15.1",
   "type": "module",
-  "engines": {"node": "^22.22.2 || >=24.15.0"},
+  "engines": {
+    "node": "^22.22.2 || >=24.15.0"
+  },
   "scripts": {
     "dev": "vite",
     "type-check": "vue-tsc --noEmit",
     "test:unit": "vitest run",
-    "build": "npm run type-check && npm run test:unit && vite build"
+    "build": "node scripts/fetch-digikala-assets.mjs && npm run type-check && npm run test:unit && vite build",
+    "fetch:digikala": "node scripts/fetch-digikala-assets.mjs"
   },
   "dependencies": {
     "@lucide/vue": "1.47.0",
     "pinia": "4.0.3",
     "vue": "3.5.42",
-    "vue-router": "5.3.1"
+    "vue-router": "5.3.1",
+    "photoswipe": "5.4.4"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.3.3",
