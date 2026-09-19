@@ -30,7 +30,7 @@ onBeforeUnmount(stopLongPress)
     @pointerleave.passive="stopLongPress"
   >
     <div class="mx-auto flex max-w-6xl items-center gap-3 px-3 py-2.5">
-      <img class="h-10 w-10 rounded-xl bg-white/10 object-cover" src="../../../logo.png" alt="ارمغان" />
+      <img class="h-10 w-10 rounded-xl bg-white/10 object-cover"  :src="'../../logo.png'" alt="ارمغان" />
       <div class="min-w-0">
         <b class="block text-sm">ارمغان</b>
         <span class="block truncate text-[10px] text-white/70">تولید و صادرات پوشاک</span>
