@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LogIn, ShieldCheck, UserRound } from '@lucide/vue'
+import { LogIn, ShieldCheck, UserRound, UserRoundX } from '@lucide/vue'
 import { useSessionStore } from '@/stores/session'
 import AdminDashboard from '@/features/admin/components/AdminDashboard.vue'
 import CustomerDashboard from '@/features/customers/components/CustomerDashboard.vue'
@@ -16,8 +16,14 @@ const emit=defineEmits<{ login: [] }>()
       <button class="mt-4 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[var(--c-primary)] px-5 font-bold text-white" @click="emit('login')"><LogIn :size="18"/> ورود</button>
     </div>
     <div v-else>
-      <div class="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-xs text-emerald-800"><ShieldCheck :size="18"/><b>{{session.isAdmin?'حالت مدیر':'حالت مشتری'}}</b><span>— خروج از حساب همیشه از نوار بالای صفحه در دسترس است.</span></div>
-      <AdminDashboard v-if="session.isAdmin"/><CustomerDashboard v-else/>
+      <div v-if="session.impersonatedCustomerId" class="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-amber-100 bg-amber-50 p-3 text-xs text-amber-900">
+        <UserRoundX :size="18"/>
+        <b>ورود به‌نیابت از مشتری #{{ session.impersonatedCustomerId }}</b>
+        <button class="ms-auto rounded-lg border border-amber-200 bg-white px-3 py-1.5 font-bold" @click="session.stopImpersonating()">بازگشت به پنل مدیر</button>
+      </div>
+      <div class="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-xs text-emerald-800"><ShieldCheck :size="18"/><b>{{session.impersonatedCustomerId?'حالت نیابتی مشتری':session.isAdmin?'حالت مدیر':'حالت مشتری'}}</b><span>— خروج از حساب از نوار بالا و داخل همه شیت‌ها در دسترس است.</span></div>
+      <CustomerDashboard v-if="session.impersonatedCustomerId || session.isCustomer"/>
+      <AdminDashboard v-else/>
     </div>
   </section>
 </template>
