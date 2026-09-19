@@ -80,6 +80,10 @@ jobs:
         run: python tests/test_test13_source_contract.py
       - name: Test Test 14 accessibility contract
         run: python tests/test_test14_accessibility_contract.py
+      - name: Test Test 15 sheet accessibility contract
+        run: python tests/test_test15_sheet_accessibility_contract.py
+      - name: Test Test 15 media/language contract
+        run: python tests/test_test15_media_language_contract.py
       - name: Test web-stock provenance policy
         run: python tests/test_web_stock_policy.py
       - name: Check Test 11 JavaScript syntax
@@ -94,16 +98,32 @@ jobs:
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm install --no-audit --no-fund
-      - name: Type-check, unit test and build Test 14
+      - name: Type-check, unit test and build Test 15
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
+        env:
+          DIGIKALA_FETCH_STRICT: '1'
         run: npm run build
-      - name: Upload Test 14 build artifact
+      - name: Verify Digikala media completeness
+        if: needs.plan.outputs.frontend == 'true'
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const p='t/15/images/digikala/manifest.json';
+          if(!fs.existsSync(p)) throw new Error('Digikala manifest missing');
+          const m=JSON.parse(fs.readFileSync(p,'utf8'));
+          if(m.source!=='Digikala'||m.products?.length!==18) throw new Error('Expected 18 Digikala product mappings');
+          for(const product of m.products){
+            if(!Array.isArray(product.images)||product.images.length!==2) throw new Error('Every prototype product must have exactly 2 images: '+product.prototype_code);
+          }
+          console.log('Digikala media contract: PASS — 18 products / 36 images');
+          NODE
+      - name: Upload Test 15 build artifact
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: test14-build
-          path: t/14
+          name: test15-build
+          path: t/15
           if-no-files-found: error
           retention-days: 1
 
@@ -162,13 +182,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 2 }
-      - name: Download Test 14 build
+      - name: Download Test 15 build
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: test14-build
-          path: t/14
-      - name: Deploy changed /t files and generated Test 14 only
+          name: test15-build
+          path: t/15
+      - name: Deploy changed /t files and generated Test 15 only
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -185,8 +205,8 @@ jobs:
           changed=subprocess.check_output(["git","diff","--name-only","HEAD^","HEAD","--","t/"],text=True).splitlines()
           changed=[p for p in changed if p.startswith("t/") and os.path.isfile(p)]
           if os.environ.get("FRONTEND_CHANGED")=="true":
-              if not os.path.isdir("t/14"): raise SystemExit("Generated Test 14 build is missing")
-              for root,_,files in os.walk("t/14"):
+              if not os.path.isdir("t/15"): raise SystemExit("Generated Test 15 build is missing")
+              for root,_,files in os.walk("t/15"):
                   for filename in files: changed.append(os.path.join(root,filename))
           changed=sorted(set(changed))
           ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"]); ftp.cwd("/public_html")
