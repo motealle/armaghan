@@ -1,0 +1,19 @@
+{
+  "name": "Armaghan Trading",
+  "short_name": "Armaghan",
+  "start_url": "./index.html#/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFFEFF",
+  "theme_color": "#151EDA",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "../../logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
