@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { CheckCircle2, MessageCircle, PackageCheck, PackageX, ShoppingBag } from '@lucide/vue'
+import { CheckCircle2, PackageCheck, PackageX, ShoppingBag } from '@lucide/vue'
 import type { Product, RequestPath } from '@/types/domain'
 import { buildProductMessage, requestPathTitle, whatsappUrl } from '@/services/whatsapp'
 import BaseSheet from '@/components/ui/BaseSheet.vue'
+import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 
 const props = defineProps<{ open: boolean; product: Product | null }>()
 defineEmits<{ close: [] }>()
@@ -57,10 +58,10 @@ const options: Array<{ id: Extract<RequestPath,'simple'|'available'|'unavailable
         :href="href"
         target="_blank"
         rel="noopener"
-        class="wa-primary flex min-h-14 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-extrabold"
+        class="wa-primary flex min-h-14 items-center justify-center gap-2 rounded-[.25rem] px-4 text-sm font-extrabold"
         :class="{ 'pointer-events-none opacity-40': !preview }"
       >
-        <MessageCircle :size="22" />
+        <span class="wa-logo-chip"><WhatsAppIcon :size="23" /></span>
         ادامه در واتساپ
       </a>
     </div>
