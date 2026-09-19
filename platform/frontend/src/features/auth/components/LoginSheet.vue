@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Chrome, KeyRound, LogIn } from '@lucide/vue'
+import { Globe2, KeyRound, LogIn } from '@lucide/vue'
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import BaseSheet from '@/components/ui/BaseSheet.vue'
@@ -44,7 +44,7 @@ function submit() {
       </button>
       <div class="grid grid-cols-2 gap-2">
         <button type="button" class="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 text-xs" @click="error='Google Login در Laravel/Socialite فعال می‌شود.'">
-          <Chrome :size="17" /> Google
+          <Globe2 :size="17" /> Google
         </button>
         <button type="button" class="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 text-xs" @click="error='Magic Link امن در بک‌اند Laravel فعال می‌شود.'">
           <KeyRound :size="17" /> لینک ورود
