@@ -44,7 +44,7 @@ const options: Array<{ id: Extract<RequestPath,'simple'|'available'|'unavailable
             <small class="mt-0.5 block text-[11px] leading-5 text-slate-500">{{ item.desc }}</small>
           </span>
           <CheckCircle2 v-if="path === item.id" class="ms-auto text-emerald-600" :size="20" />
-          <span v-else-if="(item.id === 'available' && product.availability === 'available') || (item.id === 'unavailable' && product.availability === 'unavailable')" class="ms-auto rounded-full bg-amber-50 px-2 py-1 text-[9px] font-bold text-amber-800">پیشنهادی</span>
+          <span v-else-if="(item.id === 'available' && product.availability === 'available') || (item.id === 'unavailable' && product.availability !== 'available')" class="ms-auto rounded-full bg-amber-50 px-2 py-1 text-[9px] font-bold text-amber-800">پیشنهادی</span>
         </button>
       </div>
 
