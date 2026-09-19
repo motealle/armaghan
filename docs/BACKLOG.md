@@ -1,91 +1,66 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 12 — Vue 3 Product Foundation**.
+Current implementation target: **Test 13 — Host-Centric Media + Licensed Web Stock**.
 
-## P0 — Test 12
+## P0 — Test 13
 
 ### Snapshot safety + CI
-- [x] Freeze Tests 01–11.
+- [x] Freeze Tests 01–12.
 - [x] Keep launcher mutable and newest test first.
-- [x] Protect frozen tracked test folders in CI.
-- [x] Build Test 12 from source instead of hand-editing compiled output.
-- [ ] Make Vue type-check, unit tests and production build mandatory before FTP deploy.
-- [ ] Deploy generated Test 12 artifact only under `/public_html/t/12`.
+- [x] Build each Vue iteration to a new numbered `/t/NN` folder.
+- [x] Keep Vue type-check, unit tests, production build, SQLite and frozen-test guard before FTP.
+- [x] Add licensed-stock provenance policy to QA.
+- [x] Keep FTP incremental and non-destructive.
 
-### Vue 3 architecture
-- [x] Vite + Vue 3 + TypeScript.
-- [x] Vue Router.
-- [x] Pinia.
-- [x] Tailwind CSS Vite plugin.
-- [x] Lucide Vue.
-- [x] Feature-first folders for auth/catalog/orders/customers/admin/design.
-- [x] Central WhatsApp message builder.
-- [x] Central session/logout store.
-- [x] Central production-order wizard state machine.
-- [x] SmartImage with shimmer and graceful fallback.
-- [x] Unit tests for auth/logout, WhatsApp and wizard transitions.
-- [ ] Add Playwright after static build stabilizes.
-- [ ] Accessibility regression pass.
+### Host-centric asset management
+- [x] Reframe runtime storage as host-centric.
+- [x] Rank open-source Laravel media options.
+- [x] Select `spatie/laravel-medialibrary`.
+- [x] Select official Filament Spatie Media Library integration for backend phase.
+- [x] Define public/private host disk structure.
+- [x] Define upload/conversion/metadata/archive rules.
+- [x] Add automated Wikimedia Commons vendor pipeline.
+- [x] Reject NC/ND/unknown media and runtime hotlinks.
+- [x] Store creator/source/license/checksum provenance.
+- [x] Re-encode to local WebP and strip metadata.
+- [x] Add in-product credits screen.
+- [ ] Install Media Library in Laravel backend when backend scaffold lands.
+- [ ] Validate actual hosting PHP extensions (GD/EXIF) before media conversion deployment.
+- [ ] Add scheduled off-host backup + tested restore procedure.
 
-### UX parity/improvement over Test 10
-- [x] Adaptive product detail sheet/drawer.
-- [x] Restore three production wizard paths.
-- [x] Restore three card-based WhatsApp paths.
-- [x] WhatsApp preview before handoff.
-- [x] Strong WhatsApp visual treatment even without photos.
-- [x] Favorites.
-- [x] Category/subcategory/search/status filtering.
-- [x] Hero slideshow with fallback.
-- [x] Hidden 3-second Design Lab.
-- [x] Five design systems and five color sets.
+### Catalog/data
+- [x] Expand frontend mock catalog from 6 to 18 products.
+- [x] Ensure every demo product has a local stock-image slot.
+- [x] Expand demo customers to 6.
+- [x] Add SQLite demo seed with 18 products, media rows, customers, favorites, orders and timeline events.
+- [x] Make SQLite bootstrap load schema + demo seed.
+- [ ] Revalidate all six subcategory specs against source workbook before production import.
 - [ ] Complete FA/AR/EN/KU-Sorani copy.
-- [ ] Revalidate all six subcategory specs against the source workbook.
 
-### Demo auth/customer/admin
-- [x] Admin and customer demo roles.
-- [x] Direct authenticated-header logout.
-- [x] Logout clears impersonation.
-- [x] Logout is also exposed inside open sheets.
-- [x] Impersonation demo with explicit banner and stop action.
-- [x] Customer timeline dashboard.
-- [x] Admin customer table and product CRUD demo.
-- [x] Prototype client-side image resize/WebP preview.
-- [ ] Move all real auth/state to Laravel before real customer data is used.
-- [ ] Google login via Socialite.
-- [ ] Password reset.
-- [ ] Secure direct links with revoke, expiry, scope and audit.
+### UX
+- [x] Hero uses local vendored image slots with graceful fallback.
+- [x] Category cards use local vendored image slots.
+- [x] Product cards use local vendored image slots.
+- [x] Clearly label web-stock imagery as temporary/non-Armaghan.
+- [x] Preserve full six-path WhatsApp/order wizard behavior.
+- [x] Keep robust no-image fallback.
+- [ ] Visual QA after stock vendor workflow commits binaries.
+- [ ] Accessibility regression pass.
+- [ ] Add Playwright browser smoke flows.
 
-### Asset management
-- [x] Document architecture in `docs/ASSET-MANAGEMENT.md`.
-- [x] Create generated-review manifest.
-- [x] Define media collections, conversions and frontend media contract.
-- [ ] Install `spatie/laravel-medialibrary` during Laravel bootstrap.
-- [ ] Install official Filament 5 Spatie Media Library plugin.
-- [ ] Local public/private disks for development.
-- [ ] S3-compatible object storage + CDN for production public media.
-- [ ] Signed temporary URLs for private media.
-- [ ] Server conversions: thumb/card/gallery/hero + responsive images.
-- [ ] EXIF/location stripping and MIME/pixel/size validation.
-- [ ] Import approved photography after review.
-
-### Database
-- [x] SQLite is default and needs no external credentials.
-- [x] Schema draft covers users/customers/catalog/media/favorites/orders/timeline/direct links/activity.
-- [x] Repeatable SQLite bootstrap and smoke test.
-- [ ] Convert schema to Laravel 13 migrations.
-- [ ] Seed demo data.
-- [ ] Add Pest tests.
-
-## P1 — Production backend
+## P1 — Laravel backend
 - [ ] Bootstrap Laravel 13 under `/platform/backend`.
-- [ ] Keep SQLite for local/dev first.
-- [ ] Integrate the Vue 3 customer UI through Inertia where appropriate.
-- [ ] Filament 5 admin control plane.
-- [ ] Authorization policies/roles.
-- [ ] Laravel Socialite.
-- [ ] Audit log for admin and impersonation.
-- [ ] Queue media conversions and notifications.
+- [ ] Keep SQLite as default.
+- [ ] Convert schema/seed into Laravel migrations, seeders and factories.
+- [ ] Install pinned/tested Spatie Media Library v11 patch line.
+- [ ] Filament 5 admin resources and official Spatie plugin.
+- [ ] Laravel auth + Socialite.
+- [ ] Secure magic links with hash/revoke/expiry/scope/audit.
+- [ ] Auditable impersonation.
+- [ ] Host-local public/private media disks.
+- [ ] Media conversions and responsive variants.
+- [ ] Pest feature tests.
 
 ## P1 — Admin resources
 - [ ] Customers.
@@ -99,27 +74,16 @@ Current implementation target: **Test 12 — Vue 3 Product Foundation**.
 - [ ] Prepayment state.
 
 ## P1 — MySQL cutover
-SQLite remains default until Laravel behavior is stable.
+SQLite remains default until Laravel behavior is stable. Then provision MySQL through environment/secrets, migrate staging, import data, run full tests, verify `utf8mb4`, and cut over. No MySQL credentials are required now.
 
-Then:
-- [ ] provision MySQL;
-- [ ] define connection only through deployment environment/secrets;
-- [ ] migrate staging;
-- [ ] import data;
-- [ ] run full tests;
-- [ ] verify `utf8mb4`;
-- [ ] production cutover.
-
-No MySQL credentials are required now.
-
-## Definition of Done — Test 12
-1. Tests 01–11 remain untouched.
-2. Vue type-check, unit tests and Vite production build pass.
-3. No giant SVG/icon regression.
-4. Logout works from authenticated header, open sheet and impersonation.
-5. All six request paths generate valid previews and WhatsApp links.
-6. Wizard forward/back/reset is stable.
-7. Missing photography never exposes broken-image UI or layout collapse.
-8. Mobile/tablet/desktop are usable.
-9. SQLite smoke test passes.
-10. FTP writes only Test 12 build and mutable launcher under `/public_html/t`; no remote deletion.
+## Definition of Done — Test 13
+1. Tests 01–12 remain untouched.
+2. All automated QA gates pass.
+3. Licensed web-stock pipeline either vendors every configured required slot or fails closed.
+4. All runtime catalog photography is local/hosted, not hotlinked.
+5. Attribution/provenance is visible and machine-recorded.
+6. 18 demo products and richer SQLite data are present.
+7. Missing photography still renders gracefully.
+8. Six request paths, logout, impersonation and wizard remain regression-free.
+9. Test 13 is newest in launcher.
+10. FTP writes only Test 13 build/launcher and performs no remote deletion.
