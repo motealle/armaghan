@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ArrowRight, Box, MessageCircle, RotateCcw, Tag, WandSparkles } from '@lucide/vue'
+import { ArrowRight, Box, RotateCcw, Tag, WandSparkles } from '@lucide/vue'
 import { categories } from '@/data/catalog'
 import { requestPathTitle } from '@/services/whatsapp'
 import { useOrderWizardStore } from '@/stores/orderWizard'
+import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 
 const wizard = useOrderWizardStore()
 const paths = [
@@ -79,7 +80,7 @@ const title = computed(() => wizard.path ? requestPathTitle(wizard.path) : 'سف
         <pre class="whitespace-pre-wrap font-sans text-xs leading-6 text-slate-700">{{ wizard.preview }}</pre>
       </div>
       <a :href="wizard.whatsapp" target="_blank" rel="noopener" class="wa-primary flex min-h-14 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-extrabold">
-        <MessageCircle :size="22" /> ادامه در واتساپ
+        <span class="wa-logo-chip"><WhatsAppIcon :size="23" /></span> ادامه در واتساپ
       </a>
     </div>
 
