@@ -5,10 +5,10 @@
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.
 3. Prototype deployment may write only to `/public_html/t`.
 4. Released tests are immutable snapshots.
-5. Tests 01–11 are frozen; current source target is Test 12.
+5. Tests 01–12 are frozen; current source target is Test 13.
 6. Do not modify an older numbered test to improve a newer one.
 7. `/t/index.htm` is mutable and newest test must be first.
-8. Test 12 is generated from `/platform/frontend`; do not hand-edit compiled Test 12 files on the host.
+8. Current Vue test is generated from `/platform/frontend`; do not hand-edit compiled test files on the host.
 
 ## UX
 9. Persian-first/RTL-first; English LTR; Arabic/Sorani RTL.
@@ -19,49 +19,52 @@
 14. Six request paths are domain values, not duplicated UI strings.
 15. Fixed vs negotiable specs differ by icon, label and surface — never color alone.
 16. Adaptive product details: bottom sheet mobile, side drawer desktop.
-17. Missing images must preserve aspect ratio and show polished fallback.
+17. Missing images preserve aspect ratio and show polished fallback.
 18. Shimmer must not cause layout shift.
 19. Touch targets, focus-visible, safe-area and reduced-motion behavior are required.
 
-## Visual system
+## Visual/media policy
 20. Palette anchors: `#21946A`, `#151EDA`, `#C8E3DB`, `#FFFEFF`, `#FFB514`.
 21. UI icons use Lucide Vue imports; no runtime global SVG sizing rules.
-22. Women in generated photography must use fully modest Islamic hijab, no visible hair and no revealing/body-emphasizing styling.
-23. Hidden Design Lab opens after 3-second top-bar long press and may switch design system/palette without changing business state.
+22. Final women photography must be fully modest Islamic hijab, no visible hair and no revealing/body-emphasizing styling.
+23. Temporary web stock must not be presented as actual Armaghan products, factory, staff, customers or certificates.
+24. Automated stock sourcing must use reuse-compatible licensing and record source, creator, license and checksum.
+25. No runtime hotlinking for catalog photography; vendor an optimized local derivative.
+26. Hidden Design Lab opens after 3-second top-bar long press and may switch design system/palette without changing business state.
 
 ## Vue 3 engineering
-24. Test 12 frontend: Vue 3 + TypeScript + Vite + Vue Router + Pinia + Tailwind.
-25. Use SFCs and `<script setup>`; no giant HTML-template strings.
-26. Feature-first organization; stores only for cross-screen/domain state.
-27. Components never construct WhatsApp URLs ad hoc; use the message-builder service.
-28. Components do not read/write auth storage directly; use the session store.
-29. Logout must be idempotent and available in every authenticated modal/sheet state.
-30. SmartImage owns loading/error/fallback behavior for content photography.
-31. Static Test 12 uses hash routing; production Laravel/Inertia may use server routes.
-32. Type-check + unit tests + production build are deployment gates.
+27. Frontend: Vue 3 + TypeScript + Vite + Vue Router + Pinia + Tailwind.
+28. Use SFCs and `<script setup>`; no giant HTML-template strings.
+29. Feature-first organization; stores only for cross-screen/domain state.
+30. Components never construct WhatsApp URLs ad hoc; use the message-builder service.
+31. Components do not read/write auth storage directly; use the session store.
+32. Logout must be idempotent and available in every authenticated modal/sheet state.
+33. SmartImage owns loading/error/fallback behavior for content photography.
+34. Static tests use hash routing; production Laravel/Inertia may use server routes.
+35. Type-check + unit tests + production build are deployment gates.
 
 ## Database/backend
-33. Development defaults to SQLite with no MySQL credentials.
-34. Production target is Laravel 13.
-35. Admin target is Filament 5.
-36. Google OAuth uses Laravel Socialite.
-37. Production direct links use high-entropy values stored hashed with revoke/regenerate, scope, expiry and audit.
-38. Admin impersonation must be explicit, reversible and auditable.
+36. Development defaults to SQLite with no MySQL credentials.
+37. Production target is Laravel 13.
+38. Admin target is Filament 5.
+39. Google OAuth uses Laravel Socialite.
+40. Production direct links use high-entropy values stored hashed with revoke/regenerate, scope, expiry and audit.
+41. Admin impersonation must be explicit, reversible and auditable.
 
-## Asset management
-39. Binary media is stored on Laravel filesystem disks, not database BLOBs.
-40. Database stores media metadata/relationships.
-41. Primary Laravel media package: `spatie/laravel-medialibrary`.
-42. Primary Filament integration: official `filament/spatie-laravel-media-library-plugin`.
-43. Local disk is fine for development; production public media should be S3-compatible + CDN when hosting is ready.
-44. Private customer/order documents use private disk + short-lived signed URLs.
-45. Uploads require MIME/decode validation, size/pixel limits and metadata stripping.
-46. Generated derivatives include deterministic card/gallery/hero sizes; never upscale small originals.
-47. High-resolution production originals do not belong in Git.
+## Host-centric asset management
+42. Runtime binary media is host-centric and stored on Laravel local/public/private filesystem disks, not database BLOBs.
+43. Public media starts under `storage/app/public/media` and is served through `public/storage`.
+44. Private customer/order documents remain under private host storage and are served only through authorized/temporary access.
+45. Primary Laravel media package: `spatie/laravel-medialibrary`.
+46. Primary Filament integration: official `filament/spatie-laravel-media-library-plugin`.
+47. Do not introduce S3/CDN as the primary runtime store unless explicitly approved later; off-host storage is backup/DR for now.
+48. Uploads require MIME/decode validation, size/pixel limits and metadata stripping.
+49. Generated derivatives include deterministic card/gallery/hero sizes; never upscale small originals.
+50. Production customer/private originals never belong in Git.
 
 ## QA
-48. Frozen-test guard runs before deploy.
-49. SQLite schema smoke test runs before deploy.
-50. Test 12 source contract, Vue unit tests, TypeScript and Vite build run before deploy.
-51. Verify mobile/desktop, RTL/LTR, sheet close, logout, impersonation, favorites, wizard and WhatsApp.
-52. No remote deletion to match Git.
+51. Frozen-test guard runs before deploy.
+52. SQLite schema+seed smoke test runs before deploy.
+53. Current source contract, web-stock provenance policy, Vue unit tests, TypeScript and Vite build run before deploy.
+54. Verify mobile/desktop, RTL/LTR, sheet close, logout, impersonation, favorites, wizard and WhatsApp.
+55. No remote deletion to match Git.

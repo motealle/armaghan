@@ -29,6 +29,10 @@ onMounted(()=>{
       <RouterView v-slot="{ Component }">
         <component :is="Component" @login="loginOpen=true" />
       </RouterView>
+      <footer class="mt-12 border-t border-slate-200 py-6 text-center text-[11px] text-slate-500">
+        <div>نسخه آزمایشی محصول · داده‌های نمایشی</div>
+        <RouterLink to="/credits" class="mt-1 inline-block font-bold text-[var(--c-primary)]">منابع و مجوز تصاویر آزمایشی</RouterLink>
+      </footer>
     </main>
     <BottomNav/>
     <LoginSheet :open="loginOpen" @close="loginOpen=false"/>

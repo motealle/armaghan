@@ -1,0 +1,21 @@
+{
+  "user_agent": "ArmaghanCatalog/0.13 (+https://armaghantrading.com)",
+  "max_width": 1600,
+  "quality": 82,
+  "allowed_licenses": ["CC BY", "CC BY-SA", "CC0", "Public domain"],
+  "assets": [
+    {"slot":"hero-brand","output":"hero-brand.webp","title":"File:Clothes rack.jpg","aspect":"16:9"},
+    {"slot":"hero-production","output":"hero-production.webp","title":"File:A sewing machine.jpg","aspect":"16:9"},
+    {"slot":"hero-export","output":"hero-export.webp","title":"File:Inside the second hand shop, clothing racks.jpg","aspect":"16:9"},
+    {"slot":"category-baby","output":"category-baby.webp","title":"File:Stacked Baby Clothes.jpg","aspect":"4:3"},
+    {"slot":"category-kids","output":"category-kids.webp","title":"File:Clothes rack.jpg","aspect":"4:3"},
+    {"slot":"category-women","output":"category-women.webp","title":"File:Mannequin in black and white from a clothing shop.jpg","aspect":"4:3"},
+    {"slot":"sub-11","output":"sub-11.webp","title":"File:Baby Clothes (9560424310).jpg","aspect":"4:3"},
+    {"slot":"sub-12","output":"sub-12.webp","title":"File:Baby blanket.jpg","aspect":"4:3"},
+    {"slot":"sub-21","output":"sub-21.webp","title":"File:Inside the second hand shop, clothing racks.jpg","aspect":"4:3"},
+    {"slot":"sub-22","output":"sub-22.webp","title":"File:Garment rack.jpg","aspect":"4:3"},
+    {"slot":"sub-31","output":"sub-31.webp","title":"File:Fashion Shop Mannequin Munich.jpg","aspect":"4:3"},
+    {"slot":"sub-32","output":"sub-32.webp","title":"File:Mannequin store (6179029494).jpg","aspect":"4:3"},
+    {"slot":"trust-fabric","output":"trust-fabric.webp","title":"File:Fabric roll.jpg","aspect":"3:2"}
+  ]
+}

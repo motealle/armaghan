@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Heart, MessageCircle, SlidersHorizontal } from '@lucide/vue'
+import { computed } from 'vue'
 import type { Product } from '@/types/domain'
 import { useFavoritesStore } from '@/stores/favorites'
 import SmartImage from '@/components/media/SmartImage.vue'
@@ -7,14 +8,16 @@ import SmartImage from '@/components/media/SmartImage.vue'
 const props = defineProps<{ product: Product }>()
 const emit = defineEmits<{ detail: [product: Product]; whatsapp: [product: Product] }>()
 const favorites = useFavoritesStore()
+const availabilityLabel=computed(()=>props.product.availability==='available'?'موجود':props.product.availability==='unavailable'?'ناموجود':'تولیدپذیر')
+const availabilityClass=computed(()=>props.product.availability==='available'?'text-emerald-700':props.product.availability==='unavailable'?'text-rose-700':'text-amber-800')
 </script>
 
 <template>
   <article class="product-card overflow-hidden rounded-2xl border border-slate-200 bg-[var(--c-paper)] shadow-sm">
     <div class="relative">
       <SmartImage :src="product.image" :alt="product.name" :label="product.subcategoryName" />
-      <span class="absolute end-2 top-2 z-30 rounded-full bg-white/92 px-2 py-1 text-[10px] font-extrabold text-emerald-700 shadow-sm">
-        {{ product.availability === 'available' ? 'موجود' : 'ناموجود' }}
+      <span class="absolute end-2 top-2 z-30 rounded-full bg-white/92 px-2 py-1 text-[10px] font-extrabold shadow-sm" :class="availabilityClass">
+        {{ availabilityLabel }}
       </span>
     </div>
     <div class="p-3">

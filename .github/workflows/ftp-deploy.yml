@@ -84,7 +84,7 @@ jobs:
           echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
           echo "Deploy root: $root"
           echo "Deploy /t: $t"
-          echo "Build Test 12 frontend: $frontend"
+          echo "Build Test 13 frontend: $frontend"
 
   qa:
     needs: plan
@@ -104,8 +104,14 @@ jobs:
       - name: Test Test 11 static contract
         run: python tests/test_test11_contract.py
 
-      - name: Test Test 12 source contract
+      - name: Test Test 12 regression contract
         run: python tests/test_test12_source_contract.py
+
+      - name: Test Test 13 source contract
+        run: python tests/test_test13_source_contract.py
+
+      - name: Test web-stock provenance policy
+        run: python tests/test_web_stock_policy.py
 
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
@@ -124,17 +130,17 @@ jobs:
         working-directory: platform/frontend
         run: npm install --no-audit --no-fund
 
-      - name: Type-check, unit test and build Test 12
+      - name: Type-check, unit test and build Test 13
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm run build
 
-      - name: Upload Test 12 build artifact
+      - name: Upload Test 13 build artifact
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: test12-build
-          path: t/12
+          name: test13-build
+          path: t/13
           if-no-files-found: error
           retention-days: 1
 
@@ -234,14 +240,14 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Download Test 12 build
+      - name: Download Test 13 build
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: test12-build
-          path: t/12
+          name: test13-build
+          path: t/13
 
-      - name: Deploy changed /t files and generated Test 12 only
+      - name: Deploy changed /t files and generated Test 13 only
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -273,9 +279,9 @@ jobs:
           changed = [p for p in changed if p.startswith("t/") and os.path.isfile(p)]
 
           if os.environ.get("FRONTEND_CHANGED") == "true":
-              if not os.path.isdir("t/12"):
-                  raise SystemExit("Generated Test 12 build is missing")
-              for root, _, files in os.walk("t/12"):
+              if not os.path.isdir("t/13"):
+                  raise SystemExit("Generated Test 13 build is missing")
+              for root, _, files in os.walk("t/13"):
                   for filename in files:
                       changed.append(os.path.join(root, filename))
 

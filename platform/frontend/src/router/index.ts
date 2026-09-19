@@ -4,6 +4,7 @@ import ProductsView from '@/views/ProductsView.vue'
 import ProductionView from '@/views/ProductionView.vue'
 import FavoritesView from '@/views/FavoritesView.vue'
 import TrackingView from '@/views/TrackingView.vue'
+import CreditsView from '@/views/CreditsView.vue'
 
 export const router=createRouter({
   history:createWebHashHistory(),
@@ -13,6 +14,7 @@ export const router=createRouter({
     {path:'/production',name:'production',component:ProductionView},
     {path:'/favorites',name:'favorites',component:FavoritesView},
     {path:'/tracking',name:'tracking',component:TrackingView},
+    {path:'/credits',name:'credits',component:CreditsView},
   ],
   scrollBehavior(){return{top:0}},
 })

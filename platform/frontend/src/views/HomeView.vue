@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BadgeCheck, MessageCircleMore, Sparkles } from '@lucide/vue'
+import { BadgeCheck, ExternalLink, MessageCircleMore, Sparkles } from '@lucide/vue'
 import { categories } from '@/data/catalog'
 import { useCatalogStore } from '@/stores/catalog'
 import HeroCarousel from '@/features/home/components/HeroCarousel.vue'
@@ -17,6 +17,15 @@ const trustItems=[
 <template>
   <div class="space-y-8">
     <HeroCarousel />
+
+    <aside class="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs leading-6 text-amber-950">
+      <Sparkles :size="18" class="mt-1 shrink-0" />
+      <div>
+        <b>تصاویر آزمایشی با منبع آزاد</b>
+        <p>عکس‌های این نسخه برای شکل‌دادن تجربه بصری از منابع دارای مجوز باز تهیه و روی خود هاست ذخیره می‌شوند؛ این تصاویر محصول یا کارخانه واقعی ارمغان نیستند.</p>
+        <RouterLink to="/credits" class="mt-1 inline-flex items-center gap-1 font-extrabold underline underline-offset-4">مشاهده منابع و مجوزها <ExternalLink :size="13" /></RouterLink>
+      </div>
+    </aside>
 
     <section>
       <div class="mb-3">
@@ -38,7 +47,7 @@ const trustItems=[
       <div class="mb-3 flex items-end justify-between gap-3">
         <div>
           <h2 class="text-xl font-black">محصولات پیشنهادی</h2>
-          <p class="mt-1 text-xs text-slate-500">بدون عکس نهایی هم کارت‌ها باید کامل و قابل استفاده بمانند.</p>
+          <p class="mt-1 text-xs text-slate-500">۱۸ محصول نمونه برای تست مرور، استعلام و سفارش تولید.</p>
         </div>
         <RouterLink to="/products" class="shrink-0 text-xs font-extrabold text-[var(--c-primary)]">همه محصولات</RouterLink>
       </div>
