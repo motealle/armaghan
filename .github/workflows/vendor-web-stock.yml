@@ -1,0 +1,54 @@
+name: Vendor Licensed Web Stock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'platform/assets/web-stock/queries.json'
+      - 'platform/scripts/vendor_web_stock.py'
+      - 'platform/scripts/requirements-assets.txt'
+      - '.github/workflows/vendor-web-stock.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vendor-web-stock-main
+  cancel-in-progress: false
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install asset dependencies
+        run: pip install -r platform/scripts/requirements-assets.txt
+
+      - name: Vendor licensed Wikimedia imagery
+        run: python platform/scripts/vendor_web_stock.py
+
+      - name: Validate asset provenance
+        run: python tests/test_web_stock_policy.py
+
+      - name: Commit optimized derivatives and provenance
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add platform/frontend/public/images/web-stock platform/assets/web-stock/manifest.json
+          if git diff --cached --quiet; then
+            echo "No web-stock changes to commit."
+            exit 0
+          fi
+          git commit -m "Vendor licensed Wikimedia stock imagery"
+          git push origin HEAD:main
