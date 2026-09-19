@@ -23,7 +23,7 @@ assert "bgClickAction: 'close'" in carousel
 assert "IntersectionObserver" in carousel
 assert "prefers-reduced-motion" in carousel
 assert "visibilitychange" in carousel
-assert "product.gallery" in card
+assert "product.gallery" in carousel
 assert "WhatsAppIcon" in card
 assert "favorite-heart" in card
 assert "#25D366" in icon
