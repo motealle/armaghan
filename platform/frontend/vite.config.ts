@@ -10,7 +10,7 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   build: {
-    outDir: '../../t/16',
+    outDir: '../../t/17',
     emptyOutDir: true,
     sourcemap: true,
     target: 'es2022',

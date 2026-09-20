@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 export type ThemeMode='system'|'light'|'dark'
-const KEY='armaghan:test16:theme'
+const KEY='armaghan:test17:theme'
 const query=window.matchMedia('(prefers-color-scheme: dark)')
 
 export const useThemeStore=defineStore('theme',()=>{

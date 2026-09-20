@@ -32,7 +32,7 @@ const availabilityClass=computed(()=>props.product.availability==='available'?'t
       </div>
       <div class="mt-3 grid grid-cols-3 gap-1.5">
         <button class="wa-card-action rounded-[.75rem]" :aria-label="locale.t('whatsapp')" @click="emit('whatsapp',product)">
-          <WhatsAppIcon :size="22" tone="white"/>
+          <WhatsAppIcon :size="27" tone="white"/>
           <span>{{locale.t('whatsapp')}}</span>
         </button>
         <button class="card-action favorite-action rounded-[.75rem]" :aria-pressed="isFavorite" :aria-label="locale.t('favorite')" @click="favorites.toggle(product.id)">

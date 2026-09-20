@@ -19,29 +19,12 @@ function cycle(){
 <template>
   <button
     type="button"
-    class="theme-cycle-btn lg:hidden"
+    class="theme-cycle-btn"
     :title="`حالت نمایش: ${current.label}`"
     :aria-label="`حالت نمایش: ${current.label}`"
     @pointerdown.stop
     @click.stop="cycle"
   >
-    <component :is="current.icon" :size="17"/>
+    <component :is="current.icon" :size="18"/>
   </button>
-
-  <div class="theme-switcher hidden lg:flex" aria-label="حالت نمایش">
-    <button
-      v-for="item in modes"
-      :key="item.id"
-      type="button"
-      class="theme-mode-btn"
-      :class="{active:theme.mode===item.id}"
-      :aria-pressed="theme.mode===item.id"
-      :title="item.label"
-      @pointerdown.stop
-      @click.stop="theme.setMode(item.id)"
-    >
-      <component :is="item.icon" :size="16"/>
-      <span class="hidden xl:inline">{{item.label}}</span>
-    </button>
-  </div>
 </template>

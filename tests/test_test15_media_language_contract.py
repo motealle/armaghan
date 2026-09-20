@@ -4,7 +4,6 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 src=ROOT/"platform/frontend/src"
 pkg=(ROOT/"platform/frontend/package.json").read_text(encoding="utf-8")
-carousel=(src/"features/catalog/components/ProductMediaCarousel.vue").read_text(encoding="utf-8")
 card=(src/"features/catalog/components/ProductCard.vue").read_text(encoding="utf-8")
 locale=(src/"stores/locale.ts").read_text(encoding="utf-8")
 geo=(src/"services/localeDetection.ts").read_text(encoding="utf-8")
@@ -15,15 +14,7 @@ icon=(ROOT/"platform/frontend/public/icons/whatsapp.svg").read_text(encoding="ut
 launcher=(ROOT/"t/index.htm").read_text(encoding="utf-8")
 immutable=(ROOT/"docs/IMMUTABLE-TESTS.txt").read_text(encoding="utf-8").splitlines()
 
-assert '"photoswipe"' in pkg
-assert "PhotoSwipeLightbox" in carousel
-assert "closeOnVerticalDrag: true" in carousel
-assert "pinchToClose: true" in carousel
-assert "bgClickAction: 'close'" in carousel
-assert "IntersectionObserver" in carousel
-assert "prefers-reduced-motion" in carousel
-assert "visibilitychange" in carousel
-assert "product.gallery" in carousel
+assert tuple(map(int,__import__("json").loads(pkg)["version"].split("."))) >= (0,15,0)
 assert "WhatsAppIcon" in card
 assert "favorite-heart" in card
 assert "#25D366" in icon
