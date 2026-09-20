@@ -145,10 +145,12 @@ onBeforeUnmount(()=>{
       <div class="absolute inset-0 grid place-items-center text-[var(--c-primary)]">
         <div class="absolute -start-10 -top-10 h-28 w-28 rounded-full bg-white/65" />
         <div class="absolute -bottom-12 -end-7 h-32 w-32 rounded-full bg-[color-mix(in_srgb,var(--c-primary)_7%,transparent)]" />
-        <div class="relative flex flex-col items-center gap-2">
-          <Shirt v-if="images.length" :size="38" :stroke-width="1.55" />
-          <ImageOff v-else :size="38" :stroke-width="1.55" />
-          <span class="text-[10px] font-bold text-slate-500">{{ product.subcategoryName }}</span>
+        <div class="relative flex flex-col items-center gap-3">
+          <div class="fallback-clay-icon">
+            <Shirt v-if="images.length" :size="38" :stroke-width="1.5" />
+            <ImageOff v-else :size="38" :stroke-width="1.5" />
+          </div>
+          <span class="text-[10px] font-bold text-[var(--c-muted)]">{{ product.subcategoryName }}</span>
         </div>
       </div>
       <template v-for="(src,index) in images" :key="src">
