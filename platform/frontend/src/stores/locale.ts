@@ -6,6 +6,7 @@ import {
   categorySubtitleTranslations,
   categoryTranslations,
   productNameTranslations,
+  orderStatusTranslations,
   specTranslations,
   subcategoryTranslations,
   translationGroups,
@@ -82,12 +83,13 @@ export const useLocaleStore=defineStore('locale',()=>{
   function subcategoryName(code:string,fallback=''){return subcategoryTranslations[code]?.[locale.value] ?? fallback}
   function productName(code:string,fallback=''){return productNameTranslations[code]?.[locale.value] ?? fallback}
   function specLabel(label:string){return specTranslations[label]?.[locale.value] ?? label}
+  function orderStatus(label:string){return orderStatusTranslations[label]?.[locale.value] ?? label}
 
   return{
     locale,initialized,direction,htmlLang,overrides,
     t,setManual,initialize,apply,
     setOverride,resetOverride,resetOverrides,
-    categoryName,categorySubtitle,subcategoryName,productName,specLabel,
+    categoryName,categorySubtitle,subcategoryName,productName,specLabel,orderStatus,
     baseMessages,translationGroups,
   }
 })
