@@ -25,10 +25,12 @@ watch(() => props.src, () => {
     <div class="absolute inset-0 grid place-items-center bg-gradient-to-br from-[color-mix(in_srgb,var(--c-soft)_74%,white)] via-slate-100 to-indigo-50 text-[var(--c-primary)]">
       <div class="absolute -start-8 -top-8 h-24 w-24 rounded-full bg-white/50" />
       <div class="absolute -bottom-10 -end-6 h-28 w-28 rounded-full bg-[color-mix(in_srgb,var(--c-primary)_8%,transparent)]" />
-      <div class="relative flex flex-col items-center gap-2 text-center">
-        <Shirt v-if="src" :size="34" :stroke-width="1.7" />
-        <ImageOff v-else :size="34" :stroke-width="1.7" />
-        <span class="max-w-28 text-[10px] font-bold text-slate-500">{{ label }}</span>
+      <div class="relative flex flex-col items-center gap-3 text-center">
+        <div class="fallback-clay-icon">
+          <Shirt v-if="src" :size="34" :stroke-width="1.65" />
+          <ImageOff v-else :size="34" :stroke-width="1.65" />
+        </div>
+        <span class="max-w-28 text-[10px] font-bold text-[var(--c-muted)]">{{ label }}</span>
       </div>
     </div>
     <div v-if="src && !loaded && !failed" class="skeleton absolute inset-0 z-10" />
