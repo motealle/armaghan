@@ -89,6 +89,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .language-round-button:hover{border-color:color-mix(in srgb,var(--c-primary) 35%,var(--c-border));color:var(--c-primary)}
 .language-round-button.active{border-color:var(--c-primary);background:var(--c-primary);color:#fff;box-shadow:0 5px 14px color-mix(in srgb,var(--c-primary) 20%,transparent)}
 .language-round-button:active{transform:scale(.96)}
+.language-round-button[lang="en"]{font-family:Roboto,ui-sans-serif,system-ui,sans-serif}
 .drawer-dashboard{border:1px solid var(--c-border);border-radius:1rem;background:linear-gradient(150deg,var(--c-surface),var(--c-surface-2));padding:.8rem;box-shadow:0 10px 26px rgba(20,30,65,.06)}
 .drawer-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;color:var(--c-primary)}
 .drawer-dashboard-head b{display:block;font-size:.78rem;color:var(--c-text)}
