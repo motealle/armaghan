@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ClipboardList, Grid2X2, Heart, House, LogIn, LogOut, UserRound, WandSparkles, X } from '@lucide/vue'
-import { computed, onBeforeUnmount, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useLocaleStore } from '@/stores/locale'
 import { useSessionStore } from '@/stores/session'
@@ -11,6 +11,9 @@ const emit=defineEmits<{close:[];login:[]}>()
 const locale=useLocaleStore()
 const session=useSessionStore()
 const route=useRoute()
+const panelRef=ref<HTMLElement|null>(null)
+let previousFocus:HTMLElement|null=null
+const focusable='a[href],button:not([disabled]),select:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])'
 
 const items=computed(()=>[
   {to:'/',label:locale.t('home'),icon:House},
@@ -22,12 +25,29 @@ const items=computed(()=>[
 function changeLanguage(event:Event){locale.setManual((event.target as HTMLSelectElement).value as Locale)}
 function login(){emit('close');emit('login')}
 function logout(){session.logout();emit('close')}
-function onKey(event:KeyboardEvent){if(props.open&&event.key==='Escape')emit('close')}
+function controls(){return panelRef.value?Array.from(panelRef.value.querySelectorAll<HTMLElement>(focusable)):[]}
+function onKey(event:KeyboardEvent){
+  if(!props.open)return
+  if(event.key==='Escape'){emit('close');return}
+  if(event.key!=='Tab')return
+  const list=controls()
+  if(!list.length)return
+  const first=list[0]!,last=list[list.length-1]!,active=document.activeElement
+  if(event.shiftKey&&active===first){event.preventDefault();last.focus()}
+  else if(!event.shiftKey&&active===last){event.preventDefault();first.focus()}
+}
 
-watch(()=>props.open,(open)=>{
+watch(()=>props.open,async(open,wasOpen)=>{
   document.body.style.overflow=open?'hidden':''
-  if(open)window.addEventListener('keydown',onKey)
-  else window.removeEventListener('keydown',onKey)
+  if(open){
+    previousFocus=document.activeElement instanceof HTMLElement?document.activeElement:null
+    window.addEventListener('keydown',onKey)
+    await nextTick()
+    controls()[0]?.focus({preventScroll:true})
+  }else{
+    window.removeEventListener('keydown',onKey)
+    if(wasOpen){await nextTick();previousFocus?.focus({preventScroll:true});previousFocus=null}
+  }
 })
 watch(()=>route.fullPath,()=>{if(props.open)emit('close')})
 onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener('keydown',onKey)})
@@ -36,8 +56,8 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
 <template>
   <Teleport to="body">
     <div v-if="open" class="mobile-drawer-layer lg:hidden">
-      <button class="mobile-drawer-backdrop" aria-label="بستن منو" @click="emit('close')" />
-      <aside class="mobile-drawer-panel" aria-label="منوی موبایل">
+      <button class="mobile-drawer-backdrop" aria-label="بستن منو" tabindex="-1" @click="emit('close')" />
+      <aside ref="panelRef" class="mobile-drawer-panel" role="dialog" aria-modal="true" aria-label="منوی موبایل">
         <div class="flex items-center gap-3 border-b border-[var(--c-border)] px-4 py-4">
           <img class="h-11 w-11 rounded-xl object-cover" src="../../logo.png" alt="Armaghan" />
           <div class="min-w-0">
