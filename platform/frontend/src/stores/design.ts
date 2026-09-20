@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 
 export interface DesignSystem { id: string; name: string; description: string }
 export interface ColorSet { id: string; name: string; colors: [string,string,string,string,string] }
+export type CardActionMode = 'compact' | 'labeled'
 
 export const designSystems: DesignSystem[] = [
   { id: 'core', name: 'Armaghan Core', description: 'متعادل، برندمحور و مناسب نسخه اصلی' },
@@ -20,8 +21,10 @@ export const colorSets: ColorSet[] = [
 ]
 
 export const useDesignStore = defineStore('design', () => {
-  const system = ref(localStorage.getItem('armaghan:test16:design') || 'core')
-  const palette = ref(localStorage.getItem('armaghan:test16:palette') || 'balanced')
+  const system = ref(localStorage.getItem('armaghan:test18:design') || 'core')
+  const palette = ref(localStorage.getItem('armaghan:test18:palette') || 'balanced')
+  const savedActionMode = localStorage.getItem('armaghan:test18:card-actions')
+  const cardActionMode = ref<CardActionMode>(savedActionMode === 'labeled' ? 'labeled' : 'compact')
 
   function apply(): void {
     const selected = colorSets.find((item) => item.id === palette.value) ?? colorSets[0]!
@@ -36,10 +39,11 @@ export const useDesignStore = defineStore('design', () => {
   }
 
   watch([system, palette], () => {
-    localStorage.setItem('armaghan:test16:design', system.value)
-    localStorage.setItem('armaghan:test16:palette', palette.value)
+    localStorage.setItem('armaghan:test18:design', system.value)
+    localStorage.setItem('armaghan:test18:palette', palette.value)
     apply()
   })
+  watch(cardActionMode, (value) => localStorage.setItem('armaghan:test18:card-actions', value))
 
-  return { system, palette, apply }
+  return { system, palette, cardActionMode, apply }
 })

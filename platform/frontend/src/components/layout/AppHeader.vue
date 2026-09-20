@@ -32,7 +32,7 @@ onBeforeUnmount(stopLongPress)
 
 <template>
   <header
-    class="sticky top-0 z-40 border-b border-white/10 bg-[var(--c-primary)] text-white shadow-sm"
+    class="sticky top-0 z-[90] border-b border-white/10 bg-[var(--c-primary)] text-white shadow-sm"
     @pointerdown.passive="startLongPress"
     @pointerup.passive="stopLongPress"
     @pointercancel.passive="stopLongPress"
@@ -47,7 +47,7 @@ onBeforeUnmount(stopLongPress)
         </div>
       </RouterLink>
 
-      <nav class="hidden lg:flex lg:items-center lg:justify-self-center lg:gap-8" aria-label="ناوبری اصلی">
+      <nav class="hidden lg:flex lg:items-center lg:justify-self-center lg:gap-1" aria-label="ناوبری اصلی">
         <RouterLink
           v-for="item in navItems"
           :key="item.to"
@@ -56,6 +56,7 @@ onBeforeUnmount(stopLongPress)
           :class="{active:active(item.to)}"
           @pointerdown.stop
         >
+          <component :is="item.icon" :size="17"/>
           <span>{{item.label}}</span>
         </RouterLink>
       </nav>
@@ -76,10 +77,10 @@ onBeforeUnmount(stopLongPress)
         <label class="relative hidden lg:block" @pointerdown.stop>
           <span class="sr-only">{{locale.t('language')}}</span>
           <select :value="locale.locale" class="header-select" :aria-label="locale.t('language')" @change="changeLanguage">
-            <option value="fa">فارسی</option>
-            <option value="ar">العربية</option>
-            <option value="en">English</option>
-            <option value="ku">کوردی</option>
+            <option value="fa" lang="fa">فارسی</option>
+            <option value="ar" lang="ar">العربية</option>
+            <option value="en" lang="en">English</option>
+            <option value="ku" lang="ckb">کوردی</option>
           </select>
         </label>
 

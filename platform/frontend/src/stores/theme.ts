@@ -1,23 +1,32 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
-export type ThemeMode='system'|'light'|'dark'
-const KEY='armaghan:test17:theme'
+export type ThemeMode='light'|'dark'
+const KEY='armaghan:test18:theme'
 const query=window.matchMedia('(prefers-color-scheme: dark)')
 
-export const useThemeStore=defineStore('theme',()=>{
+function initialMode():ThemeMode{
   const saved=localStorage.getItem(KEY)
-  const mode=ref<ThemeMode>(saved==='light'||saved==='dark'||saved==='system'?saved:'system')
-  const resolved=computed<'light'|'dark'>(()=>mode.value==='system'?(query.matches?'dark':'light'):mode.value)
+  if(saved==='light'||saved==='dark')return saved
+  return query.matches?'dark':'light'
+}
+
+export const useThemeStore=defineStore('theme',()=>{
+  const mode=ref<ThemeMode>(initialMode())
+
   function apply(){
     const root=document.documentElement
-    root.classList.toggle('dark',resolved.value==='dark')
-    root.dataset.theme=resolved.value
-    root.style.colorScheme=resolved.value
+    root.classList.toggle('dark',mode.value==='dark')
+    root.dataset.theme=mode.value
+    root.style.colorScheme=mode.value
   }
-  function setMode(value:ThemeMode){mode.value=value;localStorage.setItem(KEY,value);apply()}
-  function onSystemChange(){if(mode.value==='system')apply()}
-  query.addEventListener?.('change',onSystemChange)
+  function setMode(value:ThemeMode){
+    mode.value=value
+    localStorage.setItem(KEY,value)
+    apply()
+  }
+  function toggle(){setMode(mode.value==='dark'?'light':'dark')}
+
   apply()
-  return{mode,resolved,setMode,apply}
+  return{mode,setMode,toggle,apply}
 })

@@ -5,10 +5,12 @@ import { demoCustomers } from '@/data/catalog'
 import { compressImage } from '@/features/admin/services/imageCompression'
 import { useCatalogStore } from '@/stores/catalog'
 import { useSessionStore } from '@/stores/session'
+import { useDesignStore } from '@/stores/design'
 import type { Product } from '@/types/domain'
 
 const catalog=useCatalogStore()
 const session=useSessionStore()
+const design=useDesignStore()
 const note=ref('')
 const name=ref('')
 const code=ref('')
@@ -38,6 +40,34 @@ function impersonate(id:number){session.impersonate(id);note.value='حالت و�
 
 <template>
   <div class="space-y-6">
+    <section class="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 shadow-sm">
+      <div class="mb-3">
+        <h2 class="text-lg font-black text-[var(--c-text)]">نمای اکشن کارت محصول</h2>
+        <p class="mt-1 text-xs text-[var(--c-muted)]">مدیر تعیین می‌کند اکشن‌های کارت برای همه کاربران فشرده یا دارای برچسب باشند.</p>
+      </div>
+      <div class="grid gap-2 sm:grid-cols-2">
+        <button
+          type="button"
+          class="admin-display-mode"
+          :class="{active:design.cardActionMode==='compact'}"
+          :aria-pressed="design.cardActionMode==='compact'"
+          @click="design.cardActionMode='compact'"
+        >
+          <b>آیکون فقط</b>
+          <span>پیش‌فرض؛ آیکون‌های ۸۰٪ و بدون متن</span>
+        </button>
+        <button
+          type="button"
+          class="admin-display-mode"
+          :class="{active:design.cardActionMode==='labeled'}"
+          :aria-pressed="design.cardActionMode==='labeled'"
+          @click="design.cardActionMode='labeled'"
+        >
+          <b>آیکون + متن</b>
+          <span>سفارش · مطلوب · مشخصات</span>
+        </button>
+      </div>
+    </section>
     <section>
       <div class="mb-3 flex flex-wrap items-end gap-3">
         <div><h2 class="text-lg font-black">مشتری‌ها</h2><p class="mt-1 text-xs text-slate-500">نمای Customer 360 برای اعتبارسنجی تجربه مدیر.</p></div>
