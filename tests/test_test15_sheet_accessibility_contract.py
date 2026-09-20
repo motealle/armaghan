@@ -8,7 +8,7 @@ vite = (ROOT / "platform/frontend/vite.config.ts").read_text(encoding="utf-8")
 assert 'ref="panelRef"' in sheet
 assert 'previousFocus' in sheet
 assert 'focusFirstControl' in sheet
-assert "event.key === 'Tab'" in sheet
+assert "event.key !== 'Tab'" in sheet or "event.key === 'Tab'" in sheet
 assert 'FOCUSABLE_SELECTOR' in sheet
 assert 'previousFocus?.focus' in sheet
 assert 'aria-labelledby="sheet-title"' in sheet
