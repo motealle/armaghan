@@ -13,7 +13,16 @@ const locale=useLocaleStore()
 const path=ref<Extract<RequestPath,'simple'|'available'|'unavailable'>|null>(null)
 
 watch(()=>props.open,(open)=>{if(open)path.value=null})
-const preview=computed(()=>props.product&&path.value?buildProductMessage(props.product,path.value,locale.locale):'')
+const preview=computed(()=>{
+  if(!props.product||!path.value)return ''
+  const localized={
+    ...props.product,
+    name:locale.productName(props.product.code,props.product.name),
+    categoryName:locale.categoryName(props.product.categoryCode,props.product.categoryName),
+    subcategoryName:locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName),
+  }
+  return buildProductMessage(localized,path.value,locale.locale)
+})
 const href=computed(()=>preview.value?whatsappUrl(preview.value):'#')
 const displayName=computed(()=>props.product?locale.productName(props.product.code,props.product.name):'')
 const displaySubcategory=computed(()=>props.product?locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName):'')
