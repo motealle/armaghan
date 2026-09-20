@@ -151,6 +151,8 @@ async function main(){
         prototype_code:code,
         subcategory:group.sub,
         source_page:source[0].page,
+        source_product_url:source[0].page,
+        title_fa:source[0].source,
         images:local.map((item,index)=>({
           file:item.filename,
           bytes:item.bytes,
