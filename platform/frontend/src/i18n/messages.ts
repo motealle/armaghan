@@ -153,3 +153,13 @@ export const specTranslations: Record<string,Record<Locale,string>> = {
   'نوع تن‌خور':{fa:'نوع تن‌خور',ar:'قصة اللبس',en:'Fit',ku:'فیت'},'مشخصات محصول':{fa:'مشخصات محصول',ar:'تفاصيل المنتج',en:'Product details',ku:'وردەکاری بەرهەم'},
   'مشخصات قابل مذاکره':{fa:'مشخصات قابل مذاکره',ar:'مواصفات قابلة للتفاوض',en:'Negotiable specification',ku:'تایبەتمەندی گفتوگۆپێکراو'},
 }
+
+export const orderStatusTranslations: Record<string,Record<Locale,string>> = {
+  'بدون سفارش فعال':{fa:'بدون سفارش فعال',ar:'لا يوجد طلب نشط',en:'No active order',ku:'داواکاری چالاک نییە'},
+  'در حال مذاکره':{fa:'در حال مذاکره',ar:'قيد التفاوض',en:'In negotiation',ku:'لە گفتوگۆدایە'},
+  'در انتظار پیش‌پرداخت':{fa:'در انتظار پیش‌پرداخت',ar:'بانتظار الدفعة المقدمة',en:'Awaiting prepayment',ku:'چاوەڕێی پێشەکی'},
+  'تأیید پیش‌پرداخت':{fa:'تأیید پیش‌پرداخت',ar:'تأكيد الدفعة المقدمة',en:'Prepayment confirmation',ku:'پشتڕاستکردنەوەی پێشەکی'},
+  'در حال تولید':{fa:'در حال تولید',ar:'قيد الإنتاج',en:'In production',ku:'لە بەرهەمهێناندا'},
+  'آماده ارسال':{fa:'آماده ارسال',ar:'جاهز للشحن',en:'Ready to ship',ku:'ئامادەی ناردن'},
+  'بدون مرحله فعال':{fa:'بدون مرحله فعال',ar:'لا توجد مرحلة نشطة',en:'No active stage',ku:'هەنگاوی چالاک نییە'},
+}
