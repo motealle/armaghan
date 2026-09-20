@@ -39,7 +39,7 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
       <button class="mobile-drawer-backdrop" aria-label="بستن منو" @click="emit('close')" />
       <aside class="mobile-drawer-panel" aria-label="منوی موبایل">
         <div class="flex items-center gap-3 border-b border-[var(--c-border)] px-4 py-4">
-          <img class="h-11 w-11 rounded-xl object-cover" src="../../../logo.png" alt="Armaghan" />
+          <img class="h-11 w-11 rounded-xl object-cover" src="../../logo.png" alt="Armaghan" />
           <div class="min-w-0">
             <b class="block text-sm text-[var(--c-text)]">ارمغان</b>
             <span class="block truncate text-[10px] text-[var(--c-muted)]">{{locale.t('manufacturer')}}</span>
