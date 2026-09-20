@@ -33,8 +33,8 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
   <section>
     <div class="mb-4 flex items-end justify-between gap-3">
       <div>
-        <h1 class="text-2xl font-black">{{locale.t('productsTitle')}}</h1>
-        <p class="mt-1 text-sm text-[var(--c-muted)]">{{locale.t('productsHelp')}}</p>
+        <h1 class="text-[1.75rem] font-black leading-tight">{{locale.t('productsTitle')}}</h1>
+        <p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('productsHelp')}}</p>
       </div>
       <button v-if="activeCount" class="hidden text-xs font-extrabold text-[var(--c-primary)] lg:inline-flex" @click="resetFilters">
         {{locale.t('clearFilters')}} · {{activeCount}}
@@ -45,13 +45,13 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
     <div class="lg:hidden">
       <div class="grid grid-cols-3 gap-2">
         <button v-for="cat in categories" :key="cat.code" class="rounded-2xl border p-3 text-start" :class="category===cat.code?'border-[var(--c-primary)] bg-indigo-50 dark:bg-indigo-950/30':'border-[var(--c-border)] bg-[var(--c-surface)]'" @click="category=cat.code;subcategory='all'">
-          <span class="text-[10px] font-extrabold text-[var(--c-primary)]">0{{cat.code}}</span><b class="mt-1 block text-sm">{{cat.name}}</b>
+          <span class="text-[10px] font-extrabold text-[var(--c-primary)]">0{{cat.code}}</span><b class="mt-1 block text-sm">{{locale.categoryName(cat.code,cat.name)}}</b>
         </button>
       </div>
 
-      <div class="mt-3 flex gap-2 overflow-x-auto pb-1">
+      <div class="chip-scroller mt-3 flex gap-2 overflow-x-auto pb-1">
         <button class="filter-chip" :class="{active:subcategory==='all'}" @click="subcategory='all'">{{locale.t('allSubs')}}</button>
-        <button v-for="sub in subs" :key="sub.code" class="filter-chip" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code">{{sub.code}} · {{sub.name}}</button>
+        <button v-for="sub in subs" :key="sub.code" class="filter-chip" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code">{{sub.code}} · {{locale.subcategoryName(sub.code,sub.name)}}</button>
       </div>
 
       <div class="mt-4 flex flex-wrap gap-2">
@@ -82,7 +82,7 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
             <span>{{locale.t('allCategories')}}</span><Check v-if="category==='all'" :size="15"/>
           </button>
           <button v-for="cat in categories" :key="cat.code" class="desktop-filter-option" :class="{active:category===cat.code}" @click="category=cat.code;subcategory='all'">
-            <span>{{cat.name}}</span><Check v-if="category===cat.code" :size="15"/>
+            <span>{{locale.categoryName(cat.code,cat.name)}}</span><Check v-if="category===cat.code" :size="15"/>
           </button>
         </div>
 
