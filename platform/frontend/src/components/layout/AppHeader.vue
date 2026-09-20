@@ -38,7 +38,7 @@ onBeforeUnmount(stopLongPress)
     @pointercancel.passive="stopLongPress"
     @pointerleave.passive="stopLongPress"
   >
-    <div class="mx-auto flex max-w-[1440px] items-center gap-2 px-3 py-2.5 lg:grid lg:grid-cols-[auto_1fr_auto] lg:px-5">
+    <div class="app-header-layout mx-auto flex max-w-[1440px] items-center gap-2 px-3 py-2.5 lg:grid lg:grid-cols-[auto_1fr_auto] lg:px-5">
       <RouterLink to="/" class="flex min-w-0 items-center gap-2.5" @pointerdown.stop>
         <img class="h-10 w-10 shrink-0 rounded-xl bg-white/10 object-cover" :src="'../../logo.png'" alt="Armaghan" />
         <div class="min-w-0">
