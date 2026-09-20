@@ -51,7 +51,7 @@ const nextCustomerAction=computed(()=>{
       <div class="drawer-metric-grid">
         <div class="drawer-metric"><strong>{{customer?.orderCount??0}}</strong><span>{{locale.t('ordersLabel')}}</span></div>
         <div class="drawer-metric"><strong>{{favorites.ids.length}}</strong><span>{{locale.t('favorites')}}</span></div>
-        <div class="drawer-metric drawer-metric-wide"><CheckCircle2 :size="16"/><span>{{customer?.timelineStage||locale.t('noActiveStage')}}</span></div>
+        <div class="drawer-metric drawer-metric-wide"><CheckCircle2 :size="16"/><span>{{customer?.timelineStage?locale.orderStatus(customer.timelineStage):locale.t('noActiveStage')}}</span></div>
         <div class="drawer-metric drawer-metric-wide"><Sparkles :size="16"/><span>{{locale.t('nextAction')}}: {{nextCustomerAction}}</span></div>
       </div>
     </template>
