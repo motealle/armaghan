@@ -2,9 +2,11 @@
 import { computed } from 'vue'
 import { Moon, Sun } from '@lucide/vue'
 import { useThemeStore } from '@/stores/theme'
+import { useLocaleStore } from '@/stores/locale'
 
 const theme=useThemeStore()
-const label=computed(()=>theme.mode==='dark'?'تغییر به حالت روشن':'تغییر به حالت تیره')
+const locale=useLocaleStore()
+const label=computed(()=>theme.mode==='dark'?locale.t('themeToLight'):locale.t('themeToDark'))
 </script>
 
 <template>
