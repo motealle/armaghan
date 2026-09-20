@@ -1,7 +1,7 @@
 {
   "name": "armaghan-frontend",
   "private": true,
-  "version": "0.16.1",
+  "version": "0.17.0",
   "type": "module",
   "engines": {
     "node": "^22.22.2 || >=24.15.0"
@@ -10,7 +10,7 @@
     "dev": "vite",
     "type-check": "vue-tsc --noEmit",
     "test:unit": "vitest run",
-    "build": "node scripts/fetch-digikala-assets.mjs && npm run type-check && npm run test:unit && vite build",
+    "build": "npm run type-check && npm run test:unit && vite build",
     "fetch:digikala": "node scripts/fetch-digikala-assets.mjs"
   },
   "dependencies": {
