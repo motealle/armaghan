@@ -17,6 +17,8 @@ const isFavorite=computed(()=>favorites.has(props.product.id))
 const compactActions=computed(()=>design.cardActionMode==='compact')
 const availabilityLabel=computed(()=>props.product.availability==='available'?locale.t('available'):props.product.availability==='unavailable'?locale.t('unavailable'):locale.t('madeToOrder'))
 const availabilityClass=computed(()=>props.product.availability==='available'?'text-emerald-700':props.product.availability==='unavailable'?'text-rose-700':'text-amber-800')
+const displayName=computed(()=>locale.productName(props.product.code,props.product.name))
+const displaySubcategory=computed(()=>locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName))
 </script>
 
 <template>
@@ -28,13 +30,13 @@ const availabilityClass=computed(()=>props.product.availability==='available'?'t
       </span>
     </div>
     <div class="p-3">
-      <div class="min-h-11 text-sm font-extrabold leading-6 text-[var(--c-text)]">{{product.name}}</div>
+      <div class="min-h-11 text-sm font-extrabold leading-6 text-[var(--c-text)]">{{displayName}}</div>
       <div class="mt-1 flex items-center justify-between gap-2 text-[10px] text-[var(--c-muted)]">
-        <span class="truncate">{{product.subcategoryCode}} · {{product.subcategoryName}}</span>
+        <span class="truncate">{{product.subcategoryCode}} · {{displaySubcategory}}</span>
         <code class="shrink-0 rounded-md bg-[var(--c-surface-2)] px-1.5 py-1 font-sans text-[var(--c-primary)]">{{product.code}}</code>
       </div>
       <div class="card-actions mt-3 grid grid-cols-3 gap-1.5" :class="compactActions?'compact':'labeled'">
-        <button class="wa-card-action rounded-[.75rem]" :aria-label="compactActions ? 'سفارش در واتساپ' : 'سفارش'" @click="emit('whatsapp',product)">
+        <button class="wa-card-action rounded-[.75rem]"  :aria-label="locale.t('order')" @click="emit('whatsapp',product)">
           <WhatsAppIcon :size="compactActions ? 22 : 27" tone="white"/>
           <span v-if="!compactActions">{{locale.t('order')}}</span>
         </button>
