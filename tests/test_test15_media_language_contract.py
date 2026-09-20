@@ -30,9 +30,10 @@ assert "#25D366" in icon
 assert "fill="#25D366"" in icon
 assert "border-radius:.25rem" in css
 assert "@keyframes favorite-heartbeat" in css
-assert "api.digikala.com/v1/search/" in fetcher
-assert "api.digikala.com/v2/product/" in fetcher
+assert "dkstatics-public.digikala.com" in fetcher
+assert "deterministic-digikala-cdn-seed" in fetcher
 assert "requiredPerProduct = 2" in fetcher
+assert "sourceSets" in fetcher
 assert "digikalaMediaByProductCode" in catalog
 assert "ipwho.is" in geo
 for code in ["fa","ar","en","ku"]:
