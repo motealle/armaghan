@@ -19,6 +19,7 @@ export const useCatalogStore=defineStore('catalog',()=>{
 
   function add(product: Product){items.value=[...items.value,product]}
   function remove(id:number){items.value=items.value.filter(p=>p.id!==id)}
+  function removeMany(ids:number[]){const set=new Set(ids);items.value=items.value.filter(p=>!set.has(p.id))}
   function updateImage(id:number,image:string){
     const product=items.value.find(p=>p.id===id)
     if(product)product.image=image
@@ -26,5 +27,5 @@ export const useCatalogStore=defineStore('catalog',()=>{
   function reset(){items.value=structuredClone(seedProducts)}
 
   watch(items,(value)=>localStorage.setItem(KEY,JSON.stringify(value)),{deep:true})
-  return{items,add,remove,updateImage,reset}
+  return{items,add,remove,removeMany,updateImage,reset}
 })
