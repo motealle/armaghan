@@ -172,4 +172,5 @@ export const contentTranslationGroups: Array<{id:string;labelKey:string;keys:str
   ]},
   {id:'product-content',labelKey:'products',keys:Object.keys(productNameTranslations).map(code=>`product.${code}`)},
   {id:'spec-content',labelKey:'details',keys:Object.keys(specTranslations).map(key=>`spec.${key}`)},
+  {id:'status-content',labelKey:'statusLabel',keys:Object.keys(orderStatusTranslations).map(key=>`status.${key}`)},
 ]
