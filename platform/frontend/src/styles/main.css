@@ -55,6 +55,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .hero-shell{min-height:24rem;background:linear-gradient(135deg,var(--c-primary),#12184a)}
 .smart-image{background:linear-gradient(135deg,var(--c-media-bg),var(--c-surface-2))}
+.fallback-clay-icon{display:grid;width:4.4rem;height:4.4rem;place-items:center;border:1px solid color-mix(in srgb,var(--c-border) 82%,transparent);border-radius:1.35rem;background:linear-gradient(145deg,color-mix(in srgb,var(--c-surface) 92%,white),color-mix(in srgb,var(--c-soft) 34%,var(--c-surface)));color:var(--c-primary);box-shadow:inset 7px 7px 16px rgba(255,255,255,.45),inset -8px -8px 18px rgba(21,30,218,.05),0 12px 24px rgba(24,35,78,.10)}
+.dark .fallback-clay-icon{box-shadow:inset 5px 5px 14px rgba(255,255,255,.04),inset -8px -8px 18px rgba(0,0,0,.16),0 12px 24px rgba(0,0,0,.24)}
 .product-card{box-shadow:var(--surface-shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .availability-badge{background:color-mix(in srgb,var(--c-surface) 92%,transparent);backdrop-filter:blur(8px)}
 .skeleton{position:relative;overflow:hidden;background:var(--c-surface-2)}
