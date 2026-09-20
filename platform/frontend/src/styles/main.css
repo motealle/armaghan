@@ -43,8 +43,16 @@ button,a,input,textarea,select{font:inherit}
 button,a{touch-action:manipulation}
 button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid color-mix(in srgb,var(--c-primary) 32%,transparent);outline-offset:2px}
 #main-content:focus{outline:none}
-#main-content{padding-bottom:calc(var(--bottom-nav-space) + env(safe-area-inset-bottom) + 1rem)}
-html[data-locale="en"] #main-content,html[data-locale="en"] .sheet-panel,html[data-locale="en"] .modal-panel{direction:ltr;text-align:left}
+#main-content{direction:rtl;padding-bottom:calc(var(--bottom-nav-space) + env(safe-area-inset-bottom) + 1rem)}
+html[data-locale="en"] #main-content :where(h1,h2,h3,h4,p,small,label,input,textarea,select,pre,code){direction:ltr;text-align:left}
+html[data-locale="en"] .product-card,
+html[data-locale="en"] .wizard-option,
+html[data-locale="en"] .admin-surface,
+html[data-locale="en"] .drawer-dashboard,
+html[data-locale="en"] .sheet-panel,
+html[data-locale="en"] .modal-panel{direction:ltr;text-align:left}
+html[data-locale="en"] .mobile-drawer-panel{direction:rtl}
+html[data-locale="en"] .mobile-drawer-panel :where(p,b,span,label){direction:ltr;text-align:left}
 .site-footer{display:flex;flex-direction:column;gap:.2rem;margin-top:3rem;border-top:1px solid var(--c-border);padding:1.25rem 0 calc(var(--bottom-nav-space) + .5rem);text-align:center;color:var(--c-muted);font-size:.72rem}
 .site-footer b{color:var(--c-text);font-size:.78rem}
 .skip-link{position:fixed;z-index:200;top:.75rem;inset-inline-start:.75rem;transform:translateY(-180%);border-radius:.75rem;background:var(--c-surface);color:var(--c-text);padding:.7rem 1rem;font-size:.78rem;font-weight:900;box-shadow:0 12px 32px rgba(0,0,0,.2);transition:transform .15s ease}
@@ -258,10 +266,5 @@ html[data-locale="en"] .header-select{direction:ltr;text-align:left}
 }
 @media(max-width:1023.98px){
   .site-footer{padding-bottom:calc(var(--bottom-nav-space) + .5rem)}
-}
-@media(min-width:1024px){
-  body{padding-bottom:0}
-  .product-card:hover{transform:translateY(-2px);box-shadow:0 20px 48px rgba(18,27,73,.12)}
-  .hero-shell{min-height:32rem}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.skip-link{transition:none}}
