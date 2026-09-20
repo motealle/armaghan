@@ -36,7 +36,7 @@ const availabilityClass=computed(()=>props.product.availability==='available'?'t
       <div class="card-actions mt-3 grid grid-cols-3 gap-1.5" :class="compactActions?'compact':'labeled'">
         <button class="wa-card-action rounded-[.75rem]" :aria-label="compactActions ? 'سفارش در واتساپ' : 'سفارش'" @click="emit('whatsapp',product)">
           <WhatsAppIcon :size="compactActions ? 22 : 27" tone="white"/>
-          <span v-if="!compactActions">سفارش</span>
+          <span v-if="!compactActions">{{locale.t('order')}}</span>
         </button>
         <button class="card-action favorite-action rounded-[.75rem]" :aria-pressed="isFavorite" :aria-label="locale.t('favorite')" @click="favorites.toggle(product.id)">
           <Heart
