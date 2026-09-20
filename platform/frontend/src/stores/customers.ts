@@ -37,6 +37,7 @@ export interface WishlistLead{
 
 const CUSTOMER_KEY='armaghan:test19:customers'
 const LEAD_KEY='armaghan:test19:wishlist-leads'
+const VISITOR_KEY='armaghan:test19:visitor-token'
 
 const seed:CustomerRecord[]=[
   {id:1,flag:'🇮🇶',country:'Iraq',name:'Baghdad Buyer',whatsapp:'+964 7XX XXX XXXX',email:'buyer@example.test',address:'Baghdad',location:'Baghdad, Iraq',notes:'',activeOrder:'در حال تولید',orderCount:3,timelineStage:'در حال تولید',passwordSet:true,accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3600_000).toISOString()},
@@ -59,6 +60,11 @@ function loadLeads():WishlistLead[]{
   ]
 }
 function makeToken(){return crypto.getRandomValues(new Uint32Array(4)).join('').slice(0,22)}
+function visitorToken(){
+  let value=localStorage.getItem(VISITOR_KEY)
+  if(!value){value='visitor-'+makeToken();localStorage.setItem(VISITOR_KEY,value)}
+  return value
+}
 
 export const useCustomersStore=defineStore('customers',()=>{
   const items=ref<CustomerRecord[]>(loadCustomers())
@@ -89,6 +95,23 @@ export const useCustomersStore=defineStore('customers',()=>{
     return `${location.origin}/User-${accessToken}`
   }
   function revokeAccess(id:number){update(id,{accessRevoked:true})}
+  function recordWishlistChange(input:{customerId?:number;label?:string;favoritesCount:number}){
+    const now=new Date().toISOString()
+    const kind=input.customerId?'customer':'guest'
+    const key=input.customerId?`c-${input.customerId}`:`g-${visitorToken()}`
+    const existing=wishlistLeads.value.find(item=>item.id===key)
+    if(existing){
+      existing.favoritesCount=input.favoritesCount
+      existing.updatedAt=now
+      existing.label=input.label??existing.label
+      existing.messagePending=kind==='guest'
+      return
+    }
+    wishlistLeads.value=[
+      {id:key,kind,customerId:input.customerId,visitorToken:kind==='guest'?visitorToken():undefined,label:input.label??'',favoritesCount:input.favoritesCount,updatedAt:now,contactAvailable:kind==='customer',messagePending:kind==='guest'},
+      ...wishlistLeads.value,
+    ]
+  }
   function removeLead(id:string){wishlistLeads.value=wishlistLeads.value.filter(item=>item.id!==id)}
   function queueGuestMessage(id:string){
     const lead=wishlistLeads.value.find(item=>item.id===id)
@@ -97,5 +120,5 @@ export const useCustomersStore=defineStore('customers',()=>{
 
   watch(items,value=>localStorage.setItem(CUSTOMER_KEY,JSON.stringify(value)),{deep:true})
   watch(wishlistLeads,value=>localStorage.setItem(LEAD_KEY,JSON.stringify(value)),{deep:true})
-  return{items,wishlistLeads,changedWishlistCount,add,update,remove,removeMany,setProfileImage,generateAccess,revokeAccess,removeLead,queueGuestMessage}
+  return{items,wishlistLeads,changedWishlistCount,add,update,remove,removeMany,setProfileImage,generateAccess,revokeAccess,recordWishlistChange,removeLead,queueGuestMessage}
 })
