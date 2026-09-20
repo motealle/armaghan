@@ -50,6 +50,10 @@ html[data-locale="en"] #main-content,html[data-locale="en"] .sheet-panel,html[da
 .skip-link{position:fixed;z-index:200;top:.75rem;inset-inline-start:.75rem;transform:translateY(-180%);border-radius:.75rem;background:var(--c-surface);color:var(--c-text);padding:.7rem 1rem;font-size:.78rem;font-weight:900;box-shadow:0 12px 32px rgba(0,0,0,.2);transition:transform .15s ease}
 .skip-link:focus{transform:translateY(0)}
 
+.app-header-layout{direction:rtl}
+.commerce-layout{direction:rtl}
+html[data-locale="en"] .commerce-content,html[data-locale="en"] .desktop-filter-panel{direction:ltr;text-align:left}
+html[data-locale="en"] .header-select{direction:ltr;text-align:left}
 .header-select,.header-action{min-height:2.5rem;border:1px solid rgba(255,255,255,.15);border-radius:.75rem;background:rgba(255,255,255,.10);color:#fff;font-size:.72rem;font-weight:800}
 .header-select{max-width:6.5rem;padding:0 .55rem;outline:none}
 .header-select option{color:#111827}
