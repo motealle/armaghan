@@ -26,7 +26,7 @@ const languages:{id:Locale;short:string;name:string;lang:string}[]=[
 const profile=computed(()=>{
   if(session.impersonatedCustomerId){
     const customer=customers.items.find(item=>item.id===session.impersonatedCustomerId)
-    return customer?{flag:customer.flag,name:customer.name,meta:locale.t('drawerSummary')}:{flag:'🌐',name:locale.t('customerLabel'),meta:locale.t('drawerSummary')}
+    return customer?{flag:customer.flag,name:customer.name,meta:locale.orderStatus(customer.activeOrder)}:{flag:'🌐',name:locale.t('customerLabel'),meta:locale.t('drawerSummary')}
   }
   if(session.isAdmin)return{flag:'🇮🇷',name:locale.t('adminOverview'),meta:locale.t('drawerOperational')}
   if(session.isCustomer){
