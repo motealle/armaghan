@@ -63,7 +63,7 @@ const options: Array<{ id: Extract<RequestPath,'simple'|'available'|'unavailable
         class="wa-primary flex min-h-14 items-center justify-center gap-2 rounded-[.25rem] px-4 text-sm font-extrabold"
         :class="{ 'pointer-events-none opacity-40': !preview }"
       >
-        <span class="wa-logo-chip"><WhatsAppIcon :size="23" tone="white" /></span>
+        <span class="wa-logo-chip"><WhatsAppIcon :size="28" tone="white" /></span>
         ادامه در واتساپ
       </a>
     </div>
