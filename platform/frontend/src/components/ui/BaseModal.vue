@@ -44,7 +44,7 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
       <section ref="panelRef" class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
         <header class="modal-header">
           <div>
-            <div class="text-[10px] font-black tracking-[.16em] text-[var(--c-primary)]">ARMAGHAN</div>
+            <div class="text-[10px] font-black tracking-[.16em] text-[var(--c-primary)]">{{locale.t('brandName')}}</div>
             <h2 id="modal-title" class="mt-1 text-lg font-black text-[var(--c-text)]">{{title}}</h2>
           </div>
           <button class="modal-close" :aria-label="locale.t('close')" @click="emit('close')"><X :size="20"/></button>
