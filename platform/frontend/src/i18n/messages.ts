@@ -5,7 +5,7 @@ export type TranslationMap = Record<string,string>
 export const baseMessages: Record<Locale, TranslationMap> = {
   fa: {
     home:'خانه',products:'محصولات',production:'سفارش تولید',favorites:'مطلوب‌ها',tracking:'پیگیری',
-    login:'ورود',logout:'خروج',manufacturer:'تولیدی ارمغان',language:'زبان',close:'بستن',back:'بازگشت',reset:'بازنشانی',add:'افزودن',delete:'حذف',save:'ذخیره',cancel:'انصراف',searchLabel:'جستجو',actions:'عملیات',
+    login:'ورود',logout:'خروج',manufacturer:'تولیدی ارمغان',language:'زبان',close:'بستن',back:'بازگشت',reset:'بازنشانی',add:'افزودن',delete:'حذف',save:'ذخیره',cancel:'انصراف',searchLabel:'جستجو',actions:'عملیات',copy:'کپی',
     productsTitle:'محصولات',productsHelp:'دسته و زیردسته را انتخاب کنید؛ سپس محصول را مقایسه کنید.',search:'جستجو با نام یا کد محصول',allStatuses:'همه وضعیت‌ها',allSubs:'همه زیردسته‌ها',allCategories:'همه دسته‌ها',categoryLabel:'دسته محصول',subcategoryLabel:'زیردسته',statusLabel:'وضعیت',clearFilters:'پاک‌کردن فیلترها',productCount:'محصول',desktopFilterHelp:'فیلترها در ستون کناری ثابت می‌مانند تا مرور محصول قطع نشود.',
     available:'موجود',unavailable:'ناموجود',madeToOrder:'تولیدپذیر',order:'سفارش',favorite:'مطلوب',details:'مشخصات',
     recommended:'محصولات پیشنهادی',allProducts:'همه محصولات',categories:'دسته‌بندی محصولات',categoryHelp:'سه دسته اصلی و شش زیردسته برای انتخاب سریع محصول.',
@@ -27,7 +27,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
   },
   ar: {
     home:'الرئيسية',products:'المنتجات',production:'طلب إنتاج',favorites:'المفضلة',tracking:'المتابعة',
-    login:'دخول',logout:'خروج',manufacturer:'مصنع أرمغان للملابس',language:'اللغة',close:'إغلاق',back:'رجوع',reset:'إعادة ضبط',add:'إضافة',delete:'حذف',save:'حفظ',cancel:'إلغاء',searchLabel:'بحث',actions:'الإجراءات',
+    login:'دخول',logout:'خروج',manufacturer:'مصنع أرمغان للملابس',language:'اللغة',close:'إغلاق',back:'رجوع',reset:'إعادة ضبط',add:'إضافة',delete:'حذف',save:'حفظ',cancel:'إلغاء',searchLabel:'بحث',actions:'الإجراءات',copy:'نسخ',
     productsTitle:'المنتجات',productsHelp:'اختر الفئة والفئة الفرعية ثم قارن المنتجات.',search:'ابحث بالاسم أو الكود',allStatuses:'كل الحالات',allSubs:'كل الفئات الفرعية',allCategories:'كل الفئات',categoryLabel:'فئة المنتج',subcategoryLabel:'الفئة الفرعية',statusLabel:'الحالة',clearFilters:'مسح الفلاتر',productCount:'منتج',desktopFilterHelp:'تبقى الفلاتر في العمود الجانبي لتسهيل التصفح.',
     available:'متوفر',unavailable:'غير متوفر',madeToOrder:'قابل للإنتاج',order:'طلب',favorite:'مفضلة',details:'المواصفات',
     recommended:'منتجات مقترحة',allProducts:'كل المنتجات',categories:'فئات المنتجات',categoryHelp:'ثلاث فئات رئيسية وست فئات فرعية لاختيار أسرع.',
@@ -49,7 +49,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
   },
   en: {
     home:'Home',products:'Products',production:'Production',favorites:'Favorites',tracking:'Tracking',
-    login:'Sign in',logout:'Sign out',manufacturer:'Armaghan Garment Manufacturing',language:'Language',close:'Close',back:'Back',reset:'Reset',add:'Add',delete:'Delete',save:'Save',cancel:'Cancel',searchLabel:'Search',actions:'Actions',
+    login:'Sign in',logout:'Sign out',manufacturer:'Armaghan Garment Manufacturing',language:'Language',close:'Close',back:'Back',reset:'Reset',add:'Add',delete:'Delete',save:'Save',cancel:'Cancel',searchLabel:'Search',actions:'Actions',copy:'Copy',
     productsTitle:'Products',productsHelp:'Choose a category and subcategory, then compare products.',search:'Search by product name or code',allStatuses:'All statuses',allSubs:'All subcategories',allCategories:'All categories',categoryLabel:'Product category',subcategoryLabel:'Subcategory',statusLabel:'Status',clearFilters:'Clear filters',productCount:'products',desktopFilterHelp:'Filters stay in the side rail so product browsing remains uninterrupted.',
     available:'Available',unavailable:'Unavailable',madeToOrder:'Made to order',order:'Order',favorite:'Favorite',details:'Specs',
     recommended:'Recommended products',allProducts:'All products',categories:'Product categories',categoryHelp:'Three main categories and six subcategories for fast product discovery.',
@@ -71,7 +71,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
   },
   ku: {
     home:'ماڵەوە',products:'بەرهەمەکان',production:'داواکاری بەرهەم',favorites:'دڵخوازەکان',tracking:'بەدواداچوون',
-    login:'چوونەژوورەوە',logout:'چوونەدەرەوە',manufacturer:'بەرهەمهێنانی جل و بەرگی ئارماغان',language:'زمان',close:'داخستن',back:'گەڕانەوە',reset:'ڕێکخستنەوە',add:'زیادکردن',delete:'سڕینەوە',save:'پاشەکەوت',cancel:'هەڵوەشاندنەوە',searchLabel:'گەڕان',actions:'کردارەکان',
+    login:'چوونەژوورەوە',logout:'چوونەدەرەوە',manufacturer:'بەرهەمهێنانی جل و بەرگی ئارماغان',language:'زمان',close:'داخستن',back:'گەڕانەوە',reset:'ڕێکخستنەوە',add:'زیادکردن',delete:'سڕینەوە',save:'پاشەکەوت',cancel:'هەڵوەشاندنەوە',searchLabel:'گەڕان',actions:'کردارەکان',copy:'کۆپی',
     productsTitle:'بەرهەمەکان',productsHelp:'پۆل و ژێرپۆل هەڵبژێرە و بەرهەمەکان بەراورد بکە.',search:'گەڕان بە ناو یان کۆد',allStatuses:'هەموو دۆخەکان',allSubs:'هەموو ژێرپۆلەکان',allCategories:'هەموو پۆلەکان',categoryLabel:'پۆلی بەرهەم',subcategoryLabel:'ژێرپۆل',statusLabel:'دۆخ',clearFilters:'پاککردنەوەی فلتەرەکان',productCount:'بەرهەم',desktopFilterHelp:'فلتەرەکان لە ستوونی لاوەکی دەمێننەوە بۆ گەڕانێکی ئاسان.',
     available:'بەردەست',unavailable:'بەردەست نییە',madeToOrder:'بۆ بەرهەمهێنان',order:'داواکاری',favorite:'دڵخواز',details:'تایبەتمەندی',
     recommended:'بەرهەمی پێشنیارکراو',allProducts:'هەموو بەرهەمەکان',categories:'پۆلەکانی بەرهەم',categoryHelp:'سێ پۆلی سەرەکی و شەش ژێرپۆل بۆ دۆزینەوەی خێرای بەرهەم.',
