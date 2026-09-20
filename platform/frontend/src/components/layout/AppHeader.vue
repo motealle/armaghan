@@ -77,10 +77,10 @@ onBeforeUnmount(stopLongPress)
         <label class="relative hidden lg:block" @pointerdown.stop>
           <span class="sr-only">{{locale.t('language')}}</span>
           <select :value="locale.locale" class="header-select" :aria-label="locale.t('language')" @change="changeLanguage">
-            <option value="fa">فارسی</option>
-            <option value="ar">العربية</option>
-            <option value="en">English</option>
-            <option value="ku">کوردی</option>
+            <option value="fa" lang="fa">فارسی</option>
+            <option value="ar" lang="ar">العربية</option>
+            <option value="en" lang="en">English</option>
+            <option value="ku" lang="ckb">کوردی</option>
           </select>
         </label>
 
