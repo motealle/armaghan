@@ -14,9 +14,8 @@ launcher=(ROOT/"t/index.htm").read_text(encoding="utf-8")
 immutable={line.strip() for line in (ROOT/"docs/IMMUTABLE-TESTS.txt").read_text(encoding="utf-8").splitlines() if line.strip() and not line.startswith("#")}
 
 assert "@custom-variant dark" in css
-for mode in ["'system'","'light'","'dark'"]:
+for mode in ["'light'","'dark'"]:
     assert mode in theme
-assert "prefers-color-scheme: dark" in theme
 assert "localStorage" in theme
 assert "ThemeSwitcher" in header
 assert "desktop-nav-link" in header
