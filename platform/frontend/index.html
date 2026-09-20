@@ -6,18 +6,24 @@
     <meta name="theme-color" content="#151EDA" />
     <meta name="description" content="ارمغان — تولید و صادرات پوشاک" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/misc/Farsi-Digits/Vazirmatn-FD-font-face.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" />
     <link rel="icon" href="../../logo.png" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <title>ارمغان | Test 17 — Mobile Drawer & Login Modal</title>
-      <script>
+    <title>ارمغان | Test 18 — App Navigation & Account Drawer</title>
+    <script>
       (() => {
         try {
-          const saved=localStorage.getItem('armaghan:test17:theme') || 'system';
-          const dark=saved==='dark' || (saved==='system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          const saved=localStorage.getItem('armaghan:test18:theme');
+          const mode=(saved==='light'||saved==='dark')
+            ? saved
+            : (window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+          const dark=mode==='dark';
           document.documentElement.classList.toggle('dark',dark);
-          document.documentElement.dataset.theme=dark?'dark':'light';
-          document.documentElement.style.colorScheme=dark?'dark':'light';
+          document.documentElement.dataset.theme=mode;
+          document.documentElement.style.colorScheme=mode;
         } catch {}
       })();
     </script>
