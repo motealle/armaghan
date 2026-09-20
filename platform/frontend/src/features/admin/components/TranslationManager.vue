@@ -16,26 +16,26 @@ const keys=computed(()=>{
   const source=groups.value.find(item=>item.id===group.value)?.keys??Object.keys(locale.baseMessages[target.value]??{})
   const needle=query.value.trim().toLowerCase()
   return source.filter(key=>{
-    const base=locale.baseMessages[target.value]?.[key]??''
+    const base=locale.baseValue(key,target.value)
     const custom=locale.overrides[target.value]?.[key]??''
     return !needle||key.toLowerCase().includes(needle)||base.toLowerCase().includes(needle)||custom.toLowerCase().includes(needle)
   })
 })
 function sync(){
   for(const key of Object.keys(drafts))delete drafts[key]
-  for(const key of keys.value)drafts[key]=locale.overrides[target.value]?.[key]??locale.baseMessages[target.value]?.[key]??''
+  for(const key of keys.value)drafts[key]=locale.overrides[target.value]?.[key]??locale.baseValue(key,target.value)
   selected.value=[]
 }
 watch([target,group,query],sync,{immediate:true})
 function save(key:string){locale.setOverride(target.value,key,drafts[key]??'')}
 function reset(key:string){
   locale.resetOverride(target.value,key)
-  drafts[key]=locale.baseMessages[target.value]?.[key]??''
+  drafts[key]=locale.baseValue(key,target.value)
   selected.value=selected.value.filter(item=>item!==key)
 }
 function resetSelected(){
   locale.resetOverrides(target.value,selected.value)
-  for(const key of selected.value)drafts[key]=locale.baseMessages[target.value]?.[key]??''
+  for(const key of selected.value)drafts[key]=locale.baseValue(key,target.value)
   selected.value=[]
 }
 function toggleAll(){
@@ -80,7 +80,7 @@ function toggleAll(){
           <span v-if="locale.overrides[target]?.[key]" class="ms-auto rounded-full bg-[color-mix(in_srgb,var(--c-secondary)_10%,var(--c-surface))] px-2 py-1 text-[10px] font-bold text-[var(--c-secondary)]">{{locale.t('customValue')}}</span>
         </div>
         <div class="grid gap-2 md:grid-cols-2">
-          <label class="form-field">{{locale.t('baseValue')}}<textarea :value="locale.baseMessages[target]?.[key]??''" rows="2" readonly/></label>
+          <label class="form-field">{{locale.t('baseValue')}}<textarea :value="locale.baseValue(key,target)" rows="2" readonly/></label>
           <label class="form-field">{{locale.t('customValue')}}<textarea v-model="drafts[key]" rows="2"/></label>
         </div>
         <div class="flex justify-end gap-2">
