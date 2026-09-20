@@ -82,7 +82,7 @@ const title = computed(() => wizard.path ? requestPathTitle(wizard.path,locale.l
         <pre class="whitespace-pre-wrap font-sans text-xs leading-6 text-slate-700">{{ wizard.preview }}</pre>
       </div>
       <a :href="wizard.whatsapp" target="_blank" rel="noopener" class="wa-primary flex min-h-14 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-extrabold">
-        <span class="wa-logo-chip"><WhatsAppIcon :size="23" /></span> ادامه در واتساپ
+        <span class="wa-logo-chip"><WhatsAppIcon :size="23" tone="white" /></span> ادامه در واتساپ
       </a>
     </div>
 

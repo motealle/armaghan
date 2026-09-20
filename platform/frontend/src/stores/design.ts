@@ -20,8 +20,8 @@ export const colorSets: ColorSet[] = [
 ]
 
 export const useDesignStore = defineStore('design', () => {
-  const system = ref(localStorage.getItem('armaghan:test12:design') || 'core')
-  const palette = ref(localStorage.getItem('armaghan:test12:palette') || 'balanced')
+  const system = ref(localStorage.getItem('armaghan:test16:design') || 'core')
+  const palette = ref(localStorage.getItem('armaghan:test16:palette') || 'balanced')
 
   function apply(): void {
     const selected = colorSets.find((item) => item.id === palette.value) ?? colorSets[0]!
@@ -36,8 +36,8 @@ export const useDesignStore = defineStore('design', () => {
   }
 
   watch([system, palette], () => {
-    localStorage.setItem('armaghan:test12:design', system.value)
-    localStorage.setItem('armaghan:test12:palette', palette.value)
+    localStorage.setItem('armaghan:test16:design', system.value)
+    localStorage.setItem('armaghan:test16:palette', palette.value)
     apply()
   })
 

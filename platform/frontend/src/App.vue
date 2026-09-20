@@ -8,12 +8,14 @@ import DesignLabSheet from '@/features/design/components/DesignLabSheet.vue'
 import { useDesignStore } from '@/stores/design'
 import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
+import { useThemeStore } from '@/stores/theme'
 
 const loginOpen=ref(false)
 const designLabOpen=ref(false)
 const design=useDesignStore()
 const session=useSessionStore()
 const locale=useLocaleStore()
+const theme=useThemeStore()
 const route=useRoute()
 
 watch(()=>route.fullPath,async()=>{
@@ -22,6 +24,7 @@ watch(()=>route.fullPath,async()=>{
 })
 
 onMounted(async()=>{
+  theme.apply()
   design.apply()
   await locale.initialize()
   const magic=new URLSearchParams(location.search).get('magic')
@@ -36,11 +39,11 @@ onMounted(async()=>{
   <div class="min-h-screen">
     <a class="skip-link" href="#main-content">پرش به محتوای اصلی</a>
     <AppHeader @login="loginOpen=true" @designlab="designLabOpen=true"/>
-    <main id="main-content" tabindex="-1" class="mx-auto max-w-6xl px-3 py-4 pb-28 md:py-6">
+    <main id="main-content" tabindex="-1" class="mx-auto max-w-[1440px] px-3 py-4 pb-28 md:py-6 lg:px-5 lg:pb-8">
       <RouterView v-slot="{ Component }">
         <component :is="Component" @login="loginOpen=true" />
       </RouterView>
-      <footer class="mt-12 border-t border-slate-200 py-6 text-center text-[11px] text-slate-500">
+      <footer class="mt-12 border-t border-[var(--c-border)] py-6 text-center text-[11px] text-[var(--c-muted)]">
         <div>نسخه آزمایشی محصول · داده‌های نمایشی</div>
         <RouterLink to="/credits" class="mt-1 inline-block font-bold text-[var(--c-primary)]">منابع و مجوز تصاویر آزمایشی</RouterLink>
       </footer>

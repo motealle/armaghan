@@ -17,25 +17,25 @@ const availabilityClass=computed(()=>props.product.availability==='available'?'t
 </script>
 
 <template>
-  <article class="product-card overflow-hidden rounded-2xl border border-slate-200 bg-[var(--c-paper)] shadow-sm">
+  <article class="product-card overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] shadow-sm">
     <div class="relative">
       <ProductMediaCarousel :product="product" />
-      <span class="absolute end-2 top-2 z-30 rounded-full bg-white/92 px-2 py-1 text-[10px] font-extrabold shadow-sm" :class="availabilityClass">
+      <span class="availability-badge absolute end-2 top-2 z-30 rounded-full px-2 py-1 text-[10px] font-extrabold shadow-sm" :class="availabilityClass">
         {{availabilityLabel}}
       </span>
     </div>
     <div class="p-3">
-      <div class="min-h-11 text-sm font-extrabold leading-6">{{product.name}}</div>
-      <div class="mt-1 flex items-center justify-between gap-2 text-[10px] text-slate-500">
+      <div class="min-h-11 text-sm font-extrabold leading-6 text-[var(--c-text)]">{{product.name}}</div>
+      <div class="mt-1 flex items-center justify-between gap-2 text-[10px] text-[var(--c-muted)]">
         <span class="truncate">{{product.subcategoryCode}} · {{product.subcategoryName}}</span>
-        <code class="shrink-0 rounded-md bg-slate-100 px-1.5 py-1 font-sans text-[var(--c-primary)]">{{product.code}}</code>
+        <code class="shrink-0 rounded-md bg-[var(--c-surface-2)] px-1.5 py-1 font-sans text-[var(--c-primary)]">{{product.code}}</code>
       </div>
       <div class="mt-3 grid grid-cols-3 gap-1.5">
-        <button class="wa-card-action" :aria-label="locale.t('whatsapp')" @click="emit('whatsapp',product)">
-          <span class="wa-logo-chip"><WhatsAppIcon :size="22"/></span>
+        <button class="wa-card-action rounded-[.75rem]" :aria-label="locale.t('whatsapp')" @click="emit('whatsapp',product)">
+          <WhatsAppIcon :size="22" tone="white"/>
           <span>{{locale.t('whatsapp')}}</span>
         </button>
-        <button class="card-action favorite-action" :aria-pressed="isFavorite" :aria-label="locale.t('favorite')" @click="favorites.toggle(product.id)">
+        <button class="card-action favorite-action rounded-[.75rem]" :aria-pressed="isFavorite" :aria-label="locale.t('favorite')" @click="favorites.toggle(product.id)">
           <Heart
             :size="20"
             class="favorite-heart"
@@ -44,7 +44,7 @@ const availabilityClass=computed(()=>props.product.availability==='available'?'t
           />
           <span>{{locale.t('favorite')}}</span>
         </button>
-        <button class="card-action detail-action" :aria-label="locale.t('details')" @click="emit('detail',product)">
+        <button class="card-action detail-action rounded-[.75rem]" :aria-label="locale.t('details')" @click="emit('detail',product)">
           <SlidersHorizontal :size="20" class="text-[var(--c-primary)]"/>
           <span>{{locale.t('details')}}</span>
         </button>

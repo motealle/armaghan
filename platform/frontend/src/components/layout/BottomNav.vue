@@ -17,7 +17,7 @@ function active(path:string){return path==='/'?route.path==='/':route.path.start
 </script>
 
 <template>
-  <nav class="bottom-nav" :aria-label="locale.t('home')">
+  <nav class="bottom-nav lg:hidden" :aria-label="locale.t('home')">
     <div class="mx-auto grid max-w-[680px] grid-cols-5">
       <RouterLink v-for="item in items" :key="item.to" :to="item.to" class="nav-item" :class="{active:active(item.to)}">
         <component :is="item.icon" :size="21"/>

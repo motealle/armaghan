@@ -130,7 +130,7 @@ onBeforeUnmount(()=>{
 <template>
   <div
     ref="root"
-    class="product-media relative overflow-hidden bg-gradient-to-br from-emerald-50 via-slate-100 to-indigo-50"
+    class="product-media relative overflow-hidden bg-[var(--c-media-bg)]"
     @mouseenter="paused=true"
     @mouseleave="paused=false"
     @focusin="paused=true"
@@ -145,27 +145,39 @@ onBeforeUnmount(()=>{
       <div class="absolute inset-0 grid place-items-center text-[var(--c-primary)]">
         <div class="absolute -start-10 -top-10 h-28 w-28 rounded-full bg-white/65" />
         <div class="absolute -bottom-12 -end-7 h-32 w-32 rounded-full bg-[color-mix(in_srgb,var(--c-primary)_7%,transparent)]" />
-        <div class="relative flex flex-col items-center gap-2">
-          <Shirt v-if="images.length" :size="38" :stroke-width="1.55" />
-          <ImageOff v-else :size="38" :stroke-width="1.55" />
-          <span class="text-[10px] font-bold text-slate-500">{{ product.subcategoryName }}</span>
+        <div class="relative flex flex-col items-center gap-3">
+          <div class="fallback-clay-icon">
+            <Shirt v-if="images.length" :size="38" :stroke-width="1.5" />
+            <ImageOff v-else :size="38" :stroke-width="1.5" />
+          </div>
+          <span class="text-[10px] font-bold text-[var(--c-muted)]">{{ product.subcategoryName }}</span>
         </div>
       </div>
       <template v-for="(src,index) in images" :key="src">
         <div v-if="!loaded[index] && !failed[index] && index===active" class="skeleton absolute inset-0 z-10" />
-        <img
-          v-if="!failed[index]"
-          :src="src"
-          :alt="index===active ? product.name : ''"
-          class="absolute inset-0 z-20 h-full w-full object-cover transition-opacity duration-500"
-          :class="index===active&&loaded[index]?'opacity-100':'pointer-events-none opacity-0'"
-          :loading="index===0?'eager':'lazy'"
-          draggable="false"
-          @load="markLoaded(index)"
-          @error="markFailed(index)"
-        />
+        <template v-if="!failed[index]">
+          <img
+            :src="src"
+            alt=""
+            aria-hidden="true"
+            class="absolute inset-0 z-[12] h-full w-full scale-110 object-cover opacity-0 blur-2xl transition-opacity duration-500"
+            :class="index===active&&loaded[index]?'opacity-20':'pointer-events-none opacity-0'"
+            :loading="index===0?'eager':'lazy'"
+            draggable="false"
+          />
+          <img
+            :src="src"
+            :alt="index===active ? product.name : ''"
+            class="absolute inset-0 z-20 h-full w-full object-contain p-2.5 transition-opacity duration-500 sm:p-3"
+            :class="index===active&&loaded[index]?'opacity-100':'pointer-events-none opacity-0'"
+            :loading="index===0?'eager':'lazy'"
+            draggable="false"
+            @load="markLoaded(index)"
+            @error="markFailed(index)"
+          />
+        </template>
       </template>
-      <span class="absolute bottom-2 end-2 z-30 grid h-8 w-8 place-items-center rounded-full bg-slate-950/60 text-white opacity-90 backdrop-blur-sm transition group-hover:bg-slate-950/75">
+      <span class="absolute bottom-2 end-2 z-30 grid h-8 w-8 place-items-center rounded-lg bg-slate-950/60 text-white opacity-90 backdrop-blur-md transition group-hover:bg-slate-950/75">
         <Maximize2 :size="16" />
       </span>
     </button>
