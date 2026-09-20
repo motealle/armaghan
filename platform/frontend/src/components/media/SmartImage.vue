@@ -1,48 +1,30 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { ImageOff, Shirt } from '@lucide/vue'
+import { computed } from 'vue'
 
-const props = withDefaults(defineProps<{
-  src?: string
-  alt: string
-  label?: string
-  aspect?: 'hero' | 'card' | 'square'
-  eager?: boolean
-}>(), { label: 'تصویر محصول', aspect: 'card', eager: false })
+const props=withDefaults(defineProps<{
+  src?:string
+  alt:string
+  label?:string
+  aspect?:'hero'|'card'|'square'
+  eager?:boolean
+}>(),{label:'تصویر محصول',aspect:'card',eager:false})
 
-const loaded = ref(false)
-const failed = ref(false)
-const ratioClass = computed(() => props.aspect === 'hero' ? 'aspect-[16/9]' : props.aspect === 'square' ? 'aspect-square' : 'aspect-[4/3]')
-
-watch(() => props.src, () => {
-  loaded.value = false
-  failed.value = false
-})
+const ratioClass=computed(()=>props.aspect==='hero'?'aspect-[16/9]':props.aspect==='square'?'aspect-square':'aspect-[4/3]')
 </script>
 
 <template>
-  <div class="smart-image relative overflow-hidden" :class="ratioClass">
-    <div class="absolute inset-0 grid place-items-center bg-gradient-to-br from-[color-mix(in_srgb,var(--c-soft)_74%,white)] via-slate-100 to-indigo-50 text-[var(--c-primary)]">
-      <div class="absolute -start-8 -top-8 h-24 w-24 rounded-full bg-white/50" />
-      <div class="absolute -bottom-10 -end-6 h-28 w-28 rounded-full bg-[color-mix(in_srgb,var(--c-primary)_8%,transparent)]" />
-      <div class="relative flex flex-col items-center gap-3 text-center">
-        <div class="fallback-clay-icon">
-          <Shirt v-if="src" :size="34" :stroke-width="1.65" />
-          <ImageOff v-else :size="34" :stroke-width="1.65" />
-        </div>
-        <span class="max-w-28 text-[10px] font-bold text-[var(--c-muted)]">{{ label }}</span>
+  <div class="smart-image relative overflow-hidden" :class="ratioClass" role="img" :aria-label="alt || label">
+    <div class="absolute inset-0 bg-gradient-to-br from-[color-mix(in_srgb,var(--c-soft)_72%,var(--c-surface))] via-[var(--c-surface-2)] to-[color-mix(in_srgb,var(--c-primary)_8%,var(--c-surface))]" />
+    <div class="absolute -start-10 -top-10 h-28 w-28 rounded-full bg-white/30 dark:bg-white/5" />
+    <div class="absolute -bottom-12 -end-7 h-36 w-36 rounded-full bg-[color-mix(in_srgb,var(--c-primary)_8%,transparent)]" />
+    <div class="absolute inset-0 grid place-items-center">
+      <div class="relative flex flex-col items-center gap-3 text-center text-[var(--c-primary)]">
+        <svg class="smart-placeholder-svg" viewBox="0 0 220 170" aria-hidden="true">
+          <path d="M78 36c10 12 21 18 32 18s22-6 32-18l31 18-18 31-18-10v59H83V75L65 85 47 54l31-18Z" fill="currentColor" fill-opacity=".10" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M91 43c4 8 10 12 19 12s15-4 19-12" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+        <span class="max-w-36 text-[10px] font-black text-[var(--c-muted)]">{{label}}</span>
       </div>
     </div>
-    <div v-if="src && !loaded && !failed" class="skeleton absolute inset-0 z-10" />
-    <img
-      v-if="src && !failed"
-      class="absolute inset-0 z-20 h-full w-full object-cover transition-opacity duration-200"
-      :class="{ 'opacity-0': !loaded }"
-      :src="src"
-      :alt="alt"
-      :loading="eager ? 'eager' : 'lazy'"
-      @load="loaded = true"
-      @error="failed = true"
-    />
   </div>
 </template>
