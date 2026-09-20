@@ -1,93 +1,50 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { detectInitialLocale, type Locale } from '@/services/localeDetection'
+import {
+  baseMessages,
+  categorySubtitleTranslations,
+  categoryTranslations,
+  productNameTranslations,
+  specTranslations,
+  subcategoryTranslations,
+  translationGroups,
+  type TranslationMap,
+} from '@/i18n/messages'
 
 const MANUAL_KEY='armaghan:locale:manual'
+const OVERRIDE_KEY='armaghan:test19:translations'
 
-const messages = {
-  fa: {
-    home:'خانه',products:'محصولات',production:'سفارش تولید',favorites:'مطلوب‌ها',tracking:'پیگیری',
-    login:'ورود',logout:'خروج',manufacturer:'تولید و صادرات پوشاک',language:'زبان',
-    productsTitle:'محصولات',productsHelp:'دسته و زیردسته را انتخاب کنید؛ سپس محصول را مقایسه کنید.',
-    search:'جستجو با نام یا کد محصول',allStatuses:'همه وضعیت‌ها',allSubs:'همه زیردسته‌ها',allCategories:'همه دسته‌ها',categoryLabel:'دسته محصول',subcategoryLabel:'زیردسته',statusLabel:'وضعیت',clearFilters:'پاک‌کردن فیلترها',productCount:'محصول',desktopFilterHelp:'فیلترها در ستون کناری ثابت می‌مانند تا مرور محصول قطع نشود.',
-    available:'موجود',unavailable:'ناموجود',madeToOrder:'تولیدپذیر',
-    whatsapp:'واتساپ',order:'سفارش',favorite:'مطلوب',details:'مشخصات',
-    recommended:'محصولات پیشنهادی',allProducts:'همه محصولات',categories:'دسته‌بندی محصولات',
-    categoryHelp:'سه دسته اصلی، شش زیردسته و مسیر روشن برای مشتری غیرمتخصص.',
-    sourceNoteTitle:'رسانه آزمایشی بدون عکس',sourceNote:'در Test 17 عمداً تصاویر محصول حذف شده‌اند تا کیفیت UI مستقل از عکس سنجیده شود و همه سطوح با SVG تمیز نمایش داده شوند.',
-    imageSources:'سیاست و منابع رسانه',brandIntro:'معرفی تولیدکننده',
-    productionTitle:'سفارش تولید',productionHelp:'مسیر مرحله‌ای برای انتخاب نوع تولید، دسته، زیردسته و مشخصات.',
-    favoriteTitle:'مطلوب‌ها',favoriteHelp:'فهرست محصولات موردنظر شما.',emptyFavorites:'هنوز محصولی به مطلوب‌ها اضافه نشده است.',
-    account:'پیگیری و حساب',accountHelp:'سفارشات، تایملاین، مطلوب‌ها و مدیریت مشتری.',
-    tapImage:'برای بزرگ‌نمایی تصویر لمس کنید',loginTitle:'ورود به حساب',username:'نام کاربری',password:'رمز عبور',signIn:'ورود',demoHint:'آزمایشی: مدیر 1/1 · مشتری 2/2',invalidLogin:'نام کاربری یا رمز آزمایشی نادرست است.',google:'ورود با Google',magicLink:'ورود با لینک خصوصی',
-  },
-  ar: {
-    home:'الرئيسية',products:'المنتجات',production:'طلب إنتاج',favorites:'المفضلة',tracking:'المتابعة',
-    login:'دخول',logout:'خروج',manufacturer:'إنتاج وتصدير الملابس',language:'اللغة',
-    productsTitle:'المنتجات',productsHelp:'اختر الفئة والفئة الفرعية ثم قارن المنتجات.',
-    search:'ابحث بالاسم أو الكود',allStatuses:'كل الحالات',allSubs:'كل الفئات الفرعية',allCategories:'كل الفئات',categoryLabel:'فئة المنتج',subcategoryLabel:'الفئة الفرعية',statusLabel:'الحالة',clearFilters:'مسح الفلاتر',productCount:'منتج',desktopFilterHelp:'تبقى الفلاتر في العمود الجانبي حتى لا ينقطع تصفح المنتجات.',
-    available:'متوفر',unavailable:'غير متوفر',madeToOrder:'قابل للإنتاج',
-    whatsapp:'واتساب',order:'طلب',favorite:'مفضلة',details:'المواصفات',
-    recommended:'منتجات مقترحة',allProducts:'كل المنتجات',categories:'فئات المنتجات',
-    categoryHelp:'ثلاث فئات رئيسية وست فئات فرعية بمسار واضح.',
-    sourceNoteTitle:'وسائط تجريبية بدون صور',sourceNote:'في Test 17 أزيلت صور المنتجات عمداً لتقييم جودة الواجهة بشكل مستقل، وتُعرض الأسطح برسوم SVG نظيفة.',
-    imageSources:'سياسة ومصادر الوسائط',brandIntro:'تعريف المنتج',
-    productionTitle:'طلب إنتاج',productionHelp:'مسار تدريجي لاختيار نوع الإنتاج والفئة والمواصفات.',
-    favoriteTitle:'المفضلة',favoriteHelp:'قائمة المنتجات التي اخترتها.',emptyFavorites:'لم تضف أي منتج بعد.',
-    account:'الحساب والمتابعة',accountHelp:'الطلبات والخط الزمني والمفضلة وإدارة العملاء.',
-    tapImage:'اضغط لتكبير الصورة',loginTitle:'تسجيل الدخول',username:'اسم المستخدم',password:'كلمة المرور',signIn:'دخول',demoHint:'تجريبي: المدير 1/1 · العميل 2/2',invalidLogin:'اسم المستخدم أو كلمة المرور التجريبية غير صحيحة.',google:'الدخول عبر Google',magicLink:'الدخول برابط خاص',
-  },
-  en: {
-    home:'Home',products:'Products',production:'Production',favorites:'Favorites',tracking:'Tracking',
-    login:'Sign in',logout:'Sign out',manufacturer:'Garment production & export',language:'Language',
-    productsTitle:'Products',productsHelp:'Choose a category and subcategory, then compare products.',
-    search:'Search by product name or code',allStatuses:'All statuses',allSubs:'All subcategories',allCategories:'All categories',categoryLabel:'Product category',subcategoryLabel:'Subcategory',statusLabel:'Status',clearFilters:'Clear filters',productCount:'products',desktopFilterHelp:'Filters stay in the side rail so product browsing remains uninterrupted.',
-    available:'Available',unavailable:'Unavailable',madeToOrder:'Made to order',
-    whatsapp:'WhatsApp',order:'Order',favorite:'Favorite',details:'Specs',
-    recommended:'Recommended products',allProducts:'All products',categories:'Product categories',
-    categoryHelp:'Three main categories and six clear subcategories.',
-    sourceNoteTitle:'Photo-free prototype media',sourceNote:'Test 17 intentionally removes product photography so the UI can be judged independently, using clean SVG placeholders instead.',
-    imageSources:'Media policy & sources',brandIntro:'Manufacturer profile',
-    productionTitle:'Production request',productionHelp:'A guided flow for production type, category, subcategory and specifications.',
-    favoriteTitle:'Favorites',favoriteHelp:'Products you want to keep for later.',emptyFavorites:'No favorite products yet.',
-    account:'Account & tracking',accountHelp:'Orders, timeline, favorites and customer management.',
-    tapImage:'Tap image to enlarge',loginTitle:'Sign in to your account',username:'Username',password:'Password',signIn:'Sign in',demoHint:'Demo: admin 1/1 · customer 2/2',invalidLogin:'The demo username or password is incorrect.',google:'Continue with Google',magicLink:'Sign in with private link',
-  },
-  ku: {
-    home:'ماڵەوە',products:'بەرهەمەکان',production:'داواکاری بەرهەم',favorites:'دڵخوازەکان',tracking:'بەدواداچوون',
-    login:'چوونەژوورەوە',logout:'چوونەدەرەوە',manufacturer:'بەرهەمهێنان و هەناردەی جل و بەرگ',language:'زمان',
-    productsTitle:'بەرهەمەکان',productsHelp:'پۆل و ژێرپۆل هەڵبژێرە و بەرهەمەکان بەراورد بکە.',
-    search:'گەڕان بە ناو یان کۆد',allStatuses:'هەموو دۆخەکان',allSubs:'هەموو ژێرپۆلەکان',allCategories:'هەموو پۆلەکان',categoryLabel:'پۆلی بەرهەم',subcategoryLabel:'ژێرپۆل',statusLabel:'دۆخ',clearFilters:'پاککردنەوەی فلتەرەکان',productCount:'بەرهەم',desktopFilterHelp:'فلتەرەکان لە ستوونی لاوەکی دەمێننەوە بۆ ئەوەی گەڕان لە بەرهەمەکان نەوەستێت.',
-    available:'بەردەست',unavailable:'بەردەست نییە',madeToOrder:'بۆ بەرهەمهێنان',
-    whatsapp:'واتساپ',order:'داواکاری',favorite:'دڵخواز',details:'تایبەتمەندی',
-    recommended:'بەرهەمی پێشنیارکراو',allProducts:'هەموو بەرهەمەکان',categories:'پۆلەکانی بەرهەم',
-    categoryHelp:'سێ پۆلی سەرەکی و شەش ژێرپۆلی ڕوون.',
-    sourceNoteTitle:'میدیای تاقیکردنەوە بەبێ وێنە',sourceNote:'لە Test 17 وێنەی بەرهەم بە ئەنقەست لابراوە بۆ ئەوەی کوالێتی UI بە سەربەخۆیی هەڵبسەنگێندرێت و SVG پاک بەکاربهێنرێت.',
-    imageSources:'سیاسەت و سەرچاوەی میدیا',brandIntro:'ناساندنی بەرهەمهێنەر',
-    productionTitle:'داواکاری بەرهەمهێنان',productionHelp:'ڕێگای هەنگاو بە هەنگاو بۆ جۆری بەرهەمهێنان و تایبەتمەندی.',
-    favoriteTitle:'دڵخوازەکان',favoriteHelp:'لیستی بەرهەمە هەڵبژێردراوەکانت.',emptyFavorites:'هێشتا بەرهەمێکت زیاد نەکردووە.',
-    account:'هەژمار و بەدواداچوون',accountHelp:'داواکاری، هێڵی کات، دڵخوازەکان و بەڕێوەبردنی کڕیار.',
-    tapImage:'بۆ گەورەکردنەوە وێنەکە بکەوە',loginTitle:'چوونەژوورەوەی هەژمار',username:'ناوی بەکارهێنەر',password:'وشەی نهێنی',signIn:'چوونەژوورەوە',demoHint:'نموونە: بەڕێوەبەر 1/1 · کڕیار 2/2',invalidLogin:'ناوی بەکارهێنەر یان وشەی نهێنی هەڵەیە.',google:'چوونەژوورەوە بە Google',magicLink:'چوونەژوورەوە بە لینکی تایبەت',
-  },
-} as const
-
-type MessageKey=keyof typeof messages.fa
+function readOverrides(): Record<Locale,TranslationMap> {
+  try {
+    const raw=localStorage.getItem(OVERRIDE_KEY)
+    if(!raw)return {fa:{},ar:{},en:{},ku:{}}
+    const parsed=JSON.parse(raw) as Partial<Record<Locale,TranslationMap>>
+    return {fa:parsed.fa??{},ar:parsed.ar??{},en:parsed.en??{},ku:parsed.ku??{}}
+  } catch {
+    return {fa:{},ar:{},en:{},ku:{}}
+  }
+}
 
 export const useLocaleStore=defineStore('locale',()=>{
   const locale=ref<Locale>('fa')
   const initialized=ref(false)
-  const direction=computed(()=>'en'===locale.value?'ltr':'rtl')
+  const overrides=ref<Record<Locale,TranslationMap>>(readOverrides())
+  const direction=computed<'ltr'|'rtl'>(()=>locale.value==='en'?'ltr':'rtl')
   const htmlLang=computed(()=>locale.value==='ku'?'ckb':locale.value)
 
   function apply(){
     document.documentElement.lang=htmlLang.value
     document.documentElement.dir=direction.value
+    document.documentElement.dataset.locale=locale.value
   }
+
   function setManual(value:Locale){
     locale.value=value
     localStorage.setItem(MANUAL_KEY,value)
     apply()
   }
+
   async function initialize(){
     const manual=localStorage.getItem(MANUAL_KEY)
     if(manual==='fa'||manual==='ar'||manual==='en'||manual==='ku')locale.value=manual
@@ -95,8 +52,42 @@ export const useLocaleStore=defineStore('locale',()=>{
     initialized.value=true
     apply()
   }
-  function t(key:MessageKey):string{
-    return messages[locale.value][key] ?? messages.fa[key]
+
+  function t(key:string, target:Locale=locale.value):string{
+    const custom=overrides.value[target]?.[key]?.trim()
+    return custom || baseMessages[target]?.[key] || baseMessages.fa[key] || key
   }
-  return{locale,initialized,direction,htmlLang,t,setManual,initialize}
+
+  function setOverride(target:Locale,key:string,value:string){
+    overrides.value[target]={...overrides.value[target],[key]:value}
+    localStorage.setItem(OVERRIDE_KEY,JSON.stringify(overrides.value))
+  }
+
+  function resetOverride(target:Locale,key:string){
+    const next={...overrides.value[target]}
+    delete next[key]
+    overrides.value[target]=next
+    localStorage.setItem(OVERRIDE_KEY,JSON.stringify(overrides.value))
+  }
+
+  function resetOverrides(target:Locale,keys:string[]){
+    const next={...overrides.value[target]}
+    keys.forEach(key=>delete next[key])
+    overrides.value[target]=next
+    localStorage.setItem(OVERRIDE_KEY,JSON.stringify(overrides.value))
+  }
+
+  function categoryName(code:string,fallback=''){return categoryTranslations[code]?.[locale.value] ?? fallback}
+  function categorySubtitle(code:string,fallback=''){return categorySubtitleTranslations[code]?.[locale.value] ?? fallback}
+  function subcategoryName(code:string,fallback=''){return subcategoryTranslations[code]?.[locale.value] ?? fallback}
+  function productName(code:string,fallback=''){return productNameTranslations[code]?.[locale.value] ?? fallback}
+  function specLabel(label:string){return specTranslations[label]?.[locale.value] ?? label}
+
+  return{
+    locale,initialized,direction,htmlLang,overrides,
+    t,setManual,initialize,apply,
+    setOverride,resetOverride,resetOverrides,
+    categoryName,categorySubtitle,subcategoryName,productName,specLabel,
+    baseMessages,translationGroups,
+  }
 })
