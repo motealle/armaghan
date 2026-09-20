@@ -9,7 +9,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css" />
     <link rel="icon" href="../../logo.png" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <title>ارمغان | Test 15 — Digikala Media & Lightbox</title>
+    <title>ارمغان | Test 16 — Adaptive Commerce</title>
+      <script>
+      (() => {
+        try {
+          const saved=localStorage.getItem('armaghan:test16:theme') || 'system';
+          const dark=saved==='dark' || (saved==='system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark',dark);
+          document.documentElement.dataset.theme=dark?'dark':'light';
+          document.documentElement.style.colorScheme=dark?'dark':'light';
+        } catch {}
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>
