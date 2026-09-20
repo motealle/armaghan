@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ClipboardList, Grid2X2, Heart, House, LogIn, LogOut, Menu, UserRound, WandSparkles } from '@lucide/vue'
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
@@ -8,11 +8,10 @@ import type { Locale } from '@/services/localeDetection'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 import MobileMenuDrawer from './MobileMenuDrawer.vue'
 
-const emit=defineEmits<{login:[];help:[];designlab:[]}>()
+const emit=defineEmits<{login:[];help:[]}>()
 const session=useSessionStore()
 const locale=useLocaleStore()
 const route=useRoute()
-const timer=ref<number|null>(null)
 const mobileMenuOpen=ref(false)
 
 const navItems=computed(()=>[
@@ -23,20 +22,13 @@ const navItems=computed(()=>[
   {to:'/tracking',label:locale.t('tracking'),icon:ClipboardList},
 ])
 function active(path:string){return path==='/'?route.path==='/':route.path.startsWith(path)}
-function startLongPress(){stopLongPress();timer.value=window.setTimeout(()=>emit('designlab'),3000)}
-function stopLongPress(){if(timer.value)window.clearTimeout(timer.value);timer.value=null}
 function logout(){session.logout()}
 function changeLanguage(event:Event){locale.setManual((event.target as HTMLSelectElement).value as Locale)}
-onBeforeUnmount(stopLongPress)
 </script>
 
 <template>
   <header
     class="sticky top-0 z-[90] border-b border-white/10 bg-[var(--c-primary)] text-white shadow-sm"
-    @pointerdown.passive="startLongPress"
-    @pointerup.passive="stopLongPress"
-    @pointercancel.passive="stopLongPress"
-    @pointerleave.passive="stopLongPress"
   >
     <div class="app-header-layout mx-auto flex max-w-[1440px] items-center gap-2 px-3 py-2.5 lg:grid lg:grid-cols-[auto_1fr_auto] lg:px-5">
       <RouterLink to="/" class="flex min-w-0 items-center gap-2.5" @pointerdown.stop>
