@@ -69,6 +69,8 @@ export const useLocaleStore=defineStore('locale',()=>{
     if(product)return productNameTranslations[product[1]]?.[target]??''
     const spec=key.match(/^spec\.(.+)$/)
     if(spec)return specTranslations[spec[1]]?.[target]??''
+    const status=key.match(/^status\.(.+)$/)
+    if(status)return orderStatusTranslations[status[1]]?.[target]??''
     return baseMessages.fa[key]??key
   }
 
@@ -101,7 +103,7 @@ export const useLocaleStore=defineStore('locale',()=>{
   function subcategoryName(code:string,fallback=''){return t(`subcategory.${code}`)||fallback}
   function productName(code:string,fallback=''){return t(`product.${code}`)||fallback}
   function specLabel(label:string){return t(`spec.${label}`)||label}
-  function orderStatus(label:string){return orderStatusTranslations[label]?.[locale.value] ?? label}
+  function orderStatus(label:string){return t(`status.${label}`)||label}
 
   return{
     locale,initialized,direction,htmlLang,overrides,
