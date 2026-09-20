@@ -11,7 +11,7 @@ const whatsapp = ref<Product | null>(null)
 </script>
 
 <template>
-  <div class="grid grid-cols-2 gap-3 md:grid-cols-3">
+  <div class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
     <ProductCard
       v-for="product in products"
       :key="product.id"
