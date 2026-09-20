@@ -47,7 +47,7 @@ onBeforeUnmount(stopLongPress)
         </div>
       </RouterLink>
 
-      <nav class="hidden lg:flex lg:items-center lg:justify-self-center lg:gap-1" aria-label="ناوبری اصلی">
+      <nav class="hidden lg:flex lg:items-center lg:justify-self-center lg:gap-1" :aria-label="locale.t('mainNavigation')">
         <RouterLink
           v-for="item in navItems"
           :key="item.to"
@@ -67,7 +67,7 @@ onBeforeUnmount(stopLongPress)
         <button
           type="button"
           class="mobile-menu-trigger lg:hidden"
-          aria-label="باز کردن منو"
+          :aria-label="locale.t('openMenu')"
           @pointerdown.stop
           @click.stop="mobileMenuOpen=true"
         >
@@ -96,7 +96,7 @@ onBeforeUnmount(stopLongPress)
         <template v-else>
           <span class="hidden items-center gap-1.5 text-xs font-bold text-white/80 xl:inline-flex">
             <UserRound :size="17"/>
-            {{session.impersonatedCustomerId?'مدیر ← مشتری':session.isAdmin?'مدیر':'مشتری'}}
+            {{session.impersonatedCustomerId?locale.t('impersonationRole'):session.isAdmin?locale.t('adminRole'):locale.t('customerRole')}}
           </span>
           <button class="header-action hidden lg:inline-flex" :aria-label="locale.t('logout')" @pointerdown.stop @click.stop="logout">
             <LogOut :size="17"/><span>{{locale.t('logout')}}</span>
