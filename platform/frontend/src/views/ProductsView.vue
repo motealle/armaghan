@@ -23,7 +23,7 @@ const filtered=computed(()=>catalog.items.filter(product=>{
   if(subcategory.value!=='all'&&product.subcategoryCode!==subcategory.value)return false
   if(availability.value!=='all'&&product.availability!==availability.value)return false
   const needle=query.value.trim().toLowerCase()
-  return !needle||(`${product.name} ${product.code} ${product.subcategoryName}`).toLowerCase().includes(needle)
+  return !needle||(`${locale.productName(product.code,product.name)} ${product.code} ${locale.subcategoryName(product.subcategoryCode,product.subcategoryName)}`).toLowerCase().includes(needle)
 }))
 const activeCount=computed(()=>Number(category.value!=='all')+Number(subcategory.value!=='all')+Number(availability.value!=='all')+Number(Boolean(query.value.trim())))
 function resetFilters(){category.value='all';subcategory.value='all';availability.value='all';query.value=''}
@@ -69,7 +69,7 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
     </div>
 
     <!-- Desktop becomes a commerce workspace: stable facet rail + broad product canvas. -->
-    <div class="mt-5 lg:grid lg:grid-cols-[15.5rem_minmax(0,1fr)] lg:items-start lg:gap-5">
+    <div class="commerce-layout mt-5 lg:grid lg:grid-cols-[15.5rem_minmax(0,1fr)] lg:items-start lg:gap-5">
       <aside class="desktop-filter-panel hidden rounded-2xl p-3 lg:block lg:sticky lg:top-[5.25rem]">
         <label class="mb-4 flex min-h-11 items-center gap-2 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3">
           <Search :size="17" class="shrink-0 text-[var(--c-muted)]"/>
@@ -107,7 +107,7 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
         </div>
       </aside>
 
-      <div class="min-w-0">
+      <div class="commerce-content min-w-0">
         <div class="mb-3 hidden items-center justify-between rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-4 py-3 text-xs lg:flex">
           <span class="font-bold text-[var(--c-text)]">{{filtered.length}} {{locale.t('productCount')}}</span>
           <span class="text-[var(--c-muted)]">{{locale.t('desktopFilterHelp')}}</span>
