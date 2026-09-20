@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { browserLocale, detectInitialLocale, type Locale } from '@/services/localeDetection'
+import { detectInitialLocale, type Locale } from '@/services/localeDetection'
 
 const MANUAL_KEY='armaghan:locale:manual'
 
@@ -74,7 +74,7 @@ const messages = {
 type MessageKey=keyof typeof messages.fa
 
 export const useLocaleStore=defineStore('locale',()=>{
-  const locale=ref<Locale>(browserLocale())
+  const locale=ref<Locale>('fa')
   const initialized=ref(false)
   const direction=computed(()=>'en'===locale.value?'ltr':'rtl')
   const htmlLang=computed(()=>locale.value==='ku'?'ckb':locale.value)
