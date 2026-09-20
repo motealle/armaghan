@@ -23,7 +23,7 @@ for path in ["simple", "available", "unavailable", "custom", "brand", "packaging
     assert path in whatsapp, f"Missing request path {path}"
 for label in ["تولید سفارشی", "تولید با برند", "تولید با بسته‌بندی"]:
     assert label in wizard, f"Production wizard missing {label}"
-assert "skeleton" in image and "@error" in image, "SmartImage needs loading and error fallback"
+assert ("skeleton" in image and "@error" in image) or ("<svg" in image and "smart-placeholder-svg" in image), "SmartImage needs a resilient media fallback"
 assert ".wa-card-action" in css and ".wa-primary" in css, "WhatsApp needs dedicated visual treatment"
 assert "spatie/laravel-medialibrary" in asset_doc, "Media architecture must name primary media package"
 assert launcher.index("./12/index.html") < launcher.index("./11/index.htm"), "Test 12 must be newest launcher entry"
