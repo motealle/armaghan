@@ -34,7 +34,7 @@ function changeLanguage(event:Event){locale.setManual((event.target as HTMLSelec
       <RouterLink to="/" class="flex min-w-0 items-center gap-2.5" @pointerdown.stop>
         <img class="h-10 w-10 shrink-0 rounded-xl bg-white/10 object-cover" :src="'../../logo.png'" alt="Armaghan" />
         <div class="min-w-0">
-          <b class="block text-sm">ارمغان</b>
+          <b class="block text-sm">{{locale.t('brandName')}}</b>
           <span class="hidden truncate text-[10px] text-white/70 lg:block">{{locale.t('manufacturer')}}</span>
         </div>
       </RouterLink>
