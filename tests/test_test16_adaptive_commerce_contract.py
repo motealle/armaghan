@@ -29,7 +29,7 @@ assert "lg:hidden" in bottom, "Mobile/tablet bottom navigation must remain but h
 assert "xl:grid-cols-4" in grid
 assert "hidden lg:block" in products and "sticky" in products, "Desktop filter sidebar required"
 assert "rounded-[.75rem]" in card or "border-radius:.75rem" in css
-assert "tone="white"" in card
+assert 'tone="white"' in card
 assert "favorite-heart active" not in card, "Favorite should not recolor its container"
 assert "@keyframes favorite-heartbeat" in css
 assert "object-contain" in media
