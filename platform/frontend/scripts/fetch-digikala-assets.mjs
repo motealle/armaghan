@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import { mkdir, rm, writeFile } from 'node:fs/promises'
+import { mkdir, rename, rm, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { execFileSync } from 'node:child_process'
 
 const HERE=path.dirname(fileURLToPath(import.meta.url))
 const FRONTEND=path.resolve(HERE,'..')
@@ -19,25 +20,26 @@ const groups=[
   {sub:'32',query:'ست ورزشی زنانه پوشیده',codes:['32001','32002','32003']},
 ]
 
-const headers={
-  'Accept':'application/json',
-  'User-Agent':'Mozilla/5.0 (compatible; ArmaghanPrototype/1.0; +https://armaghantrading.com)',
-}
+const browserUa='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 const sleep=(ms)=>new Promise(resolve=>setTimeout(resolve,ms))
 
-async function getJson(url,tries=3){
-  let last
-  for(let attempt=1;attempt<=tries;attempt++){
-    try{
-      const response=await fetch(url,{headers,redirect:'follow'})
-      if(!response.ok)throw new Error(`${response.status} ${response.statusText}`)
-      return await response.json()
-    }catch(error){
-      last=error
-      await sleep(350*attempt)
-    }
+function curlText(url, accept='application/json'){
+  try{
+    return execFileSync('curl',[
+      '--fail','--silent','--show-error','--location','--max-redirs','12',
+      '--retry','3','--retry-delay','1','--retry-all-errors',
+      '--connect-timeout','15','--max-time','60',
+      '--user-agent',browserUa,'--header',`Accept: ${accept}`,url,
+    ],{encoding:'utf8',maxBuffer:32*1024*1024})
+  }catch(error){
+    throw new Error(`curl failed for ${url}: ${error?.message??error}`)
   }
-  throw last
+}
+
+async function getJson(url){
+  const text=curlText(url,'application/json')
+  try{return JSON.parse(text)}
+  catch(error){throw new Error(`Invalid JSON from ${url}: ${error?.message??error}`)}
 }
 
 function productUrl(product,id){
@@ -62,25 +64,39 @@ function imageUrls(product){
   return urls
 }
 
-function extension(contentType,url){
-  const type=(contentType??'').toLowerCase()
-  if(type.includes('webp'))return 'webp'
-  if(type.includes('png'))return 'png'
-  if(type.includes('avif'))return 'avif'
-  if(type.includes('jpeg')||type.includes('jpg'))return 'jpg'
-  const match=new URL(url).pathname.toLowerCase().match(/\.(webp|png|avif|jpe?g)$/)
-  return match ? (match[1]==='jpeg'?'jpg':match[1]) : 'jpg'
+function extensionFromUrl(url){
+  try{
+    const pathname=new URL(url).pathname.toLowerCase()
+    const match=pathname.match(/\.(webp|png|avif|jpe?g)$/)
+    if(match)return match[1]==='jpeg'?'jpg':match[1]
+  }catch{}
+  return 'jpg'
 }
 
 async function download(url,basename){
-  const response=await fetch(url,{headers:{'User-Agent':headers['User-Agent'],'Accept':'image/avif,image/webp,image/*,*/*;q=0.8'},redirect:'follow'})
-  if(!response.ok)throw new Error(`image ${response.status}: ${url}`)
-  const bytes=Buffer.from(await response.arrayBuffer())
-  if(bytes.length<3000)throw new Error(`image too small (${bytes.length} bytes): ${url}`)
-  const ext=extension(response.headers.get('content-type'),response.url||url)
+  const ext=extensionFromUrl(url)
   const filename=`${basename}.${ext}`
-  await writeFile(path.join(PUBLIC_DIR,filename),bytes)
-  return {filename,path:`./images/digikala/${filename}`,bytes:bytes.length,contentType:response.headers.get('content-type')||''}
+  const target=path.join(PUBLIC_DIR,filename)
+  const temp=target+'.part'
+  try{
+    execFileSync('curl',[
+      '--fail','--silent','--show-error','--location','--max-redirs','12',
+      '--retry','3','--retry-delay','1','--retry-all-errors',
+      '--connect-timeout','15','--max-time','90',
+      '--user-agent',browserUa,
+      '--header','Accept: image/avif,image/webp,image/*,*/*;q=0.8',
+      '--output',temp,url,
+    ],{stdio:['ignore','inherit','pipe'],maxBuffer:8*1024*1024})
+  }catch(error){
+    throw new Error(`image curl failed for ${url}: ${error?.stderr?.toString?.()||error?.message||error}`)
+  }
+  const info=await stat(temp)
+  if(info.size<3000){
+    await rm(temp,{force:true})
+    throw new Error(`image too small (${info.size} bytes): ${url}`)
+  }
+  await rename(temp,target)
+  return {filename,path:`./images/digikala/${filename}`,bytes:info.size,contentType:''}
 }
 
 async function search(query){
