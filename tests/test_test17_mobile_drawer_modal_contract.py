@@ -25,7 +25,7 @@ assert "mobile-drawer-backdrop" in drawer and "mobile-drawer-panel" in drawer
 assert "locale.setManual" in drawer
 assert "session.logout" in drawer
 assert "emit('login')" in drawer
-assert "v-for="item in modes"" not in theme
+assert 'v-for="item in modes"' not in theme
 assert "theme.setMode" in theme and "cycle" in theme
 assert "BaseModal" in login and "BaseSheet" not in login
 assert 'role="dialog"' in modal and 'aria-modal="true"' in modal
