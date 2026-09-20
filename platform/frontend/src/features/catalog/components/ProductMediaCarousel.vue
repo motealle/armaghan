@@ -130,7 +130,7 @@ onBeforeUnmount(()=>{
 <template>
   <div
     ref="root"
-    class="product-media relative overflow-hidden bg-gradient-to-br from-emerald-50 via-slate-100 to-indigo-50"
+    class="product-media relative overflow-hidden bg-[var(--c-media-bg)]"
     @mouseenter="paused=true"
     @mouseleave="paused=false"
     @focusin="paused=true"
@@ -153,19 +153,29 @@ onBeforeUnmount(()=>{
       </div>
       <template v-for="(src,index) in images" :key="src">
         <div v-if="!loaded[index] && !failed[index] && index===active" class="skeleton absolute inset-0 z-10" />
-        <img
-          v-if="!failed[index]"
-          :src="src"
-          :alt="index===active ? product.name : ''"
-          class="absolute inset-0 z-20 h-full w-full object-cover transition-opacity duration-500"
-          :class="index===active&&loaded[index]?'opacity-100':'pointer-events-none opacity-0'"
-          :loading="index===0?'eager':'lazy'"
-          draggable="false"
-          @load="markLoaded(index)"
-          @error="markFailed(index)"
-        />
+        <template v-if="!failed[index]">
+          <img
+            :src="src"
+            alt=""
+            aria-hidden="true"
+            class="absolute inset-0 z-[12] h-full w-full scale-110 object-cover opacity-0 blur-2xl transition-opacity duration-500"
+            :class="index===active&&loaded[index]?'opacity-20':'pointer-events-none opacity-0'"
+            :loading="index===0?'eager':'lazy'"
+            draggable="false"
+          />
+          <img
+            :src="src"
+            :alt="index===active ? product.name : ''"
+            class="absolute inset-0 z-20 h-full w-full object-contain p-2.5 transition-opacity duration-500 sm:p-3"
+            :class="index===active&&loaded[index]?'opacity-100':'pointer-events-none opacity-0'"
+            :loading="index===0?'eager':'lazy'"
+            draggable="false"
+            @load="markLoaded(index)"
+            @error="markFailed(index)"
+          />
+        </template>
       </template>
-      <span class="absolute bottom-2 end-2 z-30 grid h-8 w-8 place-items-center rounded-full bg-slate-950/60 text-white opacity-90 backdrop-blur-sm transition group-hover:bg-slate-950/75">
+      <span class="absolute bottom-2 end-2 z-30 grid h-8 w-8 place-items-center rounded-lg bg-slate-950/60 text-white opacity-90 backdrop-blur-md transition group-hover:bg-slate-950/75">
         <Maximize2 :size="16" />
       </span>
     </button>
