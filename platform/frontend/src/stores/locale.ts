@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { detectInitialLocale, type Locale } from '@/services/localeDetection'
 import {
   baseMessages,
+  contentTranslationGroups,
   categorySubtitleTranslations,
   categoryTranslations,
   productNameTranslations,
@@ -54,9 +55,26 @@ export const useLocaleStore=defineStore('locale',()=>{
     apply()
   }
 
-  function t(key:string, target:Locale=locale.value):string{
+  function baseValue(key:string,target:Locale=locale.value):string{
+    const direct=baseMessages[target]?.[key]
+    if(direct!==undefined)return direct
+    const category=key.match(/^category\.([^.]*)\.(name|subtitle)$/)
+    if(category){
+      const [,code,field]=category
+      return field==='name'?(categoryTranslations[code]?.[target]??''):(categorySubtitleTranslations[code]?.[target]??'')
+    }
+    const subcategory=key.match(/^subcategory\.(.+)$/)
+    if(subcategory)return subcategoryTranslations[subcategory[1]]?.[target]??''
+    const product=key.match(/^product\.(.+)$/)
+    if(product)return productNameTranslations[product[1]]?.[target]??''
+    const spec=key.match(/^spec\.(.+)$/)
+    if(spec)return specTranslations[spec[1]]?.[target]??''
+    return baseMessages.fa[key]??key
+  }
+
+  function t(key:string,target:Locale=locale.value):string{
     const custom=overrides.value[target]?.[key]?.trim()
-    return custom || baseMessages[target]?.[key] || baseMessages.fa[key] || key
+    return custom||baseValue(key,target)
   }
 
   function setOverride(target:Locale,key:string,value:string){
@@ -78,18 +96,18 @@ export const useLocaleStore=defineStore('locale',()=>{
     localStorage.setItem(OVERRIDE_KEY,JSON.stringify(overrides.value))
   }
 
-  function categoryName(code:string,fallback=''){return categoryTranslations[code]?.[locale.value] ?? fallback}
-  function categorySubtitle(code:string,fallback=''){return categorySubtitleTranslations[code]?.[locale.value] ?? fallback}
-  function subcategoryName(code:string,fallback=''){return subcategoryTranslations[code]?.[locale.value] ?? fallback}
-  function productName(code:string,fallback=''){return productNameTranslations[code]?.[locale.value] ?? fallback}
-  function specLabel(label:string){return specTranslations[label]?.[locale.value] ?? label}
+  function categoryName(code:string,fallback=''){return t(`category.${code}.name`)||fallback}
+  function categorySubtitle(code:string,fallback=''){return t(`category.${code}.subtitle`)||fallback}
+  function subcategoryName(code:string,fallback=''){return t(`subcategory.${code}`)||fallback}
+  function productName(code:string,fallback=''){return t(`product.${code}`)||fallback}
+  function specLabel(label:string){return t(`spec.${label}`)||label}
   function orderStatus(label:string){return orderStatusTranslations[label]?.[locale.value] ?? label}
 
   return{
     locale,initialized,direction,htmlLang,overrides,
-    t,setManual,initialize,apply,
+    t,baseValue,setManual,initialize,apply,
     setOverride,resetOverride,resetOverrides,
     categoryName,categorySubtitle,subcategoryName,productName,specLabel,orderStatus,
-    baseMessages,translationGroups,
+    baseMessages,translationGroups:[...translationGroups,...contentTranslationGroups],
   }
 })
