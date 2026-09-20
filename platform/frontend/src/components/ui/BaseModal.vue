@@ -9,7 +9,7 @@ let previousFocus:HTMLElement|null=null
 const focusable='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
 
 function controls(){return panelRef.value?Array.from(panelRef.value.querySelectorAll<HTMLElement>(focusable)):[]}
-function focusFirst(){(controls()[0]??panelRef.value)?.focus({preventScroll:true})}
+function focusFirst(){const preferred=panelRef.value?.querySelector<HTMLElement>('[autofocus]');(preferred??controls()[0]??panelRef.value)?.focus({preventScroll:true})}
 function onKey(event:KeyboardEvent){
   if(!props.open)return
   if(event.key==='Escape'){event.preventDefault();emit('close');return}
@@ -32,7 +32,7 @@ watch(()=>props.open,async(open,wasOpen)=>{
     if(wasOpen){await nextTick();previousFocus?.focus({preventScroll:true});previousFocus=null}
   }
 },{immediate:true})
-onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener('keydown',onKey)})
+onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener('keydown',onKey);if(props.open)previousFocus?.focus({preventScroll:true})})
 </script>
 
 <template>
