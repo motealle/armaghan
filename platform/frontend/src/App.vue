@@ -30,8 +30,7 @@ onMounted(async()=>{
   design.apply()
   await locale.initialize()
   const magic=new URLSearchParams(location.search).get('magic')
-  if(magic==='customer-demo-token'){
-    session.login('2','2')
+  if(magic&&session.consumeMagicLink(magic)){
     location.hash='#/tracking'
   }
 })
