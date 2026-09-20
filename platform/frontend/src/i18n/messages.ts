@@ -163,3 +163,12 @@ export const orderStatusTranslations: Record<string,Record<Locale,string>> = {
   'آماده ارسال':{fa:'آماده ارسال',ar:'جاهز للشحن',en:'Ready to ship',ku:'ئامادەی ناردن'},
   'بدون مرحله فعال':{fa:'بدون مرحله فعال',ar:'لا توجد مرحلة نشطة',en:'No active stage',ku:'هەنگاوی چالاک نییە'},
 }
+
+export const contentTranslationGroups: Array<{id:string;labelKey:string;keys:string[]}> = [
+  {id:'category-content',labelKey:'categories',keys:[
+    ...Object.keys(categoryTranslations).flatMap(code=>[`category.${code}.name`,`category.${code}.subtitle`]),
+    ...Object.keys(subcategoryTranslations).map(code=>`subcategory.${code}`),
+  ]},
+  {id:'product-content',labelKey:'products',keys:Object.keys(productNameTranslations).map(code=>`product.${code}`)},
+  {id:'spec-content',labelKey:'details',keys:Object.keys(specTranslations).map(key=>`spec.${key}`)},
+]
