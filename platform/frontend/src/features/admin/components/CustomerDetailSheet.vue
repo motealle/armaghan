@@ -67,12 +67,28 @@ async function copy(){
         <label class="form-field">{{locale.t('fullName')}}<input v-model="draft.name"/></label>
         <label class="form-field">{{locale.t('email')}}<input v-model="draft.email" type="email"/></label>
         <label class="form-field">WhatsApp<input v-model="draft.whatsapp" dir="ltr"/></label>
-        <label class="form-field">{{locale.t('country')}}<div class="grid grid-cols-[4.5rem_1fr] gap-2"><input v-model="draft.flag" aria-label="flag"/><input v-model="draft.country"/></div></label>
+        <label class="form-field">{{locale.t('country')}}<div class="grid grid-cols-[4.5rem_1fr] gap-2"><input v-model="draft.flag" :aria-label="locale.t('country')"/><input v-model="draft.country"/></div></label>
         <label class="form-field md:col-span-2">{{locale.t('address')}}<input v-model="draft.address"/></label>
         <label class="form-field md:col-span-2">{{locale.t('location')}}<input v-model="draft.location"/></label>
         <label class="form-field">{{locale.t('previousOrders')}}<input v-model.number="draft.orderCount" type="number" min="0"/></label>
-        <label class="form-field">{{locale.t('currentOrder')}}<input v-model="draft.activeOrder"/></label>
-        <label class="form-field md:col-span-2">{{locale.t('timelineStage')}}<input v-model="draft.timelineStage"/></label>
+        <label class="form-field">{{locale.t('currentOrder')}}
+          <select v-model="draft.activeOrder">
+            <option value="بدون سفارش فعال">{{locale.orderStatus('بدون سفارش فعال')}}</option>
+            <option value="در حال مذاکره">{{locale.orderStatus('در حال مذاکره')}}</option>
+            <option value="در انتظار پیش‌پرداخت">{{locale.orderStatus('در انتظار پیش‌پرداخت')}}</option>
+            <option value="در حال تولید">{{locale.orderStatus('در حال تولید')}}</option>
+            <option value="آماده ارسال">{{locale.orderStatus('آماده ارسال')}}</option>
+          </select>
+        </label>
+        <label class="form-field md:col-span-2">{{locale.t('timelineStage')}}
+          <select v-model="draft.timelineStage">
+            <option value="بدون مرحله فعال">{{locale.orderStatus('بدون مرحله فعال')}}</option>
+            <option value="در حال مذاکره">{{locale.orderStatus('در حال مذاکره')}}</option>
+            <option value="تأیید پیش‌پرداخت">{{locale.orderStatus('تأیید پیش‌پرداخت')}}</option>
+            <option value="در حال تولید">{{locale.orderStatus('در حال تولید')}}</option>
+            <option value="آماده ارسال">{{locale.orderStatus('آماده ارسال')}}</option>
+          </select>
+        </label>
         <label class="form-field md:col-span-2">{{locale.t('notes')}}<textarea v-model="draft.notes" rows="4"/></label>
       </section>
 
