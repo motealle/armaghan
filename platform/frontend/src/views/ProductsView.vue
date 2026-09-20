@@ -37,7 +37,7 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
         <p class="mt-1 text-sm text-[var(--c-muted)]">{{locale.t('productsHelp')}}</p>
       </div>
       <button v-if="activeCount" class="hidden text-xs font-extrabold text-[var(--c-primary)] lg:inline-flex" @click="resetFilters">
-        پاک‌کردن فیلترها · {{activeCount}}
+        {{locale.t('clearFilters')}} · {{activeCount}}
       </button>
     </div>
 
@@ -77,9 +77,9 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
         </label>
 
         <div class="border-b border-[var(--c-border)] pb-4">
-          <div class="mb-2 text-xs font-black text-[var(--c-text)]">دسته محصول</div>
+          <div class="mb-2 text-xs font-black text-[var(--c-text)]">{{locale.t('categoryLabel')}}</div>
           <button class="desktop-filter-option" :class="{active:category==='all'}" @click="category='all';subcategory='all'">
-            <span>همه دسته‌ها</span><Check v-if="category==='all'" :size="15"/>
+            <span>{{locale.t('allCategories')}}</span><Check v-if="category==='all'" :size="15"/>
           </button>
           <button v-for="cat in categories" :key="cat.code" class="desktop-filter-option" :class="{active:category===cat.code}" @click="category=cat.code;subcategory='all'">
             <span>{{cat.name}}</span><Check v-if="category===cat.code" :size="15"/>
@@ -87,7 +87,7 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
         </div>
 
         <div v-if="subs.length" class="border-b border-[var(--c-border)] py-4">
-          <div class="mb-2 text-xs font-black text-[var(--c-text)]">زیردسته</div>
+          <div class="mb-2 text-xs font-black text-[var(--c-text)]">{{locale.t('subcategoryLabel')}}</div>
           <button class="desktop-filter-option" :class="{active:subcategory==='all'}" @click="subcategory='all'">
             <span>{{locale.t('allSubs')}}</span><Check v-if="subcategory==='all'" :size="15"/>
           </button>
@@ -97,7 +97,7 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
         </div>
 
         <div class="pt-4">
-          <label class="mb-2 block text-xs font-black text-[var(--c-text)]">وضعیت</label>
+          <label class="mb-2 block text-xs font-black text-[var(--c-text)]">{{locale.t('statusLabel')}}</label>
           <select v-model="availability" class="min-h-10 w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-xs">
             <option value="all">{{locale.t('allStatuses')}}</option>
             <option value="available">{{locale.t('available')}}</option>
@@ -109,8 +109,8 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
 
       <div class="min-w-0">
         <div class="mb-3 hidden items-center justify-between rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-4 py-3 text-xs lg:flex">
-          <span class="font-bold text-[var(--c-text)]">{{filtered.length}} محصول</span>
-          <span class="text-[var(--c-muted)]">فیلترها در ستون کناری ثابت می‌مانند تا مرور محصول قطع نشود.</span>
+          <span class="font-bold text-[var(--c-text)]">{{filtered.length}} {{locale.t('productCount')}}</span>
+          <span class="text-[var(--c-muted)]">{{locale.t('desktopFilterHelp')}}</span>
         </div>
         <ProductGrid v-if="filtered.length" :products="filtered"/>
         <div v-else class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">—</div>
