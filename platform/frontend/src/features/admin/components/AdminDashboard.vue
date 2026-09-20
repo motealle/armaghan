@@ -85,10 +85,22 @@ function impersonate(id:number){session.impersonate(id);openMenuId.value=null}
 function contactLead(id:string){
   const lead=customers.wishlistLeads.find(item=>item.id===id)
   if(!lead)return
-  if(lead.kind==='guest'){customers.queueGuestMessage(id);note.value=locale.t('guestMessage')}
-  else note.value=locale.t('contactCustomer')
+  if(lead.kind==='guest'){
+    customers.queueGuestMessage(id,locale.t('leadMessageText'))
+    note.value=locale.t('guestMessage')
+    return
+  }
+  const customer=customers.items.find(item=>item.id===lead.customerId)
+  const digits=customer?.whatsapp.replace(/\D/g,'')??''
+  if(digits.length>=8){
+    window.open(`https://wa.me/${digits}?text=${encodeURIComponent(locale.t('leadMessageText'))}`,'_blank','noopener')
+  }
+  note.value=locale.t('contactCustomer')
 }
-function inviteLead(id:string){customers.queueGuestMessage(id);note.value=locale.t('inviteAccount')}
+function inviteLead(id:string){
+  customers.queueGuestMessage(id,locale.t('inviteMessageText'))
+  note.value=locale.t('inviteAccount')
+}
 </script>
 
 <template>
