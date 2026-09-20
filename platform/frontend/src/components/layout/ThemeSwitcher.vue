@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Monitor, Moon, Sun } from '@lucide/vue'
 import { useThemeStore, type ThemeMode } from '@/stores/theme'
 
@@ -8,10 +9,25 @@ const modes:{id:ThemeMode;label:string;icon:typeof Sun}[]=[
   {id:'light',label:'روشن',icon:Sun},
   {id:'dark',label:'تیره',icon:Moon},
 ]
+const current=computed(()=>modes.find(item=>item.id===theme.mode) ?? modes[0]!)
+function cycle(){
+  const index=modes.findIndex(item=>item.id===theme.mode)
+  theme.setMode(modes[(index+1)%modes.length]!.id)
+}
 </script>
 
 <template>
-  <div class="theme-switcher" aria-label="حالت نمایش">
+  <button
+    type="button"
+    class="theme-cycle-btn lg:hidden"
+    :title="`حالت نمایش: ${current.label}`"
+    :aria-label="`حالت نمایش: ${current.label}`"
+    @click.stop="cycle"
+  >
+    <component :is="current.icon" :size="17"/>
+  </button>
+
+  <div class="theme-switcher hidden lg:flex" aria-label="حالت نمایش">
     <button
       v-for="item in modes"
       :key="item.id"
