@@ -133,7 +133,7 @@ function inviteLead(id:string){customers.queueGuestMessage(id);note.value=locale
       <div class="grid gap-4 xl:grid-cols-2">
         <section class="admin-surface rounded-2xl p-4">
           <div class="mb-3 flex items-center justify-between"><h2 class="font-black">{{locale.t('adminCustomers')}}</h2><button class="mini-action" @click="activeTab='customers'">{{locale.t('manageCustomer')}}</button></div>
-          <div class="space-y-2"><div v-for="customer in customers.items.slice(0,4)" :key="customer.id" class="overview-row"><span>{{customer.flag}}</span><b>{{customer.name}}</b><small>{{customer.activeOrder}}</small></div></div>
+          <div class="space-y-2"><div v-for="customer in customers.items.slice(0,4)" :key="customer.id" class="overview-row"><span>{{customer.flag}}</span><b>{{customer.name}}</b><small>{{locale.orderStatus(customer.activeOrder)}}</small></div></div>
         </section>
         <section class="admin-surface rounded-2xl p-4">
           <div class="mb-3 flex items-center justify-between"><h2 class="font-black">{{locale.t('adminProducts')}}</h2><button class="mini-action" @click="activeTab='products'">{{locale.t('adminProducts')}}</button></div>
