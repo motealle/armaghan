@@ -77,7 +77,7 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
             <div class="drawer-header">
               <img class="h-11 w-11 rounded-xl object-cover" :src="'../../logo.png'" alt="Armaghan" />
               <div class="min-w-0">
-                <b class="block text-sm text-[var(--c-text)]">ارمغان</b>
+                <b class="block text-sm text-[var(--c-text)]">{{locale.t('brandName')}}</b>
                 <span class="block truncate text-[11px] text-[var(--c-muted)]">{{locale.t('manufacturer')}}</span>
               </div>
               <button class="drawer-close-button" :aria-label="locale.t('close')" @click="emit('close')"><X :size="20"/></button>
