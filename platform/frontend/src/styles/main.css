@@ -47,6 +47,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .desktop-nav-link{display:inline-flex;min-height:2.65rem;align-items:center;gap:.4rem;border-radius:.75rem;padding:0 .8rem;color:rgba(255,255,255,.74);font-size:.76rem;font-weight:800;transition:background-color .15s ease,color .15s ease}
 .desktop-nav-link:hover{background:rgba(255,255,255,.08);color:#fff}
 .desktop-nav-link.active{background:#fff;color:var(--c-primary);box-shadow:0 6px 18px rgba(3,8,52,.16)}
+.theme-cycle-btn{display:grid;min-width:2.5rem;min-height:2.5rem;place-items:center;border:1px solid rgba(255,255,255,.15);border-radius:.75rem;background:rgba(255,255,255,.10);color:#fff}
 .theme-switcher{display:flex;align-items:center;border:1px solid rgba(255,255,255,.15);border-radius:.75rem;background:rgba(255,255,255,.08);padding:.18rem}
 .theme-mode-btn{display:inline-flex;min-height:2.1rem;align-items:center;justify-content:center;gap:.3rem;border-radius:.55rem;padding:0 .48rem;color:rgba(255,255,255,.68);font-size:.66rem;font-weight:800}
 .theme-mode-btn:hover{color:#fff}
