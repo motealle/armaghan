@@ -4,7 +4,7 @@ withDefaults(defineProps<{ size?: number; decorative?: boolean }>(), { size: 22,
 
 <template>
   <img
-    src="./icons/whatsapp.svg"
+    :src="'./icons/whatsapp.svg'"
     class="whatsapp-brand-icon"
     :width="size"
     :height="size"
