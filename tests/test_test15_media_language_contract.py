@@ -28,7 +28,7 @@ assert "WhatsAppIcon" in card
 assert "favorite-heart" in card
 assert "#25D366" in icon
 assert "fill="#25D366"" in icon
-assert "border-radius:.25rem" in css
+assert ".wa-card-action" in css and ".favorite-action" in css
 assert "@keyframes favorite-heartbeat" in css
 assert "dkstatics-public.digikala.com" in fetcher
 assert "deterministic-digikala-cdn-seed" in fetcher
