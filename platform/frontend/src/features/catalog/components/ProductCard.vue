@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import type { Product } from '@/types/domain'
 import { useFavoritesStore } from '@/stores/favorites'
 import { useLocaleStore } from '@/stores/locale'
+import { useDesignStore } from '@/stores/design'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import ProductMediaCarousel from './ProductMediaCarousel.vue'
 
@@ -11,7 +12,9 @@ const props=defineProps<{product:Product}>()
 const emit=defineEmits<{detail:[product:Product];whatsapp:[product:Product]}>()
 const favorites=useFavoritesStore()
 const locale=useLocaleStore()
+const design=useDesignStore()
 const isFavorite=computed(()=>favorites.has(props.product.id))
+const compactActions=computed(()=>design.cardActionMode==='compact')
 const availabilityLabel=computed(()=>props.product.availability==='available'?locale.t('available'):props.product.availability==='unavailable'?locale.t('unavailable'):locale.t('madeToOrder'))
 const availabilityClass=computed(()=>props.product.availability==='available'?'text-emerald-700':props.product.availability==='unavailable'?'text-rose-700':'text-amber-800')
 </script>
@@ -30,23 +33,23 @@ const availabilityClass=computed(()=>props.product.availability==='available'?'t
         <span class="truncate">{{product.subcategoryCode}} · {{product.subcategoryName}}</span>
         <code class="shrink-0 rounded-md bg-[var(--c-surface-2)] px-1.5 py-1 font-sans text-[var(--c-primary)]">{{product.code}}</code>
       </div>
-      <div class="mt-3 grid grid-cols-3 gap-1.5">
-        <button class="wa-card-action rounded-[.75rem]" :aria-label="locale.t('whatsapp')" @click="emit('whatsapp',product)">
-          <WhatsAppIcon :size="27" tone="white"/>
-          <span>{{locale.t('whatsapp')}}</span>
+      <div class="card-actions mt-3 grid grid-cols-3 gap-1.5" :class="compactActions?'compact':'labeled'">
+        <button class="wa-card-action rounded-[.75rem]" :aria-label="compactActions ? 'سفارش در واتساپ' : 'سفارش'" @click="emit('whatsapp',product)">
+          <WhatsAppIcon :size="compactActions ? 22 : 27" tone="white"/>
+          <span v-if="!compactActions">سفارش</span>
         </button>
         <button class="card-action favorite-action rounded-[.75rem]" :aria-pressed="isFavorite" :aria-label="locale.t('favorite')" @click="favorites.toggle(product.id)">
           <Heart
-            :size="20"
+            :size="compactActions ? 16 : 20"
             class="favorite-heart"
             :class="{active:isFavorite}"
             :fill="isFavorite?'currentColor':'none'"
           />
-          <span>{{locale.t('favorite')}}</span>
+          <span v-if="!compactActions">{{locale.t('favorite')}}</span>
         </button>
         <button class="card-action detail-action rounded-[.75rem]" :aria-label="locale.t('details')" @click="emit('detail',product)">
-          <SlidersHorizontal :size="20" class="text-[var(--c-primary)]"/>
-          <span>{{locale.t('details')}}</span>
+          <SlidersHorizontal :size="compactActions ? 16 : 20" class="text-[var(--c-primary)]"/>
+          <span v-if="!compactActions">{{locale.t('details')}}</span>
         </button>
       </div>
     </div>
