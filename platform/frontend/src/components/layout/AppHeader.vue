@@ -8,7 +8,7 @@ import type { Locale } from '@/services/localeDetection'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 import MobileMenuDrawer from './MobileMenuDrawer.vue'
 
-const emit=defineEmits<{login:[];designlab:[]}>()
+const emit=defineEmits<{login:[];help:[];designlab:[]}>()
 const session=useSessionStore()
 const locale=useLocaleStore()
 const route=useRoute()
@@ -106,5 +106,5 @@ onBeforeUnmount(stopLongPress)
     </div>
   </header>
 
-  <MobileMenuDrawer :open="mobileMenuOpen" @close="mobileMenuOpen=false" @login="emit('login')"/>
+  <MobileMenuDrawer :open="mobileMenuOpen" @close="mobileMenuOpen=false" @login="emit('login')" @help="emit('help')"/>
 </template>
