@@ -3,7 +3,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { CircleHelp, LogIn, LogOut, X } from '@lucide/vue'
 import { useLocaleStore } from '@/stores/locale'
 import { useSessionStore } from '@/stores/session'
-import { demoCustomers } from '@/data/catalog'
+import { useCustomersStore } from '@/stores/customers'
 import type { Locale } from '@/services/localeDetection'
 import DrawerAccountDashboard from './DrawerAccountDashboard.vue'
 
@@ -11,6 +11,7 @@ const props=defineProps<{open:boolean}>()
 const emit=defineEmits<{close:[];login:[];help:[]}>()
 const locale=useLocaleStore()
 const session=useSessionStore()
+const customers=useCustomersStore()
 const panelRef=ref<HTMLElement|null>(null)
 let previousFocus:HTMLElement|null=null
 const focusable='button:not([disabled]),select:not([disabled]),input:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])'
@@ -24,13 +25,13 @@ const languages:{id:Locale;short:string;name:string;lang:string}[]=[
 
 const profile=computed(()=>{
   if(session.impersonatedCustomerId){
-    const customer=demoCustomers.find(item=>item.id===session.impersonatedCustomerId)
-    return customer ? {flag:customer.flag,name:customer.name,meta:customer.activeOrder} : {flag:'🌐',name:locale.t('customerLabel'),meta:locale.t('drawerSummary')}
+    const customer=customers.items.find(item=>item.id===session.impersonatedCustomerId)
+    return customer?{flag:customer.flag,name:customer.name,meta:locale.t('drawerSummary')}:{flag:'🌐',name:locale.t('customerLabel'),meta:locale.t('drawerSummary')}
   }
-  if(session.isAdmin)return {flag:'🇮🇷',name:locale.t('adminOverview'),meta:locale.t('drawerOperational')}
+  if(session.isAdmin)return{flag:'🇮🇷',name:locale.t('adminOverview'),meta:locale.t('drawerOperational')}
   if(session.isCustomer){
-    const customer=demoCustomers[0]!
-    return {flag:customer.flag,name:customer.name,meta:customer.activeOrder}
+    const customer=customers.items[0]
+    return customer?{flag:customer.flag,name:customer.name,meta:locale.t('drawerSummary')}:{flag:'🌐',name:locale.t('customerLabel'),meta:locale.t('drawerSummary')}
   }
   return null
 })
