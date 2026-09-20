@@ -33,6 +33,7 @@ export interface WishlistLead{
   updatedAt:string
   contactAvailable:boolean
   messagePending:boolean
+  message?:string
 }
 
 const CUSTOMER_KEY='armaghan:test19:customers'
@@ -40,10 +41,10 @@ const LEAD_KEY='armaghan:test19:wishlist-leads'
 const VISITOR_KEY='armaghan:test19:visitor-token'
 
 const seed:CustomerRecord[]=[
-  {id:1,flag:'🇮🇶',country:'Iraq',name:'Baghdad Buyer',whatsapp:'+964 7XX XXX XXXX',email:'buyer@example.test',address:'Baghdad',location:'Baghdad, Iraq',notes:'',activeOrder:'در حال تولید',orderCount:3,timelineStage:'در حال تولید',passwordSet:true,accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3600_000).toISOString()},
-  {id:2,flag:'🇦🇪',country:'UAE',name:'Dubai Trade',whatsapp:'+971 5X XXX XXXX',email:'trade@example.test',address:'Dubai',location:'Dubai, UAE',notes:'',activeOrder:'بدون سفارش فعال',orderCount:1,timelineStage:'بدون مرحله فعال',passwordSet:false,accessMode:'permanent',accessToken:'',accessExpiresAt:'',accessRevoked:false},
-  {id:3,flag:'🇹🇷',country:'Turkey',name:'Istanbul Store',whatsapp:'+90 5XX XXX XXXX',email:'store@example.test',address:'Istanbul',location:'Istanbul, Turkey',notes:'',activeOrder:'در انتظار پیش‌پرداخت',orderCount:2,timelineStage:'تأیید پیش‌پرداخت',passwordSet:true,accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3*3600_000).toISOString()},
-  {id:4,flag:'🇶🇦',country:'Qatar',name:'Doha Buyer',whatsapp:'+974 3XXX XXXX',email:'doha@example.test',address:'Doha',location:'Doha, Qatar',notes:'',activeOrder:'آماده ارسال',orderCount:4,timelineStage:'آماده ارسال',passwordSet:true,accessMode:'permanent',accessToken:'',accessExpiresAt:'',accessRevoked:false},
+  {id:1,flag:'🇮🇶',country:'Iraq',name:'Baghdad Buyer',whatsapp:'+964 7XX XXX XXXX',email:'',address:'Baghdad',location:'Baghdad, Iraq',notes:'',activeOrder:'در حال تولید',orderCount:3,timelineStage:'در حال تولید',passwordSet:true,accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3600_000).toISOString()},
+  {id:2,flag:'🇦🇪',country:'UAE',name:'Dubai Trade',whatsapp:'+971 5X XXX XXXX',email:'',address:'Dubai',location:'Dubai, UAE',notes:'',activeOrder:'بدون سفارش فعال',orderCount:1,timelineStage:'بدون مرحله فعال',passwordSet:false,accessMode:'permanent',accessToken:'',accessExpiresAt:'',accessRevoked:false},
+  {id:3,flag:'🇹🇷',country:'Turkey',name:'Istanbul Store',whatsapp:'+90 5XX XXX XXXX',email:'',address:'Istanbul',location:'Istanbul, Turkey',notes:'',activeOrder:'در انتظار پیش‌پرداخت',orderCount:2,timelineStage:'تأیید پیش‌پرداخت',passwordSet:true,accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3*3600_000).toISOString()},
+  {id:4,flag:'🇶🇦',country:'Qatar',name:'Doha Buyer',whatsapp:'+974 3XXX XXXX',email:'',address:'Doha',location:'Doha, Qatar',notes:'',activeOrder:'آماده ارسال',orderCount:4,timelineStage:'آماده ارسال',passwordSet:true,accessMode:'permanent',accessToken:'',accessExpiresAt:'',accessRevoked:false},
 ]
 
 function loadCustomers():CustomerRecord[]{
@@ -71,6 +72,11 @@ export const useCustomersStore=defineStore('customers',()=>{
   const wishlistLeads=ref<WishlistLead[]>(loadLeads())
 
   const changedWishlistCount=computed(()=>wishlistLeads.value.length)
+  const currentVisitorMessage=computed(()=>{
+    const token=localStorage.getItem(VISITOR_KEY)
+    if(!token)return null
+    return wishlistLeads.value.find(item=>item.kind==='guest'&&item.visitorToken===token&&item.messagePending&&item.message)?.message??null
+  })
   function add(input:Pick<CustomerRecord,'name'|'email'|'whatsapp'>&Partial<CustomerRecord>){
     const id=Math.max(0,...items.value.map(item=>item.id))+1
     items.value=[...items.value,{
@@ -113,12 +119,17 @@ export const useCustomersStore=defineStore('customers',()=>{
     ]
   }
   function removeLead(id:string){wishlistLeads.value=wishlistLeads.value.filter(item=>item.id!==id)}
-  function queueGuestMessage(id:string){
+  function queueGuestMessage(id:string,message=''){
     const lead=wishlistLeads.value.find(item=>item.id===id)
-    if(lead)lead.messagePending=true
+    if(lead){lead.messagePending=true;if(message)lead.message=message}
+  }
+  function clearCurrentVisitorMessage(){
+    const token=localStorage.getItem(VISITOR_KEY)
+    const lead=wishlistLeads.value.find(item=>item.kind==='guest'&&item.visitorToken===token)
+    if(lead)lead.messagePending=false
   }
 
   watch(items,value=>localStorage.setItem(CUSTOMER_KEY,JSON.stringify(value)),{deep:true})
   watch(wishlistLeads,value=>localStorage.setItem(LEAD_KEY,JSON.stringify(value)),{deep:true})
-  return{items,wishlistLeads,changedWishlistCount,add,update,remove,removeMany,setProfileImage,generateAccess,revokeAccess,recordWishlistChange,removeLead,queueGuestMessage}
+  return{items,wishlistLeads,changedWishlistCount,currentVisitorMessage,add,update,remove,removeMany,setProfileImage,generateAccess,revokeAccess,recordWishlistChange,removeLead,queueGuestMessage,clearCurrentVisitorMessage}
 })
