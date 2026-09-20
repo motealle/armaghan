@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Camera, Check, Clock3, Heart, RotateCcw } from '@lucide/vue'
+import { computed, reactive, watch } from 'vue'
+import { Camera, Check, Clock3, Heart, RotateCcw, Save } from '@lucide/vue'
 import { compressImage } from '@/features/admin/services/imageCompression'
 import { useCustomersStore } from '@/stores/customers'
 import { useLocaleStore } from '@/stores/locale'
@@ -11,18 +11,39 @@ const session=useSessionStore()
 const customers=useCustomersStore()
 const timelineKeys=['inquiryRegistered','specsApproved','prepaymentApproved','inProduction']
 const customer=computed(()=>customers.items.find(item=>item.id===(session.impersonatedCustomerId??1))??customers.items[0]??null)
+const profile=reactive({name:'',email:'',whatsapp:'',address:'',location:''})
+
+watch(customer,(row)=>{
+  if(!row)return
+  Object.assign(profile,{name:row.name,email:row.email,whatsapp:row.whatsapp,address:row.address,location:row.location})
+},{immediate:true})
+
 async function upload(event:Event){
   const file=(event.target as HTMLInputElement).files?.[0]
   if(!file||!customer.value)return
   try{customers.setProfileImage(customer.value.id,await compressImage(file))}catch{}
 }
+function saveProfile(){
+  if(!customer.value)return
+  customers.update(customer.value.id,{...profile})
+}
 </script>
 <template>
   <div class="space-y-4">
-    <section v-if="customer" class="customer-profile-head">
-      <div class="profile-photo"><img v-if="customer.profileImage" :src="customer.profileImage" alt=""><span v-else>{{customer.flag}}</span></div>
-      <div class="min-w-0 flex-1"><b class="block truncate text-base text-[var(--c-text)]">{{customer.name}}</b><span class="text-xs text-[var(--c-muted)]">{{customer.country}}</span></div>
-      <label class="mini-action cursor-pointer"><Camera :size="16"/>{{locale.t('profilePhoto')}}<input class="hidden" type="file" accept="image/*" @change="upload"></label>
+    <section v-if="customer" class="admin-surface rounded-2xl p-4">
+      <div class="customer-profile-head">
+        <div class="profile-photo"><img v-if="customer.profileImage" :src="customer.profileImage" alt=""><span v-else>{{customer.flag}}</span></div>
+        <div class="min-w-0 flex-1"><b class="block truncate text-base text-[var(--c-text)]">{{customer.name}}</b><span class="text-xs text-[var(--c-muted)]">{{customer.country}}</span></div>
+        <label class="mini-action cursor-pointer"><Camera :size="16"/>{{locale.t('profilePhoto')}}<input class="hidden" type="file" accept="image/*" @change="upload"></label>
+      </div>
+      <div class="mt-3 grid gap-2 md:grid-cols-2">
+        <label class="form-field">{{locale.t('fullName')}}<input v-model="profile.name"></label>
+        <label class="form-field">{{locale.t('email')}}<input v-model="profile.email" type="email"></label>
+        <label class="form-field">WhatsApp<input v-model="profile.whatsapp" dir="ltr"></label>
+        <label class="form-field">{{locale.t('address')}}<input v-model="profile.address"></label>
+        <label class="form-field md:col-span-2">{{locale.t('location')}}<input v-model="profile.location"></label>
+      </div>
+      <div class="mt-3 flex justify-end"><button class="mini-action bg-[var(--c-primary)] text-white" @click="saveProfile"><Save :size="15"/>{{locale.t('save')}}</button></div>
     </section>
 
     <div class="grid gap-4 md:grid-cols-2">
