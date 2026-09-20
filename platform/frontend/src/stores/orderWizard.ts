@@ -23,10 +23,10 @@ export const useOrderWizardStore = defineStore('order-wizard', () => {
     if (!path.value || !category.value || !subcategory.value || !specSource.value) return ''
     return buildProductionMessage({
       path: path.value,
-      category: category.value.name,
-      subcategory: `${subcategory.value.code} · ${subcategory.value.name}`,
-      negotiable: specSource.value.specs.negotiable,
-      locked: specSource.value.specs.locked,
+      category: locale.categoryName(category.value.code,category.value.name),
+      subcategory: `${subcategory.value.code} · ${locale.subcategoryName(subcategory.value.code,subcategory.value.name)}`,
+      negotiable: specSource.value.specs.negotiable.map(locale.specLabel),
+      locked: specSource.value.specs.locked.map(locale.specLabel),
       note: note.value,
       locale: locale.locale,
     })
