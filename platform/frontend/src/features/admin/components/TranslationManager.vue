@@ -55,7 +55,7 @@ function toggleAll(){
         <select v-model="target"><option value="fa">فارسی</option><option value="ar">العربية</option><option value="en">English</option><option value="ku">کوردی</option></select>
       </label>
       <label class="form-field">{{locale.t('translationGroup')}}
-        <select v-model="group"><option v-for="item in groups" :key="item.id" :value="item.id">{{item.label}}</option></select>
+        <select v-model="group"><option v-for="item in groups" :key="item.id" :value="item.id">{{locale.t(item.labelKey)}}</option></select>
       </label>
       <label class="form-field">{{locale.t('translationSearch')}}
         <span class="relative block"><Search :size="16" class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-[var(--c-muted)]"/><input v-model="query" class="ps-9"/></span>
