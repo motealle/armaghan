@@ -10,7 +10,7 @@ const tone=computed(()=>{
   if(props.product.subcategoryCode.startsWith('2'))return 'kids'
   return 'women'
 })
-const productName=computed(()=>locale.productName(props.product.code,props.product.name))
+const productName=computed(()=>locale.productName(props.product.code,props.product.name,props.product.names))
 const subcategoryName=computed(()=>locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName))
 </script>
 
