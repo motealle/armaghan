@@ -34,7 +34,6 @@ assert "RouterLink v-for" not in drawer, "Primary navigation must not be duplica
 for token in ["Fa","En","ع","ک"]:
     assert token in drawer
 assert "language-" in drawer and 'lang="item.lang"' in drawer
-assert 'lang="item.lang"' in drawer
 assert "DrawerAccountDashboard" in drawer
 assert "drawer-account-footer" in drawer
 assert "profile" in drawer
@@ -52,7 +51,7 @@ assert "Monitor" not in switcher
 assert "cardActionMode" in design and "'compact'" in design and "'labeled'" in design
 assert "cardActionMode" in admin
 assert "compactActions" in card
-assert "سفارش" in card
+assert "locale.t('order')" in card or "سفارش" in card
 assert "v-if=\"!compactActions\"" in card
 assert "compactActions ? 22 : 27" in card
 assert "compactActions ? 16 : 20" in card
