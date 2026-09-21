@@ -38,9 +38,9 @@ export interface WishlistLead{
   message?:string
 }
 
-const CUSTOMER_KEY='armaghan:test19:customers'
-const LEAD_KEY='armaghan:test19:wishlist-leads'
-const VISITOR_KEY='armaghan:test19:visitor-token'
+const CUSTOMER_KEY='armaghan:test20:customers'
+const LEAD_KEY='armaghan:test20:wishlist-leads'
+const VISITOR_KEY='armaghan:test20:visitor-token'
 
 const seed:CustomerRecord[]=[
   {id:1,flag:'🇮🇶',country:'Iraq',name:'Baghdad Buyer',whatsapp:'+964 7XX XXX XXXX',email:'',address:'Baghdad',location:'Baghdad, Iraq',notes:'',priorityStars:5,activeOrder:'در حال تولید',orderCount:3,timelineStage:'در حال تولید',passwordSet:true,loginPassword:'',accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3600_000).toISOString()},
