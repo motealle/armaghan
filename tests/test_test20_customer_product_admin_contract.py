@@ -81,7 +81,7 @@ assert "lockedText" in editor and "negotiableText" in editor
 assert "catalog.update" in editor and "catalog.add" in editor
 assert "function update(product: Product)" in catalog
 assert "productNameFor" in locale
-assert "custom?.[target]" in locale
+assert "custom?.[target]?.trim()" in locale
 
 # Test isolation and repo memory
 for key_file in [
