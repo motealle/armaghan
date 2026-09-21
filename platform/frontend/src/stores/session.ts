@@ -65,15 +65,15 @@ export const useSessionStore=defineStore('session',()=>{
     return true
   }
 
-  function register(name:string,email:string,password:string):{ok:boolean;reason?:'exists'|'invalid'}{
+  function register(name:string,email:string,password:string,customerId?:number):{ok:boolean;reason?:'exists'|'invalid';customerId?:number}{
     const cleanEmail=email.trim().toLowerCase()
     if(!name.trim()||!cleanEmail.includes('@')||password.length<4)return{ok:false,reason:'invalid'}
     if(accounts.value.some(item=>item.email.toLowerCase()===cleanEmail))return{ok:false,reason:'exists'}
-    const id=Math.max(0,...accounts.value.map(item=>item.id))+1
+    const id=customerId??(Math.max(1000,...accounts.value.map(item=>item.id))+1)
     accounts.value=[...accounts.value,{id,name:name.trim(),email:cleanEmail,password}]
     localStorage.setItem(ACCOUNTS_KEY,JSON.stringify(accounts.value))
     persistRole('customer',cleanEmail,id)
-    return{ok:true}
+    return{ok:true,customerId:id}
   }
 
   function createMagicLink(email:string,mode:MagicMode='expiring',hours=72):string{
