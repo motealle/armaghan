@@ -422,7 +422,7 @@ html[data-locale="en"] .hero-text{letter-spacing:0}
 }
 
 
-/* Test 25 — gray dark theme, portrait placeholder media, wizard and bidi polish */
+/* Test 25 — gray dark theme, portrait placeholder media, wizard and bidi polish */\n/* Test 25 deployment trigger: contract fix remains source-identical in behavior. */
 html.dark body{background:linear-gradient(180deg,#17181a 0,var(--c-bg) 22rem);color:var(--c-text)}
 html.dark .product-card,
 html.dark .category-card,

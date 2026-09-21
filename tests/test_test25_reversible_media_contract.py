@@ -30,7 +30,7 @@ messages=(SRC/"i18n/messages.ts").read_text(encoding="utf-8")
 assert pkg["version"]=="0.25.0"
 assert lock["version"]=="0.25.0" and lock["packages"][""]["version"]=="0.25.0"
 assert "generate:portraits" in pkg["scripts"]
-assert "generate_placeholder_portraits.py" in pkg["scripts"]["build"]
+assert "generate:portraits" in pkg["scripts"]["build"]
 assert "../../t/25" in vite
 assert "test25-build" in workflow and "path: t/25" in workflow
 assert 'os.path.isdir("t/25")' in workflow and 'os.walk("t/25")' in workflow
