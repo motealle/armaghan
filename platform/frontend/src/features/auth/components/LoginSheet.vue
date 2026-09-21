@@ -74,7 +74,7 @@ function googleInfo(){
     </div>
 
     <form v-if="mode==='signin'" class="mt-4 space-y-4" @submit.prevent="submit">
-      <label class="form-field">{{locale.t('username')}}<input v-model="username" autocomplete="username" autofocus/></label>
+      <label class="form-field">{{locale.t('loginIdentifier')}}<input v-model="username" autocomplete="username" inputmode="email" autofocus/></label>
       <label class="form-field">{{locale.t('password')}}<input v-model="password" type="password" autocomplete="current-password"/></label>
       <p v-if="error" class="auth-error">{{error}}</p>
       <button class="auth-primary"><LogIn :size="19"/>{{locale.t('signIn')}}</button>

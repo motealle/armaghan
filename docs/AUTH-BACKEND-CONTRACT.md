@@ -13,6 +13,8 @@ Test 19 exposes the final intended authentication surfaces without pretending th
 
 ## Google OAuth
 
+Step-by-step production activation: `docs/GOOGLE-OAUTH-SETUP.md`.
+
 Live Google sign-in cannot be completed safely without server-side OAuth credentials and callback handling. The frontend button must never simulate a successful Google login.
 
 Expected Laravel routes:

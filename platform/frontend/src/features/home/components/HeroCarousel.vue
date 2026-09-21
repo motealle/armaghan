@@ -34,16 +34,19 @@ onBeforeUnmount(()=>{if(timer)window.clearInterval(timer);document.removeEventLi
 </script>
 
 <template>
-  <section class="hero-shell relative overflow-hidden rounded-[1.5rem] text-white shadow-xl" @mouseenter="paused=true;start()" @mouseleave="paused=false;start()" @focusin="paused=true;start()" @focusout="paused=false;start()">
-    <SmartImage :src="slide.image" alt="" :label="slide.kicker" aspect="hero" eager/>
-    <div class="absolute inset-0 z-30 bg-gradient-to-l from-slate-950/72 via-slate-950/48 to-slate-950/16"/>
-    <div class="absolute inset-0 z-40 flex items-end p-5 md:p-9">
-      <div class="max-w-2xl">
-        <div class="mb-2 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/8 px-3 py-1 text-[10px] font-extrabold tracking-[.14em]">
+  <section class="hero-shell overflow-hidden rounded-[1.5rem] text-white shadow-xl" @mouseenter="paused=true;start()" @mouseleave="paused=false;start()" @focusin="paused=true;start()" @focusout="paused=false;start()">
+    <div class="hero-media-pane relative">
+      <SmartImage :src="slide.image" alt="" :label="slide.kicker" aspect="hero" eager/>
+      <div class="hero-media-shade absolute inset-0 z-30"/>
+    </div>
+
+    <div class="hero-copy-pane">
+      <div class="hero-copy-inner">
+        <div class="mb-2 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/8 px-3 py-1 text-[10px] font-extrabold tracking-[.12em]">
           <component :is="slide.icon" :size="15"/> {{slide.kicker}}
         </div>
-        <h1 class="text-[1.8rem] font-black leading-[1.45] md:text-[2.6rem]">{{slide.title}}</h1>
-        <p class="mt-3 max-w-xl text-sm leading-7 text-white/82 md:text-base">{{slide.text}}</p>
+        <h1 class="hero-title text-[1.75rem] font-black leading-[1.42] md:text-[2.35rem] lg:text-[clamp(2.15rem,3.1vw,3.4rem)]">{{slide.title}}</h1>
+        <p class="hero-text mt-3 max-w-xl text-sm leading-7 text-white/82 md:text-base">{{slide.text}}</p>
         <div class="mt-5 flex flex-wrap gap-2">
           <RouterLink to="/products" class="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[var(--c-accent)] px-4 font-extrabold text-slate-900">
             {{locale.t('products')}} <ArrowLeft :size="18"/>

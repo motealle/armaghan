@@ -3,11 +3,11 @@ import { computed, ref } from 'vue'
 import type { UserRole } from '@/types/domain'
 import { useCustomersStore } from '@/stores/customers'
 
-const STORAGE_KEY='armaghan:test23:role'
-const IMPERSONATION_KEY='armaghan:test23:impersonation'
-const CUSTOMER_ID_KEY='armaghan:test23:customer-id'
-const ACCOUNTS_KEY='armaghan:test23:accounts'
-const MAGIC_KEY='armaghan:test23:magic-links'
+const STORAGE_KEY='armaghan:test24:role'
+const IMPERSONATION_KEY='armaghan:test24:impersonation'
+const CUSTOMER_ID_KEY='armaghan:test24:customer-id'
+const ACCOUNTS_KEY='armaghan:test24:accounts'
+const MAGIC_KEY='armaghan:test24:magic-links'
 
 type LocalAccount={id:number;name:string;email:string;password:string}
 type MagicMode='permanent'|'expiring'
@@ -30,6 +30,10 @@ function readMagic():MagicRecord[]{
   try{return JSON.parse(localStorage.getItem(MAGIC_KEY)??'[]') as MagicRecord[]}catch{return[]}
 }
 function token(){return crypto.getRandomValues(new Uint32Array(4)).join('').slice(0,24)}
+function normalizePhone(value:string){
+  const compact=value.trim().replace(/[\s().-]/g,'')
+  return compact.startsWith('00')?('+'+compact.slice(2)):compact
+}
 
 export const useSessionStore=defineStore('session',()=>{
   const customers=useCustomersStore()
@@ -37,7 +41,7 @@ export const useSessionStore=defineStore('session',()=>{
   const impersonatedCustomerId=ref<number|null>(readImpersonation())
   const accounts=ref<LocalAccount[]>(readAccounts())
   const magicLinks=ref<MagicRecord[]>(readMagic())
-  const currentEmail=ref(sessionStorage.getItem('armaghan:test23:email')??'')
+  const currentEmail=ref(sessionStorage.getItem('armaghan:test24:email')??'')
   const currentCustomerId=ref<number|null>(Number(sessionStorage.getItem(CUSTOMER_ID_KEY))||null)
 
   const isAuthenticated=computed(()=>role.value!=='guest')
@@ -51,8 +55,8 @@ export const useSessionStore=defineStore('session',()=>{
     currentCustomerId.value=customerId
     if(next==='guest')sessionStorage.removeItem(STORAGE_KEY)
     else sessionStorage.setItem(STORAGE_KEY,next)
-    if(email)sessionStorage.setItem('armaghan:test23:email',email)
-    else sessionStorage.removeItem('armaghan:test23:email')
+    if(email)sessionStorage.setItem('armaghan:test24:email',email)
+    else sessionStorage.removeItem('armaghan:test24:email')
     if(customerId)sessionStorage.setItem(CUSTOMER_ID_KEY,String(customerId))
     else sessionStorage.removeItem(CUSTOMER_ID_KEY)
     sessionStorage.removeItem(IMPERSONATION_KEY)
@@ -62,7 +66,13 @@ export const useSessionStore=defineStore('session',()=>{
     if(username==='1'&&password==='1'){persistRole('admin');return true}
     if(username==='2'&&password==='2'){persistRole('customer','',1);return true}
     const normalized=username.trim().toLowerCase()
-    const managedCustomer=customers.items.find(item=>item.email.trim().toLowerCase()===normalized&&item.loginPassword&&item.loginPassword===password)
+    const normalizedPhone=normalizePhone(username)
+    const managedCustomer=customers.items.find(item=>{
+      if(!item.loginPassword||item.loginPassword!==password)return false
+      const emailMatches=Boolean(item.email)&&item.email.trim().toLowerCase()===normalized
+      const phoneMatches=Boolean(item.whatsapp)&&normalizePhone(item.whatsapp)===normalizedPhone
+      return emailMatches||phoneMatches
+    })
     if(managedCustomer){persistRole('customer',managedCustomer.email,managedCustomer.id);return true}
     const account=accounts.value.find(item=>item.email.toLowerCase()===normalized&&item.password===password)
     if(!account)return false

@@ -1,8 +1,29 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 23 — Image-first Categories + Low-copy Product Cards**.
-Detailed ranked UX decisions: `docs/TEST23-UX-AUDIT.md`.
+Current implementation target: **Test 24 — Responsive Commerce Polish + Admin Content Control**.
+Detailed ranked UX decisions: `docs/TEST24-UX-AUDIT.md`.
+Google OAuth setup: `docs/GOOGLE-OAUTH-SETUP.md`.
+
+## P0 — Test 24: responsive commerce polish + admin content control
+
+- [x] Freeze Test 23 and leave `/t/23` untouched.
+- [x] Show full product images with contain + same-image soft backdrop instead of destructive crop.
+- [x] Rebuild dark mode around neutral near-black layered surfaces while preserving Armaghan brand tokens and primary navbar.
+- [x] Split mobile hero into image + dedicated copy panel so copy never straddles the image/content seam.
+- [x] Use a true split hero and wider editorial composition on laptop/desktop.
+- [x] Restore Home main-category images using the same image-first card language as Products.
+- [x] Fix English category/filter LTR structure and switch English UI typography to Inter with calmer weights.
+- [x] Improve desktop spacing, category-card composition and home manufacturer/trust layout.
+- [x] Add a dedicated Admin Home Content editor using existing per-language translation overrides.
+- [x] Keep quick manual customer creation, allow email OR mobile, then open Customer 360.
+- [x] Allow managed customers to sign in with either normalized mobile/WhatsApp or email.
+- [x] Add an exact Laravel Socialite + Google Cloud activation guide without exposing secrets to Vue.
+- [x] Isolate Test 24 browser state under `armaghan:test24:*` and migrate catalog data from Test 23.
+- [x] Add a strict Test 24 source/UX contract and retain previous regression contracts.
+- [x] Build/deploy only `/public_html/t/24` plus the mutable launcher.
+- [ ] Confirm CI, FTP smoke test and live deployment of `/public_html/t/24`.
+- [ ] Record successful delivery and mark Test 24 complete.
 
 ## P0 — Test 23: Image-first categories + low-copy product cards
 

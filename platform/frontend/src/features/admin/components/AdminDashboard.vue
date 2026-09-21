@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import {
-  BellRing, Boxes, Check, Languages, LayoutDashboard, MessageCircleMore, MoreVertical,
+  BellRing, Boxes, Check, FilePenLine, Languages, LayoutDashboard, MessageCircleMore, MoreVertical,
   Plus, Trash2, UserPlus, UserRoundCog, UsersRound,
 } from '@lucide/vue'
 import CustomerDetailSheet from '@/features/admin/components/CustomerDetailSheet.vue'
 import TranslationManager from '@/features/admin/components/TranslationManager.vue'
+import HomeContentEditor from '@/features/admin/components/HomeContentEditor.vue'
 import AdminProductsPanel from '@/features/admin/components/AdminProductsPanel.vue'
 import { placeholderSets } from '@/data/productPlaceholders'
 import { useCatalogStore } from '@/stores/catalog'
@@ -14,7 +15,7 @@ import { useDesignStore } from '@/stores/design'
 import { useLocaleStore } from '@/stores/locale'
 import { useSessionStore } from '@/stores/session'
 
-type AdminTab='overview'|'customers'|'products'|'languages'
+type AdminTab='overview'|'customers'|'products'|'content'|'languages'
 const catalog=useCatalogStore()
 const customers=useCustomersStore()
 const session=useSessionStore()
@@ -31,11 +32,13 @@ const customerFormOpen=ref(false)
 const customerName=ref('')
 const customerEmail=ref('')
 const customerWhatsapp=ref('')
+const customerFormError=ref('')
 
 const tabs=computed(()=>[
   {id:'overview' as const,label:locale.t('adminOverview'),icon:LayoutDashboard},
   {id:'customers' as const,label:locale.t('adminCustomers'),icon:UsersRound},
   {id:'products' as const,label:locale.t('adminProducts'),icon:Boxes},
+  {id:'content' as const,label:locale.t('brandIntro'),icon:FilePenLine},
   {id:'languages' as const,label:locale.t('adminLanguages'),icon:Languages},
 ])
 const allCustomersSelected=computed(()=>customers.items.length>0&&selectedCustomers.value.length===customers.items.length)
@@ -47,9 +50,16 @@ function bulkDeleteCustomers(){
   customers.removeMany(selectedCustomers.value);selectedCustomers.value=[]
 }
 function addCustomer(){
-  if(!customerName.value.trim()||!customerEmail.value.trim())return
-  customers.add({name:customerName.value.trim(),email:customerEmail.value.trim(),whatsapp:customerWhatsapp.value.trim()})
+  customerFormError.value=''
+  const name=customerName.value.trim()
+  const email=customerEmail.value.trim()
+  const whatsapp=customerWhatsapp.value.trim()
+  if(!name)return
+  if(!email&&!whatsapp){customerFormError.value=locale.t('contactIdentifierRequired');return}
+  const id=customers.add({name,email,whatsapp})
   customerName.value='';customerEmail.value='';customerWhatsapp.value='';customerFormOpen.value=false
+  customerDetailId.value=id
+  customerDetailOpen.value=true
 }
 function manageCustomer(id:number){customerDetailId.value=id;customerDetailOpen.value=true;openMenuId.value=null}
 function impersonate(id:number){session.impersonate(id);openMenuId.value=null}
@@ -143,9 +153,10 @@ function inviteLead(id:string){
 
       <form v-if="customerFormOpen" class="admin-surface grid gap-2 rounded-2xl p-3 md:grid-cols-4" @submit.prevent="addCustomer">
         <label class="form-field">{{locale.t('fullName')}}<input v-model="customerName" required></label>
-        <label class="form-field">{{locale.t('email')}}<input v-model="customerEmail" type="email" required></label>
-        <label class="form-field">WhatsApp<input v-model="customerWhatsapp" dir="ltr"></label>
+        <label class="form-field">{{locale.t('email')}}<input v-model="customerEmail" type="email" autocomplete="email"></label>
+        <label class="form-field">WhatsApp / {{locale.t('loginIdentifier')}}<input v-model="customerWhatsapp" dir="ltr" inputmode="tel" autocomplete="tel"></label>
         <button class="mt-auto min-h-11 rounded-xl bg-[var(--c-primary)] px-4 text-sm font-bold text-white"><UserPlus :size="16" class="me-1 inline"/>{{locale.t('add')}}</button>
+        <p v-if="customerFormError" class="auth-error md:col-span-4">{{customerFormError}}</p>
       </form>
 
       <div v-if="selectedCustomers.length" class="batch-bar">
@@ -180,6 +191,8 @@ function inviteLead(id:string){
     </section>
 
     <AdminProductsPanel v-else-if="activeTab==='products'"/>
+
+    <HomeContentEditor v-else-if="activeTab==='content'"/>
 
     <TranslationManager v-else/>
 

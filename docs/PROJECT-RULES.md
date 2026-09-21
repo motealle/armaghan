@@ -5,7 +5,7 @@
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.
 3. Prototype deployment may write only to `/public_html/t`.
 4. Released tests are immutable snapshots.
-5. Tests 01–22 are frozen; current source target is Test 23.
+5. Tests 01–23 are frozen; current source target is Test 24.
 6. Do not modify an older numbered test to improve a newer one.
 7. `/t/index.htm` is mutable and newest test must be first.
 8. Current Vue test is generated from `/platform/frontend`; do not hand-edit compiled test files on the host.
@@ -19,7 +19,7 @@
 14. Six request paths are domain values, not duplicated UI strings.
 15. Fixed vs negotiable specs differ by icon, label and surface — never color alone.
 16. Adaptive product details: bottom sheet mobile, side drawer desktop.
-17. Missing images preserve aspect ratio and show polished fallback.
+17. Product/category media preserves the full garment silhouette when cropping would hide meaningful edges; use a polished contained fallback instead of destructive crop.
 18. Shimmer must not cause layout shift.
 19. Touch targets, focus-visible, safe-area and reduced-motion behavior are required.
 

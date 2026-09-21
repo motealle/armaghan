@@ -34,7 +34,7 @@ function selectCategory(code:string){
 </script>
 
 <template>
-  <section>
+  <section class="products-page">
     <div class="mb-4 flex items-end justify-between gap-3">
       <div>
         <h1 class="text-[1.75rem] font-black leading-tight">{{locale.t('productsTitle')}}</h1>
@@ -67,13 +67,13 @@ function selectCategory(code:string){
     </div>
 
     <!-- Mobile + tablet controls intentionally stay lightweight and app-like. -->
-    <div class="mt-3 lg:hidden">
+    <div class="products-mobile-controls mt-3 lg:hidden">
       <div class="chip-scroller flex gap-2 overflow-x-auto pb-1">
         <button class="filter-chip" :class="{active:subcategory==='all'}" @click="subcategory='all'">{{locale.t('allSubs')}}</button>
         <button v-for="sub in subs" :key="sub.code" class="filter-chip" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code">{{sub.code}} · {{locale.subcategoryName(sub.code,sub.name)}}</button>
       </div>
 
-      <div class="mt-4 flex flex-wrap gap-2">
+      <div class="products-filter-row mt-4 flex flex-wrap gap-2">
         <label class="flex min-h-11 flex-1 basis-56 items-center gap-2 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3">
           <Search :size="18" class="shrink-0 text-[var(--c-muted)]"/>
           <input v-model="query" class="min-w-0 flex-1 bg-transparent text-sm outline-none" :placeholder="locale.t('search')"/>

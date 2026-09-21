@@ -18,6 +18,6 @@ const productImage=computed(()=>props.product.image?.trim()||fallbackImage.value
 <template>
   <div class="product-media-placeholder relative overflow-hidden">
     <svg class="product-placeholder-svg hidden" viewBox="0 0 1 1" aria-hidden="true"><path d="M0 0h1v1H0z"/></svg>
-    <SmartImage :src="productImage" :fallback-src="fallbackImage" :alt="productName" aspect="product"/>
+    <SmartImage :src="productImage" :fallback-src="fallbackImage" :alt="productName" aspect="product" fit="contain-blur"/>
   </div>
 </template>

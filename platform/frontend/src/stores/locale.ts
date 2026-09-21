@@ -15,7 +15,7 @@ import {
 } from '@/i18n/messages'
 
 const MANUAL_KEY='armaghan:locale:manual'
-const OVERRIDE_KEY='armaghan:test23:translations'
+const OVERRIDE_KEY='armaghan:test24:translations'
 
 function readOverrides(): Record<Locale,TranslationMap> {
   try {

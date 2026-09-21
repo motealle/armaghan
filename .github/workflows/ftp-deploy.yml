@@ -113,6 +113,8 @@ jobs:
         run: python tests/test_test22_release_contract.py
       - name: Test Test 23 product-card/category contract
         run: python tests/test_test23_product_cards_contract.py
+      - name: Test Test 24 responsive commerce/admin contract
+        run: python tests/test_test24_responsive_commerce_contract.py
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
       - name: Check Python syntax
@@ -125,16 +127,16 @@ jobs:
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm ci --no-audit --no-fund
-      - name: Type-check, unit test and build Test 23
+      - name: Type-check, unit test and build Test 24
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm run build
-      - name: Upload Test 23 build artifact
+      - name: Upload Test 24 build artifact
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: test23-build
-          path: t/23
+          name: test24-build
+          path: t/24
           if-no-files-found: error
           retention-days: 1
 
@@ -193,13 +195,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - name: Download Test 23 build
+      - name: Download Test 24 build
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: test23-build
-          path: t/23
-      - name: Deploy changed /t files and generated Test 23 only
+          name: test24-build
+          path: t/24
+      - name: Deploy changed /t files and generated Test 24 only
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -227,8 +229,8 @@ jobs:
               changed.append("t/index.htm")
 
           if os.environ.get("FRONTEND_CHANGED")=="true":
-              if not os.path.isdir("t/23"): raise SystemExit("Generated Test 23 build is missing")
-              for root,_,files in os.walk("t/23"):
+              if not os.path.isdir("t/24"): raise SystemExit("Generated Test 24 build is missing")
+              for root,_,files in os.walk("t/24"):
                   for filename in files: changed.append(os.path.join(root,filename))
           changed=sorted(set(changed))
           ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"]); ftp.cwd("/public_html")

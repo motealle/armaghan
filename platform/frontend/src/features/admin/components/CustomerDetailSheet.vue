@@ -102,7 +102,11 @@ async function copy(){
         <div class="grid gap-3 md:grid-cols-2">
           <label class="form-field">{{locale.t('fullName')}}<input v-model="draft.name"/></label>
           <label class="form-field">{{locale.t('email')}}<input v-model="draft.email" type="email"/></label>
-          <label class="form-field">WhatsApp<input v-model="draft.whatsapp" dir="ltr"/></label>
+          <label class="form-field">WhatsApp<input v-model="draft.whatsapp" dir="ltr" inputmode="tel"/></label>
+          <div class="md:col-span-2 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 py-2 text-xs text-[var(--c-muted)]">
+            <b class="text-[var(--c-text)]">{{locale.t('loginIdentifier')}}:</b>
+            <span dir="ltr">{{draft.email || draft.whatsapp || '—'}}</span>
+          </div>
           <label class="form-field">{{locale.t('country')}}<div class="grid grid-cols-[4.5rem_1fr] gap-2"><input v-model="draft.flag" :aria-label="locale.t('country')"/><input v-model="draft.country"/></div></label>
           <label class="form-field md:col-span-2">{{locale.t('address')}}<input v-model="draft.address"/></label>
           <label class="form-field md:col-span-2">{{locale.t('location')}}<span class="relative block"><MapPin :size="16" class="absolute start-3 top-1/2 mt-1 -translate-y-1/2 text-[var(--c-muted)]"/><input v-model="draft.location" class="ps-9"/></span></label>
