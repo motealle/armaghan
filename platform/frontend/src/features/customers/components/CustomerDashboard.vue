@@ -10,7 +10,7 @@ const locale=useLocaleStore()
 const session=useSessionStore()
 const customers=useCustomersStore()
 const timelineKeys=['inquiryRegistered','specsApproved','prepaymentApproved','inProduction']
-const customer=computed(()=>customers.items.find(item=>item.id===(session.impersonatedCustomerId??1))??customers.items[0]??null)
+const customer=computed(()=>customers.items.find(item=>item.id===(session.impersonatedCustomerId??session.currentCustomerId??1))??customers.items[0]??null)
 const profile=reactive({name:'',email:'',whatsapp:'',address:'',location:''})
 
 watch(customer,(row)=>{
