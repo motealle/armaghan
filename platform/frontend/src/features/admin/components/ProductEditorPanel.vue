@@ -5,7 +5,7 @@ import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { productDefaultsFromCode } from '@/data/catalog'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
-import type { Availability, Product, ProductNames } from '@/types/domain'
+import type { Product, ProductNames } from '@/types/domain'
 
 const props=defineProps<{open:boolean;productId:number|null}>()
 const emit=defineEmits<{close:[]}>()
@@ -60,6 +60,16 @@ watch(()=>[props.open,props.productId] as const,([open,id])=>{
 watch(()=>draft.value?.code,()=>applyCodeDefaults())
 
 const inferredValid=computed(()=>Boolean(draft.value&&productDefaultsFromCode(draft.value.code)))
+function ensureNames(){
+  if(!draft.value)return {fa:'',ar:'',en:'',ku:''} as ProductNames
+  if(!draft.value.names)draft.value.names={fa:'',ar:'',en:'',ku:''}
+  return draft.value.names
+}
+const nameFa=computed({get:()=>ensureNames().fa??'',set:(value:string)=>{ensureNames().fa=value}})
+const nameAr=computed({get:()=>ensureNames().ar??'',set:(value:string)=>{ensureNames().ar=value}})
+const nameEn=computed({get:()=>ensureNames().en??'',set:(value:string)=>{ensureNames().en=value}})
+const nameKu=computed({get:()=>ensureNames().ku??'',set:(value:string)=>{ensureNames().ku=value}})
+
 const lockedText=computed({
   get:()=>draft.value?.specs.locked.join('\n')??'',
   set:(value:string)=>{if(draft.value)draft.value.specs.locked=value.split(/\n|,/).map(v=>v.trim()).filter(Boolean)},
@@ -107,10 +117,10 @@ function save(){
       <section class="admin-surface rounded-2xl p-4">
         <h3 class="mb-3 text-sm font-black">{{locale.t('namesByLanguage')}}</h3>
         <div class="grid gap-3 md:grid-cols-2">
-          <label class="form-field" lang="fa">فارسی<input v-model="draft.names!.fa" dir="rtl"/></label>
-          <label class="form-field" lang="ar">العربية<input v-model="draft.names!.ar" dir="rtl"/></label>
-          <label class="form-field" lang="en">English<input v-model="draft.names!.en" dir="ltr"/></label>
-          <label class="form-field" lang="ckb">کوردی<input v-model="draft.names!.ku" dir="rtl"/></label>
+          <label class="form-field" lang="fa">فارسی<input v-model="nameFa" dir="rtl"/></label>
+          <label class="form-field" lang="ar">العربية<input v-model="nameAr" dir="rtl"/></label>
+          <label class="form-field" lang="en">English<input v-model="nameEn" dir="ltr"/></label>
+          <label class="form-field" lang="ckb">کوردی<input v-model="nameKu" dir="rtl"/></label>
         </div>
       </section>
 
