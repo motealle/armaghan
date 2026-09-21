@@ -101,6 +101,32 @@ Detailed ranked UX decisions: `docs/TEST19-UX-AUDIT.md`.
 - [x] Show base value and overridden value clearly.
 - [x] Persist overrides locally in prototype; design API shape for later DB persistence.
 
+### Customer profile completion
+- [ ] Fix reactive Proxy clone bug that can open an empty customer sheet.
+- [ ] Replace customer management surface with adaptive bottom-sheet (<1024px) / centered modal (>=1024px).
+- [ ] Add dashboard summary cards for customer priority, previous orders, current order and timeline stage.
+- [ ] Add 1–5 star internal customer-priority control.
+- [ ] Keep editable name, email, WhatsApp, country/flag, address, location, notes, order state and timeline.
+- [ ] Keep customer profile photo upload/optimization.
+- [ ] Keep password set/reset state.
+- [ ] Keep direct-access link modes with concise labels: Permanent / Expiring, expiry and revoke.
+- [ ] Add explicit loading/not-found fallback so the adaptive panel can never appear blank.
+
+### Product administration completion
+- [ ] Add subtle transform-only product-card hover scale/lift on fine-pointer hover; disable under reduced motion.
+- [ ] Add admin product search across code and all localized names.
+- [ ] Add category and subcategory filters to admin product table.
+- [ ] Add pagination with 50 products per page by default and accessible page controls.
+- [ ] Make select-all operate on the visible page and retain batch delete.
+- [ ] Add persistent three-dot overflow menu to every product row.
+- [ ] Disable row overflow actions while batch mode is active.
+- [ ] Add adaptive Add/Edit Product panel: bottom sheet on mobile/tablet and centered modal on desktop.
+- [ ] Add four product-name fields: fa / ar / en / ku.
+- [ ] Persist localized product names on the product record with fallback to the base translation registry.
+- [ ] Infer category/subcategory/spec schema from the first two product-code digits.
+- [ ] Show inferred schema immediately and provide reset-from-code behavior.
+- [ ] Keep prototype pagination client-side but preserve a server-pagination-ready state model for Laravel.
+
 ### Repository memory
 - [x] Add detailed 5-option ranked analysis for each requested item and self-detected visual/product bugs in `docs/TEST19-UX-AUDIT.md`.
 - [x] Update backlog checkboxes as each implementation block lands.
