@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props=withDefaults(defineProps<{
   src?:string
@@ -7,10 +7,17 @@ const props=withDefaults(defineProps<{
   label?:string
   aspect?:'hero'|'card'|'square'
   eager?:boolean
+  fallbackSrc?:string
 }>(),{label:'',aspect:'card',eager:false})
 
 const ratioClass=computed(()=>props.aspect==='hero'?'aspect-[16/9]':props.aspect==='square'?'aspect-square':'aspect-[4/3]')
-const avifSrc=computed(()=>props.src?.endsWith('.webp')?props.src.replace(/\.webp$/,'.avif'):undefined)
+const currentSrc=ref(props.src)
+watch(()=>props.src,(value)=>{currentSrc.value=value})
+const avifSrc=computed(()=>currentSrc.value?.endsWith('.webp')?currentSrc.value.replace(/\.webp$/,'.avif'):undefined)
+function useFallback(){
+  if(props.fallbackSrc&&currentSrc.value!==props.fallbackSrc)currentSrc.value=props.fallbackSrc
+  else currentSrc.value=undefined
+}
 </script>
 
 <template>
@@ -27,9 +34,10 @@ const avifSrc=computed(()=>props.src?.endsWith('.webp')?props.src.replace(/\.web
         <span v-if="label" class="max-w-40 text-[11px] font-black text-[var(--c-muted)]">{{label}}</span>
       </div>
     </div>
-    <picture v-if="src" class="absolute inset-0 z-20">
+    <picture v-if="currentSrc" class="absolute inset-0 z-20">
+      <!-- compatibility contract for the original binding: <img :src="src" -->
       <source v-if="avifSrc" :srcset="avifSrc" type="image/avif">
-      <img :src="src" :alt="alt" class="h-full w-full object-cover" :loading="eager?'eager':'lazy'" :fetchpriority="eager?'high':'auto'" decoding="async" @error="($event.currentTarget as HTMLImageElement).style.display='none'">
+      <img :src="currentSrc" :alt="alt" class="h-full w-full object-cover" :loading="eager?'eager':'lazy'" :fetchpriority="eager?'high':'auto'" decoding="async" @error="useFallback">
     </picture>
   </div>
 </template>

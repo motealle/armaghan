@@ -3,12 +3,24 @@ import { ref, watch } from 'vue'
 import { products as seedProducts } from '@/data/catalog'
 import type { Product } from '@/types/domain'
 
-const KEY='armaghan:test20:products-v3'
+const KEY='armaghan:test21:products-v1'
+const LEGACY_KEYS=['armaghan:test20:products-v4','armaghan:test20:products-v3']
+const legacyCategoryImages=new Set([
+  './images/final/categories/category-baby.webp',
+  './images/final/categories/category-kids.webp',
+  './images/final/categories/category-women-modest.webp',
+])
+
+function migrateProduct(product:Product):Product{
+  const migrated=structuredClone(product)
+  if(migrated.image&&legacyCategoryImages.has(migrated.image))delete migrated.image
+  return migrated
+}
 
 function load(): Product[] {
   try {
-    const raw=localStorage.getItem(KEY)
-    return raw ? JSON.parse(raw) as Product[] : structuredClone(seedProducts)
+    const raw=localStorage.getItem(KEY)??LEGACY_KEYS.map(key=>localStorage.getItem(key)).find(Boolean)??null
+    return raw ? (JSON.parse(raw) as Product[]).map(migrateProduct) : structuredClone(seedProducts)
   } catch {
     return structuredClone(seedProducts)
   }

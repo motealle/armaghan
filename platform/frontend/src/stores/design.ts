@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
+import { defaultPlaceholderSet, isPlaceholderSetId, type PlaceholderSetId } from '@/data/productPlaceholders'
 
 export interface DesignSystem { id: string; name: string; description: string }
 export interface ColorSet { id: string; name: string; colors: [string,string,string,string,string] }
@@ -21,10 +22,12 @@ export const colorSets: ColorSet[] = [
 ]
 
 export const useDesignStore = defineStore('design', () => {
-  const system = ref(localStorage.getItem('armaghan:test20:design') || 'core')
-  const palette = ref(localStorage.getItem('armaghan:test20:palette') || 'balanced')
-  const savedActionMode = localStorage.getItem('armaghan:test20:card-actions')
+  const system = ref(localStorage.getItem('armaghan:test21:design') || 'core')
+  const palette = ref(localStorage.getItem('armaghan:test21:palette') || 'balanced')
+  const savedActionMode = localStorage.getItem('armaghan:test21:card-actions')
   const cardActionMode = ref<CardActionMode>(savedActionMode === 'labeled' ? 'labeled' : 'compact')
+  const savedPlaceholderSet = localStorage.getItem('armaghan:test21:placeholder-set')
+  const placeholderSet = ref<PlaceholderSetId>(isPlaceholderSetId(savedPlaceholderSet) ? savedPlaceholderSet : defaultPlaceholderSet)
 
   function apply(): void {
     const selected = colorSets.find((item) => item.id === palette.value) ?? colorSets[0]!
@@ -39,11 +42,12 @@ export const useDesignStore = defineStore('design', () => {
   }
 
   watch([system, palette], () => {
-    localStorage.setItem('armaghan:test20:design', system.value)
-    localStorage.setItem('armaghan:test20:palette', palette.value)
+    localStorage.setItem('armaghan:test21:design', system.value)
+    localStorage.setItem('armaghan:test21:palette', palette.value)
     apply()
   })
-  watch(cardActionMode, (value) => localStorage.setItem('armaghan:test20:card-actions', value))
+  watch(cardActionMode, (value) => localStorage.setItem('armaghan:test21:card-actions', value))
+  watch(placeholderSet, (value) => localStorage.setItem('armaghan:test21:placeholder-set', value))
 
-  return { system, palette, cardActionMode, apply }
+  return { system, palette, cardActionMode, placeholderSet, apply }
 })

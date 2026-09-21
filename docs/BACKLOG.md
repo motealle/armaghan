@@ -1,8 +1,21 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 20 — Customer 360 + Product Administration**.  
-Detailed ranked UX decisions: `docs/TEST20-UX-AUDIT.md`.
+Current implementation target: **Test 21 — Selectable Subcategory Product Placeholders**.
+Detailed ranked UX decisions: `docs/TEST21-UX-AUDIT.md`.
+
+## P0 — Test 21: Selectable product placeholders
+
+- [x] Freeze Test 20 and leave `/t/20` untouched.
+- [x] Generate three complete visual sets for all six subcategories.
+- [x] Make set B (`paper-cut`) the default.
+- [x] Preserve sets A and C as administrator-selectable alternatives.
+- [x] Add an accessible preview selector to the admin overview.
+- [x] Keep product-specific media above placeholders in the fallback chain.
+- [x] Recover from broken product media with the active subcategory placeholder.
+- [x] Isolate Test 21 browser state from released snapshots.
+- [x] Add AVIF/WebP media validation, unit coverage and a Test 21 source contract.
+- [x] Build and deploy only `/public_html/t/21` plus the mutable launcher.
 
 ## P0 — Final generated image set
 
@@ -15,6 +28,17 @@ Decision record: `docs/IMAGE-GENERATION-AUDIT.md`.
 - [x] Record prompt provenance, dimensions, sizes and checksums in a generated-media manifest.
 - [x] Wire final media into the current Vue application without deleting stock fallbacks.
 - [x] Run image-policy tests, type-check, unit tests and production build.
+
+## P0 — Subcategory product placeholders
+
+- [x] Generate three coherent six-image sets for subcategories 11, 12, 21, 22, 31 and 32.
+- [x] Select paper-cut set B as the safe default for products without media.
+- [x] Preserve sets A and C as administrator-selectable alternatives.
+- [x] Keep product-specific media above placeholders in the fallback priority.
+- [x] Fall back to the selected subcategory image when product media fails to load.
+- [x] Persist the administrator selection and expose an accessible preview selector.
+- [x] Store optimized AVIF and WebP derivatives with a versioned manifest.
+- [x] Add registry unit coverage and a repository media contract.
 
 ## P0 — Test 20: Customer 360 + Product Administration
 

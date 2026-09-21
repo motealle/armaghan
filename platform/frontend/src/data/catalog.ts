@@ -126,7 +126,6 @@ function product(
     categoryName: meta.categoryName,
     subcategoryName: meta.subcategoryName,
     availability,
-    image: gallery[0],
     gallery,
     specs: structuredClone(meta.specs),
   }

@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "generator": "OpenAI built-in image generation",
+  "default_set": "paper-cut",
+  "dimensions": {
+    "width": 1448,
+    "height": 1086
+  },
+  "formats": ["avif", "webp"],
+  "sets": [
+    {
+      "id": "paper-cut",
+      "label": "B — Premium paper cut",
+      "role": "default"
+    },
+    {
+      "id": "flat-geometric",
+      "label": "A — Geometric flat",
+      "role": "alternative"
+    },
+    {
+      "id": "dimensional",
+      "label": "C — Dimensional textile",
+      "role": "alternative"
+    }
+  ],
+  "subcategories": {
+    "11": "Babywear",
+    "12": "Baby blankets",
+    "21": "Girls",
+    "22": "Boys",
+    "31": "Long tunic",
+    "32": "Loungewear / activewear"
+  },
+  "policy": "Product-specific media has priority. The selected set is used only when product media is absent or fails to load."
+}

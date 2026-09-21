@@ -105,6 +105,10 @@ jobs:
         run: python tests/test_web_stock_policy.py
       - name: Test generated-media contract
         run: python tests/test_generated_media_contract.py
+      - name: Test product-placeholder media contract
+        run: python tests/test_product_placeholder_contract.py
+      - name: Test Test 21 placeholder/admin contract
+        run: python tests/test_test21_placeholder_admin_contract.py
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
       - name: Check Python syntax
@@ -117,16 +121,16 @@ jobs:
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm ci --no-audit --no-fund
-      - name: Type-check, unit test and build Test 20
+      - name: Type-check, unit test and build Test 21
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm run build
-      - name: Upload Test 20 build artifact
+      - name: Upload Test 21 build artifact
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: test20-build
-          path: t/20
+          name: test21-build
+          path: t/21
           if-no-files-found: error
           retention-days: 1
 
@@ -185,13 +189,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - name: Download Test 20 build
+      - name: Download Test 21 build
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: test20-build
-          path: t/20
-      - name: Deploy changed /t files and generated Test 20 only
+          name: test21-build
+          path: t/21
+      - name: Deploy changed /t files and generated Test 21 only
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -219,8 +223,8 @@ jobs:
               changed.append("t/index.htm")
 
           if os.environ.get("FRONTEND_CHANGED")=="true":
-              if not os.path.isdir("t/20"): raise SystemExit("Generated Test 20 build is missing")
-              for root,_,files in os.walk("t/20"):
+              if not os.path.isdir("t/21"): raise SystemExit("Generated Test 21 build is missing")
+              for root,_,files in os.walk("t/21"):
                   for filename in files: changed.append(os.path.join(root,filename))
           changed=sorted(set(changed))
           ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"]); ftp.cwd("/public_html")

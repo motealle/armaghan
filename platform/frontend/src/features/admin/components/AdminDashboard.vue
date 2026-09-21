@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import {
-  BellRing, Boxes, Languages, LayoutDashboard, MessageCircleMore, MoreVertical,
+  BellRing, Boxes, Check, Languages, LayoutDashboard, MessageCircleMore, MoreVertical,
   Plus, Trash2, UserPlus, UserRoundCog, UsersRound,
 } from '@lucide/vue'
 import CustomerDetailSheet from '@/features/admin/components/CustomerDetailSheet.vue'
 import TranslationManager from '@/features/admin/components/TranslationManager.vue'
 import AdminProductsPanel from '@/features/admin/components/AdminProductsPanel.vue'
+import { placeholderSets } from '@/data/productPlaceholders'
 import { useCatalogStore } from '@/stores/catalog'
 import { useCustomersStore } from '@/stores/customers'
 import { useDesignStore } from '@/stores/design'
@@ -102,6 +103,24 @@ function inviteLead(id:string){
             </div>
           </article>
         </div>
+      </section>
+
+      <section class="admin-surface rounded-2xl p-4">
+        <div class="mb-3"><h2 class="text-lg font-black">{{locale.t('adminPlaceholderSet')}}</h2><p class="mt-1 text-xs text-[var(--c-muted)]">{{locale.t('adminPlaceholderSetHelp')}}</p></div>
+        <div class="grid gap-3 md:grid-cols-3" role="radiogroup" :aria-label="locale.t('adminPlaceholderSet')">
+          <label
+            v-for="set in placeholderSets"
+            :key="set.id"
+            class="placeholder-set-card"
+            :class="{active:design.placeholderSet===set.id}"
+          >
+            <input v-model="design.placeholderSet" class="sr-only" type="radio" name="placeholder-set" :value="set.id">
+            <img :src="set.preview" alt="" loading="lazy" decoding="async">
+            <span class="placeholder-set-copy"><b>{{locale.t(set.labelKey)}}</b><small>{{locale.t(set.descriptionKey)}}</small></span>
+            <span v-if="design.placeholderSet===set.id" class="placeholder-set-check" aria-hidden="true"><Check :size="15"/></span>
+          </label>
+        </div>
+        <p class="mt-3 text-[11px] font-bold text-[var(--c-secondary)]">{{locale.t('placeholderAppliedImmediately')}}</p>
       </section>
 
       <section class="admin-surface rounded-2xl p-4">
