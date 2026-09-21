@@ -2,11 +2,11 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { UserRole } from '@/types/domain'
 
-const STORAGE_KEY='armaghan:test19:role'
-const IMPERSONATION_KEY='armaghan:test19:impersonation'
-const CUSTOMER_ID_KEY='armaghan:test19:customer-id'
-const ACCOUNTS_KEY='armaghan:test19:accounts'
-const MAGIC_KEY='armaghan:test19:magic-links'
+const STORAGE_KEY='armaghan:test20:role'
+const IMPERSONATION_KEY='armaghan:test20:impersonation'
+const CUSTOMER_ID_KEY='armaghan:test20:customer-id'
+const ACCOUNTS_KEY='armaghan:test20:accounts'
+const MAGIC_KEY='armaghan:test20:magic-links'
 
 type LocalAccount={id:number;name:string;email:string;password:string}
 type MagicMode='permanent'|'expiring'
@@ -35,7 +35,7 @@ export const useSessionStore=defineStore('session',()=>{
   const impersonatedCustomerId=ref<number|null>(readImpersonation())
   const accounts=ref<LocalAccount[]>(readAccounts())
   const magicLinks=ref<MagicRecord[]>(readMagic())
-  const currentEmail=ref(sessionStorage.getItem('armaghan:test19:email')??'')
+  const currentEmail=ref(sessionStorage.getItem('armaghan:test20:email')??'')
   const currentCustomerId=ref<number|null>(Number(sessionStorage.getItem(CUSTOMER_ID_KEY))||null)
 
   const isAuthenticated=computed(()=>role.value!=='guest')
@@ -49,8 +49,8 @@ export const useSessionStore=defineStore('session',()=>{
     currentCustomerId.value=customerId
     if(next==='guest')sessionStorage.removeItem(STORAGE_KEY)
     else sessionStorage.setItem(STORAGE_KEY,next)
-    if(email)sessionStorage.setItem('armaghan:test19:email',email)
-    else sessionStorage.removeItem('armaghan:test19:email')
+    if(email)sessionStorage.setItem('armaghan:test20:email',email)
+    else sessionStorage.removeItem('armaghan:test20:email')
     if(customerId)sessionStorage.setItem(CUSTOMER_ID_KEY,String(customerId))
     else sessionStorage.removeItem(CUSTOMER_ID_KEY)
     sessionStorage.removeItem(IMPERSONATION_KEY)
