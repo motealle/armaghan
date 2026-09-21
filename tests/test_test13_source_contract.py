@@ -23,7 +23,7 @@ assert launcher.index("./14/index.html") < launcher.index("./13/index.html")
 assert catalog.count("product(") >= 19, "Expected product factory + at least 18 seeded products"
 assert catalog.count("./images/web-stock/sub-") >= 6
 assert "./images/web-stock/" in fallback, "Current source must retain a local no-network fallback for media"
-assert "/credits" in router
+assert "CreditsView" not in router, "Later product versions may remove public prototype credits navigation"
 assert "host-centric" in asset_doc.lower()
 assert "spatie/laravel-medialibrary" in asset_doc
 assert "commons.wikimedia.org/w/api.php" in vendor
