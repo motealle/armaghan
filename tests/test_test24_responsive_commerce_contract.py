@@ -63,7 +63,7 @@ assert ".hero-media-pane .smart-image" in css
 assert "home-category-grid" in home
 assert "category-card home-category-card" in home
 assert '<img :src="category.image"' in home
-assert "SmartImage :src="category.image"" not in home
+assert 'SmartImage :src="category.image"' not in home
 assert "category-showcase" in products
 
 # Dark theme: neutral layered surfaces, while brand primary remains canonical.

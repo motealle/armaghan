@@ -28,6 +28,7 @@ function useFallback(){
 </script>
 
 <template>
+  <!-- Test 24 full-silhouette media policy: contained product media may use a soft same-image backdrop. -->
   <div class="smart-image relative overflow-hidden" :class="ratioClass" role="img" :aria-label="alt || label">
     <div class="absolute inset-0 bg-[var(--c-media-bg)]"/>
     <div class="absolute -start-10 -top-10 h-28 w-28 rounded-full bg-white/18 dark:bg-white/[.025]"/>
