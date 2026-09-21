@@ -12,11 +12,13 @@ export interface CustomerRecord{
   address:string
   location:string
   notes:string
+  priorityStars:number
   activeOrder:string
   orderCount:number
   timelineStage:string
   profileImage?:string
   passwordSet:boolean
+  loginPassword:string
   accessMode:AccessLinkMode
   accessToken:string
   accessExpiresAt:string
@@ -41,10 +43,10 @@ const LEAD_KEY='armaghan:test19:wishlist-leads'
 const VISITOR_KEY='armaghan:test19:visitor-token'
 
 const seed:CustomerRecord[]=[
-  {id:1,flag:'🇮🇶',country:'Iraq',name:'Baghdad Buyer',whatsapp:'+964 7XX XXX XXXX',email:'',address:'Baghdad',location:'Baghdad, Iraq',notes:'',activeOrder:'در حال تولید',orderCount:3,timelineStage:'در حال تولید',passwordSet:true,accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3600_000).toISOString()},
-  {id:2,flag:'🇦🇪',country:'UAE',name:'Dubai Trade',whatsapp:'+971 5X XXX XXXX',email:'',address:'Dubai',location:'Dubai, UAE',notes:'',activeOrder:'بدون سفارش فعال',orderCount:1,timelineStage:'بدون مرحله فعال',passwordSet:false,accessMode:'permanent',accessToken:'',accessExpiresAt:'',accessRevoked:false},
-  {id:3,flag:'🇹🇷',country:'Turkey',name:'Istanbul Store',whatsapp:'+90 5XX XXX XXXX',email:'',address:'Istanbul',location:'Istanbul, Turkey',notes:'',activeOrder:'در انتظار پیش‌پرداخت',orderCount:2,timelineStage:'تأیید پیش‌پرداخت',passwordSet:true,accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3*3600_000).toISOString()},
-  {id:4,flag:'🇶🇦',country:'Qatar',name:'Doha Buyer',whatsapp:'+974 3XXX XXXX',email:'',address:'Doha',location:'Doha, Qatar',notes:'',activeOrder:'آماده ارسال',orderCount:4,timelineStage:'آماده ارسال',passwordSet:true,accessMode:'permanent',accessToken:'',accessExpiresAt:'',accessRevoked:false},
+  {id:1,flag:'🇮🇶',country:'Iraq',name:'Baghdad Buyer',whatsapp:'+964 7XX XXX XXXX',email:'',address:'Baghdad',location:'Baghdad, Iraq',notes:'',priorityStars:5,activeOrder:'در حال تولید',orderCount:3,timelineStage:'در حال تولید',passwordSet:true,loginPassword:'',accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3600_000).toISOString()},
+  {id:2,flag:'🇦🇪',country:'UAE',name:'Dubai Trade',whatsapp:'+971 5X XXX XXXX',email:'',address:'Dubai',location:'Dubai, UAE',notes:'',priorityStars:3,activeOrder:'بدون سفارش فعال',orderCount:1,timelineStage:'بدون مرحله فعال',passwordSet:false,loginPassword:'',accessMode:'permanent',accessToken:'',accessExpiresAt:'',accessRevoked:false},
+  {id:3,flag:'🇹🇷',country:'Turkey',name:'Istanbul Store',whatsapp:'+90 5XX XXX XXXX',email:'',address:'Istanbul',location:'Istanbul, Turkey',notes:'',priorityStars:4,activeOrder:'در انتظار پیش‌پرداخت',orderCount:2,timelineStage:'تأیید پیش‌پرداخت',passwordSet:true,loginPassword:'',accessMode:'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,favoritesUpdatedAt:new Date(Date.now()-3*3600_000).toISOString()},
+  {id:4,flag:'🇶🇦',country:'Qatar',name:'Doha Buyer',whatsapp:'+974 3XXX XXXX',email:'',address:'Doha',location:'Doha, Qatar',notes:'',priorityStars:4,activeOrder:'آماده ارسال',orderCount:4,timelineStage:'آماده ارسال',passwordSet:true,loginPassword:'',accessMode:'permanent',accessToken:'',accessExpiresAt:'',accessRevoked:false},
 ]
 
 function loadCustomers():CustomerRecord[]{
@@ -81,8 +83,8 @@ export const useCustomersStore=defineStore('customers',()=>{
     const id=Math.max(0,...items.value.map(item=>item.id))+1
     items.value=[...items.value,{
       id,flag:input.flag??'🌐',country:input.country??'',name:input.name,email:input.email,whatsapp:input.whatsapp,
-      address:input.address??'',location:input.location??'',notes:input.notes??'',activeOrder:input.activeOrder??'بدون سفارش فعال',
-      orderCount:input.orderCount??0,timelineStage:input.timelineStage??'بدون مرحله فعال',profileImage:input.profileImage,passwordSet:input.passwordSet??false,
+      address:input.address??'',location:input.location??'',notes:input.notes??'',priorityStars:input.priorityStars??0,activeOrder:input.activeOrder??'بدون سفارش فعال',
+      orderCount:input.orderCount??0,timelineStage:input.timelineStage??'بدون مرحله فعال',profileImage:input.profileImage,passwordSet:input.passwordSet??false,loginPassword:input.loginPassword??'',
       accessMode:input.accessMode??'expiring',accessToken:'',accessExpiresAt:'',accessRevoked:false,
     }]
   }
