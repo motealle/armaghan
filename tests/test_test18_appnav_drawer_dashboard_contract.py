@@ -49,12 +49,18 @@ assert "theme.toggle" in switcher
 assert "Monitor" not in switcher
 
 assert "cardActionMode" in design and "'compact'" in design and "'labeled'" in design
-assert "cardActionMode" in admin
-assert "compactActions" in card
-assert "locale.t('order')" in card or "سفارش" in card
-assert "v-if=\"!compactActions\"" in card
-assert "compactActions ? 22 : 27" in card
-assert "compactActions ? 16 : 20" in card
+legacy_card_modes = "cardActionMode" in admin and "compactActions" in card
+test23_low_copy = "card-actions compact" in card and "detail-menu-icon" in card and 'size="25.3"' in card
+assert legacy_card_modes or test23_low_copy
+if legacy_card_modes:
+    assert "locale.t('order')" in card or "سفارش" in card
+    assert "v-if=\"!compactActions\"" in card
+    assert "compactActions ? 22 : 27" in card
+    assert "compactActions ? 16 : 20" in card
+else:
+    assert "adminCardActions" not in admin
+    assert "Menu" in card and "ArrowDownRight" in card
+    assert "SlidersHorizontal" not in card
 
 assert "rgba(5,9,24,.40)" in css
 assert "mobile-drawer-panel" in css

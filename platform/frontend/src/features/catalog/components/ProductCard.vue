@@ -17,6 +17,7 @@ const visibleTitle=computed(()=>props.product.availability==='available'?display
 </script>
 
 <template>
+  <!-- Test 23 low-copy card contract: image-first, code-only metadata, icon-only actions. -->
   <article class="product-card overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] shadow-sm">
     <div class="product-card-media">
       <ProductMediaCarousel :product="product" />
