@@ -7,6 +7,7 @@ import HelpSheet from '@/components/layout/HelpSheet.vue'
 import LoginSheet from '@/features/auth/components/LoginSheet.vue'
 import { useDesignStore } from '@/stores/design'
 import { useSessionStore } from '@/stores/session'
+import { useCustomersStore } from '@/stores/customers'
 import { useLocaleStore } from '@/stores/locale'
 import { useThemeStore } from '@/stores/theme'
 
@@ -14,6 +15,7 @@ const loginOpen=ref(false)
 const helpOpen=ref(false)
 const design=useDesignStore()
 const session=useSessionStore()
+const customers=useCustomersStore()
 const locale=useLocaleStore()
 const theme=useThemeStore()
 const route=useRoute()
@@ -27,9 +29,13 @@ onMounted(async()=>{
   theme.apply()
   design.apply()
   await locale.initialize()
-  const magic=new URLSearchParams(location.search).get('magic')
-  if(magic&&session.consumeMagicLink(magic)){
-    location.hash='#/tracking'
+  const params=new URLSearchParams(location.search)
+  const magic=params.get('magic')
+  const customerAccess=params.get('customerAccess')
+  if(magic&&session.consumeMagicLink(magic)) location.hash='#/tracking'
+  if(customerAccess){
+    const customer=customers.resolveAccessToken(customerAccess)
+    if(customer){session.loginCustomerRecord(customer.id,customer.email);location.hash='#/tracking'}
   }
 })
 </script>
