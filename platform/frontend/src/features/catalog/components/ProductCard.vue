@@ -17,7 +17,7 @@ const isFavorite=computed(()=>favorites.has(props.product.id))
 const compactActions=computed(()=>design.cardActionMode==='compact')
 const availabilityLabel=computed(()=>props.product.availability==='available'?locale.t('available'):props.product.availability==='unavailable'?locale.t('unavailable'):locale.t('madeToOrder'))
 const availabilityClass=computed(()=>props.product.availability==='available'?'text-emerald-700':props.product.availability==='unavailable'?'text-rose-700':'text-amber-800')
-const displayName=computed(()=>locale.productName(props.product.code,props.product.name))
+const displayName=computed(()=>locale.productName(props.product.code,props.product.name,props.product.names))
 const displaySubcategory=computed(()=>locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName))
 </script>
 
