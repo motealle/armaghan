@@ -1,9 +1,30 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 24 — Responsive Commerce Polish + Admin Content Control**.
-Detailed ranked UX decisions: `docs/TEST24-UX-AUDIT.md`.
-Google OAuth setup: `docs/GOOGLE-OAUTH-SETUP.md`.
+Current implementation target: **Test 25 — Gray Dark Theme + Reversible Portrait Placeholder Pipeline**.
+Detailed ranked UX decisions: `docs/TEST25-UX-AUDIT.md`.
+Rollback checkpoint: `rollback/test24-pre-test25`.
+
+## P0 — Test 25: gray dark theme + reversible portrait placeholder pipeline
+
+- [x] Freeze Test 24 and keep `/t/24` immutable.
+- [x] Create rollback branch `rollback/test24-pre-test25` at the last Test 24 source commit.
+- [x] Keep all original horizontal placeholder WebP/AVIF assets untouched.
+- [x] Add a deterministic Pillow build pipeline that creates 960×1440 portrait WebP derivatives without stretching or cropping.
+- [x] Extend portrait canvases from sampled top/bottom edge colors and apply only a very mild vignette.
+- [x] Make portrait placeholders the default for tall product cards.
+- [x] Keep landscape placeholders selectable and add Portrait / Landscape / Auto controls to Admin.
+- [x] Keep an edge-extend rendering fallback when generated portrait media is unavailable.
+- [x] Rebuild dark mode with neutral graphite/gray surfaces while preserving the Armaghan blue navbar and active states.
+- [x] Reduce the visual prominence of category number badges 01/02/03.
+- [x] Refine product media/body separation without adding copy over images.
+- [x] Fix Production Request category-card wrapping, reset hierarchy and locale-aware Back arrow.
+- [x] Isolate English footer direction/punctuation and tighten English trust-card alignment.
+- [x] Isolate Test 25 browser state under `armaghan:test25:*` and migrate catalog data forward from Test 24.
+- [x] Add a strict Test 25 contract and preserve all earlier regression contracts.
+- [x] Build/deploy only `/public_html/t/25` plus the mutable launcher.
+- [ ] Confirm CI, generated portrait media, FTP smoke test and live deployment of `/public_html/t/25`.
+- [ ] Record successful delivery and mark Test 25 complete.
 
 ## P0 — Test 24: responsive commerce polish + admin content control
 

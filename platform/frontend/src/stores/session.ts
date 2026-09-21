@@ -3,11 +3,11 @@ import { computed, ref } from 'vue'
 import type { UserRole } from '@/types/domain'
 import { useCustomersStore } from '@/stores/customers'
 
-const STORAGE_KEY='armaghan:test24:role'
-const IMPERSONATION_KEY='armaghan:test24:impersonation'
-const CUSTOMER_ID_KEY='armaghan:test24:customer-id'
-const ACCOUNTS_KEY='armaghan:test24:accounts'
-const MAGIC_KEY='armaghan:test24:magic-links'
+const STORAGE_KEY='armaghan:test25:role'
+const IMPERSONATION_KEY='armaghan:test25:impersonation'
+const CUSTOMER_ID_KEY='armaghan:test25:customer-id'
+const ACCOUNTS_KEY='armaghan:test25:accounts'
+const MAGIC_KEY='armaghan:test25:magic-links'
 
 type LocalAccount={id:number;name:string;email:string;password:string}
 type MagicMode='permanent'|'expiring'
@@ -41,7 +41,7 @@ export const useSessionStore=defineStore('session',()=>{
   const impersonatedCustomerId=ref<number|null>(readImpersonation())
   const accounts=ref<LocalAccount[]>(readAccounts())
   const magicLinks=ref<MagicRecord[]>(readMagic())
-  const currentEmail=ref(sessionStorage.getItem('armaghan:test24:email')??'')
+  const currentEmail=ref(sessionStorage.getItem('armaghan:test25:email')??'')
   const currentCustomerId=ref<number|null>(Number(sessionStorage.getItem(CUSTOMER_ID_KEY))||null)
 
   const isAuthenticated=computed(()=>role.value!=='guest')
@@ -55,8 +55,8 @@ export const useSessionStore=defineStore('session',()=>{
     currentCustomerId.value=customerId
     if(next==='guest')sessionStorage.removeItem(STORAGE_KEY)
     else sessionStorage.setItem(STORAGE_KEY,next)
-    if(email)sessionStorage.setItem('armaghan:test24:email',email)
-    else sessionStorage.removeItem('armaghan:test24:email')
+    if(email)sessionStorage.setItem('armaghan:test25:email',email)
+    else sessionStorage.removeItem('armaghan:test25:email')
     if(customerId)sessionStorage.setItem(CUSTOMER_ID_KEY,String(customerId))
     else sessionStorage.removeItem(CUSTOMER_ID_KEY)
     sessionStorage.removeItem(IMPERSONATION_KEY)

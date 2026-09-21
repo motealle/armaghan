@@ -6,7 +6,7 @@ const props=withDefaults(defineProps<{
   alt:string
   label?:string
   aspect?:'hero'|'card'|'square'|'product'
-  fit?:'cover'|'contain'|'contain-blur'
+  fit?:'cover'|'contain'|'contain-blur'|'edge-extend'
   eager?:boolean
   fallbackSrc?:string
 }>(),{label:'',aspect:'card',fit:'cover',eager:false})
@@ -16,10 +16,11 @@ const currentSrc=ref(props.src)
 watch(()=>props.src,(value)=>{currentSrc.value=value})
 const avifSrc=computed(()=>{
   const value=currentSrc.value
-  if(!value?.endsWith('.webp')||value.includes('/images/category-navigation/'))return undefined
+  if(!value?.endsWith('.webp')||value.includes('/images/category-navigation/')||value.includes('/images/placeholders-portrait/'))return undefined
   return value.replace(/\.webp$/,'.avif')
 })
 const imageClass=computed(()=>props.fit==='cover'?'object-cover':'object-contain')
+const hasAmbientBackdrop=computed(()=>props.fit==='contain-blur'||props.fit==='edge-extend')
 const backdropStyle=computed(()=>currentSrc.value?{backgroundImage:`url("${currentSrc.value}")`}:undefined)
 function useFallback(){
   if(props.fallbackSrc&&currentSrc.value!==props.fallbackSrc)currentSrc.value=props.fallbackSrc
@@ -28,12 +29,11 @@ function useFallback(){
 </script>
 
 <template>
-  <!-- Test 24 full-silhouette media policy: contained product media may use a soft same-image backdrop. -->
   <div class="smart-image relative overflow-hidden" :class="ratioClass" role="img" :aria-label="alt || label">
     <div class="absolute inset-0 bg-[var(--c-media-bg)]"/>
     <div class="absolute -start-10 -top-10 h-28 w-28 rounded-full bg-white/18 dark:bg-white/[.025]"/>
     <div class="absolute -bottom-12 -end-7 h-36 w-36 rounded-full bg-[color-mix(in_srgb,var(--c-primary)_4%,transparent)]"/>
-    <div v-if="fit==='contain-blur'&&currentSrc" class="smart-image-backdrop" :style="backdropStyle" aria-hidden="true"/>
+    <div v-if="hasAmbientBackdrop&&currentSrc" class="smart-image-backdrop" :class="{'edge-extend-backdrop':fit==='edge-extend'}" :style="backdropStyle" aria-hidden="true"/>
     <div class="absolute inset-0 grid place-items-center">
       <div class="relative flex flex-col items-center gap-3 text-center text-[var(--c-primary)]">
         <svg class="smart-placeholder-svg" viewBox="0 0 220 170" aria-hidden="true">
@@ -44,18 +44,18 @@ function useFallback(){
       </div>
     </div>
     <picture v-if="currentSrc" class="absolute inset-0 z-20">
-      <!-- compatibility contract for the original binding: <img :src="src" -->
       <source v-if="avifSrc" :srcset="avifSrc" type="image/avif">
       <img
         :src="currentSrc"
         :alt="alt"
         class="smart-image-content h-full w-full"
-        :class="[imageClass,{'smart-image-contained':fit==='contain-blur'}]"
+        :class="[imageClass,{'smart-image-contained':hasAmbientBackdrop,'smart-image-edge-extend':fit==='edge-extend'}]"
         :loading="eager?'eager':'lazy'"
         :fetchpriority="eager?'high':'auto'"
         decoding="async"
         @error="useFallback"
       >
     </picture>
+    <div v-if="fit==='edge-extend'" class="smart-image-vignette pointer-events-none absolute inset-0 z-30" aria-hidden="true"/>
   </div>
 </template>

@@ -5,7 +5,7 @@
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.
 3. Prototype deployment may write only to `/public_html/t`.
 4. Released tests are immutable snapshots.
-5. Tests 01–23 are frozen; current source target is Test 24.
+5. Tests 01–24 are frozen; current source target is Test 25.
 6. Do not modify an older numbered test to improve a newer one.
 7. `/t/index.htm` is mutable and newest test must be first.
 8. Current Vue test is generated from `/platform/frontend`; do not hand-edit compiled test files on the host.
@@ -61,10 +61,11 @@
 48. Uploads require MIME/decode validation, size/pixel limits and metadata stripping.
 49. Generated derivatives include deterministic card/gallery/hero sizes; never upscale small originals.
 50. Production customer/private originals never belong in Git.
+51. Portrait placeholder derivatives are reproducible build artifacts generated from immutable landscape originals; never overwrite the originals.
 
 ## QA
-51. Frozen-test guard runs before deploy.
-52. SQLite schema+seed smoke test runs before deploy.
-53. Current source contract, web-stock provenance policy, Vue unit tests, TypeScript and Vite build run before deploy.
-54. Verify mobile/desktop, RTL/LTR, sheet close, logout, impersonation, favorites, wizard and WhatsApp.
-55. No remote deletion to match Git.
+52. Frozen-test guard runs before deploy.
+53. SQLite schema+seed smoke test runs before deploy.
+54. Current source contract, web-stock provenance policy, Vue unit tests, TypeScript and Vite build run before deploy.
+55. Verify mobile/desktop, RTL/LTR, sheet close, logout, impersonation, favorites, wizard and WhatsApp.
+56. No remote deletion to match Git.

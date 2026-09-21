@@ -1,6 +1,7 @@
 import type { Product } from '@/types/domain'
 
 export type PlaceholderSetId = 'flat-geometric' | 'paper-cut' | 'dimensional'
+export type PlaceholderOrientation = 'portrait' | 'landscape' | 'auto'
 
 export interface PlaceholderSet {
   id: PlaceholderSetId
@@ -10,6 +11,7 @@ export interface PlaceholderSet {
 }
 
 export const defaultPlaceholderSet: PlaceholderSetId = 'paper-cut'
+export const defaultPlaceholderOrientation: PlaceholderOrientation = 'portrait'
 
 export const placeholderSets: PlaceholderSet[] = [
   {
@@ -36,9 +38,30 @@ export function isPlaceholderSetId(value: string | null): value is PlaceholderSe
   return placeholderSets.some((set) => set.id === value)
 }
 
-export function productPlaceholder(
+export function isPlaceholderOrientation(value: string | null): value is PlaceholderOrientation {
+  return value === 'portrait' || value === 'landscape' || value === 'auto'
+}
+
+export function landscapePlaceholder(
   set: PlaceholderSetId,
   subcategoryCode: Product['subcategoryCode'],
 ): string {
   return `./images/placeholders/${set}/sub-${subcategoryCode}.webp`
+}
+
+export function portraitPlaceholder(
+  set: PlaceholderSetId,
+  subcategoryCode: Product['subcategoryCode'],
+): string {
+  return `./images/placeholders-portrait/${set}/sub-${subcategoryCode}.webp`
+}
+
+export function productPlaceholder(
+  set: PlaceholderSetId,
+  subcategoryCode: Product['subcategoryCode'],
+  orientation: PlaceholderOrientation = defaultPlaceholderOrientation,
+): string {
+  return orientation === 'landscape'
+    ? landscapePlaceholder(set, subcategoryCode)
+    : portraitPlaceholder(set, subcategoryCode)
 }

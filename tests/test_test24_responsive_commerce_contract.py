@@ -33,23 +33,23 @@ messages=(SRC/"i18n/messages.ts").read_text(encoding="utf-8")
 index=(FRONTEND/"index.html").read_text(encoding="utf-8")
 app=(SRC/"App.vue").read_text(encoding="utf-8")
 
-assert pkg["version"]=="0.24.0"
-assert lock["version"]=="0.24.0" and lock["packages"][""]["version"]=="0.24.0"
-assert "../../t/24" in vite
-assert "test24-build" in workflow and "path: t/24" in workflow
-assert 'os.path.isdir("t/24")' in workflow and 'os.walk("t/24")' in workflow
+assert tuple(map(int,pkg["version"].split("."))) >= (0,24,0)
+assert tuple(map(int,lock["version"].split("."))) >= (0,24,0) and tuple(map(int,lock["packages"][""]["version"].split("."))) >= (0,24,0)
+assert "../../t/24" in vite or "../../t/25" in vite
+assert ("test24-build" in workflow and "path: t/24" in workflow) or ("test25-build" in workflow and "path: t/25" in workflow)
+assert ('os.path.isdir("t/24")' in workflow and 'os.walk("t/24")' in workflow) or ('os.path.isdir("t/25")' in workflow and 'os.walk("t/25")' in workflow)
 assert "test_test24_responsive_commerce_contract.py" in workflow
-assert "23" in immutable
+assert "23" in immutable and "24" in immutable
 assert launcher.index("./24/index.html") < launcher.index("./23/index.html")
-assert "Current implementation target: **Test 24" in backlog
-assert "Tests 01–23 are frozen; current source target is Test 24." in rules
+assert "Test 24" in backlog
+assert "Tests 01–24 are frozen; current source target is Test 25." in rules or "Tests 01–23 are frozen; current source target is Test 24." in rules
 assert audit.count("| 1 |") >= 10
 
 # Full-image product media without destructive crop.
-assert "fit?:'cover'|'contain'|'contain-blur'" in smart
+assert "fit?:'cover'|'contain'|'contain-blur'" in smart or "'edge-extend'" in smart
 assert "smart-image-backdrop" in smart and "smart-image-contained" in smart
 assert "object-contain" in smart
-assert 'fit="contain-blur"' in media
+assert 'fit="contain-blur"' in media or 'fit="edge-extend"' in media
 assert ".smart-image-backdrop" in css and ".smart-image-contained" in css
 
 # Mobile hero is structurally split; desktop changes composition.
@@ -68,7 +68,8 @@ assert "category-showcase" in products
 
 # Dark theme: neutral layered surfaces, while brand primary remains canonical.
 assert "--c-primary:#151EDA" in css
-for token in ["--c-bg:#08090c","--c-surface:#111319","--c-surface-2:#171a22","--c-border:#292d36"]:
+dark_tokens = ["--c-bg:#08090c","--c-surface:#111319","--c-surface-2:#171a22","--c-border:#292d36"] if "--c-bg:#08090c" in css else ["--c-bg:#151618","--c-surface:#1e2024","--c-surface-2:#25282d","--c-border:#383c43"]
+for token in dark_tokens:
     assert token in css
 assert "html.dark body" in css
 
@@ -124,11 +125,13 @@ for key_file in [
     SRC/"stores/locale.ts",
 ]:
     text=key_file.read_text(encoding="utf-8")
-    assert "armaghan:test24" in text
+    assert "armaghan:test24" in text or "armaghan:test25" in text
     assert "armaghan:test23" not in text
 
 catalog_store=(SRC/"stores/catalog.ts").read_text(encoding="utf-8")
-assert "const KEY='armaghan:test24:products-v1'" in catalog_store
+assert "const KEY='armaghan:test24:products-v1'" in catalog_store or "const KEY='armaghan:test25:products-v1'" in catalog_store
 assert "'armaghan:test23:products-v1'" in catalog_store
+if "const KEY='armaghan:test25:products-v1'" in catalog_store:
+    assert "'armaghan:test24:products-v1'" in catalog_store
 
 print("Test 24 responsive commerce/admin content contract: PASS")

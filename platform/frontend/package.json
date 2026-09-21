@@ -1,7 +1,7 @@
 {
   "name": "armaghan-frontend",
   "private": true,
-  "version": "0.24.0",
+  "version": "0.25.0",
   "type": "module",
   "engines": {
     "node": "^22.22.2 || >=24.15.0"
@@ -10,8 +10,9 @@
     "dev": "vite",
     "type-check": "vue-tsc --noEmit",
     "test:unit": "vitest run",
-    "build": "npm run type-check && npm run test:unit && vite build",
-    "fetch:digikala": "node scripts/fetch-digikala-assets.mjs"
+    "build": "npm run generate:portraits && npm run type-check && npm run test:unit && vite build",
+    "fetch:digikala": "node scripts/fetch-digikala-assets.mjs",
+    "generate:portraits": "python ../scripts/generate_placeholder_portraits.py"
   },
   "dependencies": {
     "@lucide/vue": "1.47.0",

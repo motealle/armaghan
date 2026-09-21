@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import { defaultPlaceholderSet, isPlaceholderSetId, type PlaceholderSetId } from '@/data/productPlaceholders'
+import {
+  defaultPlaceholderOrientation,
+  defaultPlaceholderSet,
+  isPlaceholderOrientation,
+  isPlaceholderSetId,
+  type PlaceholderOrientation,
+  type PlaceholderSetId,
+} from '@/data/productPlaceholders'
 
 export interface DesignSystem { id: string; name: string; description: string }
 export interface ColorSet { id: string; name: string; colors: [string,string,string,string,string] }
@@ -22,12 +29,16 @@ export const colorSets: ColorSet[] = [
 ]
 
 export const useDesignStore = defineStore('design', () => {
-  const system = ref(localStorage.getItem('armaghan:test24:design') || 'core')
-  const palette = ref(localStorage.getItem('armaghan:test24:palette') || 'balanced')
-  const savedActionMode = localStorage.getItem('armaghan:test24:card-actions')
+  const system = ref(localStorage.getItem('armaghan:test25:design') || 'core')
+  const palette = ref(localStorage.getItem('armaghan:test25:palette') || 'balanced')
+  const savedActionMode = localStorage.getItem('armaghan:test25:card-actions')
   const cardActionMode = ref<CardActionMode>(savedActionMode === 'labeled' ? 'labeled' : 'compact')
-  const savedPlaceholderSet = localStorage.getItem('armaghan:test24:placeholder-set')
+  const savedPlaceholderSet = localStorage.getItem('armaghan:test25:placeholder-set')
   const placeholderSet = ref<PlaceholderSetId>(isPlaceholderSetId(savedPlaceholderSet) ? savedPlaceholderSet : defaultPlaceholderSet)
+  const savedPlaceholderOrientation = localStorage.getItem('armaghan:test25:placeholder-orientation')
+  const placeholderOrientation = ref<PlaceholderOrientation>(
+    isPlaceholderOrientation(savedPlaceholderOrientation) ? savedPlaceholderOrientation : defaultPlaceholderOrientation,
+  )
 
   function apply(): void {
     const selected = colorSets.find((item) => item.id === palette.value) ?? colorSets[0]!
@@ -42,12 +53,13 @@ export const useDesignStore = defineStore('design', () => {
   }
 
   watch([system, palette], () => {
-    localStorage.setItem('armaghan:test24:design', system.value)
-    localStorage.setItem('armaghan:test24:palette', palette.value)
+    localStorage.setItem('armaghan:test25:design', system.value)
+    localStorage.setItem('armaghan:test25:palette', palette.value)
     apply()
   })
-  watch(cardActionMode, (value) => localStorage.setItem('armaghan:test24:card-actions', value))
-  watch(placeholderSet, (value) => localStorage.setItem('armaghan:test24:placeholder-set', value))
+  watch(cardActionMode, (value) => localStorage.setItem('armaghan:test25:card-actions', value))
+  watch(placeholderSet, (value) => localStorage.setItem('armaghan:test25:placeholder-set', value))
+  watch(placeholderOrientation, (value) => localStorage.setItem('armaghan:test25:placeholder-orientation', value))
 
-  return { system, palette, cardActionMode, placeholderSet, apply }
+  return { system, palette, cardActionMode, placeholderSet, placeholderOrientation, apply }
 })

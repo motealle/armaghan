@@ -8,7 +8,7 @@ import CustomerDetailSheet from '@/features/admin/components/CustomerDetailSheet
 import TranslationManager from '@/features/admin/components/TranslationManager.vue'
 import HomeContentEditor from '@/features/admin/components/HomeContentEditor.vue'
 import AdminProductsPanel from '@/features/admin/components/AdminProductsPanel.vue'
-import { placeholderSets } from '@/data/productPlaceholders'
+import { placeholderSets, productPlaceholder } from '@/data/productPlaceholders'
 import { useCatalogStore } from '@/stores/catalog'
 import { useCustomersStore } from '@/stores/customers'
 import { useDesignStore } from '@/stores/design'
@@ -125,11 +125,29 @@ function inviteLead(id:string){
             :class="{active:design.placeholderSet===set.id}"
           >
             <input v-model="design.placeholderSet" class="sr-only" type="radio" name="placeholder-set" :value="set.id">
-            <img :src="set.preview" alt="" loading="lazy" decoding="async">
+            <img :src="productPlaceholder(set.id,'11',design.placeholderOrientation)" :data-landscape-preview="set.preview" alt="" loading="lazy" decoding="async">
             <span class="placeholder-set-copy"><b>{{locale.t(set.labelKey)}}</b><small>{{locale.t(set.descriptionKey)}}</small></span>
             <span v-if="design.placeholderSet===set.id" class="placeholder-set-check" aria-hidden="true"><Check :size="15"/></span>
           </label>
         </div>
+        <fieldset class="placeholder-orientation mt-4">
+          <legend class="text-xs font-black text-[var(--c-text)]">{{locale.t('placeholderOrientation')}}</legend>
+          <p class="mt-1 text-[11px] leading-5 text-[var(--c-muted)]">{{locale.t('placeholderOrientationHelp')}}</p>
+          <div class="mt-2 grid grid-cols-3 gap-2" role="radiogroup" :aria-label="locale.t('placeholderOrientation')">
+            <label class="placeholder-orientation-option" :class="{active:design.placeholderOrientation==='portrait'}">
+              <input v-model="design.placeholderOrientation" class="sr-only" type="radio" name="placeholder-orientation" value="portrait">
+              <b>{{locale.t('placeholderPortrait')}}</b><small>{{locale.t('placeholderPortraitHelp')}}</small>
+            </label>
+            <label class="placeholder-orientation-option" :class="{active:design.placeholderOrientation==='landscape'}">
+              <input v-model="design.placeholderOrientation" class="sr-only" type="radio" name="placeholder-orientation" value="landscape">
+              <b>{{locale.t('placeholderLandscape')}}</b><small>{{locale.t('placeholderLandscapeHelp')}}</small>
+            </label>
+            <label class="placeholder-orientation-option" :class="{active:design.placeholderOrientation==='auto'}">
+              <input v-model="design.placeholderOrientation" class="sr-only" type="radio" name="placeholder-orientation" value="auto">
+              <b>{{locale.t('placeholderAuto')}}</b><small>{{locale.t('placeholderAutoHelp')}}</small>
+            </label>
+          </div>
+        </fieldset>
         <p class="mt-3 text-[11px] font-bold text-[var(--c-secondary)]">{{locale.t('placeholderAppliedImmediately')}}</p>
       </section>
 
