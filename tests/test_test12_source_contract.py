@@ -21,8 +21,8 @@ assert "session.logout()" in sheet, "Sheets must expose logout while authenticat
 assert "989381009231" in whatsapp, "Canonical seller WhatsApp number missing"
 for path in ["simple", "available", "unavailable", "custom", "brand", "packaging"]:
     assert path in whatsapp, f"Missing request path {path}"
-for label in ["تولید سفارشی", "تولید با برند", "تولید با بسته‌بندی"]:
-    assert label in wizard, f"Production wizard missing {label}"
+for key in ["customProduction", "privateLabel", "customPackaging"]:
+    assert f"locale.t('{key}')" in wizard, f"Production wizard missing localized path {key}"
 assert ("skeleton" in image and "@error" in image) or ("<svg" in image and "smart-placeholder-svg" in image), "SmartImage needs a resilient media fallback"
 assert ".wa-card-action" in css and ".wa-primary" in css, "WhatsApp needs dedicated visual treatment"
 assert "spatie/laravel-medialibrary" in asset_doc, "Media architecture must name primary media package"
