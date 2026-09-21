@@ -119,7 +119,7 @@ function inviteLead(id:string){
         </section>
         <section class="admin-surface rounded-2xl p-4">
           <div class="mb-3 flex items-center justify-between"><h2 class="font-black">{{locale.t('adminProducts')}}</h2><button class="mini-action" @click="activeTab='products'">{{locale.t('adminProducts')}}</button></div>
-          <div class="space-y-2"><div v-for="product in catalog.items.slice(0,4)" :key="product.id" class="overview-row"><b>{{locale.productName(product.code,product.name)}}</b><small>{{product.code}}</small></div></div>
+          <div class="space-y-2"><div v-for="product in catalog.items.slice(0,4)" :key="product.id" class="overview-row"><b>{{locale.productName(product.code,product.name,product.names)}}</b><small>{{product.code}}</small></div></div>
         </section>
       </div>
     </template>
