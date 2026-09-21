@@ -109,7 +109,7 @@ export const useLocaleStore=defineStore('locale',()=>{
     locale,initialized,direction,htmlLang,overrides,
     t,baseValue,setManual,initialize,apply,
     setOverride,resetOverride,resetOverrides,
-    categoryName,categorySubtitle,subcategoryName,productName,specLabel,orderStatus,
+    categoryName,categorySubtitle,subcategoryName,productName,productNameFor,specLabel,orderStatus,
     baseMessages,translationGroups:[...translationGroups,...contentTranslationGroups],
   }
 })
