@@ -300,10 +300,10 @@ html[data-locale="en"] .header-select{direction:ltr;text-align:left}
 
   #main-content{padding-bottom:2rem}
   .site-footer{padding-bottom:1.25rem}
-  @media(hover:hover) and (pointer:fine){.product-card{transition:transform 190ms cubic-bezier(.2,.8,.2,1),box-shadow 190ms ease}.product-card:hover{transform:translateY(-2px) scale(1.012);box-shadow:0 20px 48px rgba(18,27,73,.12)}}
   .hero-shell{min-height:32rem}
 }
 @media(max-width:1023.98px){
   .site-footer{padding-bottom:calc(var(--bottom-nav-space) + .5rem)}
 }
+@media(min-width:1024px) and (hover:hover) and (pointer:fine){.product-card{transition:transform 190ms cubic-bezier(.2,.8,.2,1),box-shadow 190ms ease}.product-card:hover{transform:translateY(-2px) scale(1.012);box-shadow:0 20px 48px rgba(18,27,73,.12)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.skip-link{transition:none}}
