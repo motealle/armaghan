@@ -98,9 +98,15 @@ export const useCustomersStore=defineStore('customers',()=>{
     const accessToken=makeToken()
     const accessExpiresAt=mode==='expiring'?new Date(Date.now()+72*3600_000).toISOString():''
     update(id,{accessMode:mode,accessToken,accessExpiresAt,accessRevoked:false})
-    return `${location.origin}/User-${accessToken}`
+    return `${location.origin}${location.pathname}?customerAccess=${accessToken}#/tracking`
   }
   function revokeAccess(id:number){update(id,{accessRevoked:true})}
+  function resolveAccessToken(token:string):CustomerRecord|null{
+    const row=items.value.find(item=>item.accessToken===token&&!item.accessRevoked)
+    if(!row)return null
+    if(row.accessMode==='expiring'&&row.accessExpiresAt&&Date.now()>Date.parse(row.accessExpiresAt))return null
+    return row
+  }
   function recordWishlistChange(input:{customerId?:number;label?:string;favoritesCount:number}){
     const now=new Date().toISOString()
     const kind=input.customerId?'customer':'guest'
@@ -131,5 +137,5 @@ export const useCustomersStore=defineStore('customers',()=>{
 
   watch(items,value=>localStorage.setItem(CUSTOMER_KEY,JSON.stringify(value)),{deep:true})
   watch(wishlistLeads,value=>localStorage.setItem(LEAD_KEY,JSON.stringify(value)),{deep:true})
-  return{items,wishlistLeads,changedWishlistCount,currentVisitorMessage,add,update,remove,removeMany,setProfileImage,generateAccess,revokeAccess,recordWishlistChange,removeLead,queueGuestMessage,clearCurrentVisitorMessage}
+  return{items,wishlistLeads,changedWishlistCount,currentVisitorMessage,add,update,remove,removeMany,setProfileImage,generateAccess,revokeAccess,resolveAccessToken,recordWishlistChange,removeLead,queueGuestMessage,clearCurrentVisitorMessage}
 })
