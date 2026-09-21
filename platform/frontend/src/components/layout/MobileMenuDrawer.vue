@@ -30,7 +30,7 @@ const profile=computed(()=>{
   }
   if(session.isAdmin)return{flag:'🇮🇷',name:locale.t('adminOverview'),meta:locale.t('drawerOperational')}
   if(session.isCustomer){
-    const customer=customers.items[0]
+    const customer=customers.items.find(item=>item.id===(session.currentCustomerId??1))??customers.items[0]
     return customer?{flag:customer.flag,name:customer.name,meta:locale.t('drawerSummary')}:{flag:'🌐',name:locale.t('customerLabel'),meta:locale.t('drawerSummary')}
   }
   return null
