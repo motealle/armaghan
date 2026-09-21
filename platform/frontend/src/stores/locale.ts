@@ -101,7 +101,12 @@ export const useLocaleStore=defineStore('locale',()=>{
   function categoryName(code:string,fallback=''){return t(`category.${code}.name`)||fallback}
   function categorySubtitle(code:string,fallback=''){return t(`category.${code}.subtitle`)||fallback}
   function subcategoryName(code:string,fallback=''){return t(`subcategory.${code}`)||fallback}
-  function productName(code:string,fallback=''){return t(`product.${code}`)||fallback}
+  function productNameFor(code:string,target:Locale,fallback='',custom?:Partial<Record<Locale,string>>){
+    return custom?.[target]?.trim() || t(`product.${code}`,target) || fallback
+  }
+  function productName(code:string,fallback='',custom?:Partial<Record<Locale,string>>){
+    return productNameFor(code,locale.value,fallback,custom)
+  }
   function specLabel(label:string){return t(`spec.${label}`)||label}
   function orderStatus(label:string){return t(`status.${label}`)||label}
 
