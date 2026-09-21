@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ClipboardList, Grid2X2, Heart, House, LogIn, LogOut, Menu, UserRound, WandSparkles } from '@lucide/vue'
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
@@ -8,11 +8,10 @@ import type { Locale } from '@/services/localeDetection'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 import MobileMenuDrawer from './MobileMenuDrawer.vue'
 
-const emit=defineEmits<{login:[];designlab:[]}>()
+const emit=defineEmits<{login:[];help:[]}>()
 const session=useSessionStore()
 const locale=useLocaleStore()
 const route=useRoute()
-const timer=ref<number|null>(null)
 const mobileMenuOpen=ref(false)
 
 const navItems=computed(()=>[
@@ -23,31 +22,24 @@ const navItems=computed(()=>[
   {to:'/tracking',label:locale.t('tracking'),icon:ClipboardList},
 ])
 function active(path:string){return path==='/'?route.path==='/':route.path.startsWith(path)}
-function startLongPress(){stopLongPress();timer.value=window.setTimeout(()=>emit('designlab'),3000)}
-function stopLongPress(){if(timer.value)window.clearTimeout(timer.value);timer.value=null}
 function logout(){session.logout()}
 function changeLanguage(event:Event){locale.setManual((event.target as HTMLSelectElement).value as Locale)}
-onBeforeUnmount(stopLongPress)
 </script>
 
 <template>
   <header
     class="sticky top-0 z-[90] border-b border-white/10 bg-[var(--c-primary)] text-white shadow-sm"
-    @pointerdown.passive="startLongPress"
-    @pointerup.passive="stopLongPress"
-    @pointercancel.passive="stopLongPress"
-    @pointerleave.passive="stopLongPress"
   >
-    <div class="mx-auto flex max-w-[1440px] items-center gap-2 px-3 py-2.5 lg:grid lg:grid-cols-[auto_1fr_auto] lg:px-5">
+    <div class="app-header-layout mx-auto flex max-w-[1440px] items-center gap-2 px-3 py-2.5 lg:grid lg:grid-cols-[auto_1fr_auto] lg:px-5">
       <RouterLink to="/" class="flex min-w-0 items-center gap-2.5" @pointerdown.stop>
         <img class="h-10 w-10 shrink-0 rounded-xl bg-white/10 object-cover" :src="'../../logo.png'" alt="Armaghan" />
         <div class="min-w-0">
-          <b class="block text-sm">ارمغان</b>
+          <b class="block text-sm">{{locale.t('brandName')}}</b>
           <span class="hidden truncate text-[10px] text-white/70 lg:block">{{locale.t('manufacturer')}}</span>
         </div>
       </RouterLink>
 
-      <nav class="hidden lg:flex lg:items-center lg:justify-self-center lg:gap-1" aria-label="ناوبری اصلی">
+      <nav class="hidden lg:flex lg:items-center lg:justify-self-center lg:gap-1" :aria-label="locale.t('mainNavigation')">
         <RouterLink
           v-for="item in navItems"
           :key="item.to"
@@ -67,7 +59,7 @@ onBeforeUnmount(stopLongPress)
         <button
           type="button"
           class="mobile-menu-trigger lg:hidden"
-          aria-label="باز کردن منو"
+          :aria-label="locale.t('openMenu')"
           @pointerdown.stop
           @click.stop="mobileMenuOpen=true"
         >
@@ -96,7 +88,7 @@ onBeforeUnmount(stopLongPress)
         <template v-else>
           <span class="hidden items-center gap-1.5 text-xs font-bold text-white/80 xl:inline-flex">
             <UserRound :size="17"/>
-            {{session.impersonatedCustomerId?'مدیر ← مشتری':session.isAdmin?'مدیر':'مشتری'}}
+            {{session.impersonatedCustomerId?locale.t('impersonationRole'):session.isAdmin?locale.t('adminRole'):locale.t('customerRole')}}
           </span>
           <button class="header-action hidden lg:inline-flex" :aria-label="locale.t('logout')" @pointerdown.stop @click.stop="logout">
             <LogOut :size="17"/><span>{{locale.t('logout')}}</span>
@@ -106,5 +98,5 @@ onBeforeUnmount(stopLongPress)
     </div>
   </header>
 
-  <MobileMenuDrawer :open="mobileMenuOpen" @close="mobileMenuOpen=false" @login="emit('login')"/>
+  <MobileMenuDrawer :open="mobileMenuOpen" @close="mobileMenuOpen=false" @login="emit('login')" @help="emit('help')"/>
 </template>

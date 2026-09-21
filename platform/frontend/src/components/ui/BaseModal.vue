@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { X } from '@lucide/vue'
+import { useLocaleStore } from '@/stores/locale'
 
 const props=defineProps<{open:boolean;title:string}>()
 const emit=defineEmits<{close:[]}>()
+const locale=useLocaleStore()
 const panelRef=ref<HTMLElement|null>(null)
 let previousFocus:HTMLElement|null=null
 const focusable='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
@@ -38,14 +40,14 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
 <template>
   <Teleport to="body">
     <div v-if="open" class="modal-layer" role="presentation">
-      <button class="modal-backdrop" aria-label="بستن" tabindex="-1" @click="emit('close')" />
+      <button class="modal-backdrop" :aria-label="locale.t('close')" tabindex="-1" @click="emit('close')" />
       <section ref="panelRef" class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
         <header class="modal-header">
           <div>
-            <div class="text-[10px] font-black tracking-[.16em] text-[var(--c-primary)]">ARMAGHAN</div>
+            <div class="text-[10px] font-black tracking-[.16em] text-[var(--c-primary)]">{{locale.t('brandName')}}</div>
             <h2 id="modal-title" class="mt-1 text-lg font-black text-[var(--c-text)]">{{title}}</h2>
           </div>
-          <button class="modal-close" aria-label="بستن" @click="emit('close')"><X :size="20"/></button>
+          <button class="modal-close" :aria-label="locale.t('close')" @click="emit('close')"><X :size="20"/></button>
         </header>
         <div class="p-5"><slot/></div>
       </section>

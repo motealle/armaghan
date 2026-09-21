@@ -23,7 +23,7 @@ const filtered=computed(()=>catalog.items.filter(product=>{
   if(subcategory.value!=='all'&&product.subcategoryCode!==subcategory.value)return false
   if(availability.value!=='all'&&product.availability!==availability.value)return false
   const needle=query.value.trim().toLowerCase()
-  return !needle||(`${product.name} ${product.code} ${product.subcategoryName}`).toLowerCase().includes(needle)
+  return !needle||(`${locale.productName(product.code,product.name)} ${product.code} ${locale.subcategoryName(product.subcategoryCode,product.subcategoryName)}`).toLowerCase().includes(needle)
 }))
 const activeCount=computed(()=>Number(category.value!=='all')+Number(subcategory.value!=='all')+Number(availability.value!=='all')+Number(Boolean(query.value.trim())))
 function resetFilters(){category.value='all';subcategory.value='all';availability.value='all';query.value=''}
@@ -33,8 +33,8 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
   <section>
     <div class="mb-4 flex items-end justify-between gap-3">
       <div>
-        <h1 class="text-2xl font-black">{{locale.t('productsTitle')}}</h1>
-        <p class="mt-1 text-sm text-[var(--c-muted)]">{{locale.t('productsHelp')}}</p>
+        <h1 class="text-[1.75rem] font-black leading-tight">{{locale.t('productsTitle')}}</h1>
+        <p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('productsHelp')}}</p>
       </div>
       <button v-if="activeCount" class="hidden text-xs font-extrabold text-[var(--c-primary)] lg:inline-flex" @click="resetFilters">
         {{locale.t('clearFilters')}} · {{activeCount}}
@@ -45,13 +45,13 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
     <div class="lg:hidden">
       <div class="grid grid-cols-3 gap-2">
         <button v-for="cat in categories" :key="cat.code" class="rounded-2xl border p-3 text-start" :class="category===cat.code?'border-[var(--c-primary)] bg-indigo-50 dark:bg-indigo-950/30':'border-[var(--c-border)] bg-[var(--c-surface)]'" @click="category=cat.code;subcategory='all'">
-          <span class="text-[10px] font-extrabold text-[var(--c-primary)]">0{{cat.code}}</span><b class="mt-1 block text-sm">{{cat.name}}</b>
+          <span class="text-[10px] font-extrabold text-[var(--c-primary)]">0{{cat.code}}</span><b class="mt-1 block text-sm">{{locale.categoryName(cat.code,cat.name)}}</b>
         </button>
       </div>
 
-      <div class="mt-3 flex gap-2 overflow-x-auto pb-1">
+      <div class="chip-scroller mt-3 flex gap-2 overflow-x-auto pb-1">
         <button class="filter-chip" :class="{active:subcategory==='all'}" @click="subcategory='all'">{{locale.t('allSubs')}}</button>
-        <button v-for="sub in subs" :key="sub.code" class="filter-chip" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code">{{sub.code}} · {{sub.name}}</button>
+        <button v-for="sub in subs" :key="sub.code" class="filter-chip" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code">{{sub.code}} · {{locale.subcategoryName(sub.code,sub.name)}}</button>
       </div>
 
       <div class="mt-4 flex flex-wrap gap-2">
@@ -69,7 +69,7 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
     </div>
 
     <!-- Desktop becomes a commerce workspace: stable facet rail + broad product canvas. -->
-    <div class="mt-5 lg:grid lg:grid-cols-[15.5rem_minmax(0,1fr)] lg:items-start lg:gap-5">
+    <div class="commerce-layout mt-5 lg:grid lg:grid-cols-[15.5rem_minmax(0,1fr)] lg:items-start lg:gap-5">
       <aside class="desktop-filter-panel hidden rounded-2xl p-3 lg:block lg:sticky lg:top-[5.25rem]">
         <label class="mb-4 flex min-h-11 items-center gap-2 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3">
           <Search :size="17" class="shrink-0 text-[var(--c-muted)]"/>
@@ -82,7 +82,7 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
             <span>{{locale.t('allCategories')}}</span><Check v-if="category==='all'" :size="15"/>
           </button>
           <button v-for="cat in categories" :key="cat.code" class="desktop-filter-option" :class="{active:category===cat.code}" @click="category=cat.code;subcategory='all'">
-            <span>{{cat.name}}</span><Check v-if="category===cat.code" :size="15"/>
+            <span>{{locale.categoryName(cat.code,cat.name)}}</span><Check v-if="category===cat.code" :size="15"/>
           </button>
         </div>
 
@@ -107,7 +107,7 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
         </div>
       </aside>
 
-      <div class="min-w-0">
+      <div class="commerce-content min-w-0">
         <div class="mb-3 hidden items-center justify-between rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-4 py-3 text-xs lg:flex">
           <span class="font-bold text-[var(--c-text)]">{{filtered.length}} {{locale.t('productCount')}}</span>
           <span class="text-[var(--c-muted)]">{{locale.t('desktopFilterHelp')}}</span>

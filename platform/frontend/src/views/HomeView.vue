@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BadgeCheck, ExternalLink, MessageCircleMore, Sparkles } from '@lucide/vue'
+import { BadgeCheck, MessageCircleMore, Sparkles } from '@lucide/vue'
 import { categories } from '@/data/catalog'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
@@ -10,36 +10,27 @@ import SmartImage from '@/components/media/SmartImage.vue'
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
 const trustItems=[
-  {icon:Sparkles,label:'توانمندی‌ها'},
-  {icon:BadgeCheck,label:'اعتبارات و اسناد'},
-  {icon:MessageCircleMore,label:'ارتباط فروش'},
+  {icon:Sparkles,label:'brandCapabilities',text:'brandCapabilitiesText'},
+  {icon:BadgeCheck,label:'brandDocuments',text:'brandDocumentsText'},
+  {icon:MessageCircleMore,label:'brandSales',text:'brandSalesText'},
 ]
 </script>
 
 <template>
   <div class="space-y-8">
-    <HeroCarousel />
-
-    <aside class="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs leading-6 text-amber-950">
-      <Sparkles :size="18" class="mt-1 shrink-0" />
-      <div>
-        <b>{{ locale.t('sourceNoteTitle') }}</b>
-        <p>{{ locale.t('sourceNote') }}</p>
-        <RouterLink to="/credits" class="mt-1 inline-flex items-center gap-1 font-extrabold underline underline-offset-4">{{ locale.t('imageSources') }} <ExternalLink :size="13" /></RouterLink>
-      </div>
-    </aside>
+    <HeroCarousel/>
 
     <section>
       <div class="mb-3">
-        <h2 class="text-xl font-black">{{ locale.t('categories') }}</h2>
-        <p class="mt-1 text-xs text-slate-500">{{ locale.t('categoryHelp') }}</p>
+        <h2 class="text-xl font-black leading-tight text-[var(--c-text)]">{{locale.t('categories')}}</h2>
+        <p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('categoryHelp')}}</p>
       </div>
       <div class="grid grid-cols-3 gap-2">
-        <RouterLink v-for="category in categories" :key="category.code" :to="{path:'/products',query:{category:category.code}}" class="overflow-hidden rounded-2xl border border-slate-200 bg-[var(--c-paper)] shadow-sm">
-          <SmartImage :src="category.image" :alt="category.name" :label="category.name" />
+        <RouterLink v-for="category in categories" :key="category.code" :to="{path:'/products',query:{category:category.code}}" class="overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] shadow-sm">
+          <SmartImage :src="category.image" :alt="locale.categoryName(category.code,category.name)" :label="locale.categoryName(category.code,category.name)"/>
           <div class="p-3">
-            <div class="flex items-center gap-2"><Sparkles :size="16" class="text-[var(--c-primary)]" /><b class="text-sm">{{ category.name }}</b></div>
-            <small class="mt-1 hidden text-[10px] text-slate-500 sm:block">{{ category.subtitle }}</small>
+            <div class="flex items-center gap-2"><Sparkles :size="16" class="text-[var(--c-primary)]"/><b class="text-sm">{{locale.categoryName(category.code,category.name)}}</b></div>
+            <small class="mt-1 hidden text-[11px] leading-5 text-[var(--c-muted)] sm:block">{{locale.categorySubtitle(category.code,category.subtitle)}}</small>
           </div>
         </RouterLink>
       </div>
@@ -48,24 +39,24 @@ const trustItems=[
     <section>
       <div class="mb-3 flex items-end justify-between gap-3">
         <div>
-          <h2 class="text-xl font-black">{{ locale.t('recommended') }}</h2>
-          <p class="mt-1 text-xs text-slate-500">۱۸ محصول نمونه برای تست مرور، استعلام و سفارش تولید.</p>
+          <h2 class="text-xl font-black leading-tight text-[var(--c-text)]">{{locale.t('recommended')}}</h2>
+          <p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('favoriteHelp')}}</p>
         </div>
-        <RouterLink to="/products" class="shrink-0 text-xs font-extrabold text-[var(--c-primary)]">{{ locale.t('allProducts') }}</RouterLink>
+        <RouterLink to="/products" class="shrink-0 text-xs font-extrabold text-[var(--c-primary)]">{{locale.t('allProducts')}}</RouterLink>
       </div>
-      <ProductGrid :products="catalog.items.slice(0,6)" />
+      <ProductGrid :products="catalog.items.slice(0,6)"/>
     </section>
 
     <section>
-      <h2 class="mb-3 text-xl font-black">{{ locale.t('brandIntro') }}</h2>
-      <div class="mb-3 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SmartImage :src="catalog.items[0]?.gallery?.[1]" alt="نمونه تصویری محصول" label="نمونه تصویری محصول" aspect="hero" />
+      <h2 class="mb-3 text-xl font-black leading-tight text-[var(--c-text)]">{{locale.t('brandIntro')}}</h2>
+      <div class="mb-3 overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] shadow-sm">
+        <SmartImage :src="catalog.items[0]?.gallery?.[1]" :alt="locale.t('brandIntro')" :label="locale.t('manufacturer')" aspect="hero"/>
       </div>
       <div class="grid gap-3 md:grid-cols-3">
-        <article v-for="item in trustItems" :key="item.label" class="rounded-2xl border border-slate-200 bg-[var(--c-paper)] p-4 shadow-sm">
-          <div class="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><component :is="item.icon" :size="21" /></div>
-          <b class="text-sm">{{ item.label }}</b>
-          <p class="mt-2 text-xs leading-6 text-slate-500">اطلاعات تأییدشده کسب‌وکار در نسخه نهایی این بخش تکمیل می‌شود.</p>
+        <article v-for="item in trustItems" :key="item.label" class="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 shadow-sm">
+          <div class="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-[color-mix(in_srgb,var(--c-secondary)_10%,var(--c-surface))] text-[var(--c-secondary)]"><component :is="item.icon" :size="21"/></div>
+          <b class="text-sm text-[var(--c-text)]">{{locale.t(item.label)}}</b>
+          <p class="mt-2 text-xs leading-6 text-[var(--c-muted)]">{{locale.t(item.text)}}</p>
         </article>
       </div>
     </section>
