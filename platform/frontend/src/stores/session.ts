@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { UserRole } from '@/types/domain'
+import { useCustomersStore } from '@/stores/customers'
 
 const STORAGE_KEY='armaghan:test20:role'
 const IMPERSONATION_KEY='armaghan:test20:impersonation'
@@ -31,6 +32,7 @@ function readMagic():MagicRecord[]{
 function token(){return crypto.getRandomValues(new Uint32Array(4)).join('').slice(0,24)}
 
 export const useSessionStore=defineStore('session',()=>{
+  const customers=useCustomersStore()
   const role=ref<UserRole>(readRole())
   const impersonatedCustomerId=ref<number|null>(readImpersonation())
   const accounts=ref<LocalAccount[]>(readAccounts())
@@ -59,7 +61,10 @@ export const useSessionStore=defineStore('session',()=>{
   function login(username:string,password:string):boolean{
     if(username==='1'&&password==='1'){persistRole('admin');return true}
     if(username==='2'&&password==='2'){persistRole('customer','',1);return true}
-    const account=accounts.value.find(item=>item.email.toLowerCase()===username.toLowerCase()&&item.password===password)
+    const normalized=username.trim().toLowerCase()
+    const managedCustomer=customers.items.find(item=>item.email.trim().toLowerCase()===normalized&&item.loginPassword&&item.loginPassword===password)
+    if(managedCustomer){persistRole('customer',managedCustomer.email,managedCustomer.id);return true}
+    const account=accounts.value.find(item=>item.email.toLowerCase()===normalized&&item.password===password)
     if(!account)return false
     persistRole('customer',account.email,account.id)
     return true
