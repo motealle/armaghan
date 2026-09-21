@@ -1,6 +1,7 @@
 import type { Category, CustomerSummary, Product, ProductSpecGroup } from '@/types/domain'
 import { digikalaMediaByProductCode } from '@/data/digikalaMedia.generated'
 
+// Test 23 category navigation uses user-provided optimized thumbnails; product galleries keep canonical final media.
 export const categories: Category[] = [
   {
     code: '1',

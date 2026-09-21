@@ -34,7 +34,8 @@ hero = (ROOT / "platform/frontend/src/features/home/components/HeroCarousel.vue"
 catalog = (ROOT / "platform/frontend/src/data/catalog.ts").read_text()
 smart_image = (ROOT / "platform/frontend/src/components/media/SmartImage.vue").read_text()
 assert hero.count("./images/final/hero/") == 3
-assert catalog.count("./images/final/categories/") == 9
+assert catalog.count("./images/final/categories/") == 6
+assert catalog.count("./images/category-navigation/") == 3
 assert "const gallery = [meta.image, './images/final/details/fabric-detail.webp', legacyFallback]" in catalog
 assert 'type="image/avif"' in smart_image
 assert "<img :src=\"src\"" in smart_image
