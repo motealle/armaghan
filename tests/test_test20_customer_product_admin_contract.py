@@ -26,8 +26,8 @@ locale=(src/"stores/locale.ts").read_text(encoding="utf-8")
 css=(src/"styles/main.css").read_text(encoding="utf-8")
 
 assert tuple(map(int,pkg["version"].split("."))) >= (0,20,0)
-assert "../../t/20" in vite or "../../t/21" in vite
-assert ("test20-build" in workflow and "t/20" in workflow) or ("test21-build" in workflow and "t/21" in workflow)
+assert "../../t/20" in vite or "../../t/21" in vite or "../../t/22" in vite
+assert ("test20-build" in workflow and "t/20" in workflow) or ("test21-build" in workflow and "t/21" in workflow) or ("test22-build" in workflow and "t/22" in workflow)
 assert "test_test20_customer_product_admin_contract.py" in workflow
 assert "19" in immutable
 assert launcher.index("./20/index.html") < launcher.index("./19/index.html")
@@ -93,7 +93,7 @@ for key_file in [
     src/"stores/locale.ts",
 ]:
     text=key_file.read_text(encoding="utf-8")
-    assert "test20" in text or "test21" in text or "armaghan:locale:manual" in text
+    assert "test20" in text or "test21" in text or "test22" in text or "armaghan:locale:manual" in text
 
 assert "Customer 360" in audit and "Subtle Hover Scale" in audit
 assert "Test 20" in backlog

@@ -1,8 +1,21 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 21 — Selectable Subcategory Product Placeholders**.
-Detailed ranked UX decisions: `docs/TEST21-UX-AUDIT.md`.
+Current implementation target: **Test 22 — Release Hardening + Immutable Snapshot Handoff**.
+Release decision record: `docs/TEST22-RELEASE.md`.
+
+## P0 — Test 22: Release hardening + immutable snapshot handoff
+
+- [x] Freeze Test 21 and leave `/t/21` untouched.
+- [x] Bump frontend package version to `0.22.0`.
+- [x] Isolate Test 22 browser storage under `armaghan:test22:*`.
+- [x] Preserve Test 21 product data as a catalog migration source.
+- [x] Build only `/t/22` from the Vue source.
+- [x] Add a strict Test 22 release contract while keeping Test 20/21 regression contracts.
+- [x] Put Test 22 first in the mutable launcher.
+- [x] Update CI artifact/deploy targeting from Test 21 to Test 22.
+- [ ] Confirm CI, FTP smoke test and live deployment of `/public_html/t/22`.
+- [ ] Record the successful deployment run and mark Test 22 delivered.
 
 ## P0 — Test 21: Selectable product placeholders
 
