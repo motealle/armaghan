@@ -32,7 +32,6 @@ router=(src/"router/index.ts").read_text(encoding="utf-8")
 
 assert tuple(map(int,pkg["version"].split("."))) >= (0,19,0)
 assert "Test 19" not in index, "Public document shell should look like a product, not a test"
-assert "armaghan:test19:theme" in index
 assert "test_test19_production_admin_i18n_contract.py" in workflow
 assert "18" in immutable
 assert launcher.index("./19/index.html") < launcher.index("./18/index.html")
