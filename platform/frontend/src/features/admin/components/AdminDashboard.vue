@@ -146,17 +146,18 @@ function inviteLead(id:string){
         <table class="data-table">
           <thead><tr>
             <th><input type="checkbox" :checked="allCustomersSelected" :aria-label="locale.t('selectAll')" @change="toggleAllCustomers"></th>
-            <th>{{locale.t('customerLabel')}}</th><th>WhatsApp</th><th>{{locale.t('email')}}</th><th>{{locale.t('currentOrder')}}</th><th>{{locale.t('actions')}}</th>
+            <th>{{locale.t('customerLabel')}}</th><th>{{locale.t('customerPriority')}}</th><th>WhatsApp</th><th>{{locale.t('email')}}</th><th>{{locale.t('currentOrder')}}</th><th>{{locale.t('actions')}}</th>
           </tr></thead>
           <tbody>
             <tr v-for="customer in customers.items" :key="customer.id">
               <td><input v-model="selectedCustomers" type="checkbox" :value="customer.id"></td>
               <td><button class="text-start font-bold" @click="manageCustomer(customer.id)">{{customer.flag}} {{customer.name}}</button></td>
-              <td dir="ltr">{{customer.whatsapp}}</td><td dir="ltr">{{customer.email}}</td><td>{{customer.activeOrder}}</td>
+              <td><span class="inline-flex items-center gap-1 text-amber-500">★ <b class="text-[var(--c-text)]">{{customer.priorityStars??0}}</b></span></td>
+              <td dir="ltr">{{customer.whatsapp}}</td><td dir="ltr">{{customer.email}}</td><td>{{locale.orderStatus(customer.activeOrder)}}</td>
               <td><div class="relative flex items-center gap-1">
-                <button class="row-overflow" :aria-label="locale.t('impersonate')" @click="impersonate(customer.id)"><UserRoundCog :size="17"/></button>
-                <button class="row-overflow" :aria-label="locale.t('moreActions')" @click="openMenuId=openMenuId===customer.id?null:customer.id"><MoreVertical :size="17"/></button>
-                <div v-if="openMenuId===customer.id" class="row-menu">
+                <button class="row-overflow" :disabled="selectedCustomers.length>0" :aria-label="locale.t('impersonate')" @click="impersonate(customer.id)"><UserRoundCog :size="17"/></button>
+                <button class="row-overflow" :disabled="selectedCustomers.length>0" :aria-label="locale.t('moreActions')" @click="openMenuId=openMenuId===customer.id?null:customer.id"><MoreVertical :size="17"/></button>
+                <div v-if="openMenuId===customer.id&&selectedCustomers.length===0" class="row-menu">
                   <button @click="manageCustomer(customer.id)">{{locale.t('manageCustomer')}}</button>
                   <button class="text-rose-700" @click="customers.remove(customer.id);openMenuId=null"><Trash2 :size="14"/>{{locale.t('delete')}}</button>
                 </div>
