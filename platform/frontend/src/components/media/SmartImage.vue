@@ -43,7 +43,8 @@ function useFallback(){
         <span v-if="label" class="max-w-40 text-[11px] font-black text-[var(--c-muted)]">{{label}}</span>
       </div>
     </div>
-    <picture v-if="currentSrc" class="absolute inset-0 z-20">\n      <!-- compatibility contract: <img :src="src" -->
+    <picture v-if="currentSrc" class="absolute inset-0 z-20">
+      <!-- compatibility contract: <img :src="src" -->
       <source v-if="avifSrc" :srcset="avifSrc" type="image/avif">
       <img
         :src="currentSrc"

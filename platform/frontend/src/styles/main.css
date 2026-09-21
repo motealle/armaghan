@@ -422,7 +422,8 @@ html[data-locale="en"] .hero-text{letter-spacing:0}
 }
 
 
-/* Test 25 — gray dark theme, portrait placeholder media, wizard and bidi polish */\n/* Test 25 deployment trigger: contract fix remains source-identical in behavior. */
+/* Test 25 — gray dark theme, portrait placeholder media, wizard and bidi polish */
+/* Test 25 deployment trigger: contract fix remains source-identical in behavior. */
 html.dark body{background:linear-gradient(180deg,#17181a 0,var(--c-bg) 22rem);color:var(--c-text)}
 html.dark .product-card,
 html.dark .category-card,
@@ -481,5 +482,35 @@ html[data-locale="en"] .home-trust-card p{text-wrap:pretty}
   .wizard-category-title{font-size:.72rem}
   .wizard-category-subtitle{font-size:.59rem}
 }
+
+
+/* Test 25 hotfix 2 — remove leaked escape text, improve dark foreground contrast, swipe hero, normalize English LTR */
+.hero-shell{touch-action:pan-y pinch-zoom;overscroll-behavior-x:contain}
+
+html.dark .card-action{border-color:#454950;background:#222428;color:#d2d5db}
+html.dark .card-action:hover{border-color:#5a5f68;background:#2a2d32}
+html.dark .product-code-row code{background:#292c31;color:#e0e2e6}
+html.dark .detail-menu-icon,
+html.dark .category-chevron,
+html.dark .product-media-placeholder,
+html.dark .customer-kpi,
+html.dark .drawer-dashboard-head,
+html.dark .help-step-icon,
+html.dark .magic-link-box button,
+html.dark .admin-stat,
+html.dark .desktop-filter-option.active,
+html.dark .auth-tabs button.active,
+html.dark .language-square-button:hover{color:#d7dae0}
+html.dark .category-card.active .category-number{background:#2b2e33;color:#d7dae0;border-color:#474b52}
+
+html[data-locale="en"] #main-content{direction:ltr;text-align:left}
+html[data-locale="en"] .app-header-layout,
+html[data-locale="en"] .commerce-layout,
+html[data-locale="en"] .bottom-nav>div,
+html[data-locale="en"] .mobile-drawer-panel{direction:ltr}
+html[data-locale="en"] .mobile-drawer-panel{text-align:left}
+html[data-locale="en"] .mobile-drawer-panel :where(p,b,span,label,small,h1,h2,h3,h4){direction:ltr;text-align:left}
+html[data-locale="en"] .site-footer,
+html[data-locale="en"] .site-footer :where(b,span){text-align:center}
 
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.skip-link{transition:none}}

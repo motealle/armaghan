@@ -41,6 +41,19 @@ Rollback checkpoint: `rollback/test24-pre-test25`.
 - [x] `deploy-root` was skipped.
 - [x] Deployment log confirms: **104 files uploaded; no remote files were deleted.**
 
+### Test 25 hotfix 2 — screenshot bugfix pass
+
+Detailed decision record: `docs/TEST25-BUGFIX2-UX-AUDIT.md`.  
+Rollback checkpoint: `rollback/test25-pre-bugfix-2` → `6dc0b9188d50cae156c19fac86f548ed3e3d16f0`.
+
+- [x] Remove the literal `\\n` text node leaked by `SmartImage.vue` and clean the matching CSS escape.
+- [x] Add touch/pen swipe navigation to Hero with horizontal-intent detection and preserved vertical page scrolling.
+- [x] Replace low-contrast blue foreground accents in dark content/cards with light neutral gray while retaining branded navbar/filled states.
+- [x] Make English main content inherit LTR/left alignment globally, including commerce layout, header layout, bottom navigation and mobile drawer.
+- [x] Add a focused CI regression contract for these screenshot failures.
+- [ ] Confirm CI/build/FTP deployment after this hotfix.
+- [ ] Record the successful hotfix run.
+
 ## P0 — Test 24: responsive commerce polish + admin content control
 
 - [x] Freeze Test 23 and leave `/t/23` untouched.

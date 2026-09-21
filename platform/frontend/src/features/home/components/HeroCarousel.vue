@@ -8,6 +8,9 @@ const locale=useLocaleStore()
 const current=ref(0)
 const paused=ref(false)
 let timer:number|undefined
+let swipePointerId:number|null=null
+let swipeStartX=0
+let swipeStartY=0
 const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)')
 const icons=[Sparkles,Boxes,Globe2]
 const media=[
@@ -26,7 +29,35 @@ const slide=computed(()=>slides.value[current.value]!)
 function start(){
   if(timer)window.clearInterval(timer)
   if(paused.value||reduceMotion.matches||document.hidden)return
-  timer=window.setInterval(()=>current.value=(current.value+1)%slides.value.length,6500)
+  timer=window.setInterval(()=>go(1,false),6500)
+}
+function go(offset:number,restart=true){
+  current.value=(current.value+offset+slides.value.length)%slides.value.length
+  if(restart)start()
+}
+function select(index:number){current.value=index;start()}
+function beginSwipe(event:PointerEvent){
+  if(event.pointerType==='mouse')return
+  swipePointerId=event.pointerId
+  swipeStartX=event.clientX
+  swipeStartY=event.clientY
+  paused.value=true
+  if(timer)window.clearInterval(timer)
+}
+function finishSwipe(event:PointerEvent){
+  if(swipePointerId!==event.pointerId)return
+  const dx=event.clientX-swipeStartX
+  const dy=event.clientY-swipeStartY
+  swipePointerId=null
+  paused.value=false
+  if(Math.abs(dx)>=44&&Math.abs(dx)>Math.abs(dy)*1.15)go(dx<0?1:-1)
+  else start()
+}
+function cancelSwipe(){
+  if(swipePointerId===null)return
+  swipePointerId=null
+  paused.value=false
+  start()
 }
 function visibility(){start()}
 onMounted(()=>{start();document.addEventListener('visibilitychange',visibility);reduceMotion.addEventListener?.('change',start)})
@@ -34,7 +65,16 @@ onBeforeUnmount(()=>{if(timer)window.clearInterval(timer);document.removeEventLi
 </script>
 
 <template>
-  <section class="hero-shell overflow-hidden rounded-[1.5rem] text-white shadow-xl" @mouseenter="paused=true;start()" @mouseleave="paused=false;start()" @focusin="paused=true;start()" @focusout="paused=false;start()">
+  <section
+    class="hero-shell overflow-hidden rounded-[1.5rem] text-white shadow-xl"
+    @mouseenter="paused=true;start()"
+    @mouseleave="paused=false;start()"
+    @focusin="paused=true;start()"
+    @focusout="paused=false;start()"
+    @pointerdown="beginSwipe"
+    @pointerup="finishSwipe"
+    @pointercancel="cancelSwipe"
+  >
     <div class="hero-media-pane relative">
       <SmartImage :src="slide.image" alt="" :label="slide.kicker" aspect="hero" eager/>
       <div class="hero-media-shade absolute inset-0 z-30"/>
@@ -54,7 +94,7 @@ onBeforeUnmount(()=>{if(timer)window.clearInterval(timer);document.removeEventLi
           <RouterLink to="/production" class="inline-flex min-h-12 items-center rounded-xl border border-white/20 bg-white/8 px-4 font-extrabold">{{locale.t('production')}}</RouterLink>
         </div>
         <div class="mt-5 flex gap-2">
-          <button v-for="(_,i) in slides" :key="i" class="h-2 rounded-full transition-all" :class="i===current?'w-8 bg-white':'w-2 bg-white/45'" :aria-label="`${i+1}`" @click="current=i"/>
+          <button v-for="(_,i) in slides" :key="i" class="h-2 rounded-full transition-all" :class="i===current?'w-8 bg-white':'w-2 bg-white/45'" :aria-label="`${i+1}`" @click="select(i)"/>
         </div>
       </div>
     </div>
