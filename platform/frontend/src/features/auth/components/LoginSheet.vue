@@ -3,12 +3,14 @@ import { computed, ref, watch } from 'vue'
 import { ClipboardCopy, Globe2, KeyRound, LogIn, UserPlus } from '@lucide/vue'
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
+import { useCustomersStore } from '@/stores/customers'
 import { useLocaleStore } from '@/stores/locale'
 import BaseModal from '@/components/ui/BaseModal.vue'
 
 const props=defineProps<{open:boolean}>()
 const emit=defineEmits<{close:[]}>()
 const session=useSessionStore()
+const customers=useCustomersStore()
 const locale=useLocaleStore()
 const router=useRouter()
 const mode=ref<'signin'|'register'|'magic'>('signin')
@@ -39,11 +41,13 @@ function submit(){
 }
 function register(){
   error.value='';message.value=''
-  const result=session.register(name.value,email.value,password.value)
+  const nextCustomerId=Math.max(0,...customers.items.map(item=>item.id))+1
+  const result=session.register(name.value,email.value,password.value,nextCustomerId)
   if(!result.ok){
     error.value=result.reason==='exists'?locale.t('invalidLogin'):locale.t('registerHelp')
     return
   }
+  customers.add({name:name.value.trim(),email:email.value.trim().toLowerCase(),whatsapp:''})
   complete()
 }
 function makeMagic(){
