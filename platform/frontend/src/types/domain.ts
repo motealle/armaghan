@@ -15,10 +15,13 @@ export interface ProductSpecGroup {
   negotiable: string[]
 }
 
+export type ProductNames = Partial<Record<'fa'|'ar'|'en'|'ku',string>>
+
 export interface Product {
   id: number
   code: string
   name: string
+  names?: ProductNames
   categoryCode: '1' | '2' | '3'
   subcategoryCode: '11' | '12' | '21' | '22' | '31' | '32'
   categoryName: string
