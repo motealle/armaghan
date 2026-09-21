@@ -32,7 +32,11 @@ onMounted(async()=>{
   const params=new URLSearchParams(location.search)
   const magic=params.get('magic')
   const customerAccess=params.get('customerAccess')
-  if(magic&&session.consumeMagicLink(magic)) location.hash='#/tracking'
+  if(magic&&session.consumeMagicLink(magic)){
+    const customer=customers.items.find(item=>item.email&&item.email.toLowerCase()===session.currentEmail.toLowerCase())
+    if(customer)session.loginCustomerRecord(customer.id,customer.email)
+    location.hash='#/tracking'
+  }
   if(customerAccess){
     const customer=customers.resolveAccessToken(customerAccess)
     if(customer){session.loginCustomerRecord(customer.id,customer.email);location.hash='#/tracking'}
