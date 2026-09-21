@@ -9,11 +9,11 @@ Detailed ranked UX decisions: `docs/TEST20-UX-AUDIT.md`.
 Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 
 ### Snapshot and delivery
-- [ ] Freeze Test 19 and leave /t/19 untouched.
-- [ ] Build only /t/20.
-- [ ] Put Test 20 first in /t/index.htm.
-- [ ] Add Test 20 QA contract and keep previous contracts regression-safe.
-- [ ] FTP deploy only /public_html/t/20 plus launcher; no remote deletion and no root deployment.
+- [x] Freeze Test 19 and leave /t/19 untouched.
+- [x] Build only /t/20.
+- [x] Put Test 20 first in /t/index.htm.
+- [x] Add Test 20 QA contract and keep previous contracts regression-safe.
+- [x] FTP deploy only /public_html/t/20 plus launcher; no remote deletion and no root deployment.
 
 ### Customer 360
 - [x] Fix reactive Pinia Proxy clone path with toRaw + structuredClone.
@@ -25,7 +25,9 @@ Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 - [x] Keep profile photo upload/optimization.
 - [x] Add current-order and timeline controls with a visible progress summary.
 - [x] Add editable password state.
+- [x] Make manager-set customer email/password usable by the Test 20 sign-in adapter.
 - [x] Keep direct-access modes Permanent / Expiring, generation, expiry and revoke.
+- [x] Resolve valid direct-access customer tokens into the correct customer session.
 
 ### Product-card micro-interaction
 - [x] Add subtle hover scale/lift using transform only.
@@ -57,7 +59,20 @@ Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 
 ### Repository memory
 - [x] Add five-option ranked analysis and self-detected issues to docs/TEST20-UX-AUDIT.md.
-- [ ] Mark delivery/QA items complete only after CI and live FTP deployment succeed.
+- [x] Mark delivery/QA items complete after successful CI and live FTP deployment.
+
+
+### Test 20 delivery record
+- [x] **FTP Deploy Run #68** completed successfully.
+- [x] Test 11–20 regression contracts passed.
+- [x] TypeScript type-check passed.
+- [x] Unit tests passed.
+- [x] Vite production build for /t/20 passed.
+- [x] FTP smoke test passed.
+- [x] /public_html/t/20/index.html and /public_html/t/index.htm were uploaded.
+- [x] deploy-root was skipped.
+- [x] Deployment log confirms: **No remote files were deleted.**
+- [x] Test 19 remains frozen and was not rebuilt into /t/19.
 
 
 ## P0 — Test 19
