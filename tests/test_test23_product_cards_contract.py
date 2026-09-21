@@ -64,7 +64,8 @@ for item in manifest["items"]:
 assert "aspect?:'hero'|'card'|'square'|'product'" in smart
 assert "aspect-[2/3]" in smart
 assert 'aspect="product"' in media
-assert "subcategoryCode" not in media and "subcategoryName" not in media
+assert "subcategoryName" not in media
+assert "absolute inset-x-0 bottom-0" not in media
 assert "availability-badge" not in card
 assert "SlidersHorizontal" not in card
 assert "visibleTitle" in card

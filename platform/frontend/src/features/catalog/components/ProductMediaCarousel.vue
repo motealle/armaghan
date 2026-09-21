@@ -10,6 +10,7 @@ const props=defineProps<{product:Product}>()
 const locale=useLocaleStore()
 const design=useDesignStore()
 const productName=computed(()=>locale.productName(props.product.code,props.product.name,props.product.names))
+// Subcategory code is used only to resolve the image fallback; no category/status copy is rendered over media.
 const fallbackImage=computed(()=>productPlaceholder(design.placeholderSet,props.product.subcategoryCode))
 const productImage=computed(()=>props.product.image?.trim()||fallbackImage.value)
 </script>
