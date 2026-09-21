@@ -127,3 +127,14 @@
 - Baymard — Product Lists & Filtering: https://baymard.com/ecommerce-product-lists/expert-audit
 - Baymard — Unified product-list hit areas: https://baymard.com/research-articles/list-items-hover-and-hit-area
 - Material Accessibility — 48×48dp touch targets: https://m1.material.io/usability/accessibility.html
+
+## تحویل زنده
+
+- **FTP Deploy Run #79** با موفقیت کامل شد.
+- guard نسخه‌های immutable و قراردادهای Test 11–23 پاس شدند.
+- TypeScript type-check، unit tests و Vite production build پاس شدند.
+- FTP smoke test پاس شد.
+- سه thumbnail مشتق‌شده از تصاویر پیوست کاربر، `/public_html/t/23/index.html` و launcher آپلود شدند.
+- `deploy-root` عمداً skip شد.
+- 85 فایل آپلود شد و هیچ فایل remote حذف نشد.
+

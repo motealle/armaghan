@@ -21,8 +21,20 @@ Detailed ranked UX decisions: `docs/TEST23-UX-AUDIT.md`.
 - [x] Isolate Test 23 browser state under `armaghan:test23:*` while migrating catalog data forward from Test 22.
 - [x] Add a Test 23 media/UI source contract and keep prior regression contracts active.
 - [x] Build/deploy only `/public_html/t/23` plus the mutable launcher.
-- [ ] Confirm CI, FTP smoke test and live deployment of `/public_html/t/23`.
-- [ ] Record the successful deployment run and mark Test 23 delivered.
+- [x] Confirm CI, FTP smoke test and live deployment of `/public_html/t/23`.
+- [x] Record the successful deployment run and mark Test 23 delivered.
+
+### Test 23 delivery record
+
+- [x] **FTP Deploy Run #79** completed successfully.
+- [x] Immutable snapshot guard and Test 11–23 contracts passed.
+- [x] TypeScript type-check and unit tests passed.
+- [x] Vite production build for `/t/23` passed.
+- [x] FTP smoke test passed.
+- [x] User-provided category thumbnails and `/public_html/t/23/index.html` were uploaded.
+- [x] `/public_html/t/index.htm` was updated with Test 23 first.
+- [x] `deploy-root` was skipped.
+- [x] Deployment log confirms: **85 files uploaded; no remote files were deleted.**
 
 ## P0 — Test 22: Release hardening + immutable snapshot handoff
 
