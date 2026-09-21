@@ -4,6 +4,7 @@ import type { UserRole } from '@/types/domain'
 
 const STORAGE_KEY='armaghan:test19:role'
 const IMPERSONATION_KEY='armaghan:test19:impersonation'
+const CUSTOMER_ID_KEY='armaghan:test19:customer-id'
 const ACCOUNTS_KEY='armaghan:test19:accounts'
 const MAGIC_KEY='armaghan:test19:magic-links'
 
@@ -35,28 +36,32 @@ export const useSessionStore=defineStore('session',()=>{
   const accounts=ref<LocalAccount[]>(readAccounts())
   const magicLinks=ref<MagicRecord[]>(readMagic())
   const currentEmail=ref(sessionStorage.getItem('armaghan:test19:email')??'')
+  const currentCustomerId=ref<number|null>(Number(sessionStorage.getItem(CUSTOMER_ID_KEY))||null)
 
   const isAuthenticated=computed(()=>role.value!=='guest')
   const isAdmin=computed(()=>role.value==='admin')
   const isCustomer=computed(()=>role.value==='customer')
 
-  function persistRole(next:UserRole,email=''){
+  function persistRole(next:UserRole,email='',customerId:number|null=null){
     role.value=next
     currentEmail.value=email
     impersonatedCustomerId.value=null
+    currentCustomerId.value=customerId
     if(next==='guest')sessionStorage.removeItem(STORAGE_KEY)
     else sessionStorage.setItem(STORAGE_KEY,next)
     if(email)sessionStorage.setItem('armaghan:test19:email',email)
     else sessionStorage.removeItem('armaghan:test19:email')
+    if(customerId)sessionStorage.setItem(CUSTOMER_ID_KEY,String(customerId))
+    else sessionStorage.removeItem(CUSTOMER_ID_KEY)
     sessionStorage.removeItem(IMPERSONATION_KEY)
   }
 
   function login(username:string,password:string):boolean{
     if(username==='1'&&password==='1'){persistRole('admin');return true}
-    if(username==='2'&&password==='2'){persistRole('customer','buyer@example.test');return true}
+    if(username==='2'&&password==='2'){persistRole('customer','',1);return true}
     const account=accounts.value.find(item=>item.email.toLowerCase()===username.toLowerCase()&&item.password===password)
     if(!account)return false
-    persistRole('customer',account.email)
+    persistRole('customer',account.email,account.id)
     return true
   }
 
@@ -67,7 +72,7 @@ export const useSessionStore=defineStore('session',()=>{
     const id=Math.max(0,...accounts.value.map(item=>item.id))+1
     accounts.value=[...accounts.value,{id,name:name.trim(),email:cleanEmail,password}]
     localStorage.setItem(ACCOUNTS_KEY,JSON.stringify(accounts.value))
-    persistRole('customer',cleanEmail)
+    persistRole('customer',cleanEmail,id)
     return{ok:true}
   }
 
@@ -95,6 +100,7 @@ export const useSessionStore=defineStore('session',()=>{
     return true
   }
 
+  function loginCustomerRecord(customerId:number,email=''){persistRole('customer',email,customerId)}
   function logout(){persistRole('guest')}
   function impersonate(customerId:number){
     if(!isAdmin.value)return
@@ -107,7 +113,7 @@ export const useSessionStore=defineStore('session',()=>{
   }
 
   return{
-    role,isAuthenticated,isAdmin,isCustomer,impersonatedCustomerId,currentEmail,accounts,magicLinks,
-    login,register,logout,impersonate,stopImpersonating,createMagicLink,revokeMagicLink,consumeMagicLink,
+    role,isAuthenticated,isAdmin,isCustomer,impersonatedCustomerId,currentCustomerId,currentEmail,accounts,magicLinks,
+    login,register,loginCustomerRecord,logout,impersonate,stopImpersonating,createMagicLink,revokeMagicLink,consumeMagicLink,
   }
 })
