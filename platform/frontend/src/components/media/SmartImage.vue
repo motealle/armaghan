@@ -10,6 +10,7 @@ const props=withDefaults(defineProps<{
 }>(),{label:'',aspect:'card',eager:false})
 
 const ratioClass=computed(()=>props.aspect==='hero'?'aspect-[16/9]':props.aspect==='square'?'aspect-square':'aspect-[4/3]')
+const avifSrc=computed(()=>props.src?.endsWith('.webp')?props.src.replace(/\.webp$/,'.avif'):undefined)
 </script>
 
 <template>
@@ -26,5 +27,9 @@ const ratioClass=computed(()=>props.aspect==='hero'?'aspect-[16/9]':props.aspect
         <span v-if="label" class="max-w-40 text-[11px] font-black text-[var(--c-muted)]">{{label}}</span>
       </div>
     </div>
+    <picture v-if="src" class="absolute inset-0 z-20">
+      <source v-if="avifSrc" :srcset="avifSrc" type="image/avif">
+      <img :src="src" :alt="alt" class="h-full w-full object-cover" :loading="eager?'eager':'lazy'" :fetchpriority="eager?'high':'auto'" decoding="async" @error="($event.currentTarget as HTMLImageElement).style.display='none'">
+    </picture>
   </div>
 </template>

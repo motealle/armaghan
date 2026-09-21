@@ -10,11 +10,16 @@ const paused=ref(false)
 let timer:number|undefined
 const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)')
 const icons=[Sparkles,Boxes,Globe2]
+const media=[
+  './images/final/hero/hero-brand.webp',
+  './images/final/hero/hero-production.webp',
+  './images/final/hero/hero-export.webp',
+]
 
 const slides=computed(()=>[
-  {kicker:locale.t('hero1Kicker'),title:locale.t('hero1Title'),text:locale.t('hero1Text'),icon:icons[0]},
-  {kicker:locale.t('hero2Kicker'),title:locale.t('hero2Title'),text:locale.t('hero2Text'),icon:icons[1]},
-  {kicker:locale.t('hero3Kicker'),title:locale.t('hero3Title'),text:locale.t('hero3Text'),icon:icons[2]},
+  {kicker:locale.t('hero1Kicker'),title:locale.t('hero1Title'),text:locale.t('hero1Text'),icon:icons[0],image:media[0]},
+  {kicker:locale.t('hero2Kicker'),title:locale.t('hero2Title'),text:locale.t('hero2Text'),icon:icons[1],image:media[1]},
+  {kicker:locale.t('hero3Kicker'),title:locale.t('hero3Title'),text:locale.t('hero3Text'),icon:icons[2],image:media[2]},
 ])
 const slide=computed(()=>slides.value[current.value]!)
 
@@ -30,7 +35,7 @@ onBeforeUnmount(()=>{if(timer)window.clearInterval(timer);document.removeEventLi
 
 <template>
   <section class="hero-shell relative overflow-hidden rounded-[1.5rem] text-white shadow-xl" @mouseenter="paused=true;start()" @mouseleave="paused=false;start()" @focusin="paused=true;start()" @focusout="paused=false;start()">
-    <SmartImage alt="" :label="slide.kicker" aspect="hero" eager/>
+    <SmartImage :src="slide.image" alt="" :label="slide.kicker" aspect="hero" eager/>
     <div class="absolute inset-0 z-30 bg-gradient-to-l from-slate-950/72 via-slate-950/48 to-slate-950/16"/>
     <div class="absolute inset-0 z-40 flex items-end p-5 md:p-9">
       <div class="max-w-2xl">

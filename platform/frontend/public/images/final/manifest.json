@@ -1,0 +1,147 @@
+{
+  "schema": 1,
+  "generator": "OpenAI built-in image generation",
+  "prompt_sources": [
+    "pics.md",
+    "docs/pics-Prompt.md"
+  ],
+  "disclosure": "Illustrative generated media; not documentary evidence of Armaghan facilities, staff or products.",
+  "processing": {
+    "avif_quality": 52,
+    "webp_quality": 82,
+    "metadata_stripped": true,
+    "upscaled": false
+  },
+  "items": [
+    {
+      "id": "hero-brand",
+      "outputs": [
+        "hero/hero-brand.avif",
+        "hero/hero-brand.webp"
+      ],
+      "width": 1672,
+      "height": 941,
+      "sha256": {
+        "avif": "f72bc61f0a4fc0cb325d92f3e2fe651950a83ea54d47c0c2786f1c24c3f9c98e",
+        "webp": "d57d39758259f0161ca071826714cf1c63734f90f65eed64ba3cc3d6d83398c1"
+      }
+    },
+    {
+      "id": "hero-production",
+      "outputs": [
+        "hero/hero-production.avif",
+        "hero/hero-production.webp"
+      ],
+      "width": 1672,
+      "height": 941,
+      "sha256": {
+        "avif": "7dc289a757be0590bbdd8d5ac5f698b2098ab7166ad8e08632b1332cf3e17f7a",
+        "webp": "cc975e601cef4ad9aa232f89a53f65d37f5e1567119e3772f75e013a710a572f"
+      }
+    },
+    {
+      "id": "hero-export",
+      "outputs": [
+        "hero/hero-export.avif",
+        "hero/hero-export.webp"
+      ],
+      "width": 1672,
+      "height": 941,
+      "sha256": {
+        "avif": "e8511b30e4f3748b8e1895185edacfa6fba7ec114277f7cb996210e7bb24eec1",
+        "webp": "974d80e5db8cd247e6d67ebcf3b49ca997a09f4ae6883d2b8b4d563af1dbec16"
+      }
+    },
+    {
+      "id": "category-baby",
+      "outputs": [
+        "categories/category-baby.avif",
+        "categories/category-baby.webp"
+      ],
+      "width": 1448,
+      "height": 1086,
+      "sha256": {
+        "avif": "d6160377e55f9e3f3d869f30ce27496e7d854915ac609bd22e5d30b8ddd40c7d",
+        "webp": "256ce47b1864765d982316d0ed0ff2deb07c9277238f35d9a90db60228c40b68"
+      }
+    },
+    {
+      "id": "category-kids",
+      "outputs": [
+        "categories/category-kids.avif",
+        "categories/category-kids.webp"
+      ],
+      "width": 1448,
+      "height": 1086,
+      "sha256": {
+        "avif": "622d5f2094481a1767b2fac0e050fdcd67f8c10a59d2b43c95d912e66136afa4",
+        "webp": "0b8a2b1c67932b8ca65256e88ca793261be28b113c3fd91f24ee7cb482579f6b"
+      }
+    },
+    {
+      "id": "category-women-modest",
+      "outputs": [
+        "categories/category-women-modest.avif",
+        "categories/category-women-modest.webp"
+      ],
+      "width": 1448,
+      "height": 1086,
+      "sha256": {
+        "avif": "04e00a3fd3393ace6e8679cf30acdb137891e42d81dbbd9d373fa4b866331d34",
+        "webp": "509b0a57828facd4c8210436dea89e6cc8fee06a2e317ceee30f31320d920537"
+      }
+    },
+    {
+      "id": "fabric-detail",
+      "outputs": [
+        "details/fabric-detail.avif",
+        "details/fabric-detail.webp"
+      ],
+      "width": 1448,
+      "height": 1086,
+      "sha256": {
+        "avif": "ecb3f48200726d8f58ca53e67e897c11a594efe483ee8ac58c79d3ba6d221ee6",
+        "webp": "f0796cb165a666470e16b69b42692b9d29e3083c156aed01c6a7460d0087934b"
+      }
+    },
+    {
+      "id": "custom-packaging",
+      "outputs": [
+        "services/custom-packaging.avif",
+        "services/custom-packaging.webp"
+      ],
+      "width": 1448,
+      "height": 1086,
+      "sha256": {
+        "avif": "9fcded03f7078da5c3d5d6db8be14d19cd05830ce000a7a1cddb5be7b6639d09",
+        "webp": "bf45ff8ead9461a0fc17b61a6ee6918eb3b42c8d3d7442a9628466dc6727dcae"
+      }
+    },
+    {
+      "id": "private-label",
+      "outputs": [
+        "services/private-label.avif",
+        "services/private-label.webp"
+      ],
+      "width": 1448,
+      "height": 1086,
+      "sha256": {
+        "avif": "a108b260cf80d4b75a6bf793ced2f55e4eb4a7546423405faf0c2d77d0db0c72",
+        "webp": "a749ec2a83341207020dfe4be2aafcc18f74003dba85b8c5d2e4d5f9d1647663"
+      }
+    },
+    {
+      "id": "quality-documents",
+      "outputs": [
+        "trust/quality-documents.avif",
+        "trust/quality-documents.webp"
+      ],
+      "width": 1448,
+      "height": 1086,
+      "sha256": {
+        "avif": "2f96684fa5efa8796e4800b4fd378b95196fa5004ff1ede3b1420946e72268bb",
+        "webp": "f695740feaefbfe2d456de94bf45678a1a16620888d519ced49ba32d7efdb273"
+      }
+    }
+  ]
+}

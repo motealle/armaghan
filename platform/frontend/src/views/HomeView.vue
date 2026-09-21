@@ -50,7 +50,7 @@ const trustItems=[
     <section>
       <h2 class="mb-3 text-xl font-black leading-tight text-[var(--c-text)]">{{locale.t('brandIntro')}}</h2>
       <div class="mb-3 overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] shadow-sm">
-        <SmartImage :src="catalog.items[0]?.gallery?.[1]" :alt="locale.t('brandIntro')" :label="locale.t('manufacturer')" aspect="hero"/>
+        <SmartImage src="./images/final/details/fabric-detail.webp" :alt="locale.t('brandIntro')" :label="locale.t('manufacturer')" aspect="hero"/>
       </div>
       <div class="grid gap-3 md:grid-cols-3">
         <article v-for="item in trustItems" :key="item.label" class="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 shadow-sm">

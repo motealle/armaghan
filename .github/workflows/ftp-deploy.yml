@@ -103,6 +103,8 @@ jobs:
         run: python tests/test_test20_customer_product_admin_contract.py
       - name: Test web-stock provenance policy
         run: python tests/test_web_stock_policy.py
+      - name: Test generated-media contract
+        run: python tests/test_generated_media_contract.py
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
       - name: Check Python syntax
@@ -114,7 +116,7 @@ jobs:
       - name: Install Vue dependencies
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Type-check, unit test and build Test 20
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend

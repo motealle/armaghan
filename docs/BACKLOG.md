@@ -4,6 +4,18 @@ Priority: **P0 current**, P1 next, P2 later.
 Current implementation target: **Test 20 — Customer 360 + Product Administration**.  
 Detailed ranked UX decisions: `docs/TEST20-UX-AUDIT.md`.
 
+## P0 — Final generated image set
+
+Decision record: `docs/IMAGE-GENERATION-AUDIT.md`.
+
+- [x] Inventory and triangulate all image prompt/list/manifest files in the repository.
+- [x] Rank five implementation options and select the current 10-asset contract from `pics.md`.
+- [x] Generate 10 canonical source images with one coherent visual direction.
+- [x] Derive optimized AVIF and WebP variants in the paths defined by `pics.md`.
+- [x] Record prompt provenance, dimensions, sizes and checksums in a generated-media manifest.
+- [x] Wire final media into the current Vue application without deleting stock fallbacks.
+- [x] Run image-policy tests, type-check, unit tests and production build.
+
 ## P0 — Test 20: Customer 360 + Product Administration
 
 Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.

@@ -1,12 +1,12 @@
 import type { Category, CustomerSummary, Product, ProductSpecGroup } from '@/types/domain'
-import { digikalaCategoryMedia, digikalaMediaByProductCode } from '@/data/digikalaMedia.generated'
+import { digikalaMediaByProductCode } from '@/data/digikalaMedia.generated'
 
 export const categories: Category[] = [
   {
     code: '1',
     name: 'نوزادی',
     subtitle: 'لباس و پتوی نوزادی',
-    image: digikalaCategoryMedia['1'],
+    image: './images/final/categories/category-baby.webp',
     subcategories: [
       { code: '11', name: 'لباس نوزادی' },
       { code: '12', name: 'پتوی نوزادی' },
@@ -16,7 +16,7 @@ export const categories: Category[] = [
     code: '2',
     name: 'بچگانه',
     subtitle: 'دخترانه و پسرانه',
-    image: digikalaCategoryMedia['2'],
+    image: './images/final/categories/category-kids.webp',
     subcategories: [
       { code: '21', name: 'دخترانه' },
       { code: '22', name: 'پسرانه' },
@@ -26,7 +26,7 @@ export const categories: Category[] = [
     code: '3',
     name: 'زنانه',
     subtitle: 'تونیک و لباس راحتی',
-    image: digikalaCategoryMedia['3'],
+    image: './images/final/categories/category-women-modest.webp',
     subcategories: [
       { code: '31', name: 'زیرسارافون (تونیک)' },
       { code: '32', name: 'لباس راحتی (ورزشی)' },
@@ -39,6 +39,7 @@ type SubMeta = {
   categoryName: string
   subcategoryName: string
   image: string
+  fallbackImage: string
   specs: ProductSpecGroup
 }
 
@@ -47,42 +48,48 @@ export const subMeta: Record<Product['subcategoryCode'], SubMeta> = {
     categoryCode: '1',
     categoryName: 'نوزادی',
     subcategoryName: 'لباس نوزادی',
-    image: './images/web-stock/sub-11.webp',
+    image: './images/final/categories/category-baby.webp',
+    fallbackImage: './images/web-stock/sub-11.webp',
     specs: { locked: ['رنگ', 'جنس'], negotiable: ['طرح ظاهری', 'مشخصات مدل', 'اقلام محصول', 'سایز', 'رده سنی'] },
   },
   '12': {
     categoryCode: '1',
     categoryName: 'نوزادی',
     subcategoryName: 'پتوی نوزادی',
-    image: './images/web-stock/sub-12.webp',
+    image: './images/final/categories/category-baby.webp',
+    fallbackImage: './images/web-stock/sub-12.webp',
     specs: { locked: ['ابعاد'], negotiable: ['طرح ظاهری', 'فرم محصول', 'مشخصات مدل', 'ترکیب رنگ', 'جنس', 'تعداد در پک'] },
   },
   '21': {
     categoryCode: '2',
     categoryName: 'بچگانه',
     subcategoryName: 'دخترانه',
-    image: './images/web-stock/sub-21.webp',
+    image: './images/final/categories/category-kids.webp',
+    fallbackImage: './images/web-stock/sub-21.webp',
     specs: { locked: [], negotiable: ['طرح ظاهری', 'اجزای محصول', 'فرم محصول', 'مشخصات مدل', 'نوع تن‌خور', 'سایز', 'رده سنی', 'رنگ', 'جنس', 'تعداد در پک'] },
   },
   '22': {
     categoryCode: '2',
     categoryName: 'بچگانه',
     subcategoryName: 'پسرانه',
-    image: './images/web-stock/sub-22.webp',
+    image: './images/final/categories/category-kids.webp',
+    fallbackImage: './images/web-stock/sub-22.webp',
     specs: { locked: [], negotiable: ['طرح ظاهری', 'اجزای محصول', 'فرم محصول', 'مشخصات مدل', 'نوع تن‌خور', 'سایز', 'رده سنی', 'رنگ', 'جنس', 'تعداد در پک'] },
   },
   '31': {
     categoryCode: '3',
     categoryName: 'زنانه',
     subcategoryName: 'زیرسارافون (تونیک)',
-    image: './images/web-stock/sub-31.webp',
+    image: './images/final/categories/category-women-modest.webp',
+    fallbackImage: './images/web-stock/sub-31.webp',
     specs: { locked: ['سایز', 'رنگ', 'جنس', 'تعداد در پک'], negotiable: ['طرح ظاهری', 'فرم محصول'] },
   },
   '32': {
     categoryCode: '3',
     categoryName: 'زنانه',
     subcategoryName: 'لباس راحتی (ورزشی)',
-    image: './images/web-stock/sub-32.webp',
+    image: './images/final/categories/category-women-modest.webp',
+    fallbackImage: './images/web-stock/sub-32.webp',
     specs: { locked: ['سایز', 'تعداد در پک'], negotiable: ['طرح ظاهری', 'اجزای محصول', 'فرم محصول', 'مشخصات محصول', 'نوع تن‌خور', 'جنس', 'رنگ'] },
   },
 }
@@ -108,8 +115,8 @@ function product(
   availability: Product['availability'],
 ): Product {
   const meta = subMeta[subcategoryCode]
-  const media = digikalaMediaByProductCode[code] ?? [meta.image, meta.image]
-  const gallery = media.length >= 2 ? media.slice(0, 2) : [media[0] ?? meta.image, meta.image]
+  const legacyFallback = digikalaMediaByProductCode[code]?.[0] ?? meta.fallbackImage
+  const gallery = [meta.image, './images/final/details/fabric-detail.webp', legacyFallback]
   return {
     id,
     code,

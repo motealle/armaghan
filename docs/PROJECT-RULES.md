@@ -27,7 +27,7 @@
 20. Palette anchors: `#21946A`, `#151EDA`, `#C8E3DB`, `#FFFEFF`, `#FFB514`.
 21. UI icons use Lucide Vue imports; no runtime global SVG sizing rules.
 22. Final women photography must be fully modest Islamic hijab, no visible hair and no revealing/body-emphasizing styling.
-23. Temporary web stock must not be presented as actual Armaghan products, factory, staff, customers or certificates.
+23. The canonical generated set under `platform/frontend/public/images/final` is the default media source for the current Vue prototype and every later numbered prototype; temporary web stock is fallback-only and must not be presented as actual Armaghan products, factory, staff, customers or certificates.
 24. Automated stock sourcing must use reuse-compatible licensing and record source, creator, license and checksum.
 25. No runtime hotlinking for catalog photography; vendor an optimized local derivative.
 26. Hidden Design Lab opens after 3-second top-bar long press and may switch design system/palette without changing business state.
