@@ -8,7 +8,7 @@ Detailed ranked UX decisions: `docs/TEST19-UX-AUDIT.md`.
 
 ### Snapshot + delivery
 - [x] Freeze Tests 01–18.
-- [ ] Build a new immutable `/t/19` artifact.
+- [x] Build a new immutable `/t/19` artifact.
 - [x] Keep `/t/index.htm` mutable and newest test first.
 - [x] Add Test 19 contract before deployment.
 - [x] Keep root untouched and FTP non-destructive.
@@ -25,7 +25,7 @@ Detailed ranked UX decisions: `docs/TEST19-UX-AUDIT.md`.
 - [x] Animate drawer enter/leave from the side in 200ms; honor reduced motion.
 
 ### Product copy / typography / visual consistency
-- [ ] Remove public-facing prototype/test words: SVG, آزمایشی, demo/test wording, technical media labels.
+- [x] Remove public-facing prototype/test words: SVG, آزمایشی, demo/test wording, technical media labels.
 - [x] Replace ad-hoc typography with semantic scale.
 - [x] Use Vazirmatn FD for fa/ar/ku and Roboto for English.
 - [x] Hide horizontal scrollbar chrome in category chips while preserving scrolling.
@@ -87,7 +87,7 @@ Detailed ranked UX decisions: `docs/TEST19-UX-AUDIT.md`.
 ### i18n completeness
 - [x] Move visible application copy into a single translation registry.
 - [x] Add persisted per-language translation overrides.
-- [ ] Eliminate mixed-language UI in Home / Products / Production / Favorites / Tracking / Login / Drawer / Admin.
+- [x] Eliminate mixed-language UI in Home / Products / Production / Favorites / Tracking / Login / Drawer / Admin.
 - [x] Keep `html lang` and semantic `dir` correct for each locale.
 - [x] Keep overall shell geometry stable across languages with CSS; English content and controls are LTR/left-aligned.
 - [x] Translate product category/subcategory/product/spec labels needed by current UI.
@@ -104,7 +104,7 @@ Detailed ranked UX decisions: `docs/TEST19-UX-AUDIT.md`.
 ### Repository memory
 - [x] Add detailed 5-option ranked analysis for each requested item and self-detected visual/product bugs in `docs/TEST19-UX-AUDIT.md`.
 - [x] Update backlog checkboxes as each implementation block lands.
-- [ ] Update `pics.md` only if image requirements change.
+- [x] Reviewed `pics.md`; image requirements did not change in Test 19, so no update was required.
 
 ## P1 — Backend productionization
 - [ ] Laravel 13 + SQLite local/development backend.
@@ -116,13 +116,27 @@ Detailed ranked UX decisions: `docs/TEST19-UX-AUDIT.md`.
 - [ ] MySQL migration/staging after SQLite model stabilizes.
 
 ## Definition of Done — Test 19
-- [ ] Tests 01–18 immutable.
-- [ ] Test 19 first in launcher.
-- [ ] No public prototype/test wording.
-- [ ] No mixed-language major flow for fa/ar/en/ku.
-- [ ] Mobile drawer, bottom sheets and theme transitions visually coherent.
-- [ ] Admin supports focused sections, multi-select, batch delete, customer CRUD and Customer 360 edit.
-- [ ] Translation editor works with per-key and bulk reset.
-- [ ] Auth surfaces clearly distinguish functional prototype flows from backend-required Google OAuth.
-- [ ] Test 11–19 contracts, type-check, unit tests, build, FTP smoke and deploy all pass.
-- [ ] Root deploy skipped; no remote file deletion.
+- [x] Tests 01–18 immutable.
+- [x] Test 19 first in launcher.
+- [x] No public prototype/test wording.
+- [x] No mixed-language major flow for fa/ar/en/ku.
+- [x] Mobile drawer, bottom sheets and theme transitions visually coherent.
+- [x] Admin supports focused sections, multi-select, batch delete, customer CRUD and Customer 360 edit.
+- [x] Translation editor works with per-key and bulk reset.
+- [x] Auth surfaces clearly distinguish functional prototype flows from backend-required Google OAuth.
+- [x] Test 11–19 contracts, type-check, unit tests, build, FTP smoke and deploy all pass.
+- [x] Root deploy skipped; no remote file deletion.
+
+
+### Delivery record
+- [x] Main implementation landed in `398902cd1e2ed1ce600386656996aa427c5e1cfb`.
+- [x] Regression fixes landed through `02150c18ba16cd29b46f611371ac6350bb3936a0`.
+- [x] **FTP Deploy Run #63** completed successfully.
+- [x] Test 11–19 contracts passed.
+- [x] TypeScript type-check passed.
+- [x] Unit tests passed.
+- [x] Vite production build passed.
+- [x] FTP smoke test passed.
+- [x] `/public_html/t/19/index.html` and `/public_html/t/index.htm` were uploaded.
+- [x] `deploy-root` was skipped.
+- [x] Deployment log confirms: **No remote files were deleted.**
