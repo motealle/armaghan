@@ -6,7 +6,7 @@ export const categories: Category[] = [
     code: '1',
     name: 'نوزادی',
     subtitle: 'لباس و پتوی نوزادی',
-    image: './images/final/categories/category-baby.webp',
+    image: './images/category-navigation/category-baby.webp',
     subcategories: [
       { code: '11', name: 'لباس نوزادی' },
       { code: '12', name: 'پتوی نوزادی' },
@@ -16,7 +16,7 @@ export const categories: Category[] = [
     code: '2',
     name: 'بچگانه',
     subtitle: 'دخترانه و پسرانه',
-    image: './images/final/categories/category-kids.webp',
+    image: './images/category-navigation/category-kids.webp',
     subcategories: [
       { code: '21', name: 'دخترانه' },
       { code: '22', name: 'پسرانه' },
@@ -26,7 +26,7 @@ export const categories: Category[] = [
     code: '3',
     name: 'زنانه',
     subtitle: 'تونیک و لباس راحتی',
-    image: './images/final/categories/category-women-modest.webp',
+    image: './images/category-navigation/category-women.webp',
     subcategories: [
       { code: '31', name: 'زیرسارافون (تونیک)' },
       { code: '32', name: 'لباس راحتی (ورزشی)' },

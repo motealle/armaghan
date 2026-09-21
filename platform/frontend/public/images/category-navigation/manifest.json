@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "purpose": "Test 23 main-category navigation thumbnails",
+  "source": "User-provided conversation attachments",
+  "generation": "none",
+  "processing": {
+    "operation": "resize-and-pad only",
+    "width": 320,
+    "height": 240,
+    "format": "webp",
+    "quality": 60,
+    "background": "#fff9ee",
+    "originals_committed": false
+  },
+  "items": [
+    {
+      "category": "1",
+      "id": "baby",
+      "path": "category-baby.webp",
+      "bytes": 2932,
+      "sha256": "884786cddccf7e04803997da13504a999e592df4caa13f80d8743c4e45d3980b"
+    },
+    {
+      "category": "2",
+      "id": "kids",
+      "path": "category-kids.webp",
+      "bytes": 3692,
+      "sha256": "eb8d3afc4a8a6b0565f817fc89a2e3d64acd7192810e3c5b792eeceb154c78d5"
+    },
+    {
+      "category": "3",
+      "id": "women",
+      "path": "category-women.webp",
+      "bytes": 2986,
+      "sha256": "33a896356a85cf3fdafdb726881cb7a30d6e26b597ce0df7cd0d54cedd567d54"
+    }
+  ]
+}

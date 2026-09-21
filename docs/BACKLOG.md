@@ -1,8 +1,28 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 22 — Release Hardening + Immutable Snapshot Handoff**.
-Release decision record: `docs/TEST22-RELEASE.md`.
+Current implementation target: **Test 23 — Image-first Categories + Low-copy Product Cards**.
+Detailed ranked UX decisions: `docs/TEST23-UX-AUDIT.md`.
+
+## P0 — Test 23: Image-first categories + low-copy product cards
+
+- [x] Freeze Test 22 and leave `/t/22` untouched.
+- [x] Add the three user-provided category images as optimized local WebP derivatives; no image generation.
+- [x] Replace the three plain main-category buttons with image-first clickable cards and refined numeric badges.
+- [x] Make tapping the active category return to all categories without adding another text control.
+- [x] Remove duplicate main-category controls from the desktop filter rail.
+- [x] Make product media dominant using a tall 2:3 media frame so typical cards are ~70% image.
+- [x] Remove all visible text/badges from product images.
+- [x] Make the metadata row contain only the product code.
+- [x] Show the product title only when available; otherwise show only the localized unavailable label.
+- [x] Replace the settings-like details icon with a Lucide Menu + down-right arrow composite.
+- [x] Enforce icon-only card actions and remove the obsolete Compact/Labeled selector from the current admin overview.
+- [x] Increase the WhatsApp glyph from 22px to 25.3px (15%).
+- [x] Isolate Test 23 browser state under `armaghan:test23:*` while migrating catalog data forward from Test 22.
+- [x] Add a Test 23 media/UI source contract and keep prior regression contracts active.
+- [x] Build/deploy only `/public_html/t/23` plus the mutable launcher.
+- [ ] Confirm CI, FTP smoke test and live deployment of `/public_html/t/23`.
+- [ ] Record the successful deployment run and mark Test 23 delivered.
 
 ## P0 — Test 22: Release hardening + immutable snapshot handoff
 

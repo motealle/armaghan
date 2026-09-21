@@ -5,12 +5,12 @@ const props=withDefaults(defineProps<{
   src?:string
   alt:string
   label?:string
-  aspect?:'hero'|'card'|'square'
+  aspect?:'hero'|'card'|'square'|'product'
   eager?:boolean
   fallbackSrc?:string
 }>(),{label:'',aspect:'card',eager:false})
 
-const ratioClass=computed(()=>props.aspect==='hero'?'aspect-[16/9]':props.aspect==='square'?'aspect-square':'aspect-[4/3]')
+const ratioClass=computed(()=>props.aspect==='hero'?'aspect-[16/9]':props.aspect==='square'?'aspect-square':props.aspect==='product'?'aspect-[2/3]':'aspect-[4/3]')
 const currentSrc=ref(props.src)
 watch(()=>props.src,(value)=>{currentSrc.value=value})
 const avifSrc=computed(()=>currentSrc.value?.endsWith('.webp')?currentSrc.value.replace(/\.webp$/,'.avif'):undefined)

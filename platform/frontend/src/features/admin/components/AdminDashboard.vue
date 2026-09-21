@@ -123,14 +123,6 @@ function inviteLead(id:string){
         <p class="mt-3 text-[11px] font-bold text-[var(--c-secondary)]">{{locale.t('placeholderAppliedImmediately')}}</p>
       </section>
 
-      <section class="admin-surface rounded-2xl p-4">
-        <div class="mb-3"><h2 class="text-lg font-black">{{locale.t('adminCardActions')}}</h2><p class="mt-1 text-xs text-[var(--c-muted)]">{{locale.t('adminCardActionsHelp')}}</p></div>
-        <div class="grid gap-2 sm:grid-cols-2">
-          <button class="admin-display-mode" :class="{active:design.cardActionMode==='compact'}" :aria-pressed="design.cardActionMode==='compact'" @click="design.cardActionMode='compact'"><b>{{locale.t('compactMode')}}</b><span>{{locale.t('compactModeHelp')}}</span></button>
-          <button class="admin-display-mode" :class="{active:design.cardActionMode==='labeled'}" :aria-pressed="design.cardActionMode==='labeled'" @click="design.cardActionMode='labeled'"><b>{{locale.t('labeledMode')}}</b><span>{{locale.t('labeledModeHelp')}}</span></button>
-        </div>
-      </section>
-
       <div class="grid gap-4 xl:grid-cols-2">
         <section class="admin-surface rounded-2xl p-4">
           <div class="mb-3 flex items-center justify-between"><h2 class="font-black">{{locale.t('adminCustomers')}}</h2><button class="mini-action" @click="activeTab='customers'">{{locale.t('manageCustomer')}}</button></div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Check, Search } from '@lucide/vue'
+import { Check, ChevronLeft, Search } from '@lucide/vue'
 import { useRoute } from 'vue-router'
 import { categories } from '@/data/catalog'
 import { useCatalogStore } from '@/stores/catalog'
@@ -27,6 +27,10 @@ const filtered=computed(()=>catalog.items.filter(product=>{
 }))
 const activeCount=computed(()=>Number(category.value!=='all')+Number(subcategory.value!=='all')+Number(availability.value!=='all')+Number(Boolean(query.value.trim())))
 function resetFilters(){category.value='all';subcategory.value='all';availability.value='all';query.value=''}
+function selectCategory(code:string){
+  category.value=category.value===code?'all':code
+  subcategory.value='all'
+}
 </script>
 
 <template>
@@ -41,15 +45,30 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
       </button>
     </div>
 
-    <!-- Mobile + tablet controls intentionally preserve the app-like Test 15 behavior. -->
-    <div class="lg:hidden">
-      <div class="grid grid-cols-3 gap-2">
-        <button v-for="cat in categories" :key="cat.code" class="rounded-2xl border p-3 text-start" :class="category===cat.code?'border-[var(--c-primary)] bg-indigo-50 dark:bg-indigo-950/30':'border-[var(--c-border)] bg-[var(--c-surface)]'" @click="category=cat.code;subcategory='all'">
-          <span class="text-[10px] font-extrabold text-[var(--c-primary)]">0{{cat.code}}</span><b class="mt-1 block text-sm">{{locale.categoryName(cat.code,cat.name)}}</b>
-        </button>
-      </div>
+    <div class="category-showcase grid grid-cols-3 gap-2.5 md:gap-3">
+      <button
+        v-for="cat in categories"
+        :key="cat.code"
+        type="button"
+        class="category-card"
+        :class="{active:category===cat.code}"
+        :aria-pressed="category===cat.code"
+        @click="selectCategory(cat.code)"
+      >
+        <span class="category-card-media">
+          <img :src="cat.image" alt="" loading="eager" decoding="async">
+        </span>
+        <span class="category-card-footer">
+          <span class="category-number">0{{cat.code}}</span>
+          <b class="category-card-title">{{locale.categoryName(cat.code,cat.name)}}</b>
+          <ChevronLeft :size="16" class="category-chevron" aria-hidden="true"/>
+        </span>
+      </button>
+    </div>
 
-      <div class="chip-scroller mt-3 flex gap-2 overflow-x-auto pb-1">
+    <!-- Mobile + tablet controls intentionally stay lightweight and app-like. -->
+    <div class="mt-3 lg:hidden">
+      <div class="chip-scroller flex gap-2 overflow-x-auto pb-1">
         <button class="filter-chip" :class="{active:subcategory==='all'}" @click="subcategory='all'">{{locale.t('allSubs')}}</button>
         <button v-for="sub in subs" :key="sub.code" class="filter-chip" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code">{{sub.code}} · {{locale.subcategoryName(sub.code,sub.name)}}</button>
       </div>
@@ -68,7 +87,6 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
       </div>
     </div>
 
-    <!-- Desktop becomes a commerce workspace: stable facet rail + broad product canvas. -->
     <div class="commerce-layout mt-5 lg:grid lg:grid-cols-[15.5rem_minmax(0,1fr)] lg:items-start lg:gap-5">
       <aside class="desktop-filter-panel hidden rounded-2xl p-3 lg:block lg:sticky lg:top-[5.25rem]">
         <label class="mb-4 flex min-h-11 items-center gap-2 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3">
@@ -76,23 +94,13 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
           <input v-model="query" class="min-w-0 flex-1 bg-transparent text-xs outline-none" :placeholder="locale.t('search')"/>
         </label>
 
-        <div class="border-b border-[var(--c-border)] pb-4">
-          <div class="mb-2 text-xs font-black text-[var(--c-text)]">{{locale.t('categoryLabel')}}</div>
-          <button class="desktop-filter-option" :class="{active:category==='all'}" @click="category='all';subcategory='all'">
-            <span>{{locale.t('allCategories')}}</span><Check v-if="category==='all'" :size="15"/>
-          </button>
-          <button v-for="cat in categories" :key="cat.code" class="desktop-filter-option" :class="{active:category===cat.code}" @click="category=cat.code;subcategory='all'">
-            <span>{{locale.categoryName(cat.code,cat.name)}}</span><Check v-if="category===cat.code" :size="15"/>
-          </button>
-        </div>
-
-        <div v-if="subs.length" class="border-b border-[var(--c-border)] py-4">
+        <div v-if="subs.length" class="border-b border-[var(--c-border)] pb-4">
           <div class="mb-2 text-xs font-black text-[var(--c-text)]">{{locale.t('subcategoryLabel')}}</div>
           <button class="desktop-filter-option" :class="{active:subcategory==='all'}" @click="subcategory='all'">
             <span>{{locale.t('allSubs')}}</span><Check v-if="subcategory==='all'" :size="15"/>
           </button>
           <button v-for="sub in subs" :key="sub.code" class="desktop-filter-option" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code">
-            <span>{{sub.code}} · {{sub.name}}</span><Check v-if="subcategory===sub.code" :size="15"/>
+            <span>{{sub.code}} · {{locale.subcategoryName(sub.code,sub.name)}}</span><Check v-if="subcategory===sub.code" :size="15"/>
           </button>
         </div>
 

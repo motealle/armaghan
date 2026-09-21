@@ -22,11 +22,11 @@ export const colorSets: ColorSet[] = [
 ]
 
 export const useDesignStore = defineStore('design', () => {
-  const system = ref(localStorage.getItem('armaghan:test22:design') || 'core')
-  const palette = ref(localStorage.getItem('armaghan:test22:palette') || 'balanced')
-  const savedActionMode = localStorage.getItem('armaghan:test22:card-actions')
+  const system = ref(localStorage.getItem('armaghan:test23:design') || 'core')
+  const palette = ref(localStorage.getItem('armaghan:test23:palette') || 'balanced')
+  const savedActionMode = localStorage.getItem('armaghan:test23:card-actions')
   const cardActionMode = ref<CardActionMode>(savedActionMode === 'labeled' ? 'labeled' : 'compact')
-  const savedPlaceholderSet = localStorage.getItem('armaghan:test22:placeholder-set')
+  const savedPlaceholderSet = localStorage.getItem('armaghan:test23:placeholder-set')
   const placeholderSet = ref<PlaceholderSetId>(isPlaceholderSetId(savedPlaceholderSet) ? savedPlaceholderSet : defaultPlaceholderSet)
 
   function apply(): void {
@@ -42,12 +42,12 @@ export const useDesignStore = defineStore('design', () => {
   }
 
   watch([system, palette], () => {
-    localStorage.setItem('armaghan:test22:design', system.value)
-    localStorage.setItem('armaghan:test22:palette', palette.value)
+    localStorage.setItem('armaghan:test23:design', system.value)
+    localStorage.setItem('armaghan:test23:palette', palette.value)
     apply()
   })
-  watch(cardActionMode, (value) => localStorage.setItem('armaghan:test22:card-actions', value))
-  watch(placeholderSet, (value) => localStorage.setItem('armaghan:test22:placeholder-set', value))
+  watch(cardActionMode, (value) => localStorage.setItem('armaghan:test23:card-actions', value))
+  watch(placeholderSet, (value) => localStorage.setItem('armaghan:test23:placeholder-set', value))
 
   return { system, palette, cardActionMode, placeholderSet, apply }
 })
