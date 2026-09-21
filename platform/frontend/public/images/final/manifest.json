@@ -22,9 +22,10 @@
       "width": 1672,
       "height": 941,
       "sha256": {
-        "avif": "f72bc61f0a4fc0cb325d92f3e2fe651950a83ea54d47c0c2786f1c24c3f9c98e",
-        "webp": "d57d39758259f0161ca071826714cf1c63734f90f65eed64ba3cc3d6d83398c1"
-      }
+        "avif": "12dbc54e94c5126c75819e0667ec8670f61a3d6a70ea386290da1402c2fb7088",
+        "webp": "66c4e68df0f3a9c9508e3a5323c346cf07cf91f55b8f6361beb749e5212a6513"
+      },
+      "selected_concept": "Hero 5 — Three Product Worlds"
     },
     {
       "id": "hero-production",
@@ -35,9 +36,10 @@
       "width": 1672,
       "height": 941,
       "sha256": {
-        "avif": "7dc289a757be0590bbdd8d5ac5f698b2098ab7166ad8e08632b1332cf3e17f7a",
-        "webp": "cc975e601cef4ad9aa232f89a53f65d37f5e1567119e3772f75e013a710a572f"
-      }
+        "avif": "d81f16a19c330510bea88b358d755a5828b79ae1f1e009d68d6e106569ec82a7",
+        "webp": "c3b0aac906378f4990c56321a1457a7e64fa289f1485e56f8072e6aed45535cf"
+      },
+      "selected_concept": "Hero 3 — Production Precision"
     },
     {
       "id": "hero-export",
@@ -48,9 +50,10 @@
       "width": 1672,
       "height": 941,
       "sha256": {
-        "avif": "e8511b30e4f3748b8e1895185edacfa6fba7ec114277f7cb996210e7bb24eec1",
-        "webp": "974d80e5db8cd247e6d67ebcf3b49ca997a09f4ae6883d2b8b4d563af1dbec16"
-      }
+        "avif": "7b80aff959086148e6c960b486047ea4b46c37ec5c05f95d50222bc1aa16ddd0",
+        "webp": "cef6889b5ed0c5bf3278e556da4f32a1671521b863342e215309d2e671ffd8b8"
+      },
+      "selected_concept": "Hero 4 — Export Ready"
     },
     {
       "id": "category-baby",
