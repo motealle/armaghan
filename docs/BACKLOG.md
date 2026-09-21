@@ -22,8 +22,21 @@ Google OAuth setup: `docs/GOOGLE-OAUTH-SETUP.md`.
 - [x] Isolate Test 24 browser state under `armaghan:test24:*` and migrate catalog data from Test 23.
 - [x] Add a strict Test 24 source/UX contract and retain previous regression contracts.
 - [x] Build/deploy only `/public_html/t/24` plus the mutable launcher.
-- [ ] Confirm CI, FTP smoke test and live deployment of `/public_html/t/24`.
-- [ ] Record successful delivery and mark Test 24 complete.
+- [x] Confirm CI, FTP smoke test and live deployment of `/public_html/t/24`.
+- [x] Record successful delivery and mark Test 24 complete.
+
+### Test 24 delivery record
+
+- [x] Main implementation commit: `4a7158afbe594c231ef984d831a2b038416a67a0`.
+- [x] Contract repair / final deploy commit: `74fa4e39d611959e5ac2eb6b82b8f8e5d2ea1a26`.
+- [x] **FTP Deploy Run #82** completed successfully.
+- [x] Immutable snapshot guard and Test 11–24 contracts passed.
+- [x] TypeScript type-check and unit tests passed.
+- [x] Vite production build for `/t/24` passed.
+- [x] FTP smoke test passed.
+- [x] `/public_html/t/24/index.html` and `/public_html/t/index.htm` were uploaded.
+- [x] `deploy-root` was skipped.
+- [x] Deployment log confirms: **85 files uploaded; no remote files were deleted.**
 
 ## P0 — Test 23: Image-first categories + low-copy product cards
 

@@ -132,3 +132,16 @@ Test 24 responds to the supplied light/dark/mobile/English screenshots. Each req
 - No separate CMS state when the translation override layer already exists.
 - No customer identity based on display name.
 - No OAuth secret in the browser bundle or repository.
+
+## Live delivery
+
+- Main implementation: `4a7158afbe594c231ef984d831a2b038416a67a0`
+- Final pipeline/deploy fix: `74fa4e39d611959e5ac2eb6b82b8f8e5d2ea1a26`
+- GitHub Actions **FTP Deploy Run #82** completed successfully.
+- Immutable snapshot guard and Test 11–24 contracts passed.
+- TypeScript type-check, unit tests and Vite production build passed.
+- FTP smoke test passed.
+- `/public_html/t/24/index.html` and the mutable launcher were uploaded.
+- `deploy-root` was skipped.
+- 85 files were uploaded and no remote file was deleted.
+
