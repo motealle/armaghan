@@ -61,9 +61,10 @@
       "width": 1448,
       "height": 1086,
       "sha256": {
-        "avif": "d6160377e55f9e3f3d869f30ce27496e7d854915ac609bd22e5d30b8ddd40c7d",
-        "webp": "256ce47b1864765d982316d0ed0ff2deb07c9277238f35d9a90db60228c40b68"
-      }
+        "avif": "01813bd6e81092c36e04ebc16f9d05fb875292483deba56bb4de52333ab04693",
+        "webp": "3d32e3b94616d24d3210803b5c1a3dd05ca30a32e3055bc16a88409d7259f439"
+      },
+      "selected_concept": "Baby 2 — Two Soft Halves"
     },
     {
       "id": "category-kids",
@@ -74,9 +75,10 @@
       "width": 1448,
       "height": 1086,
       "sha256": {
-        "avif": "622d5f2094481a1767b2fac0e050fdcd67f8c10a59d2b43c95d912e66136afa4",
-        "webp": "0b8a2b1c67932b8ca65256e88ca793261be28b113c3fd91f24ee7cb482579f6b"
-      }
+        "avif": "2b23d6c4e206e9a4bf4afe74758fcadddb8de9b2bcac5c7f0b5bae2058c41a76",
+        "webp": "af3a22978bafba01aae53ef290911f54f283726f1a09c3304c77e0ecac95669c"
+      },
+      "selected_concept": "Kids 1 — Two Hero Looks"
     },
     {
       "id": "category-women-modest",
@@ -87,9 +89,10 @@
       "width": 1448,
       "height": 1086,
       "sha256": {
-        "avif": "04e00a3fd3393ace6e8679cf30acdb137891e42d81dbbd9d373fa4b866331d34",
-        "webp": "509b0a57828facd4c8210436dea89e6cc8fee06a2e317ceee30f31320d920537"
-      }
+        "avif": "044bc26090c0a6fe8fff8b94fe491468fc58c525faec85c1a3726bf4666e1334",
+        "webp": "efa789fefb6f784c7910936a98a4592fadd147d2aba4bf837dbd3230e15db1f5"
+      },
+      "selected_concept": "Women 1 — One Woman, Two Modest Styles"
     },
     {
       "id": "fabric-detail",
