@@ -290,3 +290,131 @@
 4. Auth surface + magic-link prototype contract + Google backend contract.
 5. Notification inbox model for wishlist updates.
 6. QA contracts, freeze Test 18, build Test 19, deploy non-destructively.
+
+# تکمیل تحلیل Test 19 — پروفایل مشتری و مدیریت کاتالوگ
+
+## 18) پروفایل کامل مشتری: Bottom Sheet موبایل/تبلت + Modal دسکتاپ
+
+| رتبه | گزینه | مزیت | ضعف / ریسک |
+|---:|---|---|---|
+| 1 | Adaptive customer workspace: bottom sheet زیر 1024px، modal مرکزی از 1024px به بالا؛ dashboard summary + بخش‌بندی هویت/تماس/سفارش/دسترسی/یادداشت | با context دستگاه سازگار، اطلاعات زیاد را chunk می‌کند، بدون از دست دادن مسیر بازگشت | component کمی پیچیده‌تر |
+| 2 | Bottom sheet در همه اندازه‌ها | یک implementation | روی دسکتاپ فضای عمودی/عرضی بد مصرف می‌شود |
+| 3 | Modal در همه اندازه‌ها | منظم روی دسکتاپ | روی موبایل keyboard و viewport مشکل‌ساز می‌شود |
+| 4 | صفحه route مستقل | فضای زیاد و deep-link خوب | برای edit سریع از جدول context را می‌شکند |
+| 5 | expandable row داخل table | سریع | برای Customer 360 بیش از حد متراکم |
+
+**انتخاب:** گزینه 1. این مدل از progressive disclosure و chunking استفاده می‌کند و context جدول را حفظ می‌کند. دکمه‌ها حداقل 44px می‌مانند و اطلاعات در گروه‌های معنی‌دار قرار می‌گیرند.
+
+### باگ ریشه‌ای پیدا شده
+`CustomerDetailSheet` از `structuredClone(row)` روی object واکنشی Pinia استفاده می‌کرد. Proxyهای reactive الزاماً structured-cloneable نیستند و می‌توانند `DataCloneError` بدهند؛ نتیجه عملی همان sheet خالی است. راه‌حل منتخب: clone از `toRaw(row)` + empty/error state صریح + تست regression.
+
+## 19) ستاره‌گذاری مطلوبیت/اولویت مشتری
+
+| رتبه | گزینه | مزیت | ضعف / ریسک |
+|---:|---|---|---|
+| 1 | امتیاز 1 تا 5 ستاره با عنوان «اولویت مشتری»، قابل پاک‌کردن، همراه aria-label | سریع، scan-friendly، آشنا | باید از score مالی/اخلاقی تفکیک شود |
+| 2 | High/Medium/Low | ساده | granularity کمتر |
+| 3 | برچسب VIP | واضح | بیش از حد قضاوتی و binary |
+| 4 | score عددی 0–100 | دقیق ظاهری | دقت کاذب و سخت برای استفاده |
+| 5 | رنگ ردیف | سریع | معنا بدون label مبهم و accessibility ضعیف |
+
+**انتخاب:** گزینه 1 با نام **«اولویت مشتری»**؛ صرفاً یادداشت عملیاتی داخلی است، نه رتبه‌بندی کیفیت انسانی مشتری.
+
+## 20) Hover کارت محصول مشابه Laws of UX
+
+| رتبه | گزینه | مزیت | ضعف / ریسک |
+|---:|---|---|---|
+| 1 | Transform-only `scale(1.012)+translateY(-2px)` در hover-capable pointer، 180–200ms، بدون تغییر layout | micro-interaction آرام، بدون layout shift، performance خوب | باید subtle بماند |
+| 2 | فقط translateY | بسیار امن | حس enlargement مورد نظر کمتر |
+| 3 | shadow-only | کم‌تحرک | feedback هندسی ندارد |
+| 4 | scale 1.05 | چشمگیر | باعث collision/visual jump می‌شود |
+| 5 | تغییر width/height | قابل مشاهده | layout shift و reflow؛ نباید استفاده شود |
+
+**انتخاب:** گزینه 1. نام این الگو **Subtle Hover Scale / Card Lift micro-interaction** است. فقط برای دستگاه دارای hover و با احترام به `prefers-reduced-motion` فعال می‌شود.
+
+## 21) فهرست حدود 500 محصول در پنل مدیر
+
+| رتبه | گزینه | مزیت | ضعف / ریسک |
+|---:|---|---|---|
+| 1 | Data-table toolbar: search باز + category/subcategory filter + pagination پایین با 50 ردیف پیش‌فرض + overflow menu هر ردیف | الگوی استاندارد و scalable؛ جستجو و batch action هم‌زمان | در production باید server-side شود |
+| 2 | infinite scroll | مرور روان | پیدا کردن/بازگشت/انتخاب گروهی سخت‌تر |
+| 3 | virtualization بدون pagination | performance خوب | URL/page state و عملیات دسته‌ای پیچیده |
+| 4 | accordion بر اساس دسته | grouping خوب | search و مقایسه چند دسته سخت |
+| 5 | نمایش همه 500 ردیف | ساده | DOM سنگین، scan ضعیف، UX نامناسب |
+
+**انتخاب:** گزینه 1. Carbon نیز search/filter را در toolbar، pagination را پایین table و overflow را برای row actions توصیه می‌کند. در prototype pagination client-side است؛ در Laravel باید query/pagination سمت سرور باشد.
+
+## 22) Add/Edit محصول چهارزبانه + استخراج مشخصات از دو رقم اول کد
+
+| رتبه | گزینه | مزیت | ضعف / ریسک |
+|---:|---|---|---|
+| 1 | Product editor واحد برای Add/Edit؛ چهار نام زبانی؛ کد محصول source-of-truth؛ prefix دو رقمی schema را auto-fill می‌کند؛ امکان reset specs از schema | کمترین drift، workflow یکسان، خطای ورود کمتر | نیازمند helper مرکزی schema |
+| 2 | انتخاب دستی subcategory + کد مستقل | انعطاف | امکان ناسازگاری کد و دسته |
+| 3 | چهار فرم جدا برای زبان‌ها | ساده ذهنی | تکرار و نگه‌داری بد |
+| 4 | فقط نام زبان فعلی | فرم کوتاه | محصول ناقص برای i18n |
+| 5 | infer روی save بدون preview | کم‌جا | رفتار پنهان و غیرقابل اعتماد |
+
+**انتخاب:** گزینه 1. دو رقم اول کد در UI همان لحظه دسته/زیردسته و schema مشخصات را نشان می‌دهد؛ مدیر قبل از ذخیره نتیجه inference را می‌بیند.
+
+# باگ‌ها و ریسک‌های خودتشخیص جدید
+
+## G) clone کردن Proxy و sheet خالی
+
+| رتبه | اقدام | چرایی |
+|---:|---|---|
+| 1 | `structuredClone(toRaw(row))` + fallback state + regression contract | ریشه خطا را رفع می‌کند |
+| 2 | JSON stringify/parse | کار می‌کند ولی type/date را از دست می‌دهد |
+| 3 | shallow spread | nested state مشترک می‌ماند |
+| 4 | edit مستقیم store | cancel واقعی سخت می‌شود |
+| 5 | catch و ignore | sheet همچنان خالی می‌ماند |
+
+**انتخاب:** گزینه 1.
+
+## H) 500 محصول و client-side pagination
+
+| رتبه | اقدام | چرایی |
+|---:|---|---|
+| 1 | اکنون client-side 50/page با API-shape سازگار؛ backlog صریح برای server-side Laravel pagination | prototype روان و migration کم‌هزینه |
+| 2 | از همین حالا fake server layer | complexity بی‌فایده |
+| 3 | همه ردیف‌ها | performance بد |
+| 4 | infinite scroll | admin task نامناسب |
+| 5 | page size ثابت بدون controls | انعطاف کم |
+
+**انتخاب:** گزینه 1.
+
+## I) نام چندزبانه در registry عمومی به‌جای خود رکورد محصول
+
+| رتبه | اقدام | چرایی |
+|---:|---|---|
+| 1 | `product.names.fa/ar/en/ku` روی رکورد + fallback به registry موجود | محصول self-contained و قابل CRUD می‌شود |
+| 2 | فقط translation registry | CRUD محصول و ترجمه از هم جدا و شکننده |
+| 3 | چهار ستون hardcoded در UI بدون domain field | persistence ناقص |
+| 4 | ترجمه خودکار runtime | کیفیت/وابستگی |
+| 5 | فقط فارسی | نیاز را رفع نمی‌کند |
+
+**انتخاب:** گزینه 1.
+
+## J) ویرایش مشخصات بدون single source of truth
+
+| رتبه | اقدام | چرایی |
+|---:|---|---|
+| 1 | helper مرکزی `defaultsFromProductCode` + auto-fill + دکمه reset از schema | consistency کد/دسته/spec |
+| 2 | duplicate spec list در editor | drift |
+| 3 | کپی از محصول قبلی | خطای انسانی |
+| 4 | متن آزاد | داده نامنظم |
+| 5 | هیچ نمایش schema | feedback ضعیف |
+
+**انتخاب:** گزینه 1.
+
+## K) overflow و batch-action conflict
+
+| رتبه | اقدام | چرایی |
+|---:|---|---|
+| 1 | وقتی batch selection فعال است، row overflow actions غیرفعال/کم‌رنگ شوند | از عملیات تصادفی جلوگیری می‌کند و با data-table pattern هم‌راستاست |
+| 2 | هر دو هم‌زمان فعال | ambiguity |
+| 3 | overflow فقط hover | touch ضعیف |
+| 4 | حذف overflow | row actions گم می‌شود |
+| 5 | همه actions inline | clutter |
+
+**انتخاب:** گزینه 1.
+
