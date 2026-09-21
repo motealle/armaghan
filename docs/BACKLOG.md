@@ -1,8 +1,64 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 19 — Production Polish + Admin CRM + Managed i18n**.  
-Detailed ranked UX decisions: `docs/TEST19-UX-AUDIT.md`.
+Current implementation target: **Test 20 — Customer 360 + Product Administration**.  
+Detailed ranked UX decisions: `docs/TEST20-UX-AUDIT.md`.
+
+## P0 — Test 20: Customer 360 + Product Administration
+
+Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
+
+### Snapshot and delivery
+- [ ] Freeze Test 19 and leave /t/19 untouched.
+- [ ] Build only /t/20.
+- [ ] Put Test 20 first in /t/index.htm.
+- [ ] Add Test 20 QA contract and keep previous contracts regression-safe.
+- [ ] FTP deploy only /public_html/t/20 plus launcher; no remote deletion and no root deployment.
+
+### Customer 360
+- [x] Fix reactive Pinia Proxy clone path with toRaw + structuredClone.
+- [x] Add adaptive bottom-sheet (<1024px) / centered modal (>=1024px) primitive.
+- [x] Add explicit not-found state so customer management cannot render as an unexplained blank panel.
+- [x] Add customer KPI summary: priority, previous orders and current order.
+- [x] Add 0–5 star internal Customer priority.
+- [x] Keep editable name, email, WhatsApp, country/flag, address, location and notes.
+- [x] Keep profile photo upload/optimization.
+- [x] Add current-order and timeline controls with a visible progress summary.
+- [x] Add editable password state.
+- [x] Keep direct-access modes Permanent / Expiring, generation, expiry and revoke.
+
+### Product-card micro-interaction
+- [x] Add subtle hover scale/lift using transform only.
+- [x] Restrict hover effect to fine pointers with hover support.
+- [x] Keep reduced-motion protection.
+
+### Product administration at ~500 items
+- [x] Add search across code and all four localized product names.
+- [x] Add category filter.
+- [x] Add subcategory filter.
+- [x] Add pagination with 50 rows per page by default.
+- [x] Add 25 / 50 / 100 page-size controls.
+- [x] Make select-all target the visible page.
+- [x] Keep batch delete.
+- [x] Add persistent three-dot overflow per product row.
+- [x] Disable row overflow while batch mode is active.
+- [x] Keep pagination controls at least 44×44 CSS px.
+- [ ] In Laravel production, move filtering/search/pagination to server-side queries.
+
+### Product Add/Edit
+- [x] Add adaptive Add/Edit Product panel using the same sheet/modal rule.
+- [x] Add four product-name fields: fa / ar / en / ku.
+- [x] Persist localized names on the product record with registry fallback.
+- [x] Infer category/subcategory/spec schema from first two product-code digits.
+- [x] Show inferred category/subcategory immediately.
+- [x] Auto-fill locked/negotiable specs when prefix changes.
+- [x] Add Reset from code to restore the subcategory schema.
+- [x] Keep specs editable after inference.
+
+### Repository memory
+- [x] Add five-option ranked analysis and self-detected issues to docs/TEST20-UX-AUDIT.md.
+- [ ] Mark delivery/QA items complete only after CI and live FTP deployment succeed.
+
 
 ## P0 — Test 19
 
