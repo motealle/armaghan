@@ -42,7 +42,7 @@ type SubMeta = {
   specs: ProductSpecGroup
 }
 
-const subMeta: Record<Product['subcategoryCode'], SubMeta> = {
+export const subMeta: Record<Product['subcategoryCode'], SubMeta> = {
   '11': {
     categoryCode: '1',
     categoryName: 'نوزادی',
@@ -85,6 +85,19 @@ const subMeta: Record<Product['subcategoryCode'], SubMeta> = {
     image: './images/web-stock/sub-32.webp',
     specs: { locked: ['سایز', 'تعداد در پک'], negotiable: ['طرح ظاهری', 'اجزای محصول', 'فرم محصول', 'مشخصات محصول', 'نوع تن‌خور', 'جنس', 'رنگ'] },
   },
+}
+
+export function productDefaultsFromCode(code:string){
+  const prefix=code.trim().slice(0,2) as Product['subcategoryCode']
+  const meta=subMeta[prefix]
+  if(!meta)return null
+  return {
+    categoryCode:meta.categoryCode,
+    categoryName:meta.categoryName,
+    subcategoryCode:prefix,
+    subcategoryName:meta.subcategoryName,
+    specs:structuredClone(meta.specs),
+  }
 }
 
 function product(
