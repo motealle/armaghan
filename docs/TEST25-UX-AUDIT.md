@@ -136,3 +136,17 @@ Each item below was considered against five implementation paths. Scores are /10
 - Capability cards needed explicit English LTR alignment and tighter vertical rhythm.
 
 All selected fixes are implemented in Test 25 without modifying Test 24.
+
+## Live delivery
+
+- Rollback source checkpoint: `rollback/test24-pre-test25` at `2f10bacfbd33219cf036f546cf91b6a9bfb76916`.
+- Implementation: `370635cf6167fcae2212f07ef665516e7e50dd04`.
+- Final deployed source: `4a41f486b08cdceb56711fc06435c170f24a16bf`.
+- GitHub Actions **FTP Deploy Run #86** completed successfully.
+- All Test 11–25 contracts, immutable guard, Python syntax, TypeScript type-check, unit tests and Vite build passed.
+- CI generated 18 portrait WebP placeholder derivatives under `images/placeholders-portrait`; the original landscape WebP/AVIF files were not overwritten.
+- FTP smoke test passed.
+- `/public_html/t/25/index.html`, the portrait derivative set and the mutable launcher were uploaded.
+- `deploy-root` was skipped.
+- Deployment completed with **104 files uploaded and no remote deletions**.
+

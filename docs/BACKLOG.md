@@ -23,8 +23,23 @@ Rollback checkpoint: `rollback/test24-pre-test25`.
 - [x] Isolate Test 25 browser state under `armaghan:test25:*` and migrate catalog data forward from Test 24.
 - [x] Add a strict Test 25 contract and preserve all earlier regression contracts.
 - [x] Build/deploy only `/public_html/t/25` plus the mutable launcher.
-- [ ] Confirm CI, generated portrait media, FTP smoke test and live deployment of `/public_html/t/25`.
-- [ ] Record successful delivery and mark Test 25 complete.
+- [x] Confirm CI, generated portrait media, FTP smoke test and live deployment of `/public_html/t/25`.
+- [x] Record successful delivery and mark Test 25 complete.
+
+### Test 25 delivery record
+
+- [x] Rollback checkpoint preserved at `rollback/test24-pre-test25` → `2f10bacfbd33219cf036f546cf91b6a9bfb76916`.
+- [x] Main implementation commit: `370635cf6167fcae2212f07ef665516e7e50dd04`.
+- [x] Regression-marker fix: `6e54533763033106c10cc53bfbf986faad2feda8`.
+- [x] Final contract/build fix: `4a41f486b08cdceb56711fc06435c170f24a16bf`.
+- [x] **FTP Deploy Run #86** completed successfully.
+- [x] Immutable snapshot guard and Test 11–25 contracts passed.
+- [x] CI generated **18 portrait placeholder derivatives** from untouched landscape originals.
+- [x] TypeScript type-check, unit tests and Vite production build for `/t/25` passed.
+- [x] FTP smoke test passed.
+- [x] Portrait derivatives, `/public_html/t/25/index.html` and `/public_html/t/index.htm` were uploaded.
+- [x] `deploy-root` was skipped.
+- [x] Deployment log confirms: **104 files uploaded; no remote files were deleted.**
 
 ## P0 — Test 24: responsive commerce polish + admin content control
 
