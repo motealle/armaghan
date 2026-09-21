@@ -65,3 +65,14 @@ Root cause found in source: `SmartImage.vue` contained a literal backslash+n tex
 | 5 | No new regression gate | 3.1 | Easy recurrence |
 
 **Selected:** Option 1. A new Test 25 hotfix contract is added to CI before the production build/deploy step.
+
+## Delivery
+
+- Source commit: `9ff6f571bd908a368f1e2b43207d4f57fb58d7ba`
+- GitHub Actions: **FTP Deploy Run #88 — success**
+- All existing Test 11–25 regression contracts and the hotfix contract passed.
+- Portrait derivative generation, TypeScript type-check, unit tests and Vite production build passed.
+- FTP smoke test passed.
+- `/public_html/t/25/index.html` and the mutable launcher were uploaded.
+- 104 files were uploaded; no remote file was deleted.
+

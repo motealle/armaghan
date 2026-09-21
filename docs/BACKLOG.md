@@ -51,8 +51,18 @@ Rollback checkpoint: `rollback/test25-pre-bugfix-2` → `6dc0b9188d50cae156c19fa
 - [x] Replace low-contrast blue foreground accents in dark content/cards with light neutral gray while retaining branded navbar/filled states.
 - [x] Make English main content inherit LTR/left alignment globally, including commerce layout, header layout, bottom navigation and mobile drawer.
 - [x] Add a focused CI regression contract for these screenshot failures.
-- [ ] Confirm CI/build/FTP deployment after this hotfix.
-- [ ] Record the successful hotfix run.
+- [x] Confirm CI/build/FTP deployment after this hotfix.
+- [x] Record the successful hotfix run.
+
+
+Hotfix delivery:
+- [x] Commit: `9ff6f571bd908a368f1e2b43207d4f57fb58d7ba`.
+- [x] **FTP Deploy Run #88** completed successfully.
+- [x] Test 11–25 regression contracts plus the new screenshot hotfix contract passed.
+- [x] Portrait generation, TypeScript, unit tests and Vite build passed.
+- [x] FTP smoke test passed.
+- [x] `/public_html/t/25/index.html` and `/public_html/t/index.htm` were uploaded.
+- [x] **104 files uploaded; no remote files deleted.**
 
 ## P0 — Test 24: responsive commerce polish + admin content control
 
