@@ -14,8 +14,19 @@ Release decision record: `docs/TEST22-RELEASE.md`.
 - [x] Add a strict Test 22 release contract while keeping Test 20/21 regression contracts.
 - [x] Put Test 22 first in the mutable launcher.
 - [x] Update CI artifact/deploy targeting from Test 21 to Test 22.
-- [ ] Confirm CI, FTP smoke test and live deployment of `/public_html/t/22`.
-- [ ] Record the successful deployment run and mark Test 22 delivered.
+- [x] Confirm CI, FTP smoke test and live deployment of `/public_html/t/22`.
+- [x] Record the successful deployment run and mark Test 22 delivered.
+
+### Test 22 delivery record
+
+- [x] **FTP Deploy Run #74** completed successfully.
+- [x] Immutable snapshot guard and Test 11–22 contracts passed.
+- [x] TypeScript type-check and unit tests passed.
+- [x] Vite production build for `/t/22` passed.
+- [x] FTP smoke test passed.
+- [x] `/public_html/t/22/index.html` and `/public_html/t/index.htm` were uploaded.
+- [x] `deploy-root` was skipped.
+- [x] Deployment log confirms: **No remote files were deleted.**
 
 ## P0 — Test 21: Selectable product placeholders
 

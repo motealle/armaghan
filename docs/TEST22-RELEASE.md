@@ -33,3 +33,13 @@ A Test 22 release is complete only when all of the following are true:
 ## Production boundary
 
 Test 22 is still a UX/product prototype snapshot. Laravel, Filament, server-side persistence, production authentication, hashed magic links and server-side media processing remain P1 productionization work and are intentionally not simulated as complete in this release.
+## Live delivery
+
+- GitHub Actions **FTP Deploy Run #74** completed successfully.
+- Test 11–22 regression/release contracts passed.
+- TypeScript type-check, unit tests and Vite production build passed.
+- FTP smoke test passed.
+- `/public_html/t/22/index.html` and the mutable launcher were uploaded.
+- `deploy-root` was skipped.
+- Deployment completed with **no remote file deletion**.
+
