@@ -15,7 +15,7 @@ const locale=useLocaleStore()
 
 const customer=computed(()=>{
   if(session.impersonatedCustomerId)return customers.items.find(item=>item.id===session.impersonatedCustomerId)??customers.items[0]??null
-  if(session.isCustomer)return customers.items[0]??null
+  if(session.isCustomer)return customers.items.find(item=>item.id===(session.currentCustomerId??1))??customers.items[0]??null
   return null
 })
 const activeOrders=computed(()=>customers.items.filter(item=>item.activeOrder!=='بدون سفارش فعال').length)
