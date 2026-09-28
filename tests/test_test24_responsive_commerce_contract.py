@@ -42,7 +42,7 @@ assert "test_test24_responsive_commerce_contract.py" in workflow
 assert "23" in immutable and "24" in immutable
 assert launcher.index("./24/index.html") < launcher.index("./23/index.html")
 assert "Test 24" in backlog
-assert "Tests 01–24 are frozen; current source target is Test 25." in rules or "Tests 01–23 are frozen; current source target is Test 24." in rules
+assert "Tests 01–25 are frozen; Test 25 is the last delivered snapshot and Test 26 is the next source target." in rules or "Tests 01–24 are frozen; current source target is Test 25." in rules or "Tests 01–23 are frozen; current source target is Test 24." in rules
 assert audit.count("| 1 |") >= 10
 
 # Full-image product media without destructive crop.
