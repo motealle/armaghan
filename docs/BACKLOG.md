@@ -36,32 +36,45 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Keep all controls keyboard/focus accessible and localized.
 
 ### Batch 26C — modular Home
-- [ ] Refactor `HomeView.vue` into composition-only section assembly.
-- [ ] Add `HeroSection.vue`; customer default is one hero image while preserving `HeroCarousel.vue` as an alternate mode.
-- [ ] Default-hide the Home product grid while preserving the `recommended-6` alternate mode.
-- [ ] Add About Armaghan using the supplied final Persian copy.
-- [ ] Add Why Armaghan with the supplied four value propositions.
-- [ ] Add three capability cards with structured detail content.
-- [ ] Add three horizontal product-category banners that route into the relevant Products category.
-- [ ] Use only documented Test 26 local paths + `placehold.co` fallbacks for unresolved images.
-- [ ] Keep section visibility independently configurable per viewport.
+- [x] Refactor `HomeView.vue` into composition-only section assembly.
+- [x] Add `HeroSection.vue`; customer default is one hero image while preserving `HeroCarousel.vue` as an alternate mode.
+- [x] Default-hide the Home product grid while preserving the `recommended-6` alternate mode.
+- [x] Add About Armaghan using the supplied final Persian copy.
+- [x] Add Why Armaghan with the supplied four value propositions.
+- [x] Add three capability cards with structured detail content.
+- [x] Add three horizontal product-category banners that route into the relevant Products category.
+- [x] Use only documented Test 26 local paths + `placehold.co` fallbacks for unresolved images.
+- [x] Keep section visibility independently configurable per viewport.
 
 ### Batch 26D — Header + Products confirmed-safe changes
-- [ ] Desktop default: expanded header with direct language/help/account affordances.
-- [ ] Mobile/tablet default: preserve compact header + tested drawer until customer explicitly rejects it.
-- [ ] Hide adjacent brand/manufacturer text by default without deleting the capability to show it.
-- [ ] Hide category number labels 01/02/03 by default without removing category codes from domain data.
-- [ ] Add the pale/mint Products intro surface inspired by customer reference while retaining a no-image CSS fallback.
-- [ ] Polish colored subcategory/status surfaces so they visually separate from plain white/light surfaces.
+- [x] Desktop default: expanded header with direct language/help/account affordances.
+- [x] Mobile/tablet default: preserve compact header + tested drawer until customer explicitly rejects it.
+- [x] Hide adjacent brand/manufacturer text by default without deleting the capability to show it.
+- [x] Hide category number labels 01/02/03 by default without removing category codes from domain data.
+- [x] Add the pale/mint Products intro surface inspired by customer reference while retaining a no-image CSS fallback.
+- [x] Polish colored subcategory/status surfaces so they visually separate from plain white/light surfaces.
 - [ ] Verify Persian RTL, English LTR, Arabic/Sorani RTL across all three viewport profiles.
 
 ### Batch 26E — Favorites sharing prototype
-- [ ] Confirm whether shared list carries only products or also owner/list metadata.
-- [ ] Implement versioned share URL containing only compact product identifiers and no PII.
-- [ ] Add a read-only shared-list state that can still enter allowed inquiry/WhatsApp flows if approved.
-- [ ] Add payload validation and URL-length guard.
-- [ ] Document production migration to opaque/signed backend share tokens.
+- [x] Confirm whether shared list carries only products or also owner/list metadata.
+- [x] Implement versioned share URL containing only compact product identifiers and no PII.
+- [x] Add a read-only shared-list state that can still enter allowed inquiry/WhatsApp flows if approved.
+- [x] Add payload validation and URL-length guard.
+- [x] Document production migration to opaque/signed backend share tokens.
 
+
+### Test 26 Run 2 customer-approved integration
+
+- [x] Customer clarification gate closed; no additional customer questions are required for this test.
+- [x] Rollback checkpoint created at `rollback/test26-foundation-pre-integration` → `152e20e5ec062f48319a45727c7448d4ee68843e`.
+- [x] Connected Admin Appearance policy to live Header, Home, Products and Footer consumers.
+- [x] Single Hero is the customer default while the prior carousel remains selectable.
+- [x] Rebuilt Home as modular About → Why → Capabilities → Product Banners, with product grid hidden by default.
+- [x] Capability details use the existing accessible AdaptivePanel rather than subpages.
+- [x] Products category numbers are hidden by policy and the intro/filter surfaces use the requested soft-mint separation.
+- [x] Favorites sharing uses a versioned anonymous list URL containing product codes only; no PII is serialized.
+- [x] Customer-approved About image source and unresolved capability/banner asset slots are recorded in the image handoff contract.
+- [ ] Final Run 2 CI + scoped `/t/26` deployment must pass before closing the integration.
 
 ### Test 26 foundation delivery record
 
@@ -76,7 +89,7 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 
 ### Batch 26F — final assets, QA and scoped release
 - [ ] Replace every required placeholder with an approved local asset or explicitly keep the row open.
-- [ ] Update Test 26 image-requirement statuses and provenance.
+- [x] Update Test 26 image-requirement statuses and provenance.
 - [x] Add Test 26 source/UX contract; keep all previous regression contracts.
 - [x] Isolate all Test 26 browser state under `armaghan:test26:*`.
 - [x] Bump frontend version for Test 26.
