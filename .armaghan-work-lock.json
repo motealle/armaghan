@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20260929T0156+0330-test26-mobile-bottomnav-fix",
-  "scope": "P0 Test 26 regression fix: restore mobile-only app-like bottom navigation and move navigation to top header from tablet upward",
-  "base_ref": "main@b89f52b92774a376a86925a82f72553cdb3235a3",
-  "acquired_at": "2026-09-28T22:26:00Z",
-  "expires_at": null,
-  "released_at": "2026-09-28T22:36:40Z",
-  "note": "Released after FTP Deploy Run #195 succeeded and documentation QA Run #196 passed with deployments skipped."
+  "run_id": "chat-20260929T0200+0330-test26-live-p0",
+  "scope": "P0 Test 26 live fix: SmartImage AVIF fallback bug, enforce mobile/tablet navigation invariant, cache-bust launcher, QA/deploy",
+  "base_ref": "main@a82a209901b70b4bbb2dbfb9f0cfad7669f7d101",
+  "acquired_at": "2026-09-28T22:30:00Z",
+  "expires_at": "2026-09-29T00:00:00Z",
+  "released_at": null,
+  "note": "Canonical shared write lock. See docs/PROJECT-RULES.md rules 64-74."
 }
