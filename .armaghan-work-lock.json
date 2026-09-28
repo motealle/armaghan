@@ -1,12 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex Work Mode",
   "run_id": "chat-20260929T0034+0330-test26-image-candidates",
   "scope": "Generate and upload numbered Test 26 image candidates to the non-production review queue; update image manifest and requirements only",
   "base_ref": "main",
   "acquired_at": "2026-09-28T21:04:40Z",
-  "expires_at": "2026-09-28T22:34:40Z",
-  "note": "Canonical shared write lock. See docs/PROJECT-RULES.md rules 64-74. Update only with the current blob SHA."
+  "expires_at": null,
+  "note": "Released after committing numbered Test 26 image candidate review files and metadata.",
+  "released_at": "2026-09-28T21:32:58.245Z"
 }
