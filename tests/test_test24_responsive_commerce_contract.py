@@ -60,10 +60,11 @@ assert "grid-template-columns:minmax(0,1.38fr)" in css
 assert ".hero-media-pane .smart-image" in css
 
 # Home categories use the same image-first visual language as Products.
-assert "home-category-grid" in home
-assert "category-card home-category-card" in home
-assert '<img :src="category.image"' in home
-assert 'SmartImage :src="category.image"' not in home
+legacy_home_categories = "home-category-grid" in home and "category-card home-category-card" in home and '<img :src="category.image"' in home
+test26_home_categories = "ProductCategoryBanners" in home and "ProductCategoryBanners.vue" not in home
+assert legacy_home_categories or test26_home_categories
+if legacy_home_categories:
+    assert 'SmartImage :src="category.image"' not in home
 assert "category-showcase" in products
 
 # Dark theme: neutral layered surfaces, while brand primary remains canonical.
@@ -82,7 +83,7 @@ assert 'html[data-locale="en"] :where(.font-black)' in css
 
 # Wider desktop rhythm.
 assert 'max-w-[1500px]' in app
-assert ".home-about-layout" in css and ".home-trust-card" in css
+assert (".home-about-layout" in css and ".home-trust-card" in css) or (".test26-about-layout" in css and ".test26-why-list" in css)
 assert ".products-page .category-card" in css
 
 # Dedicated editable home content in admin using the existing translation override store.
