@@ -371,3 +371,37 @@ Full supplied detail content should be stored as structured translation/content 
 - [x] Image-requirements document created separately.
 - [x] Customer-question document created separately.
 - [ ] No Test 26 implementation code until Batch 26A begins.
+
+
+## 12. Run 1 batching decision — while customer answers are pending
+
+The owner asked to make as much safe progress as possible, preferably in one run, but without creating regret while clarification answers are still pending.
+
+| Rank | Delivery strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Two-stage safe release: ship Test 26 foundation + Admin controls now, integrate customer-facing layout after answers** | **9.9** | Creates the new immutable target, validates storage/build/deploy isolation and reversible controls without locking ambiguous visual decisions |
+| 2 | Implement all Test 26 visuals now using current assumptions | 7.1 | Faster apparent progress, but header/mobile/capability-detail/footer answers could force immediate rework |
+| 3 | Build everything on a feature branch and do not publish Test 26 yet | 7.0 | Very safe technically, but does not satisfy the request for the launcher to continue with a new numbered version |
+| 4 | Hard-code customer defaults now and add reversibility later | 4.2 | Creates exactly the future-regret/refactor risk this phase is meant to remove |
+| 5 | Wait for every customer answer before touching code | 3.9 | Avoids assumptions but wastes a safe window for architecture, version isolation and admin tooling |
+
+**Selected:** Option 1.
+
+### Run 1 scope
+- move the active build/deploy target from Test 25 to Test 26 without modifying `/t/25`;
+- bump frontend namespace/version to Test 26;
+- migrate only catalog data forward from Test 25;
+- add typed mobile/tablet/desktop appearance policy;
+- add one shared viewport resolver aligned with Tailwind `md=48rem` and `lg=64rem`;
+- add validated Pinia persistence + resets;
+- add Admin → Appearance with high-value reversible settings;
+- add Test 26 launcher entry and a dedicated release/source contract;
+- **do not** yet apply ambiguous Home/Header/Capabilities/Footer visual changes.
+
+### Why these boundaries are low-regret
+Tailwind’s documented default breakpoints use `48rem` for `md` and `64rem` for `lg`, so the Admin’s three viewport profiles reuse existing layout boundaries rather than inventing a parallel device system. MDN’s `matchMedia()` guidance supports listening to media-query changes instead of relying on user-agent device detection. Pinia’s official guidance fits this state because it is shared across screens and needs typed state/actions, while local one-screen UI state should remain outside global stores.
+
+References:
+- https://tailwindcss.com/docs/responsive-design
+- https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
+- https://pinia.vuejs.org/core-concepts/
