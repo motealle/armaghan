@@ -316,9 +316,10 @@ Do not build backend, database, real login, real APIs, payment, checkout, Presta
 - `/t` remains the active product-design/prototype workspace.
 - Tests 01–25 are released snapshots and must remain immutable.
 - Test 25 is the last delivered snapshot.
-- Test 26 is the next implementation target: reversible homepage + device-aware appearance controls.
+- Test 26 is the active numbered prototype. Run 1 foundation is delivered: isolated Test 26 state/build, Admin Appearance controls and per-viewport reversible policy. Customer-facing Home/Header/Products/Favorites integration is the next step after clarification answers arrive.
 - Test 26 rollback checkpoint: `rollback/test25-pre-test26` at `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
 - Test 26 ranked UX/architecture decisions: `docs/TEST26-UX-AUDIT.md`.
 - Test 26 image handoff contract: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 - Test 26 customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
+- Test 26 foundation delivery: frontend build commit `1b92b0f69a3e2ab68a9e8ce21b93eb3e735f2a74`; **FTP Deploy Run #131 PASS**; `deploy-root` skipped; Test 25 unchanged.
 - Operational project memory hierarchy: `docs/PROJECT-RULES.md` → `docs/HANDOFF.md` → `docs/BACKLOG.md` → current test audit / asset docs. Chat memory is secondary.
