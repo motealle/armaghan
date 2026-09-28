@@ -695,3 +695,69 @@ The mutable launcher now points to ./26/index.html?build=test26-live-p0-r6, whil
 - Test 25 and older snapshots remained unchanged.
 
 The screenshot-visible Hero fallback and mobile expanded-header regressions are now covered by source contracts, state-migration tests and local-media existence checks.
+
+
+## 20. Run 7 — mobile UX polish from owner screenshots
+
+Owner screenshots exposed five separate UX issues. The implementation strategy is deliberately modular so each part can be reverted independently from the rollback checkpoint `rollback/test26-pre-mobile-ux-polish` → `54e2075b67ae1c21b0bac50fe32b9cd1e5144864`.
+
+### 20.1 Header mode + mobile hamburger
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Restore per-device Header Mode and hamburger controls; set customer default to compact mobile + hamburger off** | **9.9** | Keeps owner reversibility while matching the customer's mobile default |
+| 2 | Permanently remove hamburger and lock header mode | 6.0 | Matches customer today but breaks the project reversibility requirement |
+| 3 | Keep header locked and add a second hidden override | 4.8 | Confusing duplicate control paths |
+| 4 | Derive hamburger only from header mode | 4.0 | Prevents the requested compact-without-hamburger state |
+| 5 | Remove compact header entirely | 2.0 | Destructive and unnecessary |
+
+**Selected:** Option 1. Appearance schema v4 migrates the forced schema-v3 navigation state to the customer defaults while preserving unrelated per-device choices. After migration the controls are editable again.
+
+### 20.2 BottomNav in real mobile + desktop responsive emulation
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Keep BottomNav permanently mounted; drive visibility from live viewport profile and add explicit <768 / >=768 CSS fallback** | **9.8** | Works with real devices and responsive browser emulation; does not depend on device detection |
+| 2 | Tailwind `md:hidden` only | 7.0 | Simple but reproduced inconsistent testing behavior |
+| 3 | User-agent phone detection | 3.0 | Brittle and inconsistent with responsive design |
+| 4 | Admin "mobile" tab controls BottomNav preview globally | 2.8 | Confuses editing target with actual viewport |
+| 5 | Always show BottomNav | 1.0 | Duplicates primary navigation on tablet/desktop |
+
+**Selected:** Option 1. CSS viewport width remains authoritative; the Vue profile subscription is an additional runtime guard.
+
+### 20.3 Mobile footer edge-to-edge
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Break only the Test 26 footer out of the mobile main padding; keep tablet/desktop inset** | **9.8** | Exact requested look with minimal scope |
+| 2 | Move Footer outside `main` globally | 7.0 | Cleaner structure but changes tablet/desktop geometry |
+| 3 | Make all viewports full-bleed | 4.5 | Violates requested desktop/tablet white gutters |
+| 4 | Add a second mobile-only footer component | 3.0 | Duplicates content/logic |
+| 5 | Leave mobile inset and only remove radius | 2.0 | Does not satisfy the request |
+
+**Selected:** Option 1. Mobile uses negative inline margins equal to the main 0.75rem padding, no radius, and cancels the final 1rem main bottom padding; tablet/desktop are untouched.
+
+### 20.4 Product title/code alignment
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **CSS-only center alignment; preserve separate title and code rows** | **10.0** | No domain/markup change and exactly matches the requested hierarchy |
+| 2 | Merge title and code into one row | 4.0 | Contradicts the request |
+| 3 | Center only code | 3.5 | Partial fix |
+| 4 | Center only title | 3.5 | Partial fix |
+| 5 | Redesign the card body | 2.0 | Excessive regression surface |
+
+**Selected:** Option 1.
+
+### 20.5 Subcategory / pale-background text contrast
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Keep pale mint selection surface but use semantic text color (`var(--c-text)`) and stronger border/font weight** | **9.9** | Preserves customer color direction while removing the white-on-pale failure |
+| 2 | Return selected chips to primary blue + white | 8.0 | High contrast but loses the requested soft-mint visual language |
+| 3 | Darken mint heavily and retain white text | 6.5 | Readable but visually heavier |
+| 4 | Add text shadow to white text | 2.5 | Fragile and does not reliably satisfy contrast |
+| 5 | Leave color unchanged and increase font size | 1.5 | Does not solve luminance contrast |
+
+**Selected:** Option 1. Normal text must remain legible against its background; the implementation avoids white text on the pale active chip.
+
