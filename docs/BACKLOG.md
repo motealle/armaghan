@@ -17,7 +17,16 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Lock only the primary navigation placement in Admin while preserving the other per-device Appearance controls.
 - [x] Add local Test 26 media existence + AVIF-safety regression assertions.
 - [x] Add cache-busted launcher URL and Test 26 build marker/no-cache hints.
-- [ ] Final QA, build, FTP smoke and scoped Test 26 deployment must pass before closing.
+- [x] Final QA, build, FTP smoke and scoped Test 26 deployment passed.
+
+### Live P0 screenshot-fix delivery
+
+- [x] Rollback checkpoint: `rollback/test26-pre-live-p0-fix` → `a82a209901b70b4bbb2dbfb9f0cfad7669f7d101`.
+- [x] SmartImage AVIF root-cause fix: `8da6847156242e84e072ac207e857bdb2ec408ce` plus Test 25 compatibility follow-up `596c86bf1009741a95d1c76ec168bc5c4519104e`.
+- [x] Appearance navigation invariant / schema v3: `5773e92a78b89830910b74dfbe597f136288d0b8`.
+- [x] Cache-busted launcher and fresh-document marker are included in the final build.
+- [x] **FTP Deploy Run #208: SUCCESS** — Test 11–26 QA, TypeScript, unit tests and Vite Test 26 build passed; FTP smoke passed; `deploy-t` passed; `deploy-root` skipped.
+- [x] Test 25 and older snapshots were not modified.
 
 ## P0 regression hotfix — mobile PWA bottom navigation
 
