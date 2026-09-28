@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20260929-mobile-ux-polish",
   "scope": "Test 26 mobile UX hotfix: editable header mode, customer-default no hamburger, reliable emulated BottomNav, mobile edge footer, centered card title/code, subcategory contrast",
   "base_ref": "main@54e2075b67ae1c21b0bac50fe32b9cd1e5144864",
   "acquired_at": "2026-09-29T00:00:00Z",
-  "expires_at": "2026-09-29T01:30:00Z",
-  "released_at": null,
-  "note": "Canonical shared write lock. See docs/PROJECT-RULES.md rules 64-74."
+  "expires_at": null,
+  "released_at": "2026-09-29T00:26:00Z",
+  "note": "Released after FTP Deploy Run #223 succeeded and documentation QA Run #224 passed with deployments skipped."
 }
