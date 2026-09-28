@@ -681,3 +681,17 @@ Only this primary-navigation placement is locked. Brand text, language/help/acco
 
 ### Fresh-document safety
 The mutable launcher now points to ./26/index.html?build=test26-live-p0-r6, while the prototype HTML includes no-cache hints and a diagnostic build marker. These measures complement the source fixes rather than replacing them.
+
+### 19.1 Delivery record
+
+- Rollback checkpoint: `rollback/test26-pre-live-p0-fix` → `a82a209901b70b4bbb2dbfb9f0cfad7669f7d101`.
+- Final deployed head: `596c86bf1009741a95d1c76ec168bc5c4519104e`.
+- **FTP Deploy Run #208: SUCCESS**.
+- Test 11–26 regression/source contracts: PASS.
+- TypeScript, unit tests and Vite Test 26 build: PASS.
+- FTP smoke: PASS.
+- Scoped `deploy-t`: PASS.
+- `deploy-root`: SKIPPED.
+- Test 25 and older snapshots remained unchanged.
+
+The screenshot-visible Hero fallback and mobile expanded-header regressions are now covered by source contracts, state-migration tests and local-media existence checks.
