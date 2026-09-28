@@ -25,6 +25,13 @@ const viewportTabs:{id:ViewportProfile;label:string}[]=[
   {id:'tablet',label:'viewportTablet'},
   {id:'desktop',label:'viewportDesktop'},
 ]
+const sectionToggles:{key:BooleanAppearanceKey;label:string}[]=[
+  {key:'showAbout',label:'showAboutLabel'},
+  {key:'showWhy',label:'showWhyLabel'},
+  {key:'showCapabilities',label:'showCapabilitiesLabel'},
+  {key:'showProductBanners',label:'showProductBannersLabel'},
+  {key:'showFooter',label:'showFooterLabel'},
+]
 
 function checked(event:Event){return (event.target as HTMLInputElement).checked}
 function setBoolean(key:BooleanAppearanceKey,event:Event){
@@ -126,19 +133,13 @@ function setProductGrid(event:Event){
           </label>
 
           <div class="mt-1 text-xs font-black text-[var(--c-muted)]">{{locale.t('homeSectionsLabel')}}</div>
-          <label v-for="item in [
-            ['showAbout','showAboutLabel'],
-            ['showWhy','showWhyLabel'],
-            ['showCapabilities','showCapabilitiesLabel'],
-            ['showProductBanners','showProductBannersLabel'],
-            ['showFooter','showFooterLabel'],
-          ]" :key="item[0]" class="flex min-h-11 items-center gap-3 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-sm">
+          <label v-for="item in sectionToggles" :key="item.key" class="flex min-h-11 items-center gap-3 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-sm">
             <input
               type="checkbox"
-              :checked="current[item[0] as BooleanAppearanceKey]"
-              @change="setBoolean(item[0] as BooleanAppearanceKey,$event)"
+              :checked="current[item.key]"
+              @change="setBoolean(item.key,$event)"
             >
-            <span>{{locale.t(item[1]!)}}</span>
+            <span>{{locale.t(item.label)}}</span>
           </label>
         </div>
       </article>
