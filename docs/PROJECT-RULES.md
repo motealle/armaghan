@@ -5,7 +5,7 @@
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.
 3. Prototype deployment may write only to `/public_html/t`.
 4. Released tests are immutable snapshots.
-5. Tests 01–24 are frozen; current source target is Test 25.
+5. Tests 01–25 are frozen; Test 25 is the last delivered snapshot and Test 26 is the next source target.
 6. Do not modify an older numbered test to improve a newer one.
 7. `/t/index.htm` is mutable and newest test must be first.
 8. Current Vue test is generated from `/platform/frontend`; do not hand-edit compiled test files on the host.
@@ -69,3 +69,13 @@
 54. Current source contract, web-stock provenance policy, Vue unit tests, TypeScript and Vite build run before deploy.
 55. Verify mobile/desktop, RTL/LTR, sheet close, logout, impersonation, favorites, wizard and WhatsApp.
 56. No remote deletion to match Git.
+
+
+## Repository memory and reversible experience policy
+57. The repository is the operational project memory. Before planning or implementing a new numbered test, read `docs/PROJECT-RULES.md`, `docs/HANDOFF.md`, `docs/BACKLOG.md`, the current test audit, and relevant asset/media docs; chat memory is secondary.
+58. Every new numbered test starts from a rollback checkpoint at the last delivered source commit. Never rely on destructive edits as the only way to change a customer-facing choice.
+59. When a customer-requested UI choice conflicts with a reasonable owner-preferred alternative, default to the customer choice and preserve the alternative through a typed setting or mode when doing so is maintainable and does not create impossible UX states.
+60. Device-specific Admin settings use viewport profiles, not user-agent detection. Test 26 profiles are: mobile <48rem, tablet 48–<64rem, desktop >=64rem, aligned with the existing responsive breakpoints.
+61. Only high-value behavioral/layout differences belong in Admin. Do not expose micro-spacing, minor radii, exact shades or other design-token minutiae as content-manager switches.
+62. Test 26 unresolved marketing-image slots may use clearly labeled `placehold.co` runtime fallbacks in the numbered prototype only. Every such slot must exist in `docs/TEST26-IMAGE-REQUIREMENTS.md`; final approved assets are local files and catalog photography remains non-hotlinked.
+63. Test 26 sections and alternate modes must remain modular: single hero must not delete the carousel, desktop expanded navigation must not delete the accessible mobile drawer, hidden Home product grid must remain recoverable, and category numbers should be hidden by policy rather than removed from domain data.
