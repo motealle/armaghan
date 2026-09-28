@@ -18,7 +18,18 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Add a one-time appearance schema migration so browsers that already opened Test 26 do not remain stuck on the mistaken tablet default.
 - [x] Preserve Admin per-viewport overrides for the top header; do not make the BottomNav a decorative toggle.
 - [x] Add unit and source-contract coverage at the 767/768/1024 boundaries.
-- [ ] Final CI, FTP smoke and scoped `/t/26` deployment must pass before closing this hotfix.
+- [x] Final CI, FTP smoke and scoped `/t/26` deployment passed.
+
+### Mobile PWA BottomNav hotfix delivery
+
+- [x] Rollback checkpoint: `rollback/test26-pre-mobile-bottomnav-fix` → `b89f52b92774a376a86925a82f72553cdb3235a3`.
+- [x] Implementation commit: `453805ae591586d7e2d70f6ed4d82e69dece559d`.
+- [x] Contract-alignment commits: `7b6deabaa8fb77bb45ffd30b2b3e8ba83ecea13b` and `0e64894d886ef9b2bf96b84b1dcf106d8213f7b9`.
+- [x] Deployment-trigger / regression-selector commit: `c49a37c0aa0e56759e4a3418c8c798232f4e64b5`.
+- [x] **FTP Deploy Run #195: SUCCESS** — full QA/build passed, FTP smoke passed, `deploy-t` passed, `deploy-root` skipped.
+- [x] Mobile BottomNav remains the same five-item app-like navigation below 768px; tablet/desktop use the blue top navigation.
+- [x] Existing Test 26 browsers migrate the old tablet compact default to expanded top navigation; other tablet appearance choices are preserved.
+- [x] Test 25 and earlier frozen snapshots were not modified.
 
 ## P0 — Test 26: reversible homepage + device-aware appearance controls
 

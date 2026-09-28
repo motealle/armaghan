@@ -637,3 +637,20 @@ Rollback checkpoint: `rollback/test26-pre-mobile-bottomnav-fix` → `b89f52b9277
 - **Desktop (>=64rem):** no BottomNav; primary routes remain in the blue expanded top navigation.
 - The breakpoint is viewport-based, not user-agent based.
 - Existing Test 25 and older snapshots remain immutable.
+
+
+### 18.1 Delivery record
+
+- Rollback checkpoint: `rollback/test26-pre-mobile-bottomnav-fix` → `b89f52b92774a376a86925a82f72553cdb3235a3`.
+- Source fix: `453805ae591586d7e2d70f6ed4d82e69dece559d`.
+- Historic source contracts were updated only to reflect the clarified invariant: the BottomNav guarantee is now **mobile-only**, not mobile+tablet.
+- Deployment head: `c49a37c0aa0e56759e4a3418c8c798232f4e64b5`.
+- **FTP Deploy Run #195: SUCCESS**
+  - plan: PASS
+  - Test 11–26 / media / regression QA: PASS
+  - TypeScript + unit tests + Vite Test 26 build: PASS
+  - FTP smoke: PASS
+  - scoped `deploy-t`: PASS
+  - `deploy-root`: SKIPPED
+- The mobile BottomNav markup/icons/active-state styling were not redesigned. Only the visibility boundary changed from `lg:hidden` to `md:hidden`, and the obsolete tablet floating-bottom-nav CSS was removed.
+- Appearance schema version 2 migrates previously stored Test 26 tablet defaults from compact drawer to expanded top navigation without changing mobile navigation or unrelated tablet section preferences.
