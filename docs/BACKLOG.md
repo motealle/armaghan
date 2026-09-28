@@ -8,6 +8,17 @@ Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
 Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
 
 
+## P0 live regression — Test 26 still showing expanded mobile header + IMAGE REQUIRED
+
+- [x] Screenshot diagnosis: captured width is 653px, below the 768px mobile/tablet boundary, so an expanded primary header there is persisted-state regression, not a breakpoint interpretation.
+- [x] Media diagnosis: `SmartImage.vue` was advertising guessed AVIF siblings for WebP files. Test 26 selected images are WebP-only, so browsers supporting AVIF could request a nonexistent file and fall through to the remote placeholder.
+- [x] Restrict AVIF source generation to asset families that actually ship AVIF siblings.
+- [x] Bump Appearance schema to v3 and enforce navigation placement during migration and subsequent Admin updates: mobile compact+BottomNav; tablet/desktop expanded top navigation.
+- [x] Lock only the primary navigation placement in Admin while preserving the other per-device Appearance controls.
+- [x] Add local Test 26 media existence + AVIF-safety regression assertions.
+- [x] Add cache-busted launcher URL and Test 26 build marker/no-cache hints.
+- [ ] Final QA, build, FTP smoke and scoped Test 26 deployment must pass before closing.
+
 ## P0 regression hotfix — mobile PWA bottom navigation
 
 - [x] Diagnose the regression: the original `BottomNav.vue` and its mobile styling were still present; Test 26 accidentally kept them visible through the tablet range and kept tablet on compact-drawer navigation.
