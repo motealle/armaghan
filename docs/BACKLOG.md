@@ -127,7 +127,7 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Apply the prior modesty preference: loose full-coverage garments on headless mannequins, no human model.
 - [x] Save the selected 800×300 WebP at the canonical Test 26 path without upscaling.
 - [x] Archive selected source images and update the image requirements/selection record.
-- [ ] Complete QA-gated Test 26-only deployment.
+- [x] Complete QA-gated Test 26-only deployment. Commit `a35dfacde3140618899b3784db7275edea85dba2`; FTP Deploy Run #190 passed all QA and FTP checks, `deploy-t` passed, and `deploy-root` was skipped.
 
 ## P0 — Test 25: gray dark theme + reversible portrait placeholder pipeline
 

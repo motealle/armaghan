@@ -603,3 +603,13 @@ Owner-selected Test 26 images are integrated from the numbered review set: Hero 
 - Only the Test 26 output and mutable `/t` launcher were in deploy scope; no remote files were deleted.
 - The previous Hero image remains available; the unselected Women banner remains on its documented placeholder.
 - Test 25 and earlier frozen snapshots were not changed.
+
+
+## 17. Run 4 — final Women banner deployment
+
+- Automatic selection: candidate 8-2, chosen for loose full-coverage outfits on headless mannequins and alignment with the prior no-model preference.
+- Runtime asset: `platform/frontend/public/images/test26/home/banner-women.webp`, WebP 800×300, no upscaling.
+- Delivery commit: `a35dfacde3140618899b3784db7275edea85dba2`.
+- **FTP Deploy Run #190: SUCCESS** — immutable and Test 11–26 contracts, media policy, TypeScript, unit tests, Test 26 build and FTP smoke all passed; `deploy-t` passed and `deploy-root` was skipped.
+- All eight Test 26 image slots now use local selected assets; the women candidate/source choices are archived in the Test 26 selected-assets manifest.
+- Test 25 and all earlier snapshots remain unchanged.

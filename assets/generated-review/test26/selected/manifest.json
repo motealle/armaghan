@@ -52,5 +52,7 @@
       "choice": "8-2 (automatic)",
       "status": "owner-selected"
     }
-  ]
+  ],
+  "runtime_commit": "a35dfacde3140618899b3784db7275edea85dba2",
+  "deployment_run": 190
 }
