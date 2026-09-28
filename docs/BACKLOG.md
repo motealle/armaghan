@@ -1,9 +1,80 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 25 — Gray Dark Theme + Reversible Portrait Placeholder Pipeline**.
-Detailed ranked UX decisions: `docs/TEST25-UX-AUDIT.md`.
-Rollback checkpoint: `rollback/test24-pre-test25`.
+Current implementation target: **Test 26 — Reversible Homepage + Device-aware Appearance Controls**.
+Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
+Image requirements: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
+Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
+Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
+
+
+## P0 — Test 26: reversible homepage + device-aware appearance controls
+
+### Planning / repository memory
+- [x] Read and reconcile `PROJECT-RULES.md`, `HANDOFF.md`, `BACKLOG.md`, asset architecture and current Test 25 source structure before changing implementation.
+- [x] Freeze Test 25 as the last delivered snapshot.
+- [x] Create rollback branch `rollback/test25-pre-test26` at `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
+- [x] Record five-option ranked architecture analysis in `docs/TEST26-UX-AUDIT.md`.
+- [x] Record customer-ready ambiguity questions in `docs/TEST26-CUSTOMER-QUESTIONS.md`.
+- [x] Record all unresolved marketing images, dimensions, target paths, formats and `placehold.co` fallbacks in `docs/TEST26-IMAGE-REQUIREMENTS.md`.
+- [x] Codify repository-memory, reversible-choice and viewport-profile rules in `docs/PROJECT-RULES.md`.
+
+### Batch 26A — typed reversible configuration foundation
+- [ ] Add typed appearance policy for mobile / tablet / desktop.
+- [ ] Add one viewport-profile resolver aligned with 48rem / 64rem breakpoints.
+- [ ] Add Test 26 appearance Pinia store under `armaghan:test26:appearance`.
+- [ ] Add validated persistence/migration and reset-to-customer-default behavior.
+- [ ] Add unit tests for defaults, per-device resolution, reset and invalid persisted state.
+- [ ] Make no visible page redesign in this batch.
+
+### Batch 26B — Admin Appearance controls
+- [ ] Add a dedicated Admin → Appearance view, separate from content/translation editing.
+- [ ] Add Mobile / Tablet / Desktop tabs.
+- [ ] Add only high-value controls: header mode/actions, hero mode, Home product grid, category numbers and main Home section visibility.
+- [ ] Prevent impossible navigation states in control validation.
+- [ ] Add “Reset this device” and “Reset all to customer defaults”.
+- [ ] Keep all controls keyboard/focus accessible and localized.
+
+### Batch 26C — modular Home
+- [ ] Refactor `HomeView.vue` into composition-only section assembly.
+- [ ] Add `HeroSection.vue`; customer default is one hero image while preserving `HeroCarousel.vue` as an alternate mode.
+- [ ] Default-hide the Home product grid while preserving the `recommended-6` alternate mode.
+- [ ] Add About Armaghan using the supplied final Persian copy.
+- [ ] Add Why Armaghan with the supplied four value propositions.
+- [ ] Add three capability cards with structured detail content.
+- [ ] Add three horizontal product-category banners that route into the relevant Products category.
+- [ ] Use only documented Test 26 local paths + `placehold.co` fallbacks for unresolved images.
+- [ ] Keep section visibility independently configurable per viewport.
+
+### Batch 26D — Header + Products confirmed-safe changes
+- [ ] Desktop default: expanded header with direct language/help/account affordances.
+- [ ] Mobile/tablet default: preserve compact header + tested drawer until customer explicitly rejects it.
+- [ ] Hide adjacent brand/manufacturer text by default without deleting the capability to show it.
+- [ ] Hide category number labels 01/02/03 by default without removing category codes from domain data.
+- [ ] Add the pale/mint Products intro surface inspired by customer reference while retaining a no-image CSS fallback.
+- [ ] Polish colored subcategory/status surfaces so they visually separate from plain white/light surfaces.
+- [ ] Verify Persian RTL, English LTR, Arabic/Sorani RTL across all three viewport profiles.
+
+### Batch 26E — Favorites sharing prototype
+- [ ] Confirm whether shared list carries only products or also owner/list metadata.
+- [ ] Implement versioned share URL containing only compact product identifiers and no PII.
+- [ ] Add a read-only shared-list state that can still enter allowed inquiry/WhatsApp flows if approved.
+- [ ] Add payload validation and URL-length guard.
+- [ ] Document production migration to opaque/signed backend share tokens.
+
+### Batch 26F — final assets, QA and scoped release
+- [ ] Replace every required placeholder with an approved local asset or explicitly keep the row open.
+- [ ] Update Test 26 image-requirement statuses and provenance.
+- [ ] Add Test 26 source/UX contract; keep all previous regression contracts.
+- [ ] Isolate all Test 26 browser state under `armaghan:test26:*`.
+- [ ] Bump frontend version for Test 26.
+- [ ] Build only `/t/26`; do not modify `/t/25`.
+- [ ] Put Test 26 first in mutable `/t/index.htm`.
+- [ ] Run immutable guard, media policy, unit tests, type-check and Vite production build.
+- [ ] Verify mobile/tablet/desktop, RTL/LTR, navigation accessibility, favorites, wizard and WhatsApp.
+- [ ] FTP deploy only `/public_html/t/26` plus mutable launcher; never root deploy and never remote-delete.
+- [ ] Record delivery commit and successful workflow run.
+
 
 ## P0 — Test 25: gray dark theme + reversible portrait placeholder pipeline
 
