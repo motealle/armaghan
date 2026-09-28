@@ -11,12 +11,12 @@ import type {
 
 export const APPEARANCE_KEY='armaghan:test26:appearance'
 export const APPEARANCE_SCHEMA_KEY='armaghan:test26:appearance-schema'
-export const APPEARANCE_SCHEMA_VERSION='3'
+export const APPEARANCE_SCHEMA_VERSION='4'
 
 export const customerAppearanceDefaults:AppearanceProfiles={
   mobile:{
     headerMode:'compact-drawer',
-    showHamburger:true,
+    showHamburger:false,
     showBrandText:false,
     showLanguage:true,
     showHelp:true,
@@ -95,26 +95,29 @@ export function sanitizeViewportAppearance(value:unknown,fallback:ViewportAppear
     showProductBanners:booleanOr(row.showProductBanners,fallback.showProductBanners),
     showFooter:booleanOr(row.showFooter,fallback.showFooter),
   }
-  if(result.headerMode==='compact-drawer')result.showHamburger=true
   return result
-}
-
-export function enforceNavigationInvariant(profile:ViewportProfile,value:ViewportAppearance):ViewportAppearance{
-  if(profile==='mobile')return{...value,headerMode:'compact-drawer',showHamburger:true}
-  return{...value,headerMode:'expanded',showHamburger:false}
 }
 
 export function sanitizeAppearanceProfiles(value:unknown):AppearanceProfiles{
   const source=(value&&typeof value==='object'?value:{}) as Partial<Record<ViewportProfile,unknown>>
   return{
-    mobile:enforceNavigationInvariant('mobile',sanitizeViewportAppearance(source.mobile,customerAppearanceDefaults.mobile)),
-    tablet:enforceNavigationInvariant('tablet',sanitizeViewportAppearance(source.tablet,customerAppearanceDefaults.tablet)),
-    desktop:enforceNavigationInvariant('desktop',sanitizeViewportAppearance(source.desktop,customerAppearanceDefaults.desktop)),
+    mobile:sanitizeViewportAppearance(source.mobile,customerAppearanceDefaults.mobile),
+    tablet:sanitizeViewportAppearance(source.tablet,customerAppearanceDefaults.tablet),
+    desktop:sanitizeViewportAppearance(source.desktop,customerAppearanceDefaults.desktop),
   }
 }
 
 function migrateLegacyProfiles(value:unknown):unknown{
-  return value
+  const source=(value&&typeof value==='object'?value:{}) as Partial<Record<ViewportProfile,unknown>>
+  const mobile=(source.mobile&&typeof source.mobile==='object'?source.mobile:{}) as Partial<ViewportAppearance>
+  const tablet=(source.tablet&&typeof source.tablet==='object'?source.tablet:{}) as Partial<ViewportAppearance>
+  const desktop=(source.desktop&&typeof source.desktop==='object'?source.desktop:{}) as Partial<ViewportAppearance>
+  return{
+    ...source,
+    mobile:{...mobile,headerMode:'compact-drawer',showHamburger:false},
+    tablet:{...tablet,headerMode:'expanded',showHamburger:false},
+    desktop:{...desktop,headerMode:'expanded',showHamburger:false},
+  }
 }
 
 function readStoredProfiles():AppearanceProfiles{
@@ -146,7 +149,7 @@ export const useAppearanceStore=defineStore('appearance',()=>{
   function updateProfile(profile:ViewportProfile,patch:Partial<ViewportAppearance>){
     profiles.value={
       ...profiles.value,
-      [profile]:enforceNavigationInvariant(profile,sanitizeViewportAppearance({...profiles.value[profile],...patch},customerAppearanceDefaults[profile])),
+      [profile]:sanitizeViewportAppearance({...profiles.value[profile],...patch},customerAppearanceDefaults[profile]),
     }
   }
   function resetProfile(profile:ViewportProfile){
