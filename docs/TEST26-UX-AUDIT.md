@@ -370,7 +370,7 @@ Full supplied detail content should be stored as structured translation/content 
 - [x] Safe <=25-minute batches defined.
 - [x] Image-requirements document created separately.
 - [x] Customer-question document created separately.
-- [ ] No Test 26 implementation code until Batch 26A begins.
+- [x] No Test 26 implementation code was started before Batch 26A began.
 
 
 ## 12. Run 1 batching decision — while customer answers are pending
@@ -405,3 +405,40 @@ References:
 - https://tailwindcss.com/docs/responsive-design
 - https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
 - https://pinia.vuejs.org/core-concepts/
+
+
+## 13. Run 1 delivery — reversible foundation
+
+Delivered in this first safe stage:
+- active build target moved to `/t/26`; `/t/25` remains frozen;
+- frontend version / browser namespaces moved to Test 26, with catalog migration from Test 25;
+- typed appearance profiles added for mobile / tablet / desktop;
+- shared viewport resolver aligned with 48rem / 64rem;
+- validated Pinia persistence, reset-one and reset-all customer defaults;
+- Admin → Appearance added with high-value settings only;
+- impossible compact-navigation state guarded by forcing the hamburger control on in compact-drawer mode;
+- localized controls added for Persian, Arabic, English and Sorani;
+- Test 26 contract added while all Test 11–25 regression contracts remain active;
+- launcher lists Test 26 before Test 25.
+
+Validation:
+- Frontend build commit: `1b92b0f69a3e2ab68a9e8ce21b93eb3e735f2a74`
+- GitHub Actions: **FTP Deploy Run #131 — success**
+- immutable guard: PASS
+- Test 11–26 contracts: PASS
+- portrait generation: PASS
+- TypeScript: PASS
+- unit tests: PASS
+- Vite build `/t/26`: PASS
+- FTP smoke: PASS
+- `deploy-t`: PASS
+- `deploy-root`: skipped
+
+Intentionally not implemented in Run 1:
+- customer-facing Home modularization;
+- applying the appearance policy to Header/Home/Products;
+- capability-detail interaction;
+- Favorites share semantics;
+- final marketing imagery.
+
+Those remain for Run 2 after the customer answers return, avoiding premature lock-in.
