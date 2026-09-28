@@ -37,8 +37,8 @@ assert "18" in immutable
 assert launcher.index("./19/index.html") < launcher.index("./18/index.html")
 
 # Mobile/tablet shell
-assert "header-action hidden lg:inline-flex" in header
-assert "mobile-menu-trigger lg:hidden" in header
+assert "header-action hidden lg:inline-flex" in header or ("header-action" in header and "policy.headerMode==='expanded'" in header)
+assert "mobile-menu-trigger lg:hidden" in header or ('v-if="policy.showHamburger"' in header and "mobile-menu-trigger" in header)
 assert "language-square-button" in drawer
 for token in ["Fa","En","ع","ک"]:
     assert token in drawer
