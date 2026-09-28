@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import {
-  BellRing, Boxes, Check, FilePenLine, Languages, LayoutDashboard, MessageCircleMore, MoreVertical,
+  BellRing, Boxes, Check, FilePenLine, Languages, LayoutDashboard, MessageCircleMore, MonitorCog, MoreVertical,
   Plus, Trash2, UserPlus, UserRoundCog, UsersRound,
 } from '@lucide/vue'
 import CustomerDetailSheet from '@/features/admin/components/CustomerDetailSheet.vue'
 import TranslationManager from '@/features/admin/components/TranslationManager.vue'
 import HomeContentEditor from '@/features/admin/components/HomeContentEditor.vue'
 import AdminProductsPanel from '@/features/admin/components/AdminProductsPanel.vue'
+import AppearanceSettings from '@/features/admin/components/AppearanceSettings.vue'
 import { placeholderSets, productPlaceholder } from '@/data/productPlaceholders'
 import { useCatalogStore } from '@/stores/catalog'
 import { useCustomersStore } from '@/stores/customers'
@@ -15,7 +16,7 @@ import { useDesignStore } from '@/stores/design'
 import { useLocaleStore } from '@/stores/locale'
 import { useSessionStore } from '@/stores/session'
 
-type AdminTab='overview'|'customers'|'products'|'content'|'languages'
+type AdminTab='overview'|'customers'|'products'|'content'|'appearance'|'languages'
 const catalog=useCatalogStore()
 const customers=useCustomersStore()
 const session=useSessionStore()
@@ -39,6 +40,7 @@ const tabs=computed(()=>[
   {id:'customers' as const,label:locale.t('adminCustomers'),icon:UsersRound},
   {id:'products' as const,label:locale.t('adminProducts'),icon:Boxes},
   {id:'content' as const,label:locale.t('brandIntro'),icon:FilePenLine},
+  {id:'appearance' as const,label:locale.t('adminAppearance'),icon:MonitorCog},
   {id:'languages' as const,label:locale.t('adminLanguages'),icon:Languages},
 ])
 const allCustomersSelected=computed(()=>customers.items.length>0&&selectedCustomers.value.length===customers.items.length)
@@ -211,6 +213,8 @@ function inviteLead(id:string){
     <AdminProductsPanel v-else-if="activeTab==='products'"/>
 
     <HomeContentEditor v-else-if="activeTab==='content'"/>
+
+    <AppearanceSettings v-else-if="activeTab==='appearance'"/>
 
     <TranslationManager v-else/>
 
