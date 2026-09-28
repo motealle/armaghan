@@ -57,7 +57,7 @@ assert "test26-build" in workflow and "path: t/26" in workflow
 assert 'os.path.isdir("t/26")' in workflow and 'os.walk("t/26")' in workflow
 assert "test_test26_appearance_contract.py" in workflow
 assert "25" in immutable
-assert launcher.index("./26/index.html?build=test26-live-p0-r6") < launcher.index("./25/index.html")
+assert launcher.index("./26/index.html?build=test26-mobile-ux-r7") < launcher.index("./25/index.html")
 assert "Current implementation target: **Test 26" in backlog
 assert "rollback/test25-pre-test26" in backlog
 assert "Tests 01–25 are frozen" in rules
@@ -205,7 +205,7 @@ for filename in [
     "capability-documents.webp","banner-baby.webp","banner-kids.webp","banner-women.webp",
 ]:
     assert (FRONTEND/"public/images/test26/home"/filename).is_file(), filename
-assert 'name="armaghan-build" content="test26-live-p0-r6"' in frontend_index
+assert 'name="armaghan-build" content="test26-mobile-ux-r7"' in frontend_index
 assert "/* Test 26 — customer-approved reversible landing integration */" in css
 assert "Test 26 mobile UX polish" in css
 assert ".product-card-title{text-align:center}" in css
