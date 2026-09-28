@@ -1,12 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex Work Mode",
   "run_id": "chat-20260929T0140+0330-test26-women-image-deploy",
   "scope": "Select approved modest Women banner candidate 8-2, integrate into Test 26, update asset status and deploy only /public_html/t",
   "base_ref": "main",
   "acquired_at": "2026-09-28T22:10:00Z",
-  "expires_at": "2026-09-28T23:40:00Z",
-  "note": "Test 25 and earlier snapshots remain immutable; no root deployment."
+  "expires_at": null,
+  "note": "Released after Women banner option 8-2 deployment Run #190 succeeded and documentation QA Run #191 passed with deployments skipped.",
+  "released_at": "2026-09-28T22:23:00Z"
 }
