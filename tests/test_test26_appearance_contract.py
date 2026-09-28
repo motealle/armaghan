@@ -29,6 +29,22 @@ viewport=(SRC/"services/viewportProfile.ts").read_text(encoding="utf-8")
 appearance_admin=(SRC/"features/admin/components/AppearanceSettings.vue").read_text(encoding="utf-8")
 admin=(SRC/"features/admin/components/AdminDashboard.vue").read_text(encoding="utf-8")
 messages=(SRC/"i18n/messages.ts").read_text(encoding="utf-8")
+home=(SRC/"views/HomeView.vue").read_text(encoding="utf-8")
+header=(SRC/"components/layout/AppHeader.vue").read_text(encoding="utf-8")
+drawer=(SRC/"components/layout/MobileMenuDrawer.vue").read_text(encoding="utf-8")
+products=(SRC/"views/ProductsView.vue").read_text(encoding="utf-8")
+favorites=(SRC/"views/FavoritesView.vue").read_text(encoding="utf-8")
+app=(SRC/"App.vue").read_text(encoding="utf-8")
+css=(SRC/"styles/main.css").read_text(encoding="utf-8")
+hero_section=(SRC/"features/home/components/HeroSection.vue").read_text(encoding="utf-8")
+about=(SRC/"features/home/components/AboutArmaghanSection.vue").read_text(encoding="utf-8")
+why=(SRC/"features/home/components/WhyArmaghanSection.vue").read_text(encoding="utf-8")
+capabilities=(SRC/"features/home/components/CapabilitiesSection.vue").read_text(encoding="utf-8")
+banners=(SRC/"features/home/components/ProductCategoryBanners.vue").read_text(encoding="utf-8")
+site_footer=(SRC/"components/layout/SiteFooter.vue").read_text(encoding="utf-8")
+share=(SRC/"features/favorites/shareFavorites.ts").read_text(encoding="utf-8")
+share_spec=(SRC/"features/favorites/shareFavorites.spec.ts").read_text(encoding="utf-8")
+resolved=(SRC/"composables/useResolvedAppearance.ts").read_text(encoding="utf-8")
 
 assert pkg["version"]=="0.26.0"
 assert lock["version"]=="0.26.0" and lock["packages"][""]["version"]=="0.26.0"
@@ -117,4 +133,45 @@ session_spec=(SRC/"stores/session.spec.ts").read_text(encoding="utf-8")
 assert "armaghan:test26:role" in session_spec
 assert "armaghan:test26:impersonation" in session_spec
 
-print("Test 26 reversible appearance foundation contract: PASS")
+# Customer-approved Test 26 integration: every high-value setting has a public consumer.
+assert "useResolvedAppearance" in resolved and "subscribeViewportProfile" in resolved
+assert "HeroSection" in home
+for component in ["AboutArmaghanSection","WhyArmaghanSection","CapabilitiesSection","ProductCategoryBanners"]:
+    assert component in home
+for marker in ["policy.showAbout","policy.showWhy","policy.showCapabilities","policy.showProductBanners","policy.homeProductGrid==='recommended-6'"]:
+    assert marker in home
+assert "HeroCarousel" in hero_section and "policy.heroMode==='carousel'" in hero_section
+assert "heroSingleSlogan" in hero_section
+assert "aboutArmaghanText" in about and "about-armaghan.webp" in about and "placehold.co" in about
+assert "whyCapacityTitle" in why and "whyMarketTitle" in why
+assert "AdaptivePanel" in capabilities and "capabilityMore" in capabilities and "placehold.co" in (SRC/"data/home26.ts").read_text(encoding="utf-8")
+assert "category:category.code" in banners and "productBannerMedia" in banners
+
+for marker in ["policy.headerMode==='expanded'","policy.showBrandText","policy.showLanguage","policy.showHelp","policy.showAccount","policy.showHamburger"]:
+    assert marker in header
+for marker in [":show-language="policy.showLanguage"",":show-help="policy.showHelp"",":show-account="policy.showAccount"",":show-brand-text="policy.showBrandText""]:
+    assert marker in header
+assert "props.showLanguage" in drawer and "props.showHelp" in drawer and "props.showAccount" in drawer
+assert 'v-if="policy.showCategoryNumbers"' in products
+assert "products-intro-surface" in products and ".products-intro-surface" in css
+assert "SiteFooter" in app and 'v-if="policy.showFooter"' in app
+assert "test26-site-footer" in site_footer and "footerSalesTitle" in site_footer
+
+# Favorites share carries product codes only, is versioned, and has native-share + copy fallback.
+assert "FAVORITES_SHARE_PREFIX='v1:'" in share
+assert "buildFavoritesShareUrl" in share and "decodeFavoriteCodes" in share
+assert "navigator.share" in favorites and "navigator.clipboard" in favorites
+assert "favorites.items.map(product=>product.code)" in favorites
+assert "sharedFavoritesPrivacy" in favorites
+assert "not.toContain('name=')" in share_spec and "not.toContain('email=')" in share_spec
+
+for key in [
+    "aboutArmaghanText","whyArmaghanTitle","capabilitiesTitle","productBannersTitle",
+    "shareFavorites","sharedFavoritesTitle","footerSalesTitle",
+]:
+    assert key in messages
+
+assert "/* Test 26 — customer-approved reversible landing integration */" in css
+assert "rollback/test26-foundation-pre-integration" in audit or "Run 2" in audit
+
+print("Test 26 reversible appearance + customer integration contract: PASS")
