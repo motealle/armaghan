@@ -88,3 +88,12 @@ Reference: https://placehold.co/
 - **Product category banners:** customer approved the visual direction shown in the supplied collage/screenshot `image.png` (**669×558**) but previously stated that the original banner assets had not been pasted. Treat the screenshot as visual reference only; keep the three banner rows open until original/high-resolution images are available or an agentic image run generates compliant replacements.
 - **Capabilities:** customer accepted the supplied three-card reference as the intended direction but did not provide the final three individual images. Keep the three capability rows open and visibly placeholder-backed.
 - **Hero:** customer confirmed a **single** hero image and accepted the previously supplied hero image set. Test 26 currently selects the existing local `hero-brand.webp` derivative, with a one-slogan-only composition. The slogan remains editable in Admin so later copy replacement is non-destructive.
+
+
+## Generated candidate review — 2026-09-29
+
+- Three numbered alternatives are available for each of the eight required image slots, plus three optional Products intro backgrounds (27 review previews total).
+- Files and the visual selection index are in `assets/generated-review/test26/`; use the identifiers in its `README.md` to record choices.
+- These are lightweight 800px-wide (or banner-ratio) WebP review previews with status `generated-pending-review`. They are not the final target derivatives and are not connected to Test 26. The existing approved Hero and owner-approved About source remain untouched.
+- After selection, create final local derivatives at the dimensions and aspect ratios above, strip metadata, update each manifest status to `approved-local`, and only then connect the selected paths to Test 26.
+- All candidates are generic generated concepts. They must not be described as actual Armaghan staff, factory, SKU photography, certificates or shipment evidence.

@@ -1,6 +1,196 @@
 {
   "schema": 1,
   "purpose": "Temporary AI-generated image review queue. Not production media storage.",
-  "source_prompt_file": "docs/pics-Prompt.md",
-  "items": []
+  "source_prompt_file": "docs/TEST26-IMAGE-REQUIREMENTS.md",
+  "items": [
+    {
+      "filename": "test26/T26-HERO-01.webp",
+      "prompt_heading": "Home Hero — folded apparel and textiles",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-HERO-02.webp",
+      "prompt_heading": "Home Hero — export preparation",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-HERO-03.webp",
+      "prompt_heading": "Home Hero — business collaboration",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-ABOUT-01.webp",
+      "prompt_heading": "About Armaghan — partners greeting over apparel samples",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-ABOUT-02.webp",
+      "prompt_heading": "About Armaghan — close handshake and trade materials",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-ABOUT-03.webp",
+      "prompt_heading": "About Armaghan — partners reviewing a garment sample",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-CAP-PRODUCTION-01.webp",
+      "prompt_heading": "Capability production — sewing craft",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-CAP-PRODUCTION-02.webp",
+      "prompt_heading": "Capability production — seam inspection",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-CAP-PRODUCTION-03.webp",
+      "prompt_heading": "Capability production — organized production workspace",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-CAP-EXPORT-01.webp",
+      "prompt_heading": "Capability export prep — apparel packing",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-CAP-EXPORT-02.webp",
+      "prompt_heading": "Capability export prep — organized garment grouping",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-CAP-EXPORT-03.webp",
+      "prompt_heading": "Capability export prep — shipment staging",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-CAP-DOCS-01.webp",
+      "prompt_heading": "Capability trade documents — blank folder and samples",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-CAP-DOCS-02.webp",
+      "prompt_heading": "Capability trade documents — blank checklist",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-CAP-DOCS-03.webp",
+      "prompt_heading": "Capability trade documents — laptop and empty folder",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-BANNER-BABY-01.webp",
+      "prompt_heading": "Baby banner — folded newborn outfit",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-BANNER-BABY-02.webp",
+      "prompt_heading": "Baby banner — hanging essentials",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-BANNER-BABY-03.webp",
+      "prompt_heading": "Baby banner — newborn flat lay",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-BANNER-KIDS-01.webp",
+      "prompt_heading": "Kids banner — apparel mannequins",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-BANNER-KIDS-02.webp",
+      "prompt_heading": "Kids banner — kids clothing rail",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-BANNER-KIDS-03.webp",
+      "prompt_heading": "Kids banner — child models, face cropped",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-BANNER-WOMEN-01.webp",
+      "prompt_heading": "Women banner — modest tunic look",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-BANNER-WOMEN-02.webp",
+      "prompt_heading": "Women banner — modest garment mannequins",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-BANNER-WOMEN-03.webp",
+      "prompt_heading": "Women banner — modest looks on hijabi models",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-PRODUCTS-INTRO-01.webp",
+      "prompt_heading": "Products intro — airy cotton folds",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-PRODUCTS-INTRO-02.webp",
+      "prompt_heading": "Products intro — quiet copy space",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    },
+    {
+      "filename": "test26/T26-PRODUCTS-INTRO-03.webp",
+      "prompt_heading": "Products intro — close textile texture",
+      "generated_at": "2026-09-28T21:32:31.180Z",
+      "status": "generated-pending-review",
+      "commit_sha": "b6d638dd012777059cefeea0414c6c2236b82154"
+    }
+  ]
 }
