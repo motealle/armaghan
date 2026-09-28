@@ -62,6 +62,18 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [ ] Add payload validation and URL-length guard.
 - [ ] Document production migration to opaque/signed backend share tokens.
 
+
+### Test 26 foundation delivery record
+
+- [x] Frontend foundation commit triggering the validated build: `1b92b0f69a3e2ab68a9e8ce21b93eb3e735f2a74`.
+- [x] **FTP Deploy Run #131** completed successfully.
+- [x] Test 11–26 regression/source contracts passed.
+- [x] TypeScript type-check, unit tests, portrait generation and Vite production build for `/t/26` passed.
+- [x] FTP smoke test passed.
+- [x] `/public_html/t/26` and mutable `/public_html/t/index.htm` were deployed.
+- [x] `deploy-root` was skipped; Test 25 remained frozen and untouched.
+- [x] Customer-facing Home/Header/Products/Favorites integration remains intentionally pending customer clarification; only the reversible foundation and Admin Appearance controls are delivered in this stage.
+
 ### Batch 26F — final assets, QA and scoped release
 - [ ] Replace every required placeholder with an approved local asset or explicitly keep the row open.
 - [ ] Update Test 26 image-requirement statuses and provenance.
@@ -72,8 +84,8 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Put Test 26 first in mutable `/t/index.htm`.
 - [x] Run immutable guard, media policy, unit tests, type-check and Vite production build.
 - [ ] Verify mobile/tablet/desktop, RTL/LTR, navigation accessibility, favorites, wizard and WhatsApp.
-- [ ] FTP deploy only `/public_html/t/26` plus mutable launcher; never root deploy and never remote-delete.
-- [ ] Record delivery commit and successful workflow run.
+- [x] FTP deploy only `/public_html/t/26` plus mutable launcher; never root deploy and never remote-delete.
+- [x] Record delivery commit and successful workflow run.
 
 
 ## P0 — Test 25: gray dark theme + reversible portrait placeholder pipeline
