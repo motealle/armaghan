@@ -119,6 +119,7 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Preserve the previous hero image and all frozen snapshots.
 - [x] Leave the unselected Women banner on its explicit placeholder.
 - [x] Deploy through the Test 26 build and scoped `/public_html/t` workflow.
+- [x] Delivery commit `e2d9931f9c5398de9320ef698051d0f9c56db991`; FTP Deploy Run #188 passed QA, FTP smoke and `deploy-t`; `deploy-root` was skipped.
 
 ## P0 — Test 25: gray dark theme + reversible portrait placeholder pipeline
 

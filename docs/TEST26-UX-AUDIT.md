@@ -594,3 +594,12 @@ Implementation is complete for the customer-approved Test 26 interaction/layout 
 
 ### Deliberately open media slots
 Owner-selected Test 26 images are integrated from the numbered review set: Hero 1-2, About 2-2, Production 3-1, Export 4-3, Trade Documents 5-2, Baby banner 6-3, and Kids banner 7-3. They are conceptual generated visuals, not claims about actual Armaghan staff, premises, shipments, or certificates. The Women banner remains on its documented conspicuous `placehold.co` fallback because no selection was supplied. Test 25 and earlier snapshots remain frozen.
+
+
+## 16. Run 3 — selected Test 26 media deployment
+
+- Delivery commit: `e2d9931f9c5398de9320ef698051d0f9c56db991`.
+- **FTP Deploy Run #188: SUCCESS** — immutable and Test 11–26 contracts, media policies, TypeScript, unit tests and Test 26 Vite build passed; FTP smoke passed; `deploy-t` passed; `deploy-root` was skipped.
+- Only the Test 26 output and mutable `/t` launcher were in deploy scope; no remote files were deleted.
+- The previous Hero image remains available; the unselected Women banner remains on its documented placeholder.
+- Test 25 and earlier frozen snapshots were not changed.
