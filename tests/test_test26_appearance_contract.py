@@ -45,6 +45,7 @@ site_footer=(SRC/"components/layout/SiteFooter.vue").read_text(encoding="utf-8")
 share=(SRC/"features/favorites/shareFavorites.ts").read_text(encoding="utf-8")
 share_spec=(SRC/"features/favorites/shareFavorites.spec.ts").read_text(encoding="utf-8")
 resolved=(SRC/"composables/useResolvedAppearance.ts").read_text(encoding="utf-8")
+bottom_nav=(SRC/"components/layout/BottomNav.vue").read_text(encoding="utf-8")
 
 assert pkg["version"]=="0.26.0"
 assert lock["version"]=="0.26.0" and lock["packages"][""]["version"]=="0.26.0"
@@ -109,6 +110,16 @@ assert "appearance" in admin
 assert "profileForWidth(767)" in appearance_spec
 assert "profileForWidth(768)" in appearance_spec
 assert "profileForWidth(1024)" in appearance_spec
+assert 'class="bottom-nav md:hidden"' in bottom_nav
+assert 'class="bottom-nav lg:hidden"' not in bottom_nav
+assert "APPEARANCE_SCHEMA_KEY='armaghan:test26:appearance-schema'" in appearance_store
+assert "APPEARANCE_SCHEMA_VERSION='2'" in appearance_store
+assert "migrateLegacyProfiles" in appearance_store
+assert "tablet:{" in appearance_store and "headerMode:'expanded'" in appearance_store
+assert "@media(min-width:768px){" in css
+assert ":root{--bottom-nav-space:0rem}" in css
+assert ":root{--bottom-nav-space:7.2rem}" not in css
+assert ".bottom-nav{left:50%;right:auto;bottom:1rem;" not in css
 
 strict_test26_files=[
     FRONTEND/"index.html",

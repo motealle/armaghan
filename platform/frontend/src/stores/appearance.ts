@@ -10,6 +10,8 @@ import type {
 } from '@/types/appearance'
 
 export const APPEARANCE_KEY='armaghan:test26:appearance'
+export const APPEARANCE_SCHEMA_KEY='armaghan:test26:appearance-schema'
+export const APPEARANCE_SCHEMA_VERSION='2'
 
 export const customerAppearanceDefaults:AppearanceProfiles={
   mobile:{
@@ -29,8 +31,8 @@ export const customerAppearanceDefaults:AppearanceProfiles={
     showFooter:true,
   },
   tablet:{
-    headerMode:'compact-drawer',
-    showHamburger:true,
+    headerMode:'expanded',
+    showHamburger:false,
     showBrandText:false,
     showLanguage:true,
     showHelp:true,
@@ -106,12 +108,40 @@ export function sanitizeAppearanceProfiles(value:unknown):AppearanceProfiles{
   }
 }
 
+function migrateLegacyProfiles(value:unknown):unknown{
+  const source=(value&&typeof value==='object'?value:{}) as Partial<Record<ViewportProfile,unknown>>
+  const tablet=(source.tablet&&typeof source.tablet==='object'?source.tablet:{}) as Partial<ViewportAppearance>
+  return{
+    ...source,
+    tablet:{
+      ...tablet,
+      headerMode:'expanded',
+      showHamburger:false,
+    },
+  }
+}
+
 function readStoredProfiles():AppearanceProfiles{
   if(typeof localStorage==='undefined')return cloneDefaults()
   try{
     const raw=localStorage.getItem(APPEARANCE_KEY)
-    return raw?sanitizeAppearanceProfiles(JSON.parse(raw)):cloneDefaults()
-  }catch{return cloneDefaults()}
+    const schema=localStorage.getItem(APPEARANCE_SCHEMA_KEY)
+    if(!raw){
+      localStorage.setItem(APPEARANCE_SCHEMA_KEY,APPEARANCE_SCHEMA_VERSION)
+      return cloneDefaults()
+    }
+    const parsed=JSON.parse(raw)
+    const migrated=schema===APPEARANCE_SCHEMA_VERSION?parsed:migrateLegacyProfiles(parsed)
+    const sanitized=sanitizeAppearanceProfiles(migrated)
+    if(schema!==APPEARANCE_SCHEMA_VERSION){
+      localStorage.setItem(APPEARANCE_KEY,JSON.stringify(sanitized))
+      localStorage.setItem(APPEARANCE_SCHEMA_KEY,APPEARANCE_SCHEMA_VERSION)
+    }
+    return sanitized
+  }catch{
+    localStorage.setItem(APPEARANCE_SCHEMA_KEY,APPEARANCE_SCHEMA_VERSION)
+    return cloneDefaults()
+  }
 }
 
 export const useAppearanceStore=defineStore('appearance',()=>{

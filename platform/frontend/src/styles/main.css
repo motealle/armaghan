@@ -295,9 +295,8 @@ html[data-locale="en"] .header-select{direction:ltr;text-align:left}
 .dark .text-slate-900{color:var(--c-text)!important}
 
 @media(min-width:768px){
-  :root{--bottom-nav-space:7.2rem}
+  :root{--bottom-nav-space:0rem}
   .mobile-drawer-panel{width:min(340px,70vw)}
-  .bottom-nav{left:50%;right:auto;bottom:1rem;width:min(42rem,calc(100% - 2rem));transform:translateX(-50%);border:1px solid var(--c-border);border-radius:1.4rem;box-shadow:0 8px 24px rgba(17,24,39,.20);padding:.38rem}
   .hero-shell{min-height:31rem}
 }
 @media(min-width:1024px){

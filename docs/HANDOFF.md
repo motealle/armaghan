@@ -326,6 +326,7 @@ Do not build backend, database, real login, real APIs, payment, checkout, Presta
 - Test 26 customer integration build: `fafcb0d31e248e3c12ca4533ee85708f5ab08502`; **FTP Deploy Run #185 PASS**; full frontend build/type-check/unit tests/contracts passed; `deploy-root` skipped.
 - Mutable `/t` launcher completion: `57d47e3919a9b87a3fb540723c832ca64fd23d4a`; **FTP Deploy Run #186 PASS**.
 - Remaining Test 26 asset work is explicit rather than hidden: final capability images, final three banner originals/generated assets, and the optimized local derivative of the customer-approved About handshake image are tracked in `docs/TEST26-IMAGE-REQUIREMENTS.md`.
+- Mobile PWA navigation invariant for Test 26+: the original app-like five-item BottomNav is mobile-only (<48rem/768px). From tablet upward, those primary routes live in the expanded blue top navigation. Do not float the BottomNav on tablet.
 - Operational project memory hierarchy: `docs/PROJECT-RULES.md` → `docs/HANDOFF.md` → `docs/BACKLOG.md` → current test audit / asset docs. Chat memory is secondary.
 
 

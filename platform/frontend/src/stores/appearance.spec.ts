@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import {
   APPEARANCE_KEY,
+  APPEARANCE_SCHEMA_KEY,
   customerAppearanceDefaults,
   sanitizeAppearanceProfiles,
   useAppearanceStore,
@@ -25,11 +26,28 @@ describe('appearance store',()=>{
   it('uses customer defaults for each viewport',()=>{
     const store=useAppearanceStore()
     expect(store.profiles.mobile.headerMode).toBe('compact-drawer')
-    expect(store.profiles.tablet.showHamburger).toBe(true)
+    expect(store.profiles.tablet.headerMode).toBe('expanded')
+    expect(store.profiles.tablet.showHamburger).toBe(false)
     expect(store.profiles.desktop.headerMode).toBe('expanded')
     expect(store.profiles.desktop.homeProductGrid).toBe('hidden')
     expect(store.profiles.desktop.heroMode).toBe('single')
     expect(store.profiles.desktop.showCategoryNumbers).toBe(false)
+  })
+
+  it('migrates the old tablet compact default to top navigation without losing other tablet choices',()=>{
+    localStorage.setItem(APPEARANCE_KEY,JSON.stringify({
+      mobile:{headerMode:'compact-drawer',showHamburger:true},
+      tablet:{headerMode:'compact-drawer',showHamburger:true,showAbout:false},
+      desktop:{headerMode:'expanded',showHamburger:false},
+    }))
+    setActivePinia(createPinia())
+    const store=useAppearanceStore()
+    expect(store.profiles.mobile.headerMode).toBe('compact-drawer')
+    expect(store.profiles.mobile.showHamburger).toBe(true)
+    expect(store.profiles.tablet.headerMode).toBe('expanded')
+    expect(store.profiles.tablet.showHamburger).toBe(false)
+    expect(store.profiles.tablet.showAbout).toBe(false)
+    expect(localStorage.getItem(APPEARANCE_SCHEMA_KEY)).toBe('2')
   })
 
   it('sanitizes invalid persisted values and protects compact navigation',()=>{

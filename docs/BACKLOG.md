@@ -8,6 +8,18 @@ Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
 Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
 
 
+## P0 regression hotfix — mobile PWA bottom navigation
+
+- [x] Diagnose the regression: the original `BottomNav.vue` and its mobile styling were still present; Test 26 accidentally kept them visible through the tablet range and kept tablet on compact-drawer navigation.
+- [x] Preserve the exact existing mobile BottomNav component/visual treatment; change only its visibility boundary from `lg:hidden` to `md:hidden`.
+- [x] Make the BottomNav mobile-only: visible below 48rem/768px, absent on tablet and desktop.
+- [x] Remove tablet floating BottomNav geometry and bottom spacing from 48rem upward.
+- [x] Change Test 26 customer-default tablet navigation to the expanded blue top header with no hamburger.
+- [x] Add a one-time appearance schema migration so browsers that already opened Test 26 do not remain stuck on the mistaken tablet default.
+- [x] Preserve Admin per-viewport overrides for the top header; do not make the BottomNav a decorative toggle.
+- [x] Add unit and source-contract coverage at the 767/768/1024 boundaries.
+- [ ] Final CI, FTP smoke and scoped `/t/26` deployment must pass before closing this hotfix.
+
 ## P0 — Test 26: reversible homepage + device-aware appearance controls
 
 ### Planning / repository memory

@@ -613,3 +613,27 @@ Owner-selected Test 26 images are integrated from the numbered review set: Hero 
 - **FTP Deploy Run #190: SUCCESS** — immutable and Test 11–26 contracts, media policy, TypeScript, unit tests, Test 26 build and FTP smoke all passed; `deploy-t` passed and `deploy-root` was skipped.
 - All eight Test 26 image slots now use local selected assets; the women candidate/source choices are archived in the Test 26 selected-assets manifest.
 - Test 25 and all earlier snapshots remain unchanged.
+
+
+## 18. Run 5 — mobile PWA BottomNav regression correction
+
+The owner clarified that the original app-like bottom navigation is a deliberate mobile PWA interaction and must remain exactly in that role. The regression was not removal of the component: `BottomNav.vue` and its styling were still present. The mistake was allowing it to continue through the tablet range while the tablet default also stayed on compact drawer navigation.
+
+Rollback checkpoint: `rollback/test26-pre-mobile-bottomnav-fix` → `b89f52b92774a376a86925a82f72553cdb3235a3`.
+
+| Rank | Fix strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Keep the exact BottomNav on mobile only (<48rem), switch tablet/desktop to expanded blue top navigation, and migrate the old persisted tablet default** | **10.0** | Restores the intended PWA experience without redesigning the mobile nav; fixes both fresh and previously-opened Test 26 sessions |
+| 2 | Change only `lg:hidden` to `md:hidden` | 7.5 | Removes the tablet BottomNav but leaves tablet on the compact drawer by default |
+| 3 | Change only the tablet appearance default | 6.0 | Risks showing both top navigation and the old tablet BottomNav |
+| 4 | Detect phones from user-agent | 3.0 | Brittle and violates the project viewport-profile rule |
+| 5 | Make BottomNav visibility another Admin toggle | 2.5 | Turns a core navigation invariant into an easy-to-break content-manager setting |
+
+**Selected:** Option 1.
+
+### Correct invariant
+- **Mobile (<48rem / 768px):** the existing five-item app-like BottomNav remains visually unchanged and is the primary route navigation; compact top header/drawer remains available for secondary controls.
+- **Tablet (48rem–<64rem):** no BottomNav; primary routes are visible in the blue expanded top navigation.
+- **Desktop (>=64rem):** no BottomNav; primary routes remain in the blue expanded top navigation.
+- The breakpoint is viewport-based, not user-agent based.
+- Existing Test 25 and older snapshots remain immutable.
