@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
-  "holder": "Codex Work Mode",
-  "run_id": "chat-20260929T0140+0330-test26-women-image-deploy",
-  "scope": "Select approved modest Women banner candidate 8-2, integrate into Test 26, update asset status and deploy only /public_html/t",
-  "base_ref": "main",
-  "acquired_at": "2026-09-28T22:10:00Z",
-  "expires_at": null,
-  "note": "Released after Women banner option 8-2 deployment Run #190 succeeded and documentation QA Run #191 passed with deployments skipped.",
-  "released_at": "2026-09-28T22:23:00Z"
+  "state": "active",
+  "holder": "ChatGPT GPT-5.6 Sol",
+  "run_id": "chat-20260929T0156+0330-test26-mobile-bottomnav-fix",
+  "scope": "P0 Test 26 regression fix: restore mobile-only app-like bottom navigation and move navigation to top header from tablet upward",
+  "base_ref": "main@b89f52b92774a376a86925a82f72553cdb3235a3",
+  "acquired_at": "2026-09-28T22:26:00Z",
+  "expires_at": "2026-09-28T23:56:00Z",
+  "released_at": null,
+  "note": "Canonical shared write lock. See docs/PROJECT-RULES.md rules 64-74. Update only with the current blob SHA."
 }
