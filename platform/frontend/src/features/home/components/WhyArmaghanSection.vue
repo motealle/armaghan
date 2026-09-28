@@ -13,7 +13,7 @@ const values=[
 <template>
   <section class="home-section test26-why">
     <div class="test26-section-heading">
-      <span>Why Armaghan?</span>
+      <span>{{locale.t('whyArmaghanEyebrow')}}</span>
       <h2>{{locale.t('whyArmaghanTitle')}}</h2>
       <p>{{locale.t('whyArmaghanIntro')}}</p>
     </div>
