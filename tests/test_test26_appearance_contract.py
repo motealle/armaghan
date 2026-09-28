@@ -142,9 +142,11 @@ for marker in ["policy.showAbout","policy.showWhy","policy.showCapabilities","po
     assert marker in home
 assert "HeroCarousel" in hero_section and "policy.heroMode==='carousel'" in hero_section
 assert "heroSingleSlogan" in hero_section
-assert "aboutArmaghanText" in about and "about-armaghan.webp" in about and "placehold.co" in about
+assert "aboutArmaghanText" in about and "test26Media.about" in about
 assert "whyCapacityTitle" in why and "whyMarketTitle" in why
-assert "AdaptivePanel" in capabilities and "capabilityMore" in capabilities and "placehold.co" in (SRC/"data/home26.ts").read_text(encoding="utf-8")
+home26=(SRC/"data/home26.ts").read_text(encoding="utf-8")
+assert "AdaptivePanel" in capabilities and "capabilityMore" in capabilities
+assert "placehold.co" in home26 and "test26Media" in home26 and "productBannerMedia" in home26
 assert "category:category.code" in banners and "productBannerMedia" in banners
 
 for marker in ["policy.headerMode==='expanded'","policy.showBrandText","policy.showLanguage","policy.showHelp","policy.showAccount","policy.showHamburger"]:
