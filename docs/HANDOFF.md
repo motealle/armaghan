@@ -329,6 +329,7 @@ Do not build backend, database, real login, real APIs, payment, checkout, Presta
 - Mobile PWA navigation invariant for Test 26+: the original app-like five-item BottomNav is mobile-only (<48rem/768px). From tablet upward, those primary routes live in the expanded blue top navigation. This placement is enforced at runtime and must not become an arbitrary mode that can duplicate/remove primary navigation.
 - SmartImage AVIF invariant: never derive an `.avif` URL merely because a `.webp` exists. Advertise AVIF only for asset families known to ship a real AVIF sibling; Test 26 selected media are WebP-only.
 - Mobile PWA BottomNav regression fix deployed from `c49a37c0aa0e56759e4a3418c8c798232f4e64b5`; **FTP Deploy Run #195 PASS**; `deploy-root` skipped; Test 25 and older snapshots unchanged.
+- Live Test 26 P0 screenshot fix deployed from `596c86bf1009741a95d1c76ec168bc5c4519104e`; **FTP Deploy Run #208 PASS**. This fixes WebP→nonexistent-AVIF fallback, enforces mobile BottomNav vs tablet/desktop top-nav state, cache-busts the Test 26 launcher, skips root deployment, and leaves Test 25+ older snapshots untouched.
 - Operational project memory hierarchy: `docs/PROJECT-RULES.md` → `docs/HANDOFF.md` → `docs/BACKLOG.md` → current test audit / asset docs. Chat memory is secondary.
 
 
