@@ -76,7 +76,7 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
 <template>
   <Teleport to="body">
     <Transition name="drawer">
-      <div v-if="open" class="mobile-drawer-layer lg:hidden">
+      <div v-if="open" class="mobile-drawer-layer">
         <button class="mobile-drawer-backdrop" :aria-label="locale.t('close')" tabindex="-1" @click="emit('close')" />
         <aside ref="panelRef" class="mobile-drawer-panel" role="dialog" aria-modal="true" :aria-label="locale.t('drawerSummary')" tabindex="-1">
           <div class="drawer-scroll">
