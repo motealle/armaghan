@@ -27,9 +27,9 @@ manifest=json.loads((PUBLIC/"images/category-navigation/manifest.json").read_tex
 
 assert tuple(map(int,pkg["version"].split("."))) >= (0,23,0)
 assert tuple(map(int,lock["version"].split("."))) >= (0,23,0) and tuple(map(int,lock["packages"][""]["version"].split("."))) >= (0,23,0)
-assert "../../t/23" in vite or "../../t/24" in vite or "../../t/25" in vite
-assert ("test23-build" in workflow and "path: t/23" in workflow) or ("test24-build" in workflow and "path: t/24" in workflow) or ("test25-build" in workflow and "path: t/25" in workflow)
-assert ('os.path.isdir("t/23")' in workflow and 'os.walk("t/23")' in workflow) or ('os.path.isdir("t/24")' in workflow and 'os.walk("t/24")' in workflow) or ('os.path.isdir("t/25")' in workflow and 'os.walk("t/25")' in workflow)
+assert "../../t/23" in vite or "../../t/24" in vite or "../../t/25" in vite or "../../t/26" in vite
+assert ("test23-build" in workflow and "path: t/23" in workflow) or ("test24-build" in workflow and "path: t/24" in workflow) or ("test25-build" in workflow and "path: t/25" in workflow) or ("test26-build" in workflow and "path: t/26" in workflow)
+assert ('os.path.isdir("t/23")' in workflow and 'os.walk("t/23")' in workflow) or ('os.path.isdir("t/24")' in workflow and 'os.walk("t/24")' in workflow) or ('os.path.isdir("t/25")' in workflow and 'os.walk("t/25")' in workflow) or ('os.path.isdir("t/26")' in workflow and 'os.walk("t/26")' in workflow)
 assert "test_test23_product_cards_contract.py" in workflow
 assert "22" in immutable and "23" in immutable
 assert launcher.index("./23/index.html") < launcher.index("./22/index.html")
@@ -89,13 +89,16 @@ for key_file in [
     SRC/"stores/locale.ts",
 ]:
     text=key_file.read_text(encoding="utf-8")
-    assert "armaghan:test23" in text or "armaghan:test24" in text or "armaghan:test25" in text
+    assert "armaghan:test23" in text or "armaghan:test24" in text or "armaghan:test25" in text or "armaghan:test26" in text
     assert "armaghan:test22" not in text
 
 catalog_store=(SRC/"stores/catalog.ts").read_text(encoding="utf-8")
-assert "const KEY='armaghan:test23:products-v1'" in catalog_store or "const KEY='armaghan:test24:products-v1'" in catalog_store or "const KEY='armaghan:test25:products-v1'" in catalog_store
+assert "const KEY='armaghan:test23:products-v1'" in catalog_store or "const KEY='armaghan:test24:products-v1'" in catalog_store or "const KEY='armaghan:test25:products-v1'" in catalog_store or "const KEY='armaghan:test26:products-v1'" in catalog_store
 assert "'armaghan:test22:products-v1'" in catalog_store
-if "const KEY='armaghan:test25:products-v1'" in catalog_store:
+if "const KEY='armaghan:test26:products-v1'" in catalog_store:
+    assert "'armaghan:test25:products-v1'" in catalog_store
+    assert "'armaghan:test24:products-v1'" in catalog_store
+elif "const KEY='armaghan:test25:products-v1'" in catalog_store:
     assert "'armaghan:test24:products-v1'" in catalog_store
     assert "'armaghan:test23:products-v1'" in catalog_store
 elif "const KEY='armaghan:test24:products-v1'" in catalog_store:
