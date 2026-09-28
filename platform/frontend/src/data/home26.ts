@@ -14,7 +14,7 @@ export const test26Media={
   },
   about:{
     image:'./images/test26/home/about-armaghan.webp',
-    fallback:'https://placehold.co/1600x1200/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AAbout+Armaghan+1600x1200',
+    fallback:'https://placehold.co/1600x900/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AAbout+Armaghan+1600x900',
   },
 } as const
 
