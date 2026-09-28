@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project": "motealle/armaghan",
+  "state": "released",
+  "holder": null,
+  "run_id": null,
+  "scope": null,
+  "base_ref": "main",
+  "acquired_at": null,
+  "expires_at": null,
+  "released_at": "2026-09-28T17:30:00Z",
+  "note": "Canonical shared write lock. See docs/PROJECT-RULES.md rules 64-74. Update only with the current blob SHA."
+}
