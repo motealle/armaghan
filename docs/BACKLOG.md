@@ -96,7 +96,7 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Mutable launcher description updated in `57d47e3919a9b87a3fb540723c832ca64fd23d4a`.
 - [x] **FTP Deploy Run #186** completed successfully and published the updated `/t/index.htm`; `deploy-root` was skipped.
 - [x] Test 25 and all earlier frozen snapshots remained untouched.
-- [x] Owner-selected generated Hero, About, three capability, Baby-banner and Kids-banner images are local Test 26 assets; only the unselected Women banner remains on its documented placeholder. See `docs/TEST26-SELECTED-IMAGES.md`.
+- [x] All eight Test 26 image slots now use selected local assets, including the automatically selected Women banner 8-2. See `docs/TEST26-SELECTED-IMAGES.md`.
 
 ### Batch 26F — final assets, QA and scoped release
 - [x] Replace every required placeholder with an approved local asset or explicitly keep the row open.
@@ -120,6 +120,14 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Leave the unselected Women banner on its explicit placeholder.
 - [x] Deploy through the Test 26 build and scoped `/public_html/t` workflow.
 - [x] Delivery commit `e2d9931f9c5398de9320ef698051d0f9c56db991`; FTP Deploy Run #188 passed QA, FTP smoke and `deploy-t`; `deploy-root` was skipped.
+
+### Test 26 Run 4 — final Women banner
+
+- [x] Automatically select Women banner option 8-2 from the three numbered candidates.
+- [x] Apply the prior modesty preference: loose full-coverage garments on headless mannequins, no human model.
+- [x] Save the selected 800×300 WebP at the canonical Test 26 path without upscaling.
+- [x] Archive selected source images and update the image requirements/selection record.
+- [ ] Complete QA-gated Test 26-only deployment.
 
 ## P0 — Test 25: gray dark theme + reversible portrait placeholder pipeline
 

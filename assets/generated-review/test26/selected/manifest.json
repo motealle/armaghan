@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "test": "26",
+  "purpose": "Archive of owner-selected generated image candidates; runtime derivatives are stored under platform/frontend/public/images/test26.",
+  "selection_updated_at": "2026-09-29T01:40:00+03:30",
+  "items": [
+    {
+      "filename": "T26-HERO-02.webp",
+      "heading": "Home Hero",
+      "choice": "1-2",
+      "status": "owner-selected"
+    },
+    {
+      "filename": "T26-ABOUT-02.webp",
+      "heading": "About Armaghan",
+      "choice": "2-2",
+      "status": "owner-selected"
+    },
+    {
+      "filename": "T26-CAP-PRODUCTION-01.webp",
+      "heading": "Production capability",
+      "choice": "3-1",
+      "status": "owner-selected"
+    },
+    {
+      "filename": "T26-CAP-EXPORT-03.webp",
+      "heading": "Export capability",
+      "choice": "4-3",
+      "status": "owner-selected"
+    },
+    {
+      "filename": "T26-CAP-DOCS-02.webp",
+      "heading": "Trade documents capability",
+      "choice": "5-2",
+      "status": "owner-selected"
+    },
+    {
+      "filename": "T26-BANNER-BABY-03.webp",
+      "heading": "Baby category banner",
+      "choice": "6-3",
+      "status": "owner-selected"
+    },
+    {
+      "filename": "T26-BANNER-KIDS-03.webp",
+      "heading": "Kids category banner",
+      "choice": "7-3",
+      "status": "owner-selected"
+    },
+    {
+      "filename": "T26-BANNER-WOMEN-02.webp",
+      "heading": "Women category banner",
+      "choice": "8-2 (automatic)",
+      "status": "owner-selected"
+    }
+  ]
+}

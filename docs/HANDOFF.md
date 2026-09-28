@@ -331,6 +331,6 @@ Do not build backend, database, real login, real APIs, payment, checkout, Presta
 
 ## Test 26 current image state
 
-Owner-selected generated images are wired into Test 26: Hero 1-2, About 2-2, Production 3-1, Export 4-3, Trade Documents 5-2, Baby banner 6-3 and Kids banner 7-3. They remain at native 800×450 / 800×300 resolution and are described as conceptual, not verified Armaghan photography. The previous hero file and Test 25 snapshot are preserved. The Women-banner slot remains on the explicit placeholder pending an owner selection.
+Owner-selected generated images are wired into Test 26: Hero 1-2, About 2-2, Production 3-1, Export 4-3, Trade Documents 5-2, Baby banner 6-3 and Kids banner 7-3. They remain at native 800×450 / 800×300 resolution and are described as conceptual, not verified Armaghan photography. The previous hero file and Test 25 snapshot are preserved. The final Women-banner candidate was automatically selected as option 8-2, a 800×300 scene of loose fully covered outfits on headless mannequins; the slot now uses a local WebP and no placeholder.
 
 Deployment record: selected Test 26 media commit `e2d9931f9c5398de9320ef698051d0f9c56db991` passed FTP Deploy Run #188. QA, FTP smoke and `deploy-t` passed; `deploy-root` was skipped. Test 25 and earlier snapshots were untouched.

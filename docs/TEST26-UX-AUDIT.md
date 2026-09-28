@@ -1,6 +1,6 @@
 # Test 26 — Reversible Homepage / Navigation / Device Overrides UX Audit
 
-Status: **Run 2 complete; owner-selected media integrated in Run 3**  
+Status: **Run 2 complete; owner-selected media integrated in Run 3; final Women banner selected in Run 4**  
 Baseline: **Test 25 delivered and frozen**  
 Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282ddb6d21ae1685a16`
 
@@ -593,7 +593,7 @@ Implementation is complete for the customer-approved Test 26 interaction/layout 
 - Favorites list sharing by anonymous product-code URL with native Web Share where supported and copy fallback otherwise.
 
 ### Deliberately open media slots
-Owner-selected Test 26 images are integrated from the numbered review set: Hero 1-2, About 2-2, Production 3-1, Export 4-3, Trade Documents 5-2, Baby banner 6-3, and Kids banner 7-3. They are conceptual generated visuals, not claims about actual Armaghan staff, premises, shipments, or certificates. The Women banner remains on its documented conspicuous `placehold.co` fallback because no selection was supplied. Test 25 and earlier snapshots remain frozen.
+Owner-selected Test 26 images are integrated from the numbered review set: Hero 1-2, About 2-2, Production 3-1, Export 4-3, Trade Documents 5-2, Baby banner 6-3, and Kids banner 7-3. They are conceptual generated visuals, not claims about actual Armaghan staff, premises, shipments, or certificates. The final Women banner was then auto-selected as option 8-2 under the owner’s instruction, favoring loose fully covered garments on headless mannequins to match the prior no-model preference. Test 25 and earlier snapshots remain frozen.
 
 
 ## 16. Run 3 — selected Test 26 media deployment

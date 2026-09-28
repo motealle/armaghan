@@ -11,6 +11,6 @@ Owner selections use the previously shown group-option numbering. Group order: H
 | Trade Documents capability | 5-2 | `platform/frontend/public/images/test26/home/capability-documents.webp` | 800×450 |
 | Baby banner | 6-3 | `platform/frontend/public/images/test26/home/banner-baby.webp` | 800×300 |
 | Kids banner | 7-3 | `platform/frontend/public/images/test26/home/banner-kids.webp` | 800×300 |
-| Women banner | — | Existing documented fallback | — |
+| Women banner | 8-2 | `platform/frontend/public/images/test26/home/banner-women.webp` | 800×300 |
 
-All generated scenes are illustrative. They do not identify actual Armaghan staff, premises, shipments, or official documents. The source candidates are retained under `assets/generated-review/test26/selected/`. The runtime files are native-size WebP derivatives; no upscaling was applied.
+All eight requested image slots are now selected. The Women banner uses the automatic choice 8-2: fully covered loose outfits shown on headless mannequins, with no human model. All generated scenes are illustrative. They do not identify actual Armaghan staff, premises, shipments, or official documents. The source candidates are retained under `assets/generated-review/test26/selected/`. The runtime files are native-size WebP derivatives; no upscaling was applied.
