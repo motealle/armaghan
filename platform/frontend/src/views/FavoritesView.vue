@@ -91,7 +91,8 @@ async function shareFavorites(){
         <Share2 v-else :size="18"/>
         <span>{{shareState==='copied'?locale.t('shareCopied'):shareState==='shared'?locale.t('shareDone'):locale.t('shareFavorites')}}</span>
       </button>
-      <span v-if="shareState==='error'" class="w-full text-xs font-bold text-rose-600">{{locale.t('shareFavoritesError')}}</span>
+      <span v-if="shareState==='error'" class="w-full text-xs font-bold text-rose-600" role="status" aria-live="polite">{{locale.t('shareFavoritesError')}}</span>
+      <span v-else-if="shareState==='copied'||shareState==='shared'" class="sr-only" role="status" aria-live="polite">{{shareState==='copied'?locale.t('shareCopied'):locale.t('shareDone')}}</span>
     </div>
 
     <div v-if="isShared" class="shared-favorites-notice">
