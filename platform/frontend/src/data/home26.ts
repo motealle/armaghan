@@ -7,6 +7,17 @@ export interface CapabilityContent{
   fallback:string
 }
 
+export const test26Media={
+  hero:{
+    image:'./images/final/hero/hero-brand.webp',
+    fallback:'https://placehold.co/1920x1080/0B2340/FFFFFF.webp?text=IMAGE+REQUIRED%0AHome+Hero+1920x1080',
+  },
+  about:{
+    image:'./images/test26/home/about-armaghan.webp',
+    fallback:'https://placehold.co/1600x1200/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AAbout+Armaghan+1600x1200',
+  },
+} as const
+
 export const capabilities:CapabilityContent[]=[
   {
     id:'production',
