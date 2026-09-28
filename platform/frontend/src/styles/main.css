@@ -654,3 +654,37 @@ html[data-locale="en"] .test26-product-banner-copy{direction:ltr;text-align:left
   .test26-about-copy p{font-size:.95rem}
   .site-footer.test26-site-footer{grid-template-columns:minmax(13rem,.7fr) minmax(0,2.3fr);align-items:start;padding:1.6rem 1.8rem}
 }
+
+
+/* Test 26 mobile UX polish — reversible header, reliable BottomNav, mobile footer, card alignment, contrast */
+.product-card-title{text-align:center}
+.product-code-row{justify-content:center}
+.products-page .filter-chip{color:var(--c-muted);font-weight:700}
+.products-page .filter-chip.active{
+  border-color:color-mix(in srgb,var(--c-secondary) 46%,var(--c-border));
+  background:color-mix(in srgb,var(--c-secondary) 14%,var(--c-surface));
+  color:var(--c-text);
+  font-weight:900;
+}
+html.dark .products-page .filter-chip.active{
+  border-color:color-mix(in srgb,var(--c-secondary) 42%,var(--c-border));
+  background:color-mix(in srgb,var(--c-secondary) 16%,var(--c-surface-2));
+  color:var(--c-text);
+}
+
+@media(max-width:767.98px){
+  .bottom-nav{display:block!important}
+  .site-footer.test26-site-footer{
+    width:calc(100% + 1.5rem);
+    margin-inline:-.75rem;
+    margin-bottom:-1rem;
+    border-radius:0;
+    box-shadow:none;
+    padding-inline:1.25rem;
+    padding-bottom:calc(var(--bottom-nav-space) + 1rem);
+  }
+}
+
+@media(min-width:768px){
+  .bottom-nav{display:none!important}
+}
