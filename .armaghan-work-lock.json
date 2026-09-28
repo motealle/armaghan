@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
-  "holder": null,
-  "run_id": null,
-  "scope": null,
+  "state": "active",
+  "holder": "ChatGPT Armaghan Hourly Batch",
+  "run_id": "hourly-20260928T223206+0330",
+  "scope": "one safe unfinished backlog batch; numbered test + launcher if required",
   "base_ref": "main",
-  "acquired_at": null,
-  "expires_at": null,
+  "acquired_at": "2026-09-28T19:02:06Z",
+  "expires_at": "2026-09-28T20:32:06Z",
   "released_at": null,
   "note": "Canonical shared write lock. See docs/PROJECT-RULES.md rules 64-74. Update only with the current blob SHA."
 }
