@@ -601,6 +601,9 @@ html.dark .products-page .filter-chip{background:color-mix(in srgb,var(--c-secon
 .test26-footer-grid a:hover,.test26-footer-grid button:hover{color:white}
 .test26-footer-grid p{margin:0;color:rgba(255,255,255,.64);font-size:.68rem;line-height:1.8}
 .test26-footer-contact{display:flex;align-items:center;gap:.35rem;color:rgba(255,255,255,.78);font-size:.68rem}
+.test26-footer-socials{display:flex;align-items:center;gap:.45rem;margin-top:.25rem}
+.test26-footer-social-icon{display:grid;width:2rem;height:2rem;place-items:center;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.82)}
+.test26-footer-social-note{max-width:18rem;color:rgba(255,255,255,.44);font-size:.58rem;line-height:1.65}
 
 html[data-locale="en"] .test26-about-copy,
 html[data-locale="en"] .test26-why-list,
