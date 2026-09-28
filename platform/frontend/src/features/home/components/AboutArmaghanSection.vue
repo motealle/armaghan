@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SmartImage from '@/components/media/SmartImage.vue'
+import { test26Media } from '@/data/home26'
 import { useLocaleStore } from '@/stores/locale'
 
 const locale=useLocaleStore()
@@ -17,8 +18,8 @@ const locale=useLocaleStore()
       </div>
       <div class="test26-about-media">
         <SmartImage
-          src="./images/test26/home/about-armaghan.webp"
-          fallback-src="https://placehold.co/1600x1200/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AAbout+Armaghan+1600x1200"
+          :src="test26Media.about.image"
+          :fallback-src="test26Media.about.fallback"
           :alt="locale.t('aboutArmaghanImageAlt')"
           :label="locale.t('aboutArmaghanImageAlt')"
           aspect="card"
