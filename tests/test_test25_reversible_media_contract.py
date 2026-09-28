@@ -36,9 +36,9 @@ assert "test25-build" in workflow and "path: t/25" in workflow
 assert 'os.path.isdir("t/25")' in workflow and 'os.walk("t/25")' in workflow
 assert "pillow==11.3.0" in workflow.lower()
 assert "test_test25_reversible_media_contract.py" in workflow
-assert "24" in immutable
+assert "24" in immutable and "25" in immutable
 assert launcher.index("./25/index.html") < launcher.index("./24/index.html")
-assert "Current implementation target: **Test 25" in backlog
+assert "Current implementation target: **Test 26" in backlog or "Current implementation target: **Test 25" in backlog
 assert "rollback/test24-pre-test25" in backlog
 assert "Tests 01–25 are frozen; Test 25 is the last delivered snapshot and Test 26 is the next source target." in rules or "Tests 01–24 are frozen; current source target is Test 25." in rules
 assert audit.count("| 1 |") >= 10
