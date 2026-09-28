@@ -20,8 +20,8 @@ Purpose: this file is the handoff contract for the project owner or an agentic i
 
 | ID | Section | Required local path | Target size | Ratio | Format | Temporary fallback | Content brief | Status |
 |---|---|---|---:|---:|---|---|---|---|
-| T26-HERO-01 | Home Hero | `platform/frontend/public/images/test26/home/hero-main.webp` | 1920×1080 | 16:9 | WebP | `https://placehold.co/1920x1080/0B2340/FFFFFF.webp?text=IMAGE+REQUIRED%0AHome+Hero+1920x1080` | One strong export-oriented apparel-manufacturing / brand image; no collage; leave a calm copy-safe area for one short slogan | required |
-| T26-ABOUT-01 | About Armaghan | `platform/frontend/public/images/test26/home/about-armaghan.webp` | 1600×1200 | 4:3 | WebP | `https://placehold.co/1600x1200/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AAbout+Armaghan+1600x1200` | Professional B2B/export context similar in tone to the supplied Iran/Iraq business reference; do not imply a real signed contract unless the source is authentic | required |
+| T26-HERO-01 | Home Hero | `platform/frontend/public/images/final/hero/hero-brand.webp` | existing approved derivative | 16:9 | WebP | `https://placehold.co/1920x1080/0B2340/FFFFFF.webp?text=IMAGE+REQUIRED%0AHome+Hero+1920x1080` | Single hero selected from the existing supplied/approved hero set; copy is one short slogan only | approved-local |
+| T26-ABOUT-01 | About Armaghan | `platform/frontend/public/images/test26/home/about-armaghan.webp` | up to 1600×900 | 16:9 source | WebP | `https://placehold.co/1600x900/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AAbout+Armaghan+1600x900` | Use the exact owner-supplied handshake/trade image from the customer conversation (source attachment 1672×941); preserve aspect ratio and do not upscale | owner-supplied-source; derivative pending |
 | T26-CAP-01 | Capability 1 | `platform/frontend/public/images/test26/home/capability-production.webp` | 1200×675 | 16:9 | WebP | `https://placehold.co/1200x675/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AProduction+Capability` | Garment factory / production-line / quality-control visual; must not claim to depict Armaghan’s actual facility unless owner-supplied and verified | required |
 | T26-CAP-02 | Capability 2 | `platform/frontend/public/images/test26/home/capability-export-prep.webp` | 1200×675 | 16:9 | WebP | `https://placehold.co/1200x675/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AExport+Preparation` | Export preparation, coding, packing, carton organization, destination-market readiness | required |
 | T26-CAP-03 | Capability 3 | `platform/frontend/public/images/test26/home/capability-documents.webp` | 1200×675 | 16:9 | WebP | `https://placehold.co/1200x675/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0ADocuments+and+Trade` | Trade documents / structured commercial process; avoid fake certificates, fake stamps or invented official approvals | required |
@@ -80,3 +80,11 @@ Do not commit or publish these reference images as production assets unless the 
 Placehold supports explicit dimensions and WebP output. The current URLs deliberately include `IMAGE REQUIRED` text so a missing asset is obvious during QA instead of being mistaken for final media.
 
 Reference: https://placehold.co/
+
+
+## Customer-supplied source notes — final Test 26 clarification
+
+- **About Armaghan:** customer explicitly approved the supplied handshake/trade image. Conversation source filename: `50d629c7-a11a-489a-812f-ba620a705a0a.jpg`, observed source size **1672×941**. The runtime slot intentionally keeps the documented `placehold.co` fallback until an optimized local WebP derivative is committed.
+- **Product category banners:** customer approved the visual direction shown in the supplied collage/screenshot `image.png` (**669×558**) but previously stated that the original banner assets had not been pasted. Treat the screenshot as visual reference only; keep the three banner rows open until original/high-resolution images are available or an agentic image run generates compliant replacements.
+- **Capabilities:** customer accepted the supplied three-card reference as the intended direction but did not provide the final three individual images. Keep the three capability rows open and visibly placeholder-backed.
+- **Hero:** customer confirmed a **single** hero image and accepted the previously supplied hero image set. Test 26 currently selects the existing local `hero-brand.webp` derivative, with a one-slogan-only composition. The slogan remains editable in Admin so later copy replacement is non-destructive.
