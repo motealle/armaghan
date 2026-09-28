@@ -9,13 +9,23 @@ const target=ref<Locale>('fa')
 const saved=ref(false)
 const fields=[
   {key:'manufacturer',rows:1},
-  {key:'brandIntro',rows:1},
-  {key:'brandCapabilities',rows:1},
-  {key:'brandCapabilitiesText',rows:3},
-  {key:'brandDocuments',rows:1},
-  {key:'brandDocumentsText',rows:3},
-  {key:'brandSales',rows:1},
-  {key:'brandSalesText',rows:3},
+  {key:'heroSingleSlogan',rows:2},
+  {key:'aboutArmaghanTitle',rows:1},
+  {key:'aboutArmaghanText',rows:5},
+  {key:'whyArmaghanTitle',rows:1},
+  {key:'whyArmaghanIntro',rows:2},
+  {key:'whyCapacityTitle',rows:1},
+  {key:'whyCapacityText',rows:3},
+  {key:'whyCustomTitle',rows:1},
+  {key:'whyCustomText',rows:3},
+  {key:'whyDirectTitle',rows:1},
+  {key:'whyDirectText',rows:3},
+  {key:'whyMarketTitle',rows:1},
+  {key:'whyMarketText',rows:3},
+  {key:'capabilitiesTitle',rows:1},
+  {key:'capabilitiesIntro',rows:3},
+  {key:'productBannersTitle',rows:1},
+  {key:'productBannersIntro',rows:2},
 ] as const
 const drafts=reactive<Record<string,string>>({})
 
