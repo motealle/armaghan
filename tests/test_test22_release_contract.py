@@ -37,7 +37,7 @@ assert "if: needs.plan.outputs.root == 'true'" in workflow
 assert "21" in immutable and "22" in immutable
 assert launcher.index("./22/index.html") < launcher.index("./21/index.html")
 assert "Test 22" in backlog
-assert "Tests 01–24 are frozen; current source target is Test 25." in rules or "Tests 01–23 are frozen; current source target is Test 24." in rules or "Tests 01–22 are frozen; current source target is Test 23." in rules or "Tests 01–21 are frozen; current source target is Test 22." in rules
+assert "Tests 01–25 are frozen; Test 25 is the last delivered snapshot and Test 26 is the next source target." in rules or "Tests 01–24 are frozen; current source target is Test 25." in rules or "Tests 01–23 are frozen; current source target is Test 24." in rules or "Tests 01–22 are frozen; current source target is Test 23." in rules or "Tests 01–21 are frozen; current source target is Test 22." in rules
 assert "Test 22" in release and "Test 21" in release
 
 strict_test22_files = [
