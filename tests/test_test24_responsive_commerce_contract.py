@@ -61,7 +61,7 @@ assert ".hero-media-pane .smart-image" in css
 
 # Home categories use the same image-first visual language as Products.
 legacy_home_categories = "home-category-grid" in home and "category-card home-category-card" in home and '<img :src="category.image"' in home
-test26_home_categories = "ProductCategoryBanners" in home and "ProductCategoryBanners.vue" not in home
+test26_home_categories = "ProductCategoryBanners" in home and "policy.showProductBanners" in home
 assert legacy_home_categories or test26_home_categories
 if legacy_home_categories:
     assert 'SmartImage :src="category.image"' not in home
