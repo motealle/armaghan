@@ -6,10 +6,12 @@ import { categories } from '@/data/catalog'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
+import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 
 const route=useRoute()
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
+const {policy}=useResolvedAppearance()
 const category=ref(String(route.query.category ?? 'all'))
 const subcategory=ref('all')
 const query=ref('')
@@ -35,17 +37,18 @@ function selectCategory(code:string){
 
 <template>
   <section class="products-page">
-    <div class="mb-4 flex items-end justify-between gap-3">
-      <div>
-        <h1 class="text-[1.75rem] font-black leading-tight">{{locale.t('productsTitle')}}</h1>
-        <p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('productsHelp')}}</p>
+    <div class="products-intro-surface">
+      <div class="mb-4 flex items-end justify-between gap-3">
+        <div>
+          <h1 class="text-[1.75rem] font-black leading-tight">{{locale.t('productsTitle')}}</h1>
+          <p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('productsHelp')}}</p>
+        </div>
+        <button v-if="activeCount" class="hidden text-xs font-extrabold text-[var(--c-primary)] lg:inline-flex" @click="resetFilters">
+          {{locale.t('clearFilters')}} · {{activeCount}}
+        </button>
       </div>
-      <button v-if="activeCount" class="hidden text-xs font-extrabold text-[var(--c-primary)] lg:inline-flex" @click="resetFilters">
-        {{locale.t('clearFilters')}} · {{activeCount}}
-      </button>
-    </div>
 
-    <div class="category-showcase grid grid-cols-3 gap-2.5 md:gap-3">
+      <div class="category-showcase grid grid-cols-3 gap-2.5 md:gap-3">
       <button
         v-for="cat in categories"
         :key="cat.code"
@@ -59,11 +62,12 @@ function selectCategory(code:string){
           <img :src="cat.image" alt="" loading="eager" decoding="async">
         </span>
         <span class="category-card-footer">
-          <span class="category-number">0{{cat.code}}</span>
+          <span v-if="policy.showCategoryNumbers" class="category-number">0{{cat.code}}</span>
           <b class="category-card-title">{{locale.categoryName(cat.code,cat.name)}}</b>
           <ChevronLeft :size="16" class="category-chevron" aria-hidden="true"/>
         </span>
       </button>
+      </div>
     </div>
 
     <!-- Mobile + tablet controls intentionally stay lightweight and app-like. -->
