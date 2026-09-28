@@ -10,7 +10,7 @@ const locale=useLocaleStore()
 <template>
   <footer class="site-footer test26-site-footer">
     <div class="test26-footer-brand">
-      <img src="../../logo.png" alt="Armaghan">
+      <img :src="'../../logo.png'" alt="Armaghan">
       <div>
         <b>{{locale.t('brandName')}}</b>
         <span>{{locale.t('footerText')}}</span>
