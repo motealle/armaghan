@@ -22,7 +22,7 @@ const locale=useLocaleStore()
           :fallback-src="test26Media.about.fallback"
           :alt="locale.t('aboutArmaghanImageAlt')"
           :label="locale.t('aboutArmaghanImageAlt')"
-          aspect="card"
+          aspect="hero"
         />
       </div>
     </div>
