@@ -119,6 +119,8 @@ jobs:
         run: python tests/test_test25_reversible_media_contract.py
       - name: Test Test 25 screenshot hotfix contract
         run: python tests/test_test25_bugfix2_contract.py
+      - name: Test Test 26 reversible appearance contract
+        run: python tests/test_test26_appearance_contract.py
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
       - name: Check Python syntax
@@ -134,16 +136,16 @@ jobs:
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm ci --no-audit --no-fund
-      - name: Generate portrait media, type-check, unit test and build Test 25
+      - name: Generate portrait media, type-check, unit test and build Test 26
         if: needs.plan.outputs.frontend == 'true'
         working-directory: platform/frontend
         run: npm run build
-      - name: Upload Test 25 build artifact
+      - name: Upload Test 26 build artifact
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: test25-build
-          path: t/25
+          name: test26-build
+          path: t/26
           if-no-files-found: error
           retention-days: 1
 
@@ -202,13 +204,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - name: Download Test 25 build
+      - name: Download Test 26 build
         if: needs.plan.outputs.frontend == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: test25-build
-          path: t/25
-      - name: Deploy changed /t files and generated Test 25 only
+          name: test26-build
+          path: t/26
+      - name: Deploy changed /t files and generated Test 26 only
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -236,8 +238,8 @@ jobs:
               changed.append("t/index.htm")
 
           if os.environ.get("FRONTEND_CHANGED")=="true":
-              if not os.path.isdir("t/25"): raise SystemExit("Generated Test 25 build is missing")
-              for root,_,files in os.walk("t/25"):
+              if not os.path.isdir("t/26"): raise SystemExit("Generated Test 26 build is missing")
+              for root,_,files in os.walk("t/26"):
                   for filename in files: changed.append(os.path.join(root,filename))
           changed=sorted(set(changed))
           ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"]); ftp.cwd("/public_html")
