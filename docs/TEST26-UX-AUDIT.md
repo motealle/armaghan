@@ -654,3 +654,30 @@ Rollback checkpoint: `rollback/test26-pre-mobile-bottomnav-fix` → `b89f52b9277
   - `deploy-root`: SKIPPED
 - The mobile BottomNav markup/icons/active-state styling were not redesigned. Only the visibility boundary changed from `lg:hidden` to `md:hidden`, and the obsolete tablet floating-bottom-nav CSS was removed.
 - Appearance schema version 2 migrates previously stored Test 26 tablet defaults from compact drawer to expanded top navigation without changing mobile navigation or unrelated tablet section preferences.
+
+## 19. Run 6 — live screenshot root-cause correction
+
+The owner supplied a current Test 26 screenshot at 653×936. It simultaneously showed an expanded primary top navigation in a mobile-width viewport and the Hero rendering the remote IMAGE REQUIRED fallback even though the selected local Hero WebP exists.
+
+| Rank | Fix strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Fix both root causes: positive AVIF registry + navigation-state invariant + fresh launcher URL** | **10.0** | Explains both visible failures and fixes previously persisted Test 26 state without deleting unrelated preferences |
+| 2 | Clear all Test 26 localStorage | 7.1 | Could fix the header but destroys unrelated per-device choices and does not fix media |
+| 3 | Ask the owner to hard-refresh only | 2.0 | A workaround, not a deterministic source fix |
+| 4 | Hide the failed Hero or use the remote placeholder permanently | 1.7 | Masks the image bug |
+| 5 | Rebuild Test 26 from scratch | 1.4 | Destructive and unnecessary |
+
+**Selected:** Option 1.
+
+### Root cause — selected images
+SmartImage.vue used to derive an AVIF URL from nearly every WebP source. The repository's Test 26 selected media are WebP-only, while AVIF siblings exist only in specific older asset families. The component now uses a positive allow-list for those real AVIF families and sends Test 26 WebP directly to the img element.
+
+### Root cause — mobile navigation
+The screenshot itself is 653px wide, below the project's 768px boundary. The expanded primary header was therefore caused by persisted Appearance state. Schema v3 normalizes the invariant on read and on later updates:
+- mobile: compact top shell + original five-item BottomNav;
+- tablet/desktop: expanded blue top primary navigation.
+
+Only this primary-navigation placement is locked. Brand text, language/help/account visibility, Hero mode, Home section visibility, product grid and category-number options remain per-device controls.
+
+### Fresh-document safety
+The mutable launcher now points to ./26/index.html?build=test26-live-p0-r6, while the prototype HTML includes no-cache hints and a diagnostic build marker. These measures complement the source fixes rather than replacing them.
