@@ -72,7 +72,7 @@ assert "fonts.googleapis.com" in index and "Roboto" in index
 assert "prefers-color-scheme: dark" in index
 
 assert "document.documentElement.lang" in locale
-assert "md:hidden" in bottom
+assert ("md:hidden" in bottom) or ('v-show="profile===\'mobile\'"' in bottom and "useResolvedAppearance" in bottom)
 assert "pics.md" not in pics  # sanity: actual content, not a self-link placeholder
 for heading in ["ابعاد پیشنهادی","فرمت نهایی","مسیر ذخیره‌سازی در ریپو","نام فایل","پرامپت تولید تصویر به فارسی"]:
     assert heading in pics
