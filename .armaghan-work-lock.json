@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20260928T235212+0330-test26-integration",
   "scope": "Test 26 customer-approved integration: appearance consumers, Home, Header, Products, Favorites sharing, QA/deploy",
   "base_ref": "main@152e20e5ec062f48319a45727c7448d4ee68843e",
   "acquired_at": "2026-09-28T20:22:12Z",
-  "expires_at": "2026-09-28T21:52:12Z",
-  "released_at": null,
+  "expires_at": null,
+  "released_at": "2026-09-28T20:52:41Z",
   "note": "Canonical shared write lock. See docs/PROJECT-RULES.md rules 64-74. Update only with the current blob SHA."
 }
