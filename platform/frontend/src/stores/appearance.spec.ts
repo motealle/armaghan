@@ -26,6 +26,7 @@ describe('appearance store',()=>{
   it('uses customer defaults for each viewport',()=>{
     const store=useAppearanceStore()
     expect(store.profiles.mobile.headerMode).toBe('compact-drawer')
+    expect(store.profiles.mobile.showHamburger).toBe(false)
     expect(store.profiles.tablet.headerMode).toBe('expanded')
     expect(store.profiles.tablet.showHamburger).toBe(false)
     expect(store.profiles.desktop.headerMode).toBe('expanded')
@@ -34,34 +35,34 @@ describe('appearance store',()=>{
     expect(store.profiles.desktop.showCategoryNumbers).toBe(false)
   })
 
-  it('migrates schema 2 navigation state to the mobile-bottom/tablet-top invariant without losing unrelated choices',()=>{
-    localStorage.setItem(APPEARANCE_SCHEMA_KEY,'2')
+  it('migrates schema 3 to the customer defaults for navigation while preserving unrelated choices',()=>{
+    localStorage.setItem(APPEARANCE_SCHEMA_KEY,'3')
     localStorage.setItem(APPEARANCE_KEY,JSON.stringify({
-      mobile:{headerMode:'expanded',showHamburger:false,showWhy:false},
+      mobile:{headerMode:'expanded',showHamburger:true,showWhy:false},
       tablet:{headerMode:'compact-drawer',showHamburger:true,showAbout:false},
       desktop:{headerMode:'compact-drawer',showHamburger:true},
     }))
     setActivePinia(createPinia())
     const store=useAppearanceStore()
     expect(store.profiles.mobile.headerMode).toBe('compact-drawer')
-    expect(store.profiles.mobile.showHamburger).toBe(true)
+    expect(store.profiles.mobile.showHamburger).toBe(false)
     expect(store.profiles.mobile.showWhy).toBe(false)
     expect(store.profiles.tablet.headerMode).toBe('expanded')
     expect(store.profiles.tablet.showHamburger).toBe(false)
     expect(store.profiles.tablet.showAbout).toBe(false)
     expect(store.profiles.desktop.headerMode).toBe('expanded')
     expect(store.profiles.desktop.showHamburger).toBe(false)
-    expect(localStorage.getItem(APPEARANCE_SCHEMA_KEY)).toBe('3')
+    expect(localStorage.getItem(APPEARANCE_SCHEMA_KEY)).toBe('4')
   })
 
-  it('rejects navigation-mode updates that would duplicate or remove primary navigation',()=>{
+  it('allows reversible per-device header and hamburger changes after migration',()=>{
     const store=useAppearanceStore()
-    store.updateProfile('mobile',{headerMode:'expanded',showHamburger:false})
+    store.updateProfile('mobile',{headerMode:'expanded',showHamburger:true})
     store.updateProfile('tablet',{headerMode:'compact-drawer',showHamburger:true})
-    expect(store.profiles.mobile.headerMode).toBe('compact-drawer')
-    expect(store.profiles.mobile.showHamburger).toBe(true)
-    expect(store.profiles.tablet.headerMode).toBe('expanded')
-    expect(store.profiles.tablet.showHamburger).toBe(false)
+    expect(store.profiles.mobile.headerMode).toBe('expanded')
+    expect(store.profiles.mobile.showHamburger).toBe(false)
+    expect(store.profiles.tablet.headerMode).toBe('compact-drawer')
+    expect(store.profiles.tablet.showHamburger).toBe(true)
   })
 
   it('sanitizes invalid persisted values and protects compact navigation',()=>{
