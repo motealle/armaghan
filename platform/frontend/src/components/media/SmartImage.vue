@@ -14,9 +14,15 @@ const props=withDefaults(defineProps<{
 const ratioClass=computed(()=>props.aspect==='hero'?'aspect-[16/9]':props.aspect==='square'?'aspect-square':props.aspect==='product'?'aspect-[2/3]':'aspect-[4/3]')
 const currentSrc=ref(props.src)
 watch(()=>props.src,(value)=>{currentSrc.value=value})
+const KNOWN_AVIF_PREFIXES=[
+  '/images/final/',
+  '/images/placeholders/dimensional/',
+  '/images/placeholders/flat-geometric/',
+  '/images/placeholders/paper-cut/',
+] as const
 const avifSrc=computed(()=>{
   const value=currentSrc.value
-  if(!value?.endsWith('.webp')||value.includes('/images/category-navigation/')||value.includes('/images/placeholders-portrait/'))return undefined
+  if(!value?.endsWith('.webp')||!KNOWN_AVIF_PREFIXES.some(prefix=>value.includes(prefix)))return undefined
   return value.replace(/\.webp$/,'.avif')
 })
 const imageClass=computed(()=>props.fit==='cover'?'object-cover':'object-contain')
