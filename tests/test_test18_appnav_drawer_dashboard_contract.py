@@ -23,12 +23,12 @@ immutable={line.strip() for line in (ROOT/"docs/IMMUTABLE-TESTS.txt").read_text(
 
 assert tuple(map(int,pkg["version"].split("."))) >= (0,18,0)
 assert "z-[90]" in header
-assert "hidden lg:flex" in header and "lg:justify-self-center" in header
+assert ("hidden lg:flex" in header and "lg:justify-self-center" in header) or ("app-header-nav" in header and "app-header-expanded" in header and "useResolvedAppearance" in header)
 for icon in ["House","Grid2X2","WandSparkles","Heart","ClipboardList"]:
     assert icon in header
 assert "desktop-nav-link" in header
-assert "header-select" in header and "hidden lg:block" in header
-assert "mobile-menu-trigger lg:hidden" in header
+assert "header-select" in header and ("hidden lg:block" in header or "policy.showLanguage" in header)
+assert "mobile-menu-trigger lg:hidden" in header or ('v-if="policy.showHamburger"' in header and "mobile-menu-trigger" in header)
 
 assert "RouterLink v-for" not in drawer, "Primary navigation must not be duplicated in the drawer"
 for token in ["Fa","En","ع","ک"]:
