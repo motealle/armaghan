@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SmartImage from '@/components/media/SmartImage.vue'
 import HeroCarousel from '@/features/home/components/HeroCarousel.vue'
+import { test26Media } from '@/data/home26'
 import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 import { useLocaleStore } from '@/stores/locale'
 
@@ -13,8 +14,8 @@ const {policy}=useResolvedAppearance()
   <section v-else class="test26-single-hero overflow-hidden rounded-[1.5rem] shadow-xl">
     <div class="test26-single-hero-media">
       <SmartImage
-        src="./images/final/hero/hero-brand.webp"
-        fallback-src="https://placehold.co/1920x1080/0B2340/FFFFFF.webp?text=IMAGE+REQUIRED%0AHome+Hero+1920x1080"
+        :src="test26Media.hero.image"
+        :fallback-src="test26Media.hero.fallback"
         :alt="locale.t('heroSingleAlt')"
         :label="locale.t('heroSingleAlt')"
         aspect="hero"
