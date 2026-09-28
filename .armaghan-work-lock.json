@@ -1,13 +1,12 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex Work Mode",
-  "run_id": "chat-20260929T0121+0330-test26-image-deploy",
-  "scope": "Integrate owner-selected generated images into Test 26 and deploy only /public_html/t",
+  "run_id": "chat-20260929T0140+0330-test26-women-image-deploy",
+  "scope": "Select approved modest Women banner candidate 8-2, integrate into Test 26, update asset status and deploy only /public_html/t",
   "base_ref": "main",
-  "acquired_at": "2026-09-28T21:52:00Z",
-  "expires_at": null,
-  "note": "Released after Test 26 image deployment Run #188 succeeded and documentation CI Run #189 passed without deployment.",
-  "released_at": "2026-09-28T22:07:00Z"
+  "acquired_at": "2026-09-28T22:10:00Z",
+  "expires_at": "2026-09-28T23:40:00Z",
+  "note": "Test 25 and earlier snapshots remain immutable; no root deployment."
 }
