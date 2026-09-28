@@ -151,7 +151,7 @@ assert "category:category.code" in banners and "productBannerMedia" in banners
 
 for marker in ["policy.headerMode==='expanded'","policy.showBrandText","policy.showLanguage","policy.showHelp","policy.showAccount","policy.showHamburger"]:
     assert marker in header
-for marker in [":show-language="policy.showLanguage"",":show-help="policy.showHelp"",":show-account="policy.showAccount"",":show-brand-text="policy.showBrandText""]:
+for marker in [':show-language="policy.showLanguage"',':show-help="policy.showHelp"',':show-account="policy.showAccount"',':show-brand-text="policy.showBrandText"']:
     assert marker in header
 assert "props.showLanguage" in drawer and "props.showHelp" in drawer and "props.showAccount" in drawer
 assert 'v-if="policy.showCategoryNumbers"' in products
