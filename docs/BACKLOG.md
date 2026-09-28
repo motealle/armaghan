@@ -20,20 +20,20 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Codify repository-memory, reversible-choice and viewport-profile rules in `docs/PROJECT-RULES.md`.
 
 ### Batch 26A — typed reversible configuration foundation
-- [ ] Add typed appearance policy for mobile / tablet / desktop.
-- [ ] Add one viewport-profile resolver aligned with 48rem / 64rem breakpoints.
-- [ ] Add Test 26 appearance Pinia store under `armaghan:test26:appearance`.
-- [ ] Add validated persistence/migration and reset-to-customer-default behavior.
-- [ ] Add unit tests for defaults, per-device resolution, reset and invalid persisted state.
-- [ ] Make no visible page redesign in this batch.
+- [x] Add typed appearance policy for mobile / tablet / desktop.
+- [x] Add one viewport-profile resolver aligned with 48rem / 64rem breakpoints.
+- [x] Add Test 26 appearance Pinia store under `armaghan:test26:appearance`.
+- [x] Add validated persistence/migration and reset-to-customer-default behavior.
+- [x] Add unit tests for defaults, per-device resolution, reset and invalid persisted state.
+- [x] Make no visible page redesign in this batch.
 
 ### Batch 26B — Admin Appearance controls
-- [ ] Add a dedicated Admin → Appearance view, separate from content/translation editing.
-- [ ] Add Mobile / Tablet / Desktop tabs.
-- [ ] Add only high-value controls: header mode/actions, hero mode, Home product grid, category numbers and main Home section visibility.
-- [ ] Prevent impossible navigation states in control validation.
-- [ ] Add “Reset this device” and “Reset all to customer defaults”.
-- [ ] Keep all controls keyboard/focus accessible and localized.
+- [x] Add a dedicated Admin → Appearance view, separate from content/translation editing.
+- [x] Add Mobile / Tablet / Desktop tabs.
+- [x] Add only high-value controls: header mode/actions, hero mode, Home product grid, category numbers and main Home section visibility.
+- [x] Prevent impossible navigation states in control validation.
+- [x] Add “Reset this device” and “Reset all to customer defaults”.
+- [x] Keep all controls keyboard/focus accessible and localized.
 
 ### Batch 26C — modular Home
 - [ ] Refactor `HomeView.vue` into composition-only section assembly.
@@ -65,12 +65,12 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 ### Batch 26F — final assets, QA and scoped release
 - [ ] Replace every required placeholder with an approved local asset or explicitly keep the row open.
 - [ ] Update Test 26 image-requirement statuses and provenance.
-- [ ] Add Test 26 source/UX contract; keep all previous regression contracts.
-- [ ] Isolate all Test 26 browser state under `armaghan:test26:*`.
-- [ ] Bump frontend version for Test 26.
-- [ ] Build only `/t/26`; do not modify `/t/25`.
-- [ ] Put Test 26 first in mutable `/t/index.htm`.
-- [ ] Run immutable guard, media policy, unit tests, type-check and Vite production build.
+- [x] Add Test 26 source/UX contract; keep all previous regression contracts.
+- [x] Isolate all Test 26 browser state under `armaghan:test26:*`.
+- [x] Bump frontend version for Test 26.
+- [x] Build only `/t/26`; do not modify `/t/25`.
+- [x] Put Test 26 first in mutable `/t/index.htm`.
+- [x] Run immutable guard, media policy, unit tests, type-check and Vite production build.
 - [ ] Verify mobile/tablet/desktop, RTL/LTR, navigation accessibility, favorites, wizard and WhatsApp.
 - [ ] FTP deploy only `/public_html/t/26` plus mutable launcher; never root deploy and never remote-delete.
 - [ ] Record delivery commit and successful workflow run.
