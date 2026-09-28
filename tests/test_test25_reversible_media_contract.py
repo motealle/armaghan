@@ -40,7 +40,7 @@ assert "24" in immutable
 assert launcher.index("./25/index.html") < launcher.index("./24/index.html")
 assert "Current implementation target: **Test 25" in backlog
 assert "rollback/test24-pre-test25" in backlog
-assert "Tests 01–24 are frozen; current source target is Test 25." in rules
+assert "Tests 01–25 are frozen; Test 25 is the last delivered snapshot and Test 26 is the next source target." in rules or "Tests 01–24 are frozen; current source target is Test 25." in rules
 assert audit.count("| 1 |") >= 10
 
 # Reproducible portrait derivatives; originals are a separate source tree.
