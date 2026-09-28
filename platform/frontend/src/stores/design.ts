@@ -29,13 +29,13 @@ export const colorSets: ColorSet[] = [
 ]
 
 export const useDesignStore = defineStore('design', () => {
-  const system = ref(localStorage.getItem('armaghan:test25:design') || 'core')
-  const palette = ref(localStorage.getItem('armaghan:test25:palette') || 'balanced')
-  const savedActionMode = localStorage.getItem('armaghan:test25:card-actions')
+  const system = ref(localStorage.getItem('armaghan:test26:design') || 'core')
+  const palette = ref(localStorage.getItem('armaghan:test26:palette') || 'balanced')
+  const savedActionMode = localStorage.getItem('armaghan:test26:card-actions')
   const cardActionMode = ref<CardActionMode>(savedActionMode === 'labeled' ? 'labeled' : 'compact')
-  const savedPlaceholderSet = localStorage.getItem('armaghan:test25:placeholder-set')
+  const savedPlaceholderSet = localStorage.getItem('armaghan:test26:placeholder-set')
   const placeholderSet = ref<PlaceholderSetId>(isPlaceholderSetId(savedPlaceholderSet) ? savedPlaceholderSet : defaultPlaceholderSet)
-  const savedPlaceholderOrientation = localStorage.getItem('armaghan:test25:placeholder-orientation')
+  const savedPlaceholderOrientation = localStorage.getItem('armaghan:test26:placeholder-orientation')
   const placeholderOrientation = ref<PlaceholderOrientation>(
     isPlaceholderOrientation(savedPlaceholderOrientation) ? savedPlaceholderOrientation : defaultPlaceholderOrientation,
   )
@@ -53,13 +53,13 @@ export const useDesignStore = defineStore('design', () => {
   }
 
   watch([system, palette], () => {
-    localStorage.setItem('armaghan:test25:design', system.value)
-    localStorage.setItem('armaghan:test25:palette', palette.value)
+    localStorage.setItem('armaghan:test26:design', system.value)
+    localStorage.setItem('armaghan:test26:palette', palette.value)
     apply()
   })
-  watch(cardActionMode, (value) => localStorage.setItem('armaghan:test25:card-actions', value))
-  watch(placeholderSet, (value) => localStorage.setItem('armaghan:test25:placeholder-set', value))
-  watch(placeholderOrientation, (value) => localStorage.setItem('armaghan:test25:placeholder-orientation', value))
+  watch(cardActionMode, (value) => localStorage.setItem('armaghan:test26:card-actions', value))
+  watch(placeholderSet, (value) => localStorage.setItem('armaghan:test26:placeholder-set', value))
+  watch(placeholderOrientation, (value) => localStorage.setItem('armaghan:test26:placeholder-orientation', value))
 
   return { system, palette, cardActionMode, placeholderSet, placeholderOrientation, apply }
 })
