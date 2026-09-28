@@ -4,6 +4,8 @@ import { useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BottomNav from '@/components/layout/BottomNav.vue'
 import HelpSheet from '@/components/layout/HelpSheet.vue'
+import SiteFooter from '@/components/layout/SiteFooter.vue'
+import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 import LoginSheet from '@/features/auth/components/LoginSheet.vue'
 import { useDesignStore } from '@/stores/design'
 import { useSessionStore } from '@/stores/session'
@@ -19,6 +21,7 @@ const customers=useCustomersStore()
 const locale=useLocaleStore()
 const theme=useThemeStore()
 const route=useRoute()
+const {policy}=useResolvedAppearance()
 
 watch(()=>route.fullPath,async()=>{
   await nextTick()
@@ -52,10 +55,7 @@ onMounted(async()=>{
       <RouterView v-slot="{ Component }">
         <component :is="Component" @login="loginOpen=true" />
       </RouterView>
-      <footer class="site-footer">
-        <b>{{locale.t('footerText')}}</b>
-        <span>{{locale.t('footerContact')}}</span>
-      </footer>
+      <SiteFooter v-if="policy.showFooter" @help="helpOpen=true"/>
     </main>
     <BottomNav/>
     <LoginSheet :open="loginOpen" @close="loginOpen=false"/>
