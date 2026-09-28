@@ -442,3 +442,119 @@ Intentionally not implemented in Run 1:
 - final marketing imagery.
 
 Those remain for Run 2 after the customer answers return, avoiding premature lock-in.
+
+
+## 14. Run 2 — customer answers closed; public integration
+
+Customer clarification is now treated as final for Test 26. No additional clarification gate is required.  
+Rollback checkpoint for this integration: `rollback/test26-foundation-pre-integration` → `152e20e5ec062f48319a45727c7448d4ee68843e`.
+
+### 14.1 Integration strategy after final customer answers
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Connect the existing per-viewport appearance policy to modular public components, preserving old modes behind settings** | **9.9** | Delivers the customer default without deleting owner-preferred alternatives; smallest regression surface |
+| 2 | Hard-code the final customer layout and keep Admin controls decorative | 5.1 | Fast but violates the reversible requirement and repeats the Test 26 foundation bug |
+| 3 | Duplicate Home/Header into customer and owner variants | 4.9 | High drift and twice the regression surface |
+| 4 | Build a generic page builder before integration | 4.2 | Over-engineered for the current prototype |
+| 5 | Wait for more customer feedback | 2.0 | Customer has explicitly closed clarification and asked us to infer remaining details |
+
+**Selected:** Option 1.
+
+### 14.2 Home composition
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Composition-only Home using independent Hero / About / Why / Capabilities / Product Banner sections** | **9.8** | Modular, testable, independently hideable per viewport and compatible with future CMS mapping |
+| 2 | Keep all new markup inline in `HomeView.vue` | 6.0 | Works but creates another maintenance hotspot |
+| 3 | One monolithic landing component | 5.0 | Hides boundaries and makes rollback harder |
+| 4 | Dedicated route for each Home section | 3.7 | Breaks the requested single landing flow |
+| 5 | Keep Test 25 Home and only restyle it | 3.1 | Does not match the confirmed information architecture |
+
+**Selected:** Option 1.
+
+Customer default order:
+1. Header
+2. Single Hero
+3. About Armaghan
+4. Why Armaghan
+5. Three capability cards
+6. Three product-category banners
+7. Footer
+
+The product card grid is hidden by default and remains available only through the Admin appearance mode.
+
+### 14.3 Header / device behavior
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Expanded direct navigation on desktop; retain compact accessible drawer on mobile/tablet; allow Admin override per viewport** | **9.8** | Matches the customer’s desktop intent while respecting the owner’s concern that the customer did not clearly reject mobile navigation |
+| 2 | Remove hamburger on every viewport | 5.6 | Literal but risky on small screens |
+| 3 | Keep Test 25 header unchanged | 4.8 | Does not satisfy the customer’s visible-desktop-header request |
+| 4 | Separate unrelated mobile/desktop implementations | 4.4 | Duplicates behavior and accessibility logic |
+| 5 | Auto-decide from user agent | 2.0 | Brittle and inconsistent with project rules |
+
+**Selected:** Option 1.
+
+### 14.4 Capability details
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Reuse the existing accessible AdaptivePanel: bottom sheet on smaller viewports, modal/panel on desktop** | **9.9** | Exactly matches the customer’s remembered “modern overlay, no subpage” request and reuses tested accessibility behavior |
+| 2 | Dedicated capability pages | 7.0 | Good for future SEO, but explicitly not the current requested interaction |
+| 3 | In-page accordion | 5.4 | Adds excessive Home length |
+| 4 | Full text on cards | 3.1 | Destroys scanability |
+| 5 | Tooltip/popover | 1.8 | Unsuitable for long commercial content |
+
+**Selected:** Option 1.
+
+### 14.5 Favorites sharing
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Versioned anonymous URL containing only validated product codes, native Web Share when available, copy fallback otherwise** | **9.7** | Matches “products only, no personal information”; works in a backend-free prototype and remains migratable to a server token |
+| 2 | Backend share token now | 8.2 | Production-grade but prohibited by the current no-backend prototype scope |
+| 3 | Serialize full product JSON | 3.9 | Large, stale and unnecessary |
+| 4 | Share one product at a time | 2.6 | Does not satisfy list sharing |
+| 5 | localStorage-only list | 1.0 | Not shareable across devices |
+
+**Selected:** Option 1.
+
+The shared link changes only the receiver’s rendered list; it never mutates the sender’s favorites. No owner name, customer id, email, phone or visitor token is serialized.
+
+### 14.6 Image decision under incomplete final assets
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Use already-approved local Hero media, exact approved About source when derivative is available, and documented visibly-labeled placeholders for unresolved capability/banner slots** | **9.6** | Avoids inventing evidence or pretending references are final assets; honors the existing image handoff contract |
+| 2 | Reuse unrelated existing images for every missing slot | 5.8 | Looks more complete but misrepresents content |
+| 3 | Hotlink stock imagery | 3.8 | Provenance and runtime-dependency risk |
+| 4 | Hide missing-image areas | 2.8 | Conceals outstanding asset work |
+| 5 | Generate final imagery silently in this UI run | 2.2 | Customer/reference approval and provenance would be unclear |
+
+**Selected:** Option 1.
+
+### 14.7 Confirmed customer interpretation used in code
+
+- Hero: one image + one slogan only by default; carousel preserved as an optional mode.
+- Home product grid: hidden by default; product category banners are the Home entry into Products.
+- About: supplied copy is final; supplied handshake/trade visual is the requested image.
+- Why Armaghan: simple elegant text list, not four cards.
+- Capabilities: three cards; full details open in the adaptive overlay, not separate routes.
+- Capability final images: not supplied; documented placeholders remain visible.
+- Product category banners: customer confirmed the banner concept; supplied collage remains a reference because original per-banner assets were not supplied.
+- Footer: simplified structured version based on the customer reference.
+- Category numbers 01/02/03: hidden by default, retained only as recoverable presentation data.
+- Products intro: pale mint/green surface.
+- Favorites: share the product membership only, with no owner metadata.
+- No more customer questions are required for Test 26 implementation.
+
+### 14.8 Regression boundaries
+
+- `/t/25` and older snapshots remain immutable.
+- Test 26 keeps its existing namespace and build path.
+- `HeroCarousel.vue` is not removed.
+- `MobileMenuDrawer.vue` is not removed.
+- Old Home product-grid mode is not removed.
+- Header and section decisions are policy consumers rather than one-way deletion.
+- Existing Test 16–25 contracts may accept the new reversible Test 26 structure only where the underlying historic guarantee is still preserved; they must not be weakened to hide a removed capability.
