@@ -26,6 +26,13 @@ const fields=[
   {key:'capabilitiesIntro',rows:3},
   {key:'productBannersTitle',rows:1},
   {key:'productBannersIntro',rows:2},
+  {key:'brandIntro',rows:1},
+  {key:'brandCapabilities',rows:1},
+  {key:'brandCapabilitiesText',rows:3},
+  {key:'brandDocuments',rows:1},
+  {key:'brandDocumentsText',rows:3},
+  {key:'brandSales',rows:1},
+  {key:'brandSalesText',rows:3},
 ] as const
 const drafts=reactive<Record<string,string>>({})
 
