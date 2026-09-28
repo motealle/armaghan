@@ -11,7 +11,7 @@ import type {
 
 export const APPEARANCE_KEY='armaghan:test26:appearance'
 export const APPEARANCE_SCHEMA_KEY='armaghan:test26:appearance-schema'
-export const APPEARANCE_SCHEMA_VERSION='2'
+export const APPEARANCE_SCHEMA_VERSION='3'
 
 export const customerAppearanceDefaults:AppearanceProfiles={
   mobile:{
@@ -99,26 +99,22 @@ export function sanitizeViewportAppearance(value:unknown,fallback:ViewportAppear
   return result
 }
 
+export function enforceNavigationInvariant(profile:ViewportProfile,value:ViewportAppearance):ViewportAppearance{
+  if(profile==='mobile')return{...value,headerMode:'compact-drawer',showHamburger:true}
+  return{...value,headerMode:'expanded',showHamburger:false}
+}
+
 export function sanitizeAppearanceProfiles(value:unknown):AppearanceProfiles{
   const source=(value&&typeof value==='object'?value:{}) as Partial<Record<ViewportProfile,unknown>>
   return{
-    mobile:sanitizeViewportAppearance(source.mobile,customerAppearanceDefaults.mobile),
-    tablet:sanitizeViewportAppearance(source.tablet,customerAppearanceDefaults.tablet),
-    desktop:sanitizeViewportAppearance(source.desktop,customerAppearanceDefaults.desktop),
+    mobile:enforceNavigationInvariant('mobile',sanitizeViewportAppearance(source.mobile,customerAppearanceDefaults.mobile)),
+    tablet:enforceNavigationInvariant('tablet',sanitizeViewportAppearance(source.tablet,customerAppearanceDefaults.tablet)),
+    desktop:enforceNavigationInvariant('desktop',sanitizeViewportAppearance(source.desktop,customerAppearanceDefaults.desktop)),
   }
 }
 
 function migrateLegacyProfiles(value:unknown):unknown{
-  const source=(value&&typeof value==='object'?value:{}) as Partial<Record<ViewportProfile,unknown>>
-  const tablet=(source.tablet&&typeof source.tablet==='object'?source.tablet:{}) as Partial<ViewportAppearance>
-  return{
-    ...source,
-    tablet:{
-      ...tablet,
-      headerMode:'expanded',
-      showHamburger:false,
-    },
-  }
+  return value
 }
 
 function readStoredProfiles():AppearanceProfiles{
@@ -150,7 +146,7 @@ export const useAppearanceStore=defineStore('appearance',()=>{
   function updateProfile(profile:ViewportProfile,patch:Partial<ViewportAppearance>){
     profiles.value={
       ...profiles.value,
-      [profile]:sanitizeViewportAppearance({...profiles.value[profile],...patch},customerAppearanceDefaults[profile]),
+      [profile]:enforceNavigationInvariant(profile,sanitizeViewportAppearance({...profiles.value[profile],...patch},customerAppearanceDefaults[profile])),
     }
   }
   function resetProfile(profile:ViewportProfile){
