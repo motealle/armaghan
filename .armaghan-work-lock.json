@@ -1,13 +1,12 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex Work Mode",
-  "run_id": "chat-20260929T0034+0330-test26-image-candidates",
-  "scope": "Generate and upload numbered Test 26 image candidates to the non-production review queue; update image manifest and requirements only",
+  "run_id": "chat-20260929T0121+0330-test26-image-deploy",
+  "scope": "Integrate owner-selected generated images into Test 26 and deploy only /public_html/t",
   "base_ref": "main",
-  "acquired_at": "2026-09-28T21:04:40Z",
-  "expires_at": null,
-  "note": "Released after committing numbered Test 26 image candidate review files and metadata.",
-  "released_at": "2026-09-28T21:32:58.245Z"
+  "acquired_at": "2026-09-28T21:52:00Z",
+  "expires_at": "2026-09-28T23:22:00Z",
+  "note": "No root landing files will be changed; Test 25 and earlier snapshots remain frozen."
 }
