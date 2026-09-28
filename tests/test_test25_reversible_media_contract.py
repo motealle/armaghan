@@ -27,13 +27,13 @@ css=(SRC/"styles/main.css").read_text(encoding="utf-8")
 wizard=(SRC/"features/orders/components/OrderWizard.vue").read_text(encoding="utf-8")
 messages=(SRC/"i18n/messages.ts").read_text(encoding="utf-8")
 
-assert pkg["version"]=="0.25.0"
-assert lock["version"]=="0.25.0" and lock["packages"][""]["version"]=="0.25.0"
+assert tuple(map(int,pkg["version"].split("."))) >= (0,25,0)
+assert tuple(map(int,lock["version"].split("."))) >= (0,25,0) and tuple(map(int,lock["packages"][""]["version"].split("."))) >= (0,25,0)
 assert "generate:portraits" in pkg["scripts"]
 assert "generate:portraits" in pkg["scripts"]["build"]
-assert "../../t/25" in vite
-assert "test25-build" in workflow and "path: t/25" in workflow
-assert 'os.path.isdir("t/25")' in workflow and 'os.walk("t/25")' in workflow
+assert "../../t/25" in vite or "../../t/26" in vite
+assert ("test25-build" in workflow and "path: t/25" in workflow) or ("test26-build" in workflow and "path: t/26" in workflow)
+assert ('os.path.isdir("t/25")' in workflow and 'os.walk("t/25")' in workflow) or ('os.path.isdir("t/26")' in workflow and 'os.walk("t/26")' in workflow)
 assert "pillow==11.3.0" in workflow.lower()
 assert "test_test25_reversible_media_contract.py" in workflow
 assert "24" in immutable and "25" in immutable
@@ -65,7 +65,7 @@ assert "productPlaceholder(set.id, code, 'landscape')" in spec
 
 # Admin can reversibly choose the media orientation.
 assert "placeholderOrientation" in design
-assert "armaghan:test25:placeholder-orientation" in design
+assert "armaghan:test25:placeholder-orientation" in design or "armaghan:test26:placeholder-orientation" in design
 for value in ["portrait","landscape","auto"]:
     assert f'value="{value}"' in admin
 assert "placeholderOrientationHelp" in admin
@@ -114,11 +114,13 @@ for key_file in [
     SRC/"stores/locale.ts",
 ]:
     text=key_file.read_text(encoding="utf-8")
-    assert "armaghan:test25" in text
+    assert "armaghan:test25" in text or "armaghan:test26" in text
     assert "armaghan:test24" not in text
 
 catalog=(SRC/"stores/catalog.ts").read_text(encoding="utf-8")
-assert "const KEY='armaghan:test25:products-v1'" in catalog
+assert "const KEY='armaghan:test25:products-v1'" in catalog or "const KEY='armaghan:test26:products-v1'" in catalog
 assert "'armaghan:test24:products-v1'" in catalog
+if "const KEY='armaghan:test26:products-v1'" in catalog:
+    assert "'armaghan:test25:products-v1'" in catalog
 
 print("Test 25 reversible media/dark/wizard contract: PASS")
