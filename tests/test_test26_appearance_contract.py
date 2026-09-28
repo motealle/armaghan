@@ -45,6 +45,8 @@ site_footer=(SRC/"components/layout/SiteFooter.vue").read_text(encoding="utf-8")
 share=(SRC/"features/favorites/shareFavorites.ts").read_text(encoding="utf-8")
 share_spec=(SRC/"features/favorites/shareFavorites.spec.ts").read_text(encoding="utf-8")
 resolved=(SRC/"composables/useResolvedAppearance.ts").read_text(encoding="utf-8")
+smart_image=(SRC/"components/media/SmartImage.vue").read_text(encoding="utf-8")
+frontend_index=(FRONTEND/"index.html").read_text(encoding="utf-8")
 bottom_nav=(SRC/"components/layout/BottomNav.vue").read_text(encoding="utf-8")
 
 assert pkg["version"]=="0.26.0"
@@ -54,7 +56,7 @@ assert "test26-build" in workflow and "path: t/26" in workflow
 assert 'os.path.isdir("t/26")' in workflow and 'os.walk("t/26")' in workflow
 assert "test_test26_appearance_contract.py" in workflow
 assert "25" in immutable
-assert launcher.index("./26/index.html") < launcher.index("./25/index.html")
+assert launcher.index("./26/index.html?build=test26-live-p0-r6") < launcher.index("./25/index.html")
 assert "Current implementation target: **Test 26" in backlog
 assert "rollback/test25-pre-test26" in backlog
 assert "Tests 01–25 are frozen" in rules
@@ -114,8 +116,12 @@ assert 'class="bottom-nav md:hidden"' in bottom_nav
 assert 'data-pwa-bottom-nav="true"' in bottom_nav
 assert 'class="bottom-nav lg:hidden"' not in bottom_nav
 assert "APPEARANCE_SCHEMA_KEY='armaghan:test26:appearance-schema'" in appearance_store
-assert "APPEARANCE_SCHEMA_VERSION='2'" in appearance_store
+assert "APPEARANCE_SCHEMA_VERSION='3'" in appearance_store
 assert "migrateLegacyProfiles" in appearance_store
+assert "enforceNavigationInvariant" in appearance_store
+assert "profile==='mobile'" in appearance_store
+assert "headerMode:'compact-drawer'" in appearance_store
+assert "headerMode:'expanded'" in appearance_store
 assert "tablet:{" in appearance_store and "headerMode:'expanded'" in appearance_store
 assert "@media(min-width:768px){" in css
 assert ":root{--bottom-nav-space:0rem}" in css
@@ -185,6 +191,16 @@ for key in [
 ]:
     assert key in messages
 
+assert "KNOWN_AVIF_PREFIXES" in smart_image
+assert "!KNOWN_AVIF_PREFIXES.some" in smart_image
+avif_registry=smart_image.split("KNOWN_AVIF_PREFIXES=[",1)[1].split("] as const",1)[0]
+assert "/images/test26/" not in avif_registry
+for filename in [
+    "hero-selected.webp","about-armaghan.webp","capability-production.webp","capability-export-prep.webp",
+    "capability-documents.webp","banner-baby.webp","banner-kids.webp","banner-women.webp",
+]:
+    assert (FRONTEND/"public/images/test26/home"/filename).is_file(), filename
+assert 'name="armaghan-build" content="test26-live-p0-r6"' in frontend_index
 assert "/* Test 26 — customer-approved reversible landing integration */" in css
 assert "rollback/test26-foundation-pre-integration" in audit or "Run 2" in audit
 
