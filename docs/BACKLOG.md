@@ -8,6 +8,20 @@ Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
 Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
 
 
+### Test 26 Run 7 — mobile UX polish delivery
+
+- [x] Rollback checkpoint: `rollback/test26-pre-mobile-ux-polish` → `54e2075b67ae1c21b0bac50fe32b9cd1e5144864`.
+- [x] Header Mode and hamburger controls are editable again per viewport.
+- [x] Customer default for mobile is compact header with hamburger **off**; schema v4 migrates the previously forced schema-v3 state while preserving unrelated Appearance choices.
+- [x] BottomNav remains mobile-only and now has both live viewport-profile visibility and explicit CSS width fallback for responsive desktop emulation.
+- [x] Mobile Test 26 footer is full-bleed / bottom-flush; tablet and desktop keep the existing inset white gutters.
+- [x] Product title and code remain separate rows but are both centered.
+- [x] Active subcategory/filter chips use readable foreground text on the pale mint surface; no white-on-pale active text.
+- [x] Ranked alternatives and rationale recorded in `docs/TEST26-UX-AUDIT.md` Run 7.
+- [x] Release commit: `633e7e1399db1e6cca84256bcfdd516004088476`.
+- [x] **FTP Deploy Run #223: SUCCESS** — full QA, TypeScript, unit tests, Vite Test 26 build and FTP smoke passed; `deploy-t` passed; `deploy-root` skipped.
+- [x] Test 25 and earlier snapshots remain unchanged.
+
 ## P0 live regression — Test 26 still showing expanded mobile header + IMAGE REQUIRED
 
 - [x] Screenshot diagnosis: captured width is 653px, below the 768px mobile/tablet boundary, so an expanded primary header there is persisted-state regression, not a breakpoint interpretation.

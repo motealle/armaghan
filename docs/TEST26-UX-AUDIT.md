@@ -761,3 +761,18 @@ Owner screenshots exposed five separate UX issues. The implementation strategy i
 
 **Selected:** Option 1. Normal text must remain legible against its background; the implementation avoids white text on the pale active chip.
 
+
+
+### 20.6 Delivery record
+
+- Rollback checkpoint: `rollback/test26-pre-mobile-ux-polish` → `54e2075b67ae1c21b0bac50fe32b9cd1e5144864`.
+- Final release head: `633e7e1399db1e6cca84256bcfdd516004088476`.
+- **FTP Deploy Run #223: SUCCESS**.
+- Test 11–26 source/regression contracts: PASS.
+- TypeScript, unit tests and Vite Test 26 production build: PASS.
+- FTP smoke: PASS.
+- Scoped `deploy-t`: PASS.
+- `deploy-root`: SKIPPED.
+- Test 25 and all earlier snapshots remained untouched.
+- Build marker / launcher query: `test26-mobile-ux-r7`.
+
