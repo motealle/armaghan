@@ -48,6 +48,7 @@ resolved=(SRC/"composables/useResolvedAppearance.ts").read_text(encoding="utf-8"
 smart_image=(SRC/"components/media/SmartImage.vue").read_text(encoding="utf-8")
 frontend_index=(FRONTEND/"index.html").read_text(encoding="utf-8")
 bottom_nav=(SRC/"components/layout/BottomNav.vue").read_text(encoding="utf-8")
+product_card=(SRC/"features/catalog/components/ProductCard.vue").read_text(encoding="utf-8")
 
 assert pkg["version"]=="0.26.0"
 assert lock["version"]=="0.26.0" and lock["packages"][""]["version"]=="0.26.0"
@@ -106,22 +107,26 @@ for marker in [
     assert marker in appearance_admin
     assert marker in messages
 
+assert "setHeaderMode" in appearance_admin
+assert '@change="setHeaderMode"' in appearance_admin
+assert ':checked="current.showHamburger" @change="setBoolean(\'showHamburger\',$event)"' in appearance_admin
 assert "AppearanceSettings" in admin
 assert "adminAppearance" in admin
 assert "appearance" in admin
 assert "profileForWidth(767)" in appearance_spec
 assert "profileForWidth(768)" in appearance_spec
 assert "profileForWidth(1024)" in appearance_spec
-assert 'class="bottom-nav md:hidden"' in bottom_nav
+assert 'v-show="profile===\'mobile\'"' in bottom_nav
+assert 'class="bottom-nav"' in bottom_nav
 assert 'data-pwa-bottom-nav="true"' in bottom_nav
-assert 'class="bottom-nav lg:hidden"' not in bottom_nav
+assert "useResolvedAppearance" in bottom_nav
 assert "APPEARANCE_SCHEMA_KEY='armaghan:test26:appearance-schema'" in appearance_store
-assert "APPEARANCE_SCHEMA_VERSION='3'" in appearance_store
+assert "APPEARANCE_SCHEMA_VERSION='4'" in appearance_store
 assert "migrateLegacyProfiles" in appearance_store
-assert "enforceNavigationInvariant" in appearance_store
-assert "profile==='mobile'" in appearance_store
-assert "headerMode:'compact-drawer'" in appearance_store
-assert "headerMode:'expanded'" in appearance_store
+assert "mobile:{...mobile,headerMode:'compact-drawer',showHamburger:false}" in appearance_store
+assert "tablet:{...tablet,headerMode:'expanded',showHamburger:false}" in appearance_store
+assert "desktop:{...desktop,headerMode:'expanded',showHamburger:false}" in appearance_store
+assert "enforceNavigationInvariant" not in appearance_store
 assert "tablet:{" in appearance_store and "headerMode:'expanded'" in appearance_store
 assert "@media(min-width:768px){" in css
 assert ":root{--bottom-nav-space:0rem}" in css
@@ -202,6 +207,15 @@ for filename in [
     assert (FRONTEND/"public/images/test26/home"/filename).is_file(), filename
 assert 'name="armaghan-build" content="test26-live-p0-r6"' in frontend_index
 assert "/* Test 26 — customer-approved reversible landing integration */" in css
+assert "Test 26 mobile UX polish" in css
+assert ".product-card-title{text-align:center}" in css
+assert ".product-code-row{justify-content:center}" in css
+assert ".products-page .filter-chip.active" in css and "color:var(--c-text)" in css
+assert "@media(max-width:767.98px)" in css
+assert "width:calc(100% + 1.5rem)" in css
+assert "margin-inline:-.75rem" in css
+assert "margin-bottom:-1rem" in css
+assert "@media(min-width:768px)" in css and ".bottom-nav{display:none!important}" in css
 assert "rollback/test26-foundation-pre-integration" in audit or "Run 2" in audit
 
 print("Test 26 reversible appearance + customer integration contract: PASS")
