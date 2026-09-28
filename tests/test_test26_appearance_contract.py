@@ -111,6 +111,7 @@ assert "profileForWidth(767)" in appearance_spec
 assert "profileForWidth(768)" in appearance_spec
 assert "profileForWidth(1024)" in appearance_spec
 assert 'class="bottom-nav md:hidden"' in bottom_nav
+assert 'data-pwa-bottom-nav="true"' in bottom_nav
 assert 'class="bottom-nav lg:hidden"' not in bottom_nav
 assert "APPEARANCE_SCHEMA_KEY='armaghan:test26:appearance-schema'" in appearance_store
 assert "APPEARANCE_SCHEMA_VERSION='2'" in appearance_store
