@@ -327,3 +327,8 @@ Do not build backend, database, real login, real APIs, payment, checkout, Presta
 - Mutable `/t` launcher completion: `57d47e3919a9b87a3fb540723c832ca64fd23d4a`; **FTP Deploy Run #186 PASS**.
 - Remaining Test 26 asset work is explicit rather than hidden: final capability images, final three banner originals/generated assets, and the optimized local derivative of the customer-approved About handshake image are tracked in `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 - Operational project memory hierarchy: `docs/PROJECT-RULES.md` → `docs/HANDOFF.md` → `docs/BACKLOG.md` → current test audit / asset docs. Chat memory is secondary.
+
+
+## Test 26 current image state
+
+Owner-selected generated images are wired into Test 26: Hero 1-2, About 2-2, Production 3-1, Export 4-3, Trade Documents 5-2, Baby banner 6-3 and Kids banner 7-3. They remain at native 800×450 / 800×300 resolution and are described as conceptual, not verified Armaghan photography. The previous hero file and Test 25 snapshot are preserved. The Women-banner slot remains on the explicit placeholder pending an owner selection.

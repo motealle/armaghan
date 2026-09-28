@@ -9,7 +9,7 @@ export interface CapabilityContent{
 
 export const test26Media={
   hero:{
-    image:'./images/final/hero/hero-brand.webp',
+    image:'./images/test26/home/hero-selected.webp',
     fallback:'https://placehold.co/1920x1080/0B2340/FFFFFF.webp?text=IMAGE+REQUIRED%0AHome+Hero+1920x1080',
   },
   about:{
