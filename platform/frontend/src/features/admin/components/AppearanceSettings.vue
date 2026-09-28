@@ -4,7 +4,6 @@ import { RotateCcw } from '@lucide/vue'
 import { useAppearanceStore } from '@/stores/appearance'
 import { useLocaleStore } from '@/stores/locale'
 import type {
-  HeaderMode,
   HeroMode,
   HomeProductGridMode,
   ViewportAppearance,
@@ -36,9 +35,6 @@ const sectionToggles:{key:BooleanAppearanceKey;label:string}[]=[
 function checked(event:Event){return (event.target as HTMLInputElement).checked}
 function setBoolean(key:BooleanAppearanceKey,event:Event){
   appearance.updateProfile(target.value,{[key]:checked(event)} as Partial<ViewportAppearance>)
-}
-function setHeaderMode(event:Event){
-  appearance.updateProfile(target.value,{headerMode:(event.target as HTMLSelectElement).value as HeaderMode})
 }
 function setHeroMode(event:Event){
   appearance.updateProfile(target.value,{heroMode:(event.target as HTMLSelectElement).value as HeroMode})
@@ -79,15 +75,16 @@ function setProductGrid(event:Event){
         <div class="mt-4 grid gap-3">
           <label class="form-field">
             {{locale.t('headerModeLabel')}}
-            <select :value="current.headerMode" @change="setHeaderMode">
+            <select :value="current.headerMode" disabled>
               <option value="compact-drawer">{{locale.t('headerCompact')}}</option>
               <option value="expanded">{{locale.t('headerExpanded')}}</option>
             </select>
+            <small class="mt-1 block text-[var(--c-muted)]">{{locale.t('navigationModeLocked')}}</small>
           </label>
 
           <label class="flex min-h-11 items-center gap-3 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-sm">
-            <input type="checkbox" :checked="current.showHamburger" :disabled="current.headerMode==='compact-drawer'" @change="setBoolean('showHamburger',$event)">
-            <span><b class="block">{{locale.t('showHamburgerLabel')}}</b><small v-if="current.headerMode==='compact-drawer'" class="text-[var(--c-muted)]">{{locale.t('compactHamburgerRequired')}}</small></span>
+            <input type="checkbox" :checked="current.showHamburger" disabled>
+            <span><b class="block">{{locale.t('showHamburgerLabel')}}</b><small class="text-[var(--c-muted)]">{{locale.t('navigationModeLocked')}}</small></span>
           </label>
           <label class="flex min-h-11 items-center gap-3 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-sm">
             <input type="checkbox" :checked="current.showBrandText" @change="setBoolean('showBrandText',$event)">
