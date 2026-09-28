@@ -34,20 +34,34 @@ describe('appearance store',()=>{
     expect(store.profiles.desktop.showCategoryNumbers).toBe(false)
   })
 
-  it('migrates the old tablet compact default to top navigation without losing other tablet choices',()=>{
+  it('migrates schema 2 navigation state to the mobile-bottom/tablet-top invariant without losing unrelated choices',()=>{
+    localStorage.setItem(APPEARANCE_SCHEMA_KEY,'2')
     localStorage.setItem(APPEARANCE_KEY,JSON.stringify({
-      mobile:{headerMode:'compact-drawer',showHamburger:true},
+      mobile:{headerMode:'expanded',showHamburger:false,showWhy:false},
       tablet:{headerMode:'compact-drawer',showHamburger:true,showAbout:false},
-      desktop:{headerMode:'expanded',showHamburger:false},
+      desktop:{headerMode:'compact-drawer',showHamburger:true},
     }))
     setActivePinia(createPinia())
     const store=useAppearanceStore()
     expect(store.profiles.mobile.headerMode).toBe('compact-drawer')
     expect(store.profiles.mobile.showHamburger).toBe(true)
+    expect(store.profiles.mobile.showWhy).toBe(false)
     expect(store.profiles.tablet.headerMode).toBe('expanded')
     expect(store.profiles.tablet.showHamburger).toBe(false)
     expect(store.profiles.tablet.showAbout).toBe(false)
-    expect(localStorage.getItem(APPEARANCE_SCHEMA_KEY)).toBe('2')
+    expect(store.profiles.desktop.headerMode).toBe('expanded')
+    expect(store.profiles.desktop.showHamburger).toBe(false)
+    expect(localStorage.getItem(APPEARANCE_SCHEMA_KEY)).toBe('3')
+  })
+
+  it('rejects navigation-mode updates that would duplicate or remove primary navigation',()=>{
+    const store=useAppearanceStore()
+    store.updateProfile('mobile',{headerMode:'expanded',showHamburger:false})
+    store.updateProfile('tablet',{headerMode:'compact-drawer',showHamburger:true})
+    expect(store.profiles.mobile.headerMode).toBe('compact-drawer')
+    expect(store.profiles.mobile.showHamburger).toBe(true)
+    expect(store.profiles.tablet.headerMode).toBe('expanded')
+    expect(store.profiles.tablet.showHamburger).toBe(false)
   })
 
   it('sanitizes invalid persisted values and protects compact navigation',()=>{
