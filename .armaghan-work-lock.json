@@ -1,13 +1,12 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
-  "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20260928T235212+0330-test26-integration",
-  "scope": "Test 26 customer-approved integration: appearance consumers, Home, Header, Products, Favorites sharing, QA/deploy",
-  "base_ref": "main@152e20e5ec062f48319a45727c7448d4ee68843e",
-  "acquired_at": "2026-09-28T20:22:12Z",
-  "expires_at": null,
-  "released_at": "2026-09-28T20:52:41Z",
+  "state": "active",
+  "holder": "Codex Work Mode",
+  "run_id": "chat-20260929T0034+0330-test26-image-candidates",
+  "scope": "Generate and upload numbered Test 26 image candidates to the non-production review queue; update image manifest and requirements only",
+  "base_ref": "main",
+  "acquired_at": "2026-09-28T21:04:40Z",
+  "expires_at": "2026-09-28T22:34:40Z",
   "note": "Canonical shared write lock. See docs/PROJECT-RULES.md rules 64-74. Update only with the current blob SHA."
 }
