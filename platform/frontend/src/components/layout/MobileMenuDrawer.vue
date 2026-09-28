@@ -7,7 +7,13 @@ import { useCustomersStore } from '@/stores/customers'
 import type { Locale } from '@/services/localeDetection'
 import DrawerAccountDashboard from './DrawerAccountDashboard.vue'
 
-const props=defineProps<{open:boolean}>()
+const props=withDefaults(defineProps<{
+  open:boolean
+  showLanguage?:boolean
+  showHelp?:boolean
+  showAccount?:boolean
+  showBrandText?:boolean
+}>(),{showLanguage:true,showHelp:true,showAccount:true,showBrandText:true})
 const emit=defineEmits<{close:[];login:[];help:[]}>()
 const locale=useLocaleStore()
 const session=useSessionStore()
@@ -76,14 +82,14 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
           <div class="drawer-scroll">
             <div class="drawer-header">
               <img class="h-11 w-11 rounded-xl object-cover" :src="'../../logo.png'" alt="Armaghan" />
-              <div class="min-w-0">
+              <div v-if="props.showBrandText" class="min-w-0">
                 <b class="block text-sm text-[var(--c-text)]">{{locale.t('brandName')}}</b>
                 <span class="block truncate text-[11px] text-[var(--c-muted)]">{{locale.t('manufacturer')}}</span>
               </div>
               <button class="drawer-close-button" :aria-label="locale.t('close')" @click="emit('close')"><X :size="20"/></button>
             </div>
 
-            <section class="px-3 pt-4">
+            <section v-if="props.showLanguage" class="px-3 pt-4">
               <div class="mb-2 text-xs font-black text-[var(--c-muted)]">{{locale.t('language')}}</div>
               <div class="language-button-row" role="group" :aria-label="locale.t('language')">
                 <button
@@ -100,11 +106,11 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
               </div>
             </section>
 
-            <div class="px-3 pt-4">
+            <div v-if="props.showAccount" class="px-3 pt-4">
               <DrawerAccountDashboard/>
             </div>
 
-            <div class="px-3 pt-3">
+            <div v-if="props.showHelp" class="px-3 pt-3">
               <button class="drawer-help-button" @click="help">
                 <CircleHelp :size="19"/>
                 <span>{{locale.t('helpGuide')}}</span>
@@ -112,7 +118,7 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
             </div>
           </div>
 
-          <footer class="drawer-account-footer">
+          <footer v-if="props.showAccount" class="drawer-account-footer">
             <template v-if="!session.isAuthenticated">
               <button class="drawer-login-button" @click="login">
                 <LogIn :size="20"/>
