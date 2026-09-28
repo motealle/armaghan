@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CircleHelp, Instagram, Linkedin, Mail, PackageSearch, Send, Youtube } from '@lucide/vue'
+import { CircleHelp, Globe2, Mail, MessageCircleMore, PackageSearch, Send, UsersRound } from '@lucide/vue'
 import { categories } from '@/data/catalog'
 import { useLocaleStore } from '@/stores/locale'
 
@@ -40,10 +40,10 @@ const locale=useLocaleStore()
         <p>{{locale.t('footerContact')}}</p>
         <span class="test26-footer-contact"><Mail :size="16"/>{{locale.t('footerContactLabel')}}</span>
         <div class="test26-footer-socials" :aria-label="locale.t('footerSocialTitle')">
-          <span class="test26-footer-social-icon" :title="locale.t('socialInstagram')"><Instagram :size="16"/></span>
-          <span class="test26-footer-social-icon" :title="locale.t('socialLinkedIn')"><Linkedin :size="16"/></span>
+          <span class="test26-footer-social-icon" :title="locale.t('socialInstagram')"><MessageCircleMore :size="16"/></span>
+          <span class="test26-footer-social-icon" :title="locale.t('socialLinkedIn')"><UsersRound :size="16"/></span>
           <span class="test26-footer-social-icon" :title="locale.t('socialTelegram')"><Send :size="16"/></span>
-          <span class="test26-footer-social-icon" :title="locale.t('socialYouTube')"><Youtube :size="16"/></span>
+          <span class="test26-footer-social-icon" :title="locale.t('socialYouTube')"><Globe2 :size="16"/></span>
         </div>
         <small class="test26-footer-social-note">{{locale.t('footerSocialPending')}}</small>
       </section>
