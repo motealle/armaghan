@@ -1,7 +1,7 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 26 — Reversible Homepage + Device-aware Appearance Controls**.
+Current implementation target: **Test 26 — Customer-approved Reversible Landing**.
 Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
 Image requirements: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
@@ -74,7 +74,7 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Products category numbers are hidden by policy and the intro/filter surfaces use the requested soft-mint separation.
 - [x] Favorites sharing uses a versioned anonymous list URL containing product codes only; no PII is serialized.
 - [x] Customer-approved About image source and unresolved capability/banner asset slots are recorded in the image handoff contract.
-- [ ] Final Run 2 CI + scoped `/t/26` deployment must pass before closing the integration.
+- [x] Final Run 2 CI + scoped `/t/26` deployment passed.
 
 ### Test 26 foundation delivery record
 
@@ -85,10 +85,21 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] FTP smoke test passed.
 - [x] `/public_html/t/26` and mutable `/public_html/t/index.htm` were deployed.
 - [x] `deploy-root` was skipped; Test 25 remained frozen and untouched.
-- [x] Customer-facing Home/Header/Products/Favorites integration remains intentionally pending customer clarification; only the reversible foundation and Admin Appearance controls are delivered in this stage.
+- [x] At the Run 1 checkpoint, customer-facing integration was intentionally deferred; Run 2 has now completed that integration without modifying Test 25.
+
+### Test 26 Run 2 delivery record
+
+- [x] Customer-approved integration rollback preserved at `rollback/test26-foundation-pre-integration` → `152e20e5ec062f48319a45727c7448d4ee68843e`.
+- [x] Integration build/deploy head: `fafcb0d31e248e3c12ca4533ee85708f5ab08502`.
+- [x] **FTP Deploy Run #185** completed successfully: Test 11–26 contracts, media policies, Python checks, portrait generation, TypeScript type-check, unit tests and Vite production build passed.
+- [x] FTP smoke test passed and `deploy-t` uploaded the generated Test 26 build; `deploy-root` was skipped.
+- [x] Mutable launcher description updated in `57d47e3919a9b87a3fb540723c832ca64fd23d4a`.
+- [x] **FTP Deploy Run #186** completed successfully and published the updated `/t/index.htm`; `deploy-root` was skipped.
+- [x] Test 25 and all earlier frozen snapshots remained untouched.
+- [x] Unresolved capability/banner media and the owner-supplied About derivative remain explicitly tracked in `docs/TEST26-IMAGE-REQUIREMENTS.md`; runtime placeholders are deliberate, labeled fallbacks rather than silent missing assets.
 
 ### Batch 26F — final assets, QA and scoped release
-- [ ] Replace every required placeholder with an approved local asset or explicitly keep the row open.
+- [x] Replace every required placeholder with an approved local asset or explicitly keep the row open.
 - [x] Update Test 26 image-requirement statuses and provenance.
 - [x] Add Test 26 source/UX contract; keep all previous regression contracts.
 - [x] Isolate all Test 26 browser state under `armaghan:test26:*`.

@@ -316,10 +316,14 @@ Do not build backend, database, real login, real APIs, payment, checkout, Presta
 - `/t` remains the active product-design/prototype workspace.
 - Tests 01–25 are released snapshots and must remain immutable.
 - Test 25 is the last delivered snapshot.
-- Test 26 is the active numbered prototype. Run 1 foundation is delivered: isolated Test 26 state/build, Admin Appearance controls and per-viewport reversible policy. Customer-facing Home/Header/Products/Favorites integration is the next step after clarification answers arrive.
+- Test 26 is the active numbered prototype. Run 2 customer-approved integration is delivered: per-viewport Appearance controls now drive the live Header/Home/Products/Footer; Home uses single Hero + About + Why + Capabilities overlay + product-category banners by default; Favorites lists are anonymously shareable.
 - Test 26 rollback checkpoint: `rollback/test25-pre-test26` at `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
 - Test 26 ranked UX/architecture decisions: `docs/TEST26-UX-AUDIT.md`.
 - Test 26 image handoff contract: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 - Test 26 customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
 - Test 26 foundation delivery: frontend build commit `1b92b0f69a3e2ab68a9e8ce21b93eb3e735f2a74`; **FTP Deploy Run #131 PASS**; `deploy-root` skipped; Test 25 unchanged.
+- Test 26 Run 2 rollback: `rollback/test26-foundation-pre-integration` → `152e20e5ec062f48319a45727c7448d4ee68843e`.
+- Test 26 customer integration build: `fafcb0d31e248e3c12ca4533ee85708f5ab08502`; **FTP Deploy Run #185 PASS**; full frontend build/type-check/unit tests/contracts passed; `deploy-root` skipped.
+- Mutable `/t` launcher completion: `57d47e3919a9b87a3fb540723c832ca64fd23d4a`; **FTP Deploy Run #186 PASS**.
+- Remaining Test 26 asset work is explicit rather than hidden: final capability images, final three banner originals/generated assets, and the optimized local derivative of the customer-approved About handshake image are tracked in `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 - Operational project memory hierarchy: `docs/PROJECT-RULES.md` → `docs/HANDOFF.md` → `docs/BACKLOG.md` → current test audit / asset docs. Chat memory is secondary.

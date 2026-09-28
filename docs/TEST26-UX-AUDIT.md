@@ -558,3 +558,39 @@ The shared link changes only the receiver’s rendered list; it never mutates th
 - Old Home product-grid mode is not removed.
 - Header and section decisions are policy consumers rather than one-way deletion.
 - Existing Test 16–25 contracts may accept the new reversible Test 26 structure only where the underlying historic guarantee is still preserved; they must not be weakened to hide a removed capability.
+
+
+## 15. Run 2 delivery record
+
+Implementation is complete for the customer-approved Test 26 interaction/layout scope, with unresolved marketing media kept explicit in the asset handoff contract.
+
+- Rollback before public integration: `rollback/test26-foundation-pre-integration` → `152e20e5ec062f48319a45727c7448d4ee68843e`.
+- Validated integration head: `fafcb0d31e248e3c12ca4533ee85708f5ab08502`.
+- **FTP Deploy Run #185: SUCCESS**
+  - immutable snapshot guard: PASS
+  - Test 11–26 contracts: PASS
+  - web-stock / generated-media / placeholder policies: PASS
+  - portrait derivative generation: PASS
+  - TypeScript type-check: PASS
+  - unit tests, including Appearance and Favorites-share tests: PASS
+  - Vite production build for `/t/26`: PASS
+  - FTP smoke: PASS
+  - scoped `deploy-t`: PASS
+  - `deploy-root`: SKIPPED
+- Launcher completion commit: `57d47e3919a9b87a3fb540723c832ca64fd23d4a`.
+- **FTP Deploy Run #186: SUCCESS** — mutable `/t/index.htm` updated, root deployment skipped.
+- Test 25 and older snapshots were not modified.
+
+### Delivered customer defaults
+- desktop: expanded direct header; mobile/tablet: compact accessible drawer;
+- single Hero and editable single slogan;
+- no product grid on Home;
+- About Armaghan, simple Why list, three capability cards with adaptive detail overlay;
+- three category banners linking into filtered Products;
+- category numbers hidden;
+- soft-mint Products introduction/filter separation;
+- structured footer including the requested social-network presence without inventing profile URLs;
+- Favorites list sharing by anonymous product-code URL with native Web Share where supported and copy fallback otherwise.
+
+### Deliberately open media slots
+The code does not fabricate final evidence imagery. Capability card images, the three final banner assets, and the optimized local derivative of the exact customer-approved About handshake image remain tracked in `docs/TEST26-IMAGE-REQUIREMENTS.md`. Their runtime fallbacks are intentionally conspicuous and documented.
