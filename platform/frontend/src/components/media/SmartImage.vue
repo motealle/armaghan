@@ -22,7 +22,7 @@ const KNOWN_AVIF_PREFIXES=[
 ] as const
 const avifSrc=computed(()=>{
   const value=currentSrc.value
-  if(!value?.endsWith('.webp')||!KNOWN_AVIF_PREFIXES.some(prefix=>value.includes(prefix)))return undefined
+  if(!value?.endsWith('.webp')||value.includes('/images/placeholders-portrait/')||value.includes('/images/category-navigation/')||!KNOWN_AVIF_PREFIXES.some(prefix=>value.includes(prefix)))return undefined
   return value.replace(/\.webp$/,'.avif')
 })
 const imageClass=computed(()=>props.fit==='cover'?'object-cover':'object-contain')
