@@ -57,11 +57,14 @@ assert "test26-build" in workflow and "path: t/26" in workflow
 assert 'os.path.isdir("t/26")' in workflow and 'os.walk("t/26")' in workflow
 assert "test_test26_appearance_contract.py" in workflow
 assert "25" in immutable
-assert launcher.index("./26/index.html?build=test26-mobile-ux-r7") < launcher.index("./25/index.html")
+assert launcher.index("./26/index.html?build=test26-footer-language-r8") < launcher.index("./25/index.html")
 assert "Current implementation target: **Test 26" in backlog
 assert "rollback/test25-pre-test26" in backlog
 assert "Tests 01–25 are frozen" in rules
 assert "repository is the operational project memory" in rules.lower()
+assert "Communication terminology rule" in rules
+assert "first use of each specialist/technical term" in rules
+assert "hard-coding is a fixed value/decision embedded directly in code" in rules
 assert audit.count("| 1 |") >= 7
 assert "placehold.co" in images and "T26-HERO-01" in images
 assert "سوال" in questions or "سؤال" in questions
@@ -174,12 +177,18 @@ assert "category:category.code" in banners and "productBannerMedia" in banners
 
 for marker in ["policy.headerMode==='expanded'","policy.showBrandText","policy.showLanguage","policy.showHelp","policy.showAccount","policy.showHamburger"]:
     assert marker in header
+assert "mobile-header-language" in header
+assert "profile==='mobile'&&policy.headerMode!=='expanded'" in header
+assert ':show-language="policy.showLanguage&&profile!==\'mobile\'"' in header
 for marker in [':show-language="policy.showLanguage"',':show-help="policy.showHelp"',':show-account="policy.showAccount"',':show-brand-text="policy.showBrandText"']:
     assert marker in header
 assert "props.showLanguage" in drawer and "props.showHelp" in drawer and "props.showAccount" in drawer
 assert 'v-if="policy.showCategoryNumbers"' in products
 assert "products-intro-surface" in products and ".products-intro-surface" in css
-assert "SiteFooter" in app and 'v-if="policy.showFooter"' in app
+assert "SiteFooter" in app and "const showFooter=computed" in app
+assert "policy.value.showFooter" in app
+assert "profile.value!=='mobile'||route.path==='/'" in app
+assert 'v-if="showFooter"' in app
 assert "test26-site-footer" in site_footer and "footerSalesTitle" in site_footer
 
 # Favorites share carries product codes only, is versioned, and has native-share + copy fallback.
@@ -205,7 +214,7 @@ for filename in [
     "capability-documents.webp","banner-baby.webp","banner-kids.webp","banner-women.webp",
 ]:
     assert (FRONTEND/"public/images/test26/home"/filename).is_file(), filename
-assert 'name="armaghan-build" content="test26-mobile-ux-r7"' in frontend_index
+assert 'name="armaghan-build" content="test26-footer-language-r8"' in frontend_index
 assert "/* Test 26 — customer-approved reversible landing integration */" in css
 assert "Test 26 mobile UX polish" in css
 assert ".product-card-title{text-align:center}" in css
@@ -217,5 +226,7 @@ assert "margin-inline:-.75rem" in css
 assert "margin-bottom:-1rem" in css
 assert "@media(min-width:768px)" in css and ".bottom-nav{display:none!important}" in css
 assert "rollback/test26-foundation-pre-integration" in audit or "Run 2" in audit
+assert "Test 26 Run 8" in backlog
+assert "Run 8 — mobile footer scope, top language, terminology rule" in audit
 
 print("Test 26 reversible appearance + customer integration contract: PASS")
