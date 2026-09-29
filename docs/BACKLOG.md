@@ -8,6 +8,18 @@ Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
 Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
 
 
+### Test 26 Run 8 — footer scope + mobile language + terminology rule
+
+- [x] Rollback checkpoint: `rollback/test26-pre-footer-language-terminology` → `a00666040922d248d3e3e5d68490d26b797ef339`.
+- [x] Mobile Footer is shown only on Home; tablet/desktop retain the current Footer behavior on inner pages.
+- [x] Existing `showFooter` Admin setting remains the top-level visibility control.
+- [x] Mobile compact header now shows the language selector in the blue top bar when `showLanguage` is enabled.
+- [x] Mobile drawer suppresses the duplicate language selector; tablet/desktop behavior remains unchanged.
+- [x] Permanent communication rules 75–77 added: first use of each specialist term in user-facing project reports must include a short Persian explanation in parentheses.
+- [x] Feature Flag vs hard-coded terminology distinction recorded in the audit and project rules.
+- [x] Ranked five-option implementation analysis recorded in `docs/TEST26-UX-AUDIT.md` Run 8.
+- [ ] Final Test 26 QA/build, FTP smoke and scoped deploy must pass.
+
 ### Test 26 Run 7 — mobile UX polish delivery
 
 - [x] Rollback checkpoint: `rollback/test26-pre-mobile-ux-polish` → `54e2075b67ae1c21b0bac50fe32b9cd1e5144864`.
