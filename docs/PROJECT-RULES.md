@@ -93,3 +93,9 @@
 73. Every Armaghan-focused chat/agent must read root `AGENTS.md` and this file before mutation. Tool-specific instruction files may summarize this protocol but must point back here as the canonical rule.
 74. If the lock mechanism itself is unavailable or cannot be checked reliably, fail closed: do not mutate Armaghan. Report the blocker instead.
 
+
+
+## Communication terminology rule
+75. In every user-facing Armaghan report or explanation, the first use of each specialist/technical term must be followed immediately by a short plain-Persian explanation in parentheses. Example: `Feature Flag (کلید تنظیمی برای روشن/خاموش‌کردن یک رفتار بدون حذف کد)`.
+76. Acronyms and implementation jargon follow the same rule on first use in a response. Prefer the shortest explanation that teaches the term without interrupting the answer. Ordinary product labels and already-explained terms in the same response do not need repeated definitions.
+77. When contrasting implementation strategies, distinguish `Feature Flag` / configuration-driven behavior from `hard-coded` behavior precisely: hard-coding is a fixed value/decision embedded directly in code; it is a common contrast to configurable behavior, but it is not the only or formal logical opposite of a feature flag.
