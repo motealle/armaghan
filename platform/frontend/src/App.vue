@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BottomNav from '@/components/layout/BottomNav.vue'
@@ -21,7 +21,8 @@ const customers=useCustomersStore()
 const locale=useLocaleStore()
 const theme=useThemeStore()
 const route=useRoute()
-const {policy}=useResolvedAppearance()
+const {profile,policy}=useResolvedAppearance()
+const showFooter=computed(()=>policy.value.showFooter&&(profile.value!=='mobile'||route.path==='/'))
 
 watch(()=>route.fullPath,async()=>{
   await nextTick()
@@ -55,7 +56,7 @@ onMounted(async()=>{
       <RouterView v-slot="{ Component }">
         <component :is="Component" @login="loginOpen=true" />
       </RouterView>
-      <SiteFooter v-if="policy.showFooter" @help="helpOpen=true"/>
+      <SiteFooter v-if="showFooter" @help="helpOpen=true"/>
     </main>
     <BottomNav/>
     <LoginSheet :open="loginOpen" @close="loginOpen=false"/>
