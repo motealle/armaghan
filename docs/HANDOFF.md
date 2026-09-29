@@ -5,8 +5,8 @@
 - Repository: `motealle/armaghan`
 - Current prototype/development scope: `/t`
 - Root website (`/public_html`) is a protected landing page and must remain untouched by prototype work.
-- This phase is UX/UI taste testing and customer approval only.
-- Production backend will later be Laravel; do not build Laravel/backend/database/auth/API in this phase.
+- Test 26 customer-facing UX is frozen pending customer feedback; do not mutate `/t/26`.
+- The active phase is now Backend MVP productionization. Any later UI change, including customer feedback, must start in Test 27 or higher.
 
 ## 2. Deployment and hosting contract
 
@@ -314,9 +314,9 @@ Do not build backend, database, real login, real APIs, payment, checkout, Presta
 - Root landing deployment: PASS.
 - `logo.png` is present in repository.
 - `/t` remains the active product-design/prototype workspace.
-- Tests 01–25 are released snapshots and must remain immutable.
-- Test 25 is the last delivered snapshot.
-- Test 26 is the active numbered prototype. Run 2 customer-approved integration is delivered: per-viewport Appearance controls now drive the live Header/Home/Products/Footer; Home uses single Hero + About + Why + Capabilities overlay + product-category banners by default; Favorites lists are anonymously shareable.
+- Tests 01–26 are released snapshots and must remain immutable.
+- Test 26 is the frozen customer-review snapshot; snapshot branch: `snapshot/test26-final`.
+- Any further UI work starts at Test 27 or higher. Run 2 customer-approved integration is delivered: per-viewport Appearance controls now drive the live Header/Home/Products/Footer; Home uses single Hero + About + Why + Capabilities overlay + product-category banners by default; Favorites lists are anonymously shareable.
 - Test 26 rollback checkpoint: `rollback/test25-pre-test26` at `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
 - Test 26 ranked UX/architecture decisions: `docs/TEST26-UX-AUDIT.md`.
 - Test 26 image handoff contract: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
@@ -344,3 +344,13 @@ Owner-selected generated images are wired into Test 26: Hero 1-2, About 2-2, Pro
 Deployment record: selected Test 26 media commit `e2d9931f9c5398de9320ef698051d0f9c56db991` passed FTP Deploy Run #188. QA, FTP smoke and `deploy-t` passed; `deploy-root` was skipped. Test 25 and earlier snapshots were untouched.
 
 Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35dfacde3140618899b3784db7275edea85dba2`; FTP Deploy Run #190 passed QA, FTP smoke and scoped `deploy-t`; `deploy-root` was skipped. All eight Test 26 image slots now have local selected media; Test 25 and earlier snapshots remain unchanged.
+
+
+## 21. Backend MVP transition
+
+- Laravel is **not installed yet** in this repository. There is no backend `composer.json`, Artisan application, Laravel routes, Eloquent models, Filament panel or active Laravel runtime.
+- Existing production-track preparation consists of `platform/database/schema.sql`, `platform/database/seed_demo.sql`, `platform/scripts/bootstrap_sqlite.py`, `platform/.env.example`, and the frontend/admin prototypes.
+- Current products, customers and prototype authentication are browser-local Pinia/localStorage/sessionStorage implementations; they are not production persistence.
+- Current Favorites sharing is a versioned product-code URL implemented entirely in the frontend.
+- Current color system already has five-color palettes and semantic CSS variables, but the mapping is fixed in `stores/design.ts`; Backend MVP should persist a safe semantic role mapping instead of exposing arbitrary CSS.
+- Canonical backend plan: `docs/BACKEND-MVP.md`.
