@@ -18,7 +18,18 @@ Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282d
 - [x] Permanent communication rules 75–77 added: first use of each specialist term in user-facing project reports must include a short Persian explanation in parentheses.
 - [x] Feature Flag vs hard-coded terminology distinction recorded in the audit and project rules.
 - [x] Ranked five-option implementation analysis recorded in `docs/TEST26-UX-AUDIT.md` Run 8.
-- [ ] Final Test 26 QA/build, FTP smoke and scoped deploy must pass.
+- [x] Final Test 26 QA/build, FTP smoke and scoped deploy passed.
+
+### Test 26 Run 8 delivery record
+
+- [x] Rollback checkpoint: `rollback/test26-pre-footer-language-terminology` → `a00666040922d248d3e3e5d68490d26b797ef339`.
+- [x] Release head: `5a7ca47291b64bd70cf1fed2b4a32f94e9753798`.
+- [x] **FTP Deploy Run #234: SUCCESS** — Test 11–26 contracts, TypeScript, unit tests, Vite Test 26 build and FTP smoke passed; scoped `deploy-t` passed; `deploy-root` skipped.
+- [x] Mobile Footer is Home-only; non-mobile Footer behavior remains unchanged.
+- [x] Mobile top bar exposes the language selector; mobile drawer does not duplicate it.
+- [x] Permanent terminology-explanation rules 75–77 are active in `docs/PROJECT-RULES.md`.
+- [x] Build marker / launcher query: `test26-footer-language-r8a`.
+- [x] Test 25 and earlier snapshots remain unchanged.
 
 ### Test 26 Run 7 — mobile UX polish delivery
 

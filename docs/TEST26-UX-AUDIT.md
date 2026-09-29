@@ -828,3 +828,18 @@ Rollback checkpoint: `rollback/test26-pre-footer-language-terminology` → `a006
 References used for terminology and implementation approach:
 - Martin Fowler, Feature Toggles / Feature Flags: https://martinfowler.com/articles/feature-toggles.html
 - MDN, Mobile accessibility and responsive design: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/Mobile
+
+
+### 21.5 Delivery record
+
+- Rollback checkpoint: `rollback/test26-pre-footer-language-terminology` → `a00666040922d248d3e3e5d68490d26b797ef339`.
+- Release head: `5a7ca47291b64bd70cf1fed2b4a32f94e9753798`.
+- **FTP Deploy Run #234: SUCCESS**.
+- Test 11–26 regression/source contracts: PASS.
+- TypeScript + unit tests + Vite Test 26 build: PASS.
+- FTP smoke: PASS.
+- Scoped `deploy-t`: PASS.
+- `deploy-root`: SKIPPED.
+- Test 25 and older snapshots unchanged.
+- Build marker: `test26-footer-language-r8a`.
+

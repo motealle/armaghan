@@ -333,6 +333,7 @@ Do not build backend, database, real login, real APIs, payment, checkout, Presta
 - Test 26 Run 7 mobile UX polish deployed from `633e7e1399db1e6cca84256bcfdd516004088476`; **FTP Deploy Run #223 PASS**. Header mode/hamburger are reversible again; mobile default hamburger is off; BottomNav is mobile-only with responsive-emulation fallback; mobile footer is edge-to-edge; product title/code are centered; pale active subcategory chips use readable text. Root deploy skipped; Test 25 and older snapshots unchanged.
 - Test 26 Run 8 behavior: on mobile the Footer is Home-only; tablet/desktop keep the existing Footer scope. Mobile compact header exposes language selection directly in the blue top bar and does not duplicate it in the drawer.
 - Permanent technical-term explanation rule: in user-facing Armaghan explanations, define each specialist term on first use with a short Persian explanation in parentheses; canonical rules are `docs/PROJECT-RULES.md` 75–77.
+- Test 26 Run 8 deployed from `5a7ca47291b64bd70cf1fed2b4a32f94e9753798`; **FTP Deploy Run #234 PASS**. Mobile Footer is Home-only, mobile top bar exposes language selection, technical terms must be explained in Persian parentheses on first use, `deploy-root` skipped, Test 25 and older snapshots unchanged.
 - Operational project memory hierarchy: `docs/PROJECT-RULES.md` → `docs/HANDOFF.md` → `docs/BACKLOG.md` → current test audit / asset docs. Chat memory is secondary.
 
 
