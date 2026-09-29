@@ -1,7 +1,7 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Test 26 — Customer-approved Reversible Landing**.
+Current implementation target: **Backend MVP productionization**. Test 26 is frozen; any new UI snapshot starts at Test 27.
 Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
 Image requirements: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
@@ -565,6 +565,24 @@ Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 - [x] Add detailed 5-option ranked analysis for each requested item and self-detected visual/product bugs in `docs/TEST19-UX-AUDIT.md`.
 - [x] Update backlog checkboxes as each implementation block lands.
 - [x] Reviewed `pics.md`; image requirements did not change in Test 19, so no update was required.
+
+## P0 — Backend MVP delivery
+
+- [x] Freeze Test 26 and create `snapshot/test26-final`.
+- [x] Promote backend work from deferred P1 to active P0 scope.
+- [ ] Verify production hosting supports PHP >= 8.3 and a safe Laravel document-root layout before installation.
+- [ ] Install Laravel 13 under `platform/backend` with SQLite development defaults.
+- [ ] Convert the approved SQL draft into Laravel migrations/models/seeders.
+- [ ] Install Filament 5 and create administrator authentication.
+- [ ] Product CRUD: add/edit/archive, category/subcategory, availability, sort order and image management.
+- [ ] Customer CRUD: identity/contact/notes/status plus generate/revoke one-tap access links.
+- [ ] Public read endpoints for categories/products/site settings; replace browser-local catalog persistence in Test 27+ only.
+- [ ] Backend favorites-share records with compact high-entropy public token and WhatsApp share action.
+- [ ] Customer magic-link login: hashed token, expiry/revoke, secure session, optional trusted-device persistence.
+- [ ] Persist high-value site settings including semantic color-role mappings and safe contrast preview.
+- [ ] Add production backup, health check, audit log and minimal recovery procedure.
+- [ ] Deploy production backend without modifying `/t/26`; any required frontend wiring lands in Test 27+.
+- [ ] End-to-end delivery QA: admin product/customer changes visible publicly, favorites link opens correctly, WhatsApp handoff works, login link works, color settings render safely.
 
 ## P1 — Backend productionization
 - [ ] Laravel 13 + SQLite local/development backend.
