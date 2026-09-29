@@ -688,3 +688,31 @@ html.dark .products-page .filter-chip.active{
 @media(min-width:768px){
   .bottom-nav{display:none!important}
 }
+
+
+/* Test 26 Run 8 — mobile Home footer scope + top language selector */
+.mobile-header-language{
+  display:inline-flex;
+  min-height:2.5rem;
+  align-items:center;
+  gap:.2rem;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:.72rem;
+  background:rgba(255,255,255,.08);
+  padding-inline-start:.45rem;
+  color:#fff;
+}
+.mobile-header-language .header-select{
+  width:5.2rem;
+  max-width:5.2rem;
+  border:0;
+  background:transparent;
+  padding-inline:.25rem;
+}
+@media(max-width:359.98px){
+  .mobile-header-language .header-select{
+    width:4.65rem;
+    max-width:4.65rem;
+    padding-inline:.1rem;
+  }
+}
