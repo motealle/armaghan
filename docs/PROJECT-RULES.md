@@ -5,7 +5,7 @@
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.
 3. Prototype deployment may write only to `/public_html/t`.
 4. Released tests are immutable snapshots.
-5. Tests 01–25 are frozen; Test 25 is the last delivered snapshot and Test 26 is the next source target.
+5. Tests 01–26 are frozen. Test 26 is the final customer-review snapshot and must never be modified; any later UI change starts in Test 27 or higher.
 6. Do not modify an older numbered test to improve a newer one.
 7. `/t/index.htm` is mutable and newest test must be first.
 8. Current Vue test is generated from `/platform/frontend`; do not hand-edit compiled test files on the host.
@@ -99,3 +99,12 @@
 75. In every user-facing Armaghan report or explanation, the first use of each specialist/technical term must be followed immediately by a short plain-Persian explanation in parentheses. Example: `Feature Flag (کلید تنظیمی برای روشن/خاموش‌کردن یک رفتار بدون حذف کد)`.
 76. Acronyms and implementation jargon follow the same rule on first use in a response. Prefer the shortest explanation that teaches the term without interrupting the answer. Ordinary product labels and already-explained terms in the same response do not need repeated definitions.
 77. When contrasting implementation strategies, distinguish `Feature Flag` / configuration-driven behavior from `hard-coded` behavior precisely: hard-coding is a fixed value/decision embedded directly in code; it is a common contrast to configurable behavior, but it is not the only or formal logical opposite of a feature flag.
+
+
+## Backend MVP phase
+78. Test 26 is frozen at snapshot branch `snapshot/test26-final`. Backend productionization may read/reuse its source patterns but must not mutate or redeploy `/t/26`.
+79. The active delivery phase is Backend MVP: Laravel 13 + SQLite development + Filament 5 admin, while keeping the approved Vue customer experience as the presentation baseline.
+80. Minimum production scope is: persistent product CRUD, customer CRUD, product media, public catalog reads, anonymous favorites-share links, one-tap customer magic-link login, WhatsApp handoff, site/theme settings, backup and deployment health.
+81. Google OAuth, full order/timeline workflow, advanced analytics, MySQL cutover, queues and nonessential integrations are post-MVP unless they become required for delivery.
+82. Brand colors are semantic design tokens, not arbitrary per-element CSS. Admin may assign the approved palette colors to major semantic roles (for example header, primary action, secondary action, highlight, active state and soft surface) with contrast validation and preview.
+83. Token-role reassignment is configuration-driven theming, not a Feature Flag. Feature Flags switch capabilities/behaviors on or off; theme configuration maps values to presentation roles.
