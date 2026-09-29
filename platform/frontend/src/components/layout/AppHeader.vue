@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {
-  CircleHelp, ClipboardList, Grid2X2, Heart, House, LogIn, LogOut, Menu, UserRound, WandSparkles,
+  CircleHelp, ClipboardList, Globe2, Grid2X2, Heart, House, LogIn, LogOut, Menu, UserRound, WandSparkles,
 } from '@lucide/vue'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -69,6 +69,20 @@ function changeLanguage(event:Event){locale.setManual((event.target as HTMLSelec
         <div class="app-header-actions">
           <ThemeSwitcher @pointerdown.stop />
 
+          <label
+            v-if="policy.showLanguage&&profile==='mobile'&&policy.headerMode!=='expanded'"
+            class="mobile-header-language"
+            @pointerdown.stop
+          >
+            <Globe2 :size="16" aria-hidden="true"/>
+            <select :value="locale.locale" class="header-select" :aria-label="locale.t('language')" @change="changeLanguage">
+              <option value="fa" lang="fa">فارسی</option>
+              <option value="ar" lang="ar">العربية</option>
+              <option value="en" lang="en">English</option>
+              <option value="ku" lang="ckb">کوردی</option>
+            </select>
+          </label>
+
           <button
             v-if="policy.showHelp&&policy.headerMode==='expanded'"
             type="button"
@@ -125,7 +139,7 @@ function changeLanguage(event:Event){locale.setManual((event.target as HTMLSelec
 
   <MobileMenuDrawer
     :open="mobileMenuOpen"
-    :show-language="policy.showLanguage"
+    :show-language="policy.showLanguage&&profile!=='mobile'"
     :show-help="policy.showHelp"
     :show-account="policy.showAccount"
     :show-brand-text="policy.showBrandText"
