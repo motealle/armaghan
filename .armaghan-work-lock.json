@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20260929-footer-language-terminology",
   "scope": "Test 26: mobile footer Home-only, mobile top language selector, permanent technical-term explanation rule, QA/deploy",
   "base_ref": "main@a00666040922d248d3e3e5d68490d26b797ef339",
   "acquired_at": "2026-09-29T10:30:00Z",
-  "expires_at": "2026-09-29T12:00:00Z",
-  "released_at": null,
-  "note": "Canonical shared write lock. See docs/PROJECT-RULES.md rules 64-74."
+  "expires_at": null,
+  "released_at": "2026-09-29T10:38:00Z",
+  "note": "Released after FTP Deploy Run #234 succeeded and documentation QA Run #235 passed with deployments skipped."
 }
