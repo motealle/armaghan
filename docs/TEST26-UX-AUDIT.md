@@ -776,3 +776,55 @@ Owner screenshots exposed five separate UX issues. The implementation strategy i
 - Test 25 and all earlier snapshots remained untouched.
 - Build marker / launcher query: `test26-mobile-ux-r7`.
 
+
+
+## 21. Run 8 — mobile footer scope, top language, terminology rule
+
+Rollback checkpoint: `rollback/test26-pre-footer-language-terminology` → `a00666040922d248d3e3e5d68490d26b797ef339`.
+
+### 21.1 Mobile footer scope
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Keep the existing `showFooter` configuration, but add a shell-level viewport+route rule: on mobile show Footer only on Home; tablet/desktop keep current behavior** | **10.0** | Preserves reversibility while matching the requested mobile information architecture; one decision point avoids per-page duplication |
+| 2 | Put Footer only inside `HomeView.vue` | 7.6 | Correct for mobile but would also remove the Footer from non-mobile inner pages unless duplicated elsewhere |
+| 3 | Hide Footer on non-Home pages using CSS selectors | 5.2 | Presentation layer would need route awareness and is harder to test |
+| 4 | Add a new per-route Footer flag for every page | 3.7 | Too many switches for a simple stable rule |
+| 5 | Remove Footer globally outside Home | 2.3 | Changes tablet/desktop behavior unnecessarily |
+
+**Selected:** Option 1. `showFooter` remains an Admin-controlled configuration toggle; the mobile Home-only scope is a stable responsive/routing rule.
+
+### 21.2 Mobile top language selector
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Reuse the existing locale select in the compact mobile top bar and suppress its duplicate inside the mobile drawer** | **9.9** | Immediate discoverability, accessible native control, no second source of locale state |
+| 2 | Add a globe icon that opens a custom language popover | 8.0 | Visually compact but adds focus/keyboard/ARIA complexity |
+| 3 | Keep language only in the drawer | 4.2 | Contradicts the requested visibility |
+| 4 | Cycle languages on icon tap | 3.2 | Poor discoverability and easy to trigger accidentally |
+| 5 | Separate language route/page | 1.7 | Excessive navigation cost |
+
+**Selected:** Option 1. The same `showLanguage` setting controls visibility; only placement changes on mobile.
+
+### 21.3 Permanent technical-term explanation rule
+
+| Rank | Strategy | Score | Why / risk |
+|---:|---|---:|---|
+| 1 | **Add a canonical repository communication rule: first use of every specialist term gets a short Persian explanation in parentheses** | **10.0** | Survives chat handoffs because repository memory is canonical; teaches without repeating definitions throughout the response |
+| 2 | Store the preference only in chat memory | 6.0 | Can be lost across project handoffs and conflicts with repository-memory policy |
+| 3 | Add a glossary document only | 5.4 | Useful reference, but does not force explanations at point of use |
+| 4 | Avoid technical terms entirely | 3.6 | Reduces precision and learning value |
+| 5 | Explain terms only when asked | 2.0 | Does not satisfy the permanent rule request |
+
+**Selected:** Option 1. Rules 75–77 in `docs/PROJECT-RULES.md` are canonical for future Armaghan runs.
+
+### 21.4 Feature Flag terminology clarification
+
+- **Feature Flag**: a runtime/configuration switch that selects whether a feature or alternate behavior is active without deleting the other code path.
+- **Hard-coded behavior**: a fixed value or decision embedded directly in source code.
+- They are useful contrasts, but hard-coded is not the formal logical opposite of Feature Flag. A behavior can be configuration-driven without being a Feature Flag, and a Feature Flag is only one kind of configuration.
+- In this run, Footer visibility still has the existing `showFooter` configuration toggle, while “mobile Footer only on Home” is a stable route+viewport rule. Language visibility remains behind `showLanguage`; its mobile top-bar placement is a responsive presentation rule.
+
+References used for terminology and implementation approach:
+- Martin Fowler, Feature Toggles / Feature Flags: https://martinfowler.com/articles/feature-toggles.html
+- MDN, Mobile accessibility and responsive design: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/Mobile
