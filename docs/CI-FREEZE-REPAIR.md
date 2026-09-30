@@ -65,3 +65,7 @@ Selected: option 1.
 - https://docs.github.com/en/actions/reference/workflows-and-actions/variables
 - https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
 - https://laravel.com/framework/docs/deployment
+
+## E. Historical contract sweep after first CI feedback
+
+The first repaired CI run exposed the same anti-pattern in Test 20, 21, 23, 24 and 25 contracts: historical tests enumerated the current build destination and browser-state namespace up to Test 26. These assertions were replaced with release-invariant checks and minimum-version namespace matching, so future Test 27+ source evolution does not require editing every historical contract.
