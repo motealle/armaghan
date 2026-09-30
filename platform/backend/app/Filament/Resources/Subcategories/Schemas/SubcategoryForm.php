@@ -14,18 +14,34 @@ class SubcategoryForm
         return $schema
             ->components([
                 Select::make('category_id')
-                    ->relationship('category', 'id')
+                    ->label('دسته اصلی')
+                    ->relationship('category', 'name_fa')
+                    ->searchable()
+                    ->preload()
                     ->required(),
                 TextInput::make('code')
-                    ->required(),
+                    ->label('کد')
+                    ->required()
+                    ->maxLength(16)
+                    ->unique(ignoreRecord: true),
                 TextInput::make('name_fa')
-                    ->required(),
-                TextInput::make('name_ar'),
-                TextInput::make('name_en'),
-                TextInput::make('name_ku'),
+                    ->label('نام فارسی')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('name_ar')
+                    ->label('نام عربی')
+                    ->maxLength(255),
+                TextInput::make('name_en')
+                    ->label('نام انگلیسی')
+                    ->maxLength(255),
+                TextInput::make('name_ku')
+                    ->label('نام کردی')
+                    ->maxLength(255),
                 Toggle::make('active')
-                    ->required(),
+                    ->label('فعال')
+                    ->default(true),
                 TextInput::make('sort_order')
+                    ->label('ترتیب نمایش')
                     ->required()
                     ->numeric()
                     ->default(0),
