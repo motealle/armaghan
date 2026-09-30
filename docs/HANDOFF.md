@@ -393,3 +393,17 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - The one-shot bootstrap workflow was removed after use; permanent backend validation lives in `.github/workflows/backend-ci.yml`.
 - Generated Laravel agent guidance was overridden by Armaghan-specific `platform/backend/AGENTS.md` and `CLAUDE.md`; no automatic Laravel Boost installation is allowed.
 - Next safe batch is domain migrations/models plus production-safe Filament admin access foundation. Production MySQL/MariaDB provisioning can remain deferred until the first production migration and does not block repository development.
+
+
+## 25. Backend domain foundation handoff
+
+- Backend domain foundation validated in Pull Request #1; Backend CI Run #3 PASS.
+- Test suite after this batch: 4 passed / 23 assertions; locked Composer audit clean.
+- Users now have explicit `role` and `active` fields. Filament production access requires `role=admin` and `active=true`.
+- No default admin/test credential is seeded by `DatabaseSeeder`.
+- Core persistent models now exist for Customer, Category, Subcategory, Product, specification definitions/values, FavoriteShare, MagicLink and ActivityLog.
+- Favorites share and magic-link token columns store hashes, not raw public tokens.
+- Product media is intentionally deferred to Spatie Media Library per project rules; do not add a competing manual product-images table.
+- Orders/order timeline remain deferred unless MVP delivery requires them.
+- No production MySQL/MariaDB migration has been executed yet.
+- Next P0 batch: Filament CRUD Resources for catalog/customers plus secret-driven first-admin provisioning that requires no manual user SQL/cPanel work.
