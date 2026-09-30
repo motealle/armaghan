@@ -34,10 +34,11 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 
 ## P0 — Backend hosting preflight
 
-- [ ] Verify PHP >= 8.3 and Laravel-required PHP extensions.
-- [ ] Verify a safe web document root can point to Laravel `public/` without exposing the application root.
-- [ ] Verify writable `storage` and `bootstrap/cache`, HTTPS, SQLite/PDO support, and a practical Composer/deployment path.
-- [ ] Record PASS/FAIL and hosting-specific blockers before installing Laravel.
+- [x] Verify PHP >= 8.3 and Laravel-required PHP extensions — PHP 8.3.33; all required extensions PASS.
+- [x] Verify safe web/private layout — `public_html` is the active document root and PHP can read/write a private sibling outside it.
+- [x] Verify HTTPS and deployment capabilities — HTTPS PASS; CI-built Composer/vendor path selected; web shell functions are disabled. PDO SQLite FAIL, PDO MySQL PASS.
+- [x] Record result: host is Laravel-capable; original production-SQLite plan FAILS because PDO SQLite is absent. Production DB switched to MySQL/MariaDB.
+- [ ] Provision/verify production MySQL/MariaDB database, server version and credentials before first production migration.
 
 
 ### Test 26 Run 8 — footer scope + mobile language + terminology rule
@@ -617,13 +618,12 @@ Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 - [ ] End-to-end delivery QA: admin product/customer changes visible publicly, favorites link opens correctly, WhatsApp handoff works, login link works, color settings render safely.
 
 ## P1 — Backend productionization
-- [ ] Laravel 13 + SQLite local/development backend.
+- [ ] Laravel 13 backend: SQLite local/dev/test + MySQL/MariaDB production.
 - [ ] Filament 5 admin.
-- [ ] Persist customers/products/orders/timelines/translations/visitor leads to SQLite.
+- [ ] Persist production data to MySQL/MariaDB; keep SQLite for local/dev/test fixtures.
 - [ ] Laravel Socialite Google OAuth with real client credentials.
 - [ ] Signed/hashed magic links with expiry, scope, revoke and audit.
 - [ ] Server-side media library and queued image conversions.
-- [ ] MySQL migration/staging after SQLite model stabilizes.
 
 ## Definition of Done — Test 19
 - [x] Tests 01–18 immutable.
