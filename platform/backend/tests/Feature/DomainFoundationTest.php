@@ -41,6 +41,8 @@ class DomainFoundationTest extends TestCase
         $user = User::factory()->create();
         $customer = Customer::create([
             'user_id' => $user->id,
+            'name' => 'Demo Buyer Contact',
+            'email' => 'buyer@example.test',
             'country_code' => 'IQ',
             'whatsapp' => '+9647000000000',
             'company_name' => 'Demo Buyer',
