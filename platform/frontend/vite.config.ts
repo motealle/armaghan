@@ -5,7 +5,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 const uiTarget = process.env.ARMAGHAN_UI_TARGET?.trim()
 
-if (uiTarget && (!/^\\d{2}$/.test(uiTarget) || Number(uiTarget) <= 26)) {
+if (uiTarget && (!/^\d{2}$/.test(uiTarget) || Number(uiTarget) <= 26)) {
   throw new Error('Refusing to build into a frozen or invalid numbered UI test target')
 }
 
