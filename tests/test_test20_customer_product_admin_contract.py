@@ -84,7 +84,7 @@ assert "custom?.[target]?.trim()" in locale
 # Test isolation and repo memory
 
 def has_test_namespace(text: str, minimum: int) -> bool:
-    return any(int(n) >= minimum for n in re.findall(r"test(\\d{2})", text))
+    return any(int(n) >= minimum for n in re.findall(r"test(\d{2})", text))
 
 for key_file in [
     ROOT/"platform/frontend/index.html",
