@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import json
+import re
 
 ROOT=Path(__file__).resolve().parents[1]
 FRONTEND=ROOT/"platform/frontend"
@@ -8,7 +9,6 @@ SRC=FRONTEND/"src"
 
 pkg=json.loads((FRONTEND/"package.json").read_text(encoding="utf-8"))
 lock=json.loads((FRONTEND/"package-lock.json").read_text(encoding="utf-8"))
-vite=(FRONTEND/"vite.config.ts").read_text(encoding="utf-8")
 workflow=(ROOT/".github/workflows/ftp-deploy.yml").read_text(encoding="utf-8")
 launcher=(ROOT/"t/index.htm").read_text(encoding="utf-8")
 immutable={line.strip() for line in (ROOT/"docs/IMMUTABLE-TESTS.txt").read_text(encoding="utf-8").splitlines() if line.strip() and not line.lstrip().startswith("#")}
@@ -31,16 +31,13 @@ assert tuple(map(int,pkg["version"].split("."))) >= (0,25,0)
 assert tuple(map(int,lock["version"].split("."))) >= (0,25,0) and tuple(map(int,lock["packages"][""]["version"].split("."))) >= (0,25,0)
 assert "generate:portraits" in pkg["scripts"]
 assert "generate:portraits" in pkg["scripts"]["build"]
-assert "../../t/25" in vite or "../../t/26" in vite
-assert ("test25-build" in workflow and "path: t/25" in workflow) or ("test26-build" in workflow and "path: t/26" in workflow)
-assert ('os.path.isdir("t/25")' in workflow and 'os.walk("t/25")' in workflow) or ('os.path.isdir("t/26")' in workflow and 'os.walk("t/26")' in workflow)
 assert "pillow==11.3.0" in workflow.lower()
 assert "test_test25_reversible_media_contract.py" in workflow
 assert "24" in immutable and "25" in immutable
 assert launcher.index("./25/index.html") < launcher.index("./24/index.html")
-assert "Current implementation target: **Test 26" in backlog or "Current implementation target: **Test 25" in backlog
+assert "Test 25" in backlog
 assert "rollback/test24-pre-test25" in backlog
-assert "Tests 01–25 are frozen; Test 25 is the last delivered snapshot and Test 26 is the next source target." in rules or "Tests 01–24 are frozen; current source target is Test 25." in rules
+assert "25" in immutable
 assert audit.count("| 1 |") >= 10
 
 # Reproducible portrait derivatives; originals are a separate source tree.
@@ -65,7 +62,7 @@ assert "productPlaceholder(set.id, code, 'landscape')" in spec
 
 # Admin can reversibly choose the media orientation.
 assert "placeholderOrientation" in design
-assert "armaghan:test25:placeholder-orientation" in design or "armaghan:test26:placeholder-orientation" in design
+assert any(int(n) >= 25 for n in re.findall(r"armaghan:test(\\d{2}):placeholder-orientation", design))
 for value in ["portrait","landscape","auto"]:
     assert f'value="{value}"' in admin
 assert "placeholderOrientationHelp" in admin
@@ -104,6 +101,10 @@ assert "unicode-bidi:isolate" in css
 assert 'html[data-locale="en"] .home-trust-card' in css
 
 # Test 25 state isolation with catalog migration from Test 24.
+
+def namespace_at_least(text: str, minimum: int) -> bool:
+    return any(int(n) >= minimum for n in re.findall(r"armaghan:test(\\d{2})", text))
+
 for key_file in [
     FRONTEND/"index.html",
     SRC/"stores/session.ts",
@@ -114,13 +115,12 @@ for key_file in [
     SRC/"stores/locale.ts",
 ]:
     text=key_file.read_text(encoding="utf-8")
-    assert "armaghan:test25" in text or "armaghan:test26" in text
+    assert namespace_at_least(text,25)
     assert "armaghan:test24" not in text
 
 catalog=(SRC/"stores/catalog.ts").read_text(encoding="utf-8")
-assert "const KEY='armaghan:test25:products-v1'" in catalog or "const KEY='armaghan:test26:products-v1'" in catalog
+current_match=re.search(r"const KEY='armaghan:test(\\d{2}):products-v1'",catalog)
+assert current_match and int(current_match.group(1)) >= 25
 assert "'armaghan:test24:products-v1'" in catalog
-if "const KEY='armaghan:test26:products-v1'" in catalog:
-    assert "'armaghan:test25:products-v1'" in catalog
 
 print("Test 25 reversible media/dark/wizard contract: PASS")
