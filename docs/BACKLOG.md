@@ -52,10 +52,22 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] Add permanent Backend CI for Composer validation, migrations, tests, version checks, audit and secret hygiene.
 - [x] Replace generated nested agent instructions with Armaghan project rules; do not auto-install Laravel Boost.
 - [x] Confirm no Test 26/Test 27/launcher mutation during bootstrap.
-- [ ] Build the Armaghan domain migrations/models from the approved schema draft.
-- [ ] Add production-safe Filament admin access/provisioning without hard-coded credentials.
+- [x] Build the Armaghan core domain migrations/models from the approved schema draft, adapted portably for SQLite dev/test + MySQL/MariaDB production.
+- [x] Add production-safe Filament access gate: only active users with admin role can enter the admin panel; no repository credential is seeded.
+- [ ] Add secret-driven administrator provisioning for first deployment without user-side manual SQL/cPanel work.
 
 
+
+### Domain foundation delivery record
+
+- [x] Customer, Category, Subcategory, Product, SpecDefinition, ProductSpecValue, FavoriteShare, MagicLink and ActivityLog foundations added.
+- [x] Favorites-share tokens and magic-link tokens are hash-only database values.
+- [x] Product media table intentionally deferred to Spatie Media Library to avoid duplicate media ownership.
+- [x] Orders/timeline remain deferred unless delivery requires them.
+- [x] DatabaseSeeder no longer creates a default fixed user.
+- [x] Backend CI Run #3: **PASS** — 4 tests / 23 assertions; Composer audit clean.
+- [x] No production MySQL migration and no Test 26/Test 27 change occurred.
+- [ ] Next P0: Filament Product/Customer/Category/Subcategory Resources + safe first-admin provisioning.
 
 ### Test 26 Run 8 — footer scope + mobile language + terminology rule
 
