@@ -28,3 +28,11 @@ Never release a lock owned by a different `run_id`.
 
 ## Existing project protections
 Respect all frozen-test, deployment-scope, no-remote-delete, media, UX, QA and repository-memory rules in `docs/PROJECT-RULES.md`. In particular, older numbered tests are immutable snapshots and prototype deployment is scoped to `/public_html/t`.
+
+## Mandatory terminology
+
+Every user-facing Armaghan surface must follow `docs/PROJECT-RULES.md` rules 75–77: on first use, each specialist or technical term needs a short plain-Persian explanation in parentheses. This applies to chat replies, reports, handoffs, automation summaries and review notes across all agents and tools working from this repository.
+
+## Frozen UI release lane
+
+Test 26 is frozen. Main-branch UI work may continue only in Test 27 or higher according to rules 84–87. Never rebuild or redeploy Test 26 from current main.
