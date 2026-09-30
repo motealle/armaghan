@@ -348,12 +348,15 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 
 ## 21. Backend MVP transition
 
-- Laravel is **not installed yet** in this repository. There is no backend `composer.json`, Artisan application, Laravel routes, Eloquent models, Filament panel or active Laravel runtime.
-- Existing production-track preparation consists of `platform/database/schema.sql`, `platform/database/seed_demo.sql`, `platform/scripts/bootstrap_sqlite.py`, `platform/.env.example`, and the frontend/admin prototypes.
-- Current products, customers and prototype authentication are browser-local Pinia/localStorage/sessionStorage implementations; they are not production persistence.
-- Current Favorites sharing is a versioned product-code URL implemented entirely in the frontend.
+- Laravel is now installed under `platform/backend`; bootstrap resolved Laravel Framework **13.34.0**.
+- Filament Panel Builder is installed at **5.9.0** and `app/Providers/Filament/AdminPanelProvider.php` exists.
+- `composer.json` and `composer.lock` are committed; `.env` and `vendor/` remain ignored.
+- Permanent Backend CI validates Composer metadata, local SQLite migrations, framework/admin major versions, tests, security audit and secret hygiene.
+- Local/dev/test uses SQLite. Verified production hosting lacks PDO SQLite but has PDO MySQL, so production uses MySQL/MariaDB.
+- Domain Product/Customer/favorites/magic-link/theme models and Filament Resources are **not implemented yet**; the current Vue prototype data is still browser-local.
+- Current Favorites sharing is still a versioned product-code URL implemented entirely in the frontend until the persisted share flow is built.
 - Current color system already has five-color palettes and semantic CSS variables, but the mapping is fixed in `stores/design.ts`; Backend MVP should persist a safe semantic role mapping instead of exposing arbitrary CSS.
-- Canonical backend plan: `docs/BACKEND-MVP.md`.
+- Canonical backend plan: `docs/BACKEND-MVP.md`; bootstrap analysis/result: `docs/BACKEND-BOOTSTRAP.md`.
 
 ## 22. Frozen Test 26 / open Test 27+ CI handoff
 
@@ -379,3 +382,14 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Web PHP disables `proc_open`, `exec`, and `shell_exec`; deployment must build Composer dependencies in CI rather than on the host.
 - PHP `symlink()` is available. Limits are 256M upload, 256M POST, 512M memory, 300s execution.
 - The preflight touched no numbered UI snapshot; Test 26 remains frozen and Test 27 remains unpublished.
+
+
+## 24. Laravel / Filament bootstrap handoff
+
+- Backend Bootstrap Run #1: PASS.
+- Laravel Framework 13.34.0 and Filament 5.9.0 were resolved by Composer and locked.
+- Bootstrap tests: 2 passed / 2 assertions; Composer audit found no known vulnerability advisories.
+- Backend root is `platform/backend`; Test 26 and Test 27 were not touched.
+- The one-shot bootstrap workflow was removed after use; permanent backend validation lives in `.github/workflows/backend-ci.yml`.
+- Generated Laravel agent guidance was overridden by Armaghan-specific `platform/backend/AGENTS.md` and `CLAUDE.md`; no automatic Laravel Boost installation is allowed.
+- Next safe batch is domain migrations/models plus production-safe Filament admin access foundation. Production MySQL/MariaDB provisioning can remain deferred until the first production migration and does not block repository development.
