@@ -54,3 +54,19 @@ Create a maintainable Laravel 13 backend under `platform/backend` with Filament 
 - Composer security audit reports no known vulnerable locked dependency.
 - `.env`, `vendor/`, and generated secret keys are absent from the commit.
 - Diff contains only backend bootstrap/docs/workflow changes.
+
+
+## Bootstrap result
+
+- GitHub Actions Backend Bootstrap Run #1: PASS.
+- Resolved Laravel Framework: **13.34.0**.
+- Resolved Filament: **5.9.0**.
+- Generated backend root: `platform/backend`.
+- Filament Admin panel provider generated at `app/Providers/Filament/AdminPanelProvider.php`.
+- `/up` health route verified.
+- Laravel tests: **2 passed / 2 assertions** at bootstrap.
+- Composer locked-dependency security audit: no known vulnerability advisories.
+- `.env` and `vendor/` remained ignored and were not committed.
+- Test 26, Test 27 and the launcher were not modified.
+- Generated nested agent instructions were replaced with Armaghan-specific rules so future tools do not auto-install Laravel Boost or ask the user for avoidable local setup.
+- A permanent `Backend CI` workflow now validates every backend change on `main`.
