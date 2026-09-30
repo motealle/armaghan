@@ -1,0 +1,71 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "platform/backend/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "platform/backend/**"
+      - ".github/workflows/backend-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform/backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3 and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+          tools: composer:v2
+          extensions: ctype,curl,dom,fileinfo,filter,hash,mbstring,openssl,pcre,pdo,session,tokenizer,xml,sqlite3,pdo_sqlite
+
+      - name: Install locked dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare isolated test environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+          touch database/database.sqlite
+          php artisan migrate:fresh --force --no-interaction
+
+      - name: Validate dependency definition
+        run: composer validate --strict
+
+      - name: Verify framework and admin majors
+        run: |
+          php artisan --version | grep -E 'Laravel Framework 13\.'
+          composer show filament/filament --no-ansi | grep -E '^versions[[:space:]]*:.*5\.'
+          test -f app/Providers/Filament/AdminPanelProvider.php
+          php artisan route:list --path=up --no-ansi | grep -E 'GET|HEAD'
+
+      - name: Run backend tests
+        run: php artisan test
+
+      - name: Audit locked PHP dependencies
+        run: composer audit --locked --no-interaction
+
+      - name: Enforce repository secret hygiene
+        run: |
+          git check-ignore -q .env
+          git check-ignore -q vendor
+          test ! -e .env.production
