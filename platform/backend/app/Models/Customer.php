@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'user_id',
+    'name',
+    'email',
     'country_code',
     'country_name',
     'whatsapp',
