@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20260930-ci-freeze-repair",
   "scope": "Repair Test 26 freeze protections and CI targeting; add permanent technical-term explanation rule; prepare Backend MVP hosting preflight",
   "base_ref": "main@62c70910b0071f50337d05b10e9ecfb7da240317",
   "acquired_at": "2026-09-30T03:12:00Z",
-  "expires_at": "2026-09-30T04:42:00Z",
-  "released_at": null,
-  "note": "Test 26 must remain untouched; future UI work begins in Test 27+."
+  "expires_at": null,
+  "released_at": "2026-09-30T03:49:30Z",
+  "note": "Released after CI/freeze repair completed. Final main head de0f9072a4ef66ada445a9c791d5ed3926fc79e6. GitHub Actions Run #245 PASS; no UI deployment occurred. Test 26 remains frozen; next UI lane is Test 27."
 }
