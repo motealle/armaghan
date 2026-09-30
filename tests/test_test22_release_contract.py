@@ -16,7 +16,7 @@ assert "22" in immutable
 assert "./22/index.html" in launcher and "./21/index.html" in launcher
 assert launcher.index("./22/index.html") < launcher.index("./21/index.html")
 assert "Test 22" in backlog and "FTP Deploy Run #74" in backlog
-assert "Test 22" in release and "No remote files were deleted" in release
+assert "Test 22" in release and "no remote file deletion" in release.lower()
 assert "test_test22_release_contract.py" in workflow
 assert "Protect immutable test snapshots" in workflow
 
