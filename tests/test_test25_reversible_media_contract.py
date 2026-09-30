@@ -62,7 +62,7 @@ assert "productPlaceholder(set.id, code, 'landscape')" in spec
 
 # Admin can reversibly choose the media orientation.
 assert "placeholderOrientation" in design
-assert any(int(n) >= 25 for n in re.findall(r"armaghan:test(\\d{2}):placeholder-orientation", design))
+assert any(int(n) >= 25 for n in re.findall(r"armaghan:test(\d{2}):placeholder-orientation", design))
 for value in ["portrait","landscape","auto"]:
     assert f'value="{value}"' in admin
 assert "placeholderOrientationHelp" in admin
@@ -103,7 +103,7 @@ assert 'html[data-locale="en"] .home-trust-card' in css
 # Test 25 state isolation with catalog migration from Test 24.
 
 def namespace_at_least(text: str, minimum: int) -> bool:
-    return any(int(n) >= minimum for n in re.findall(r"armaghan:test(\\d{2})", text))
+    return any(int(n) >= minimum for n in re.findall(r"armaghan:test(\d{2})", text))
 
 for key_file in [
     FRONTEND/"index.html",
@@ -119,7 +119,7 @@ for key_file in [
     assert "armaghan:test24" not in text
 
 catalog=(SRC/"stores/catalog.ts").read_text(encoding="utf-8")
-current_match=re.search(r"const KEY='armaghan:test(\\d{2}):products-v1'",catalog)
+current_match=re.search(r"const KEY='armaghan:test(\d{2}):products-v1'",catalog)
 assert current_match and int(current_match.group(1)) >= 25
 assert "'armaghan:test24:products-v1'" in catalog
 
