@@ -109,7 +109,7 @@ This is configuration-driven theming, not a Feature Flag. A Feature Flag switche
 
 ### P0 — must ship
 1. Hosting/PHP preflight.
-2. Laravel 13 + SQLite + migrations/models/seed.
+2. Laravel 13 + SQLite for local/dev/test + MySQL/MariaDB for production + migrations/models/seed.
 3. Filament admin login.
 4. Product CRUD + image upload.
 5. Customer CRUD + notes/status.
@@ -125,7 +125,6 @@ This is configuration-driven theming, not a Feature Flag. A Feature Flag switche
 - Full order/timeline workflow.
 - Advanced wishlist lead analytics.
 - Queued image conversion pipeline.
-- MySQL production cutover.
 - Complex role/permission matrix.
 - Automated WhatsApp Business API.
 
@@ -133,7 +132,7 @@ This is configuration-driven theming, not a Feature Flag. A Feature Flag switche
 
 | Challenge | Risk | MVP mitigation |
 |---|---|---|
-| Shared hosting requirements | Laravel 13 needs PHP 8.3+ and safe public document root | Preflight before installation; fail closed if host cannot safely serve Laravel |
+| Shared hosting requirements | Laravel 13 needs PHP 8.3+ and safe public document root | Verified: PHP 8.3.33, required extensions, HTTPS and private sibling layout pass; build dependencies in CI |
 | Current data is browser-local | Admin edits currently affect only one browser | Database becomes source of truth; one controlled seed/import path |
 | Media uploads | Permissions, oversized files, stale paths | Laravel filesystem + validated upload limits; no DB BLOBs |
 | Passwordless login | Token leakage/reuse | Hash tokens, expire/revoke, HTTPS, audit, secure session |
@@ -143,7 +142,7 @@ This is configuration-driven theming, not a Feature Flag. A Feature Flag switche
 
 ## Safe implementation batches
 
-1. Backend bootstrap: host preflight, Laravel 13, SQLite, health test.
+1. Backend bootstrap: host preflight, Laravel 13, SQLite local/dev/test, MySQL/MariaDB production configuration, health test.
 2. Data model: migrations/models/seed from approved SQL draft.
 3. Admin core: Filament + admin user + Product/Customer resources.
 4. Media + public reads: product images and catalog/settings endpoints.
@@ -154,3 +153,18 @@ This is configuration-driven theming, not a Feature Flag. A Feature Flag switche
 9. Delivery hardening: backup, logs, recovery test, end-to-end QA and deployment.
 
 Each implementation run should remain bounded, reversible and committed separately.
+
+## Verified hosting preflight — 2026-09-30
+
+- PHP 8.3.33 / LiteSpeed: PASS.
+- All Laravel 13 required PHP extensions: PASS.
+- HTTPS execution: PASS.
+- `public_html` document root and private sibling read/write: PASS.
+- PDO MySQL: PASS.
+- SQLite3 extension: present, but PDO SQLite: **absent**.
+- Therefore production SQLite is rejected for this host; SQLite remains local/dev/test only.
+- Production database is promoted to P0 MySQL/MariaDB. Laravel 13 supports MySQL 5.7+ and MariaDB 10.3+; actual server version and credentials must be provisioned before the first production migration.
+- Web-PHP shell functions `proc_open`, `exec`, and `shell_exec` are disabled. Composer/vendor builds must happen in CI.
+- PHP `symlink()` is available.
+- Limits: upload 256M, POST 256M, memory 512M, execution 300s.
+- Temporary probe cleanup: PASS.
