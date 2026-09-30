@@ -40,6 +40,22 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] Record result: host is Laravel-capable; original production-SQLite plan FAILS because PDO SQLite is absent. Production DB switched to MySQL/MariaDB.
 - [ ] Provision/verify production MySQL/MariaDB database, server version and credentials before first production migration.
 
+## P0 — Laravel 13 / Filament 5 bootstrap
+
+- [x] Generate Laravel through Composer on an isolated bootstrap branch rather than hand-writing framework files.
+- [x] Install Laravel Framework **13.34.0** under `platform/backend`.
+- [x] Install Filament **5.9.0** Panel Builder and generate `AdminPanelProvider`.
+- [x] Preserve SQLite as local/dev/test default and add a production MySQL/MariaDB environment template with no credentials.
+- [x] Verify Laravel `/up` health route.
+- [x] Run bootstrap Laravel tests: 2 passed / 2 assertions.
+- [x] Run locked Composer security audit: no known vulnerability advisories.
+- [x] Add permanent Backend CI for Composer validation, migrations, tests, version checks, audit and secret hygiene.
+- [x] Replace generated nested agent instructions with Armaghan project rules; do not auto-install Laravel Boost.
+- [x] Confirm no Test 26/Test 27/launcher mutation during bootstrap.
+- [ ] Build the Armaghan domain migrations/models from the approved schema draft.
+- [ ] Add production-safe Filament admin access/provisioning without hard-coded credentials.
+
+
 
 ### Test 26 Run 8 — footer scope + mobile language + terminology rule
 
@@ -618,8 +634,8 @@ Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 - [ ] End-to-end delivery QA: admin product/customer changes visible publicly, favorites link opens correctly, WhatsApp handoff works, login link works, color settings render safely.
 
 ## P1 — Backend productionization
-- [ ] Laravel 13 backend: SQLite local/dev/test + MySQL/MariaDB production.
-- [ ] Filament 5 admin.
+- [x] Laravel 13 backend scaffold installed: SQLite local/dev/test + MySQL/MariaDB production contract.
+- [x] Filament 5 Panel Builder installed; domain Resources and production admin provisioning remain P0.
 - [ ] Persist production data to MySQL/MariaDB; keep SQLite for local/dev/test fixtures.
 - [ ] Laravel Socialite Google OAuth with real client credentials.
 - [ ] Signed/hashed magic links with expiry, scope, revoke and audit.
