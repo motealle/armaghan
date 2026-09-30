@@ -97,7 +97,7 @@ class DomainFoundationTest extends TestCase
         $this->assertSame('1', $product->subcategory->category->code);
         $this->assertSame('material', $product->specValues->first()->definition->key);
         $this->assertSame('11001', $share->products->first()->code);
-        $this->assertTrue($magic->enabled);
+        $this->assertTrue($magic->fresh()->enabled);
         $this->assertNotNull($magic->expires_at);
     }
 }
