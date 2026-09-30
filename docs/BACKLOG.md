@@ -8,6 +8,28 @@ Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
 Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.
 
 
+## P0 — Frozen Test 26 / CI release-lane repair
+
+Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
+
+- [x] Add Test 26 to the immutable-test registry.
+- [x] Convert the historical Test 22 contract from current-source assumptions to historical release invariants.
+- [x] Convert the Test 26 source contract into a frozen-handoff contract that no longer blocks Test 27+ source evolution.
+- [x] Remove active CI build/deploy paths that can regenerate `/t/26` from main.
+- [x] Set Test 27 as the next explicit CI UI release lane while keeping the launcher unchanged until a real Test 27 UI change is approved.
+- [x] Make local Vite builds write to `.build/frontend` unless an unfrozen numbered target is explicitly supplied.
+- [x] Exclude Vite-config-only maintenance from automatic numbered-test deployment; explicit workflow dispatch remains available.
+- [x] Propagate terminology rules 75–77 into root `AGENTS.md`.
+- [ ] Confirm the repair commit's GitHub Actions run is green before starting Backend MVP mutations.
+
+## P0 — Backend hosting preflight
+
+- [ ] Verify PHP >= 8.3 and Laravel-required PHP extensions.
+- [ ] Verify a safe web document root can point to Laravel `public/` without exposing the application root.
+- [ ] Verify writable `storage` and `bootstrap/cache`, HTTPS, SQLite/PDO support, and a practical Composer/deployment path.
+- [ ] Record PASS/FAIL and hosting-specific blockers before installing Laravel.
+
+
 ### Test 26 Run 8 — footer scope + mobile language + terminology rule
 
 - [x] Rollback checkpoint: `rollback/test26-pre-footer-language-terminology` → `a00666040922d248d3e3e5d68490d26b797ef339`.
