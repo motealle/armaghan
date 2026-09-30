@@ -54,3 +54,16 @@ Status: implementation batch for persistent catalog/customer/share foundations a
 - Domain state values use PHP backed enums and application validation so SQLite and MySQL/MariaDB behave consistently.
 - Token-bearing public links store hashes only.
 - Deleting a User nulls optional Customer.user_id; dependent share/spec/link records follow explicit foreign-key actions.
+
+
+## Validation result
+
+- Pull Request #1 was used as an isolated validation surface before main.
+- First CI attempt correctly caught a test that inspected a database default before refreshing the model; production code/migration did not need a duplicated PHP default.
+- Backend CI Run #3: **PASS**.
+- Tests: **4 passed / 23 assertions**.
+- Admin access test: PASS.
+- Core schema/relationships test: PASS.
+- Locked Composer security audit: no known vulnerability advisories.
+- Secret-hygiene checks: PASS.
+- No production database migration and no numbered UI mutation occurred.
