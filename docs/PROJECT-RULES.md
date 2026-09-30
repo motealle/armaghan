@@ -103,9 +103,9 @@
 
 ## Backend MVP phase
 78. Test 26 is frozen at snapshot branch `snapshot/test26-final`. Backend productionization may read/reuse its source patterns but must not mutate or redeploy `/t/26`.
-79. The active delivery phase is Backend MVP: Laravel 13 + SQLite development + Filament 5 admin, while keeping the approved Vue customer experience as the presentation baseline.
+79. The active delivery phase is Backend MVP: Laravel 13 + SQLite for local/dev/test + MySQL/MariaDB for production + Filament 5 admin, while keeping the approved Vue customer experience as the presentation baseline.
 80. Minimum production scope is: persistent product CRUD, customer CRUD, product media, public catalog reads, anonymous favorites-share links, one-tap customer magic-link login, WhatsApp handoff, site/theme settings, backup and deployment health.
-81. Google OAuth, full order/timeline workflow, advanced analytics, MySQL cutover, queues and nonessential integrations are post-MVP unless they become required for delivery.
+81. Google OAuth, full order/timeline workflow, advanced analytics, queues and nonessential integrations are post-MVP unless they become required for delivery. Production MySQL/MariaDB is now P0 because the verified host lacks PDO SQLite.
 82. Brand colors are semantic design tokens, not arbitrary per-element CSS. Admin may assign the approved palette colors to major semantic roles (for example header, primary action, secondary action, highlight, active state and soft surface) with contrast validation and preview.
 83. Token-role reassignment is configuration-driven theming, not a Feature Flag. Feature Flags switch capabilities/behaviors on or off; theme configuration maps values to presentation roles.
 
@@ -114,3 +114,9 @@
 85. Local Vite builds must default to the non-numbered `.build/frontend` preview directory. A numbered UI output requires explicit `ARMAGHAN_UI_TARGET`; main must reject any numbered target <=26.
 86. GitHub Actions uses `ACTIVE_UI_TEST=27` as the next release lane until Test 27 is explicitly delivered. Advancing the lane requires freezing the delivered test, adding it to `docs/IMMUTABLE-TESTS.txt`, and updating release contracts in the same atomic change.
 87. Backend MVP work and UI evolution are parallel lanes: urgent customer UI requests may proceed in the next unfrozen numbered test without waiting for backend completion, provided the shared lock, regression contracts and deployment scope rules are respected.
+
+
+## Verified production-host constraints
+88. Hosting preflight on 2026-09-30 verified PHP 8.3.33, all Laravel 13 required PHP extensions, HTTPS, a safe readable/writable private sibling outside `public_html`, and PDO MySQL. The host does not expose PDO SQLite; therefore SQLite is development/test only and production uses MySQL/MariaDB.
+89. Host web-PHP disables `proc_open`, `exec` and `shell_exec`. Do not make production deployment depend on server-side Composer or shell execution; build dependencies in CI and upload a prepared release.
+90. Host PHP has `open_basedir` enabled but the verified private sibling layout is accessible. Keep application/private files outside `public_html` and expose only the Laravel public surface.
