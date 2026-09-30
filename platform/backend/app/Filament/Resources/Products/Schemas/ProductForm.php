@@ -15,22 +15,39 @@ class ProductForm
         return $schema
             ->components([
                 Select::make('subcategory_id')
-                    ->relationship('subcategory', 'id')
+                    ->label('زیر‌دسته')
+                    ->relationship('subcategory', 'name_fa')
+                    ->searchable()
+                    ->preload()
                     ->required(),
                 TextInput::make('code')
-                    ->required(),
+                    ->label('کد محصول')
+                    ->required()
+                    ->maxLength(64)
+                    ->unique(ignoreRecord: true),
                 TextInput::make('name_fa')
-                    ->required(),
-                TextInput::make('name_ar'),
-                TextInput::make('name_en'),
-                TextInput::make('name_ku'),
+                    ->label('نام فارسی')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('name_ar')
+                    ->label('نام عربی')
+                    ->maxLength(255),
+                TextInput::make('name_en')
+                    ->label('نام انگلیسی')
+                    ->maxLength(255),
+                TextInput::make('name_ku')
+                    ->label('نام کردی')
+                    ->maxLength(255),
                 Select::make('availability')
+                    ->label('وضعیت موجودی')
                     ->options(ProductAvailability::class)
-                    ->default('available')
+                    ->default(ProductAvailability::Available->value)
                     ->required(),
                 Toggle::make('active')
-                    ->required(),
+                    ->label('فعال')
+                    ->default(true),
                 TextInput::make('sort_order')
+                    ->label('ترتیب نمایش')
                     ->required()
                     ->numeric()
                     ->default(0),
