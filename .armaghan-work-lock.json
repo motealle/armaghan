@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20260930-hosting-preflight",
-  "scope": "Run real shared-hosting preflight for Laravel 13 Backend MVP without touching Test 26/27 UI",
-  "base_ref": "main@de0f9072a4ef66ada445a9c791d5ed3926fc79e6",
-  "acquired_at": "2026-09-30T06:32:00Z",
-  "expires_at": null,
-  "released_at": "2026-09-30T06:39:00Z",
-  "note": "Released after real hosting preflight. Hosting Preflight Run #1 executed and cleaned up temporary probe files. PHP 8.3.33/required extensions/HTTPS/private sibling layout PASS; PDO SQLite absent, PDO MySQL present. Production DB promoted to MySQL/MariaDB; SQLite remains local/dev/test. Final main head 6745939e17ddc3374d2b5d3d71164d4c712294ff; FTP Deploy Run #247 PASS with no UI deploy."
+  "run_id": "chat-20260930-laravel-bootstrap",
+  "scope": "Bootstrap Laravel 13 + Filament 5 safely on a temporary branch; local/dev SQLite, production MySQL/MariaDB; no UI deployment",
+  "base_ref": "main@6745939e17ddc3374d2b5d3d71164d4c712294ff",
+  "acquired_at": "2026-09-30T06:42:00Z",
+  "expires_at": "2026-09-30T08:12:00Z",
+  "released_at": null,
+  "note": "No Test 26/27 mutation or deployment. Bootstrap must be generated/tested in CI before main is updated."
 }
