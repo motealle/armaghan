@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20260930-domain-foundation",
-  "scope": "Implement Laravel domain migrations/models and production-safe Filament admin access foundation; no production DB migration, no UI snapshot mutation",
-  "base_ref": "main@3c1dc8a9628ea4fa6993572a26dbd29ac2444cb1",
-  "acquired_at": "2026-09-30T07:08:00Z",
-  "expires_at": null,
-  "released_at": "2026-09-30T07:18:00Z",
-  "note": "Released after domain foundation merged to main at a3f04d0140130b49b05f7da8dbf4d0038ae98e9a. Backend CI #6 PASS; FTP Deploy #249 PASS with deploy-root/deploy-t skipped. No production DB migration and no UI snapshot changes."
+  "run_id": "chat-20260930-admin-core",
+  "scope": "Implement Filament CRUD Resources for core catalog/customers plus secret-driven first-admin provisioning; no production deploy, no UI snapshot mutation",
+  "base_ref": "main@a3f04d0140130b49b05f7da8dbf4d0038ae98e9a",
+  "acquired_at": "2026-09-30T07:19:00Z",
+  "expires_at": "2026-09-30T08:49:00Z",
+  "released_at": null,
+  "note": "Admin credentials must never be committed. Provisioning must consume runtime environment values and be safe to rerun."
 }
