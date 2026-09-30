@@ -26,14 +26,14 @@ assert launcher.index("./21/index.html") < launcher.index("./20/index.html")
 assert "defaultPlaceholderSet: PlaceholderSetId = 'paper-cut'" in registry
 for set_id in ["paper-cut","flat-geometric","dimensional"]:
     assert set_id in registry
-assert any(int(n) >= 21 for n in re.findall(r"armaghan:test(\\d{2}):placeholder-set", design))
+assert any(int(n) >= 21 for n in re.findall(r"armaghan:test(\d{2}):placeholder-set", design))
 assert "productPlaceholder" in media and "fallbackImage" in media
 assert 'role="radiogroup"' in admin and 'type="radio"' in admin
 assert "fallbackSrc" in smart and "useFallback" in smart
 assert "Test 21" in backlog and "رتبه" in audit
 
 def has_test_namespace(text: str, minimum: int) -> bool:
-    return any(int(n) >= minimum for n in re.findall(r"test(\\d{2})", text))
+    return any(int(n) >= minimum for n in re.findall(r"test(\d{2})", text))
 
 for key_file in [
     ROOT/"platform/frontend/index.html",
