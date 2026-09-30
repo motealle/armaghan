@@ -20,6 +20,12 @@ class SubcategoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $modelLabel = 'زیر‌دسته';
+
+    protected static ?string $pluralModelLabel = 'زیر‌دسته‌ها';
+
+    protected static ?string $navigationLabel = 'زیر‌دسته‌ها';
+
     protected static ?string $recordTitleAttribute = 'name_fa';
 
     public static function form(Schema $schema): Schema
