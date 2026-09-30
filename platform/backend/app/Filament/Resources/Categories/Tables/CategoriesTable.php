@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class CategoriesTable
@@ -16,32 +17,35 @@ class CategoriesTable
         return $table
             ->columns([
                 TextColumn::make('code')
-                    ->searchable(),
+                    ->label('کد')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('name_fa')
-                    ->searchable(),
-                TextColumn::make('name_ar')
-                    ->searchable(),
+                    ->label('نام')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('name_en')
-                    ->searchable(),
-                TextColumn::make('name_ku')
-                    ->searchable(),
+                    ->label('نام انگلیسی')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')
+                    ->label('فعال')
                     ->boolean(),
                 TextColumn::make('sort_order')
+                    ->label('ترتیب')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('آخرین تغییر')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('active')
+                    ->label('فعال بودن'),
             ])
+            ->defaultSort('sort_order')
             ->recordActions([
                 EditAction::make(),
             ])
