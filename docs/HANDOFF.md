@@ -366,3 +366,16 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Backend MVP and UI changes can proceed in parallel; customer UI corrections go to Test 27+.
 - Communication terminology rules 75–77 apply across chat replies, reports, handoffs, automation summaries and review notes.
 - Repair validation: GitHub Actions **FTP Deploy Run #244 PASS**; QA and FTP smoke passed, while both deploy jobs were skipped. Test 26 stayed untouched and no Test 27 release was published.
+
+
+## 23. Hosting preflight result
+
+- Hosting Preflight Run #1 executed a short-lived PHP probe and removed every temporary file/directory successfully.
+- PHP 8.3.33 on LiteSpeed: PASS; all Laravel 13 required PHP extensions: PASS; HTTPS: PASS.
+- FTP account root is the parent of `public_html`; PHP can read/write a verified private sibling outside the public web root even with `open_basedir` enabled.
+- PDO drivers expose `mysql` but not `sqlite`. Native SQLite3 is loaded, but Laravel production SQLite is not viable without PDO SQLite.
+- Architecture decision: SQLite remains local/dev/test; MySQL/MariaDB becomes the P0 production database.
+- Production DB server version/credentials still need provisioning/verification before the first production migration.
+- Web PHP disables `proc_open`, `exec`, and `shell_exec`; deployment must build Composer dependencies in CI rather than on the host.
+- PHP `symlink()` is available. Limits are 256M upload, 256M POST, 512M memory, 300s execution.
+- The preflight touched no numbered UI snapshot; Test 26 remains frozen and Test 27 remains unpublished.
