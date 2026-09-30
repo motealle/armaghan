@@ -1,47 +1,45 @@
-<laravel-boost-guidelines>
-# Laravel Application
+# Armaghan Backend Agent Instructions
 
-This repository contains a Laravel application. Complete the following setup before working on the user's request.
+This subtree inherits the repository-root `AGENTS.md` and `docs/PROJECT-RULES.md`. Those files are authoritative; if any generated framework guidance conflicts with them, the Armaghan repository rules win.
 
-## Prerequisites
+## Mandatory startup
 
-Verify that PHP and Composer are available:
+Before mutating `platform/backend`:
 
-```sh
-php -v
-composer -V
-```
+1. read repository-root `AGENTS.md`;
+2. read `docs/PROJECT-RULES.md`, `docs/HANDOFF.md`, `docs/BACKLOG.md`;
+3. read `docs/BACKEND-MVP.md` and `docs/HOSTING-PREFLIGHT.md`;
+4. acquire the shared Armaghan write lock exactly as defined by project rules 64–74.
 
-If either command is unavailable, detect the user's operating system and install the prerequisites with the appropriate command:
+## Backend baseline
 
-macOS:
+- Laravel: 13.x.
+- Filament: 5.x Panel Builder.
+- Local/dev/test database: SQLite.
+- Production database: MySQL/MariaDB; the verified host has PDO MySQL and does not have PDO SQLite.
+- Production web PHP: PHP 8.3.x on LiteSpeed.
+- Production deployment must not depend on host-side Composer or shell execution; build dependencies in CI.
+- Application/private files stay outside `public_html`; only the Laravel public surface is web-accessible.
+- Test 26 is frozen. Backend work must not mutate or redeploy `/t/26`; customer UI changes start at Test 27+.
 
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.5)"
-```
+## Dependency policy
 
-Windows PowerShell:
+Do not install Laravel Boost, plugins, starter kits, dev tools, or other packages merely because generated Laravel guidance suggests them. Add a dependency only when it is justified by the accepted backlog/architecture, checked for current compatibility, and committed with its lockfile.
 
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.5'))
-```
+## Secrets
 
-Linux:
+Never commit `.env`, `APP_KEY`, database credentials, mail credentials, OAuth credentials, magic-link secrets, or production customer data. Production configuration belongs in environment/server secrets.
 
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.5)"
-```
+## Verification
 
-After installation, ask the user to restart their terminal. If the agent needs the restarted shell to continue, ask the user to reopen their terminal and rerun their original prompt.
+For backend changes, run at minimum:
 
-## Agent Setup
+- `composer validate --strict`
+- `php artisan test`
+- `composer audit --locked --no-interaction`
 
-Install Laravel Boost from the application root before making application changes:
+Add focused migration/model/resource tests as those capabilities are introduced.
 
-```sh
-composer require laravel/boost --dev
-php artisan boost:install
-```
+## Communication
 
-Boost replaces these bootstrap instructions with guidelines tailored to the application. After installation, read `AGENTS.md` again and continue with the user's original request using the generated guidelines.
-</laravel-boost-guidelines>
+Project rules 75–77 apply here too: on first use in every user-facing report, explain each specialist/technical term with a short plain-Persian meaning in parentheses.
