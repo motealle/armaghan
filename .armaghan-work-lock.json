@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20260930-laravel-bootstrap",
   "scope": "Bootstrap Laravel 13 + Filament 5 safely on a temporary branch; local/dev SQLite, production MySQL/MariaDB; no UI deployment",
   "base_ref": "main@6745939e17ddc3374d2b5d3d71164d4c712294ff",
   "acquired_at": "2026-09-30T06:42:00Z",
-  "expires_at": "2026-09-30T08:12:00Z",
-  "released_at": null,
-  "note": "No Test 26/27 mutation or deployment. Bootstrap must be generated/tested in CI before main is updated."
+  "expires_at": null,
+  "released_at": "2026-09-30T07:07:00Z",
+  "note": "Released after Laravel 13.34.0 + Filament 5.9.0 bootstrap merged to main at 3c1dc8a9628ea4fa6993572a26dbd29ac2444cb1. Backend CI Run #1 PASS; FTP Deploy #248 PASS with deploy-root/deploy-t skipped. No UI snapshot changed."
 }
