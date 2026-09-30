@@ -115,7 +115,7 @@ assert 'data-backend-endpoint="/auth/google/redirect"' in login
 # Test 24 storage isolation and catalog migration.
 
 def namespace_at_least(text: str, minimum: int) -> bool:
-    return any(int(n) >= minimum for n in re.findall(r"armaghan:test(\\d{2})", text))
+    return any(int(n) >= minimum for n in re.findall(r"armaghan:test(\d{2})", text))
 
 for key_file in [
     FRONTEND/"index.html",
@@ -131,7 +131,7 @@ for key_file in [
     assert "armaghan:test23" not in text
 
 catalog_store=(SRC/"stores/catalog.ts").read_text(encoding="utf-8")
-current_match=re.search(r"const KEY='armaghan:test(\\d{2}):products-v1'",catalog_store)
+current_match=re.search(r"const KEY='armaghan:test(\d{2}):products-v1'",catalog_store)
 assert current_match and int(current_match.group(1)) >= 24
 assert "'armaghan:test23:products-v1'" in catalog_store
 
