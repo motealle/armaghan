@@ -69,3 +69,11 @@ Selected: option 1.
 ## E. Historical contract sweep after first CI feedback
 
 The first repaired CI run exposed the same anti-pattern in Test 20, 21, 23, 24 and 25 contracts: historical tests enumerated the current build destination and browser-state namespace up to Test 26. These assertions were replaced with release-invariant checks and minimum-version namespace matching, so future Test 27+ source evolution does not require editing every historical contract.
+
+## Validation result
+
+- Final repair head: `8065ed94aee9f603217e4131ca0460b55aac414d`.
+- GitHub Actions FTP Deploy Run #244: PASS.
+- All QA contracts passed.
+- FTP smoke check passed.
+- `deploy-t` and `deploy-root` were skipped, so no numbered UI release was changed by this repair.
