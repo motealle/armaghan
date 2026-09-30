@@ -44,7 +44,7 @@
 35. Type-check + unit tests + production build are deployment gates.
 
 ## Database/backend
-36. Development defaults to SQLite with no MySQL credentials.
+36. Local/development/test defaults to SQLite with no MySQL credentials. Production uses MySQL/MariaDB because the verified host lacks PDO SQLite and exposes PDO MySQL.
 37. Production target is Laravel 13.
 38. Admin target is Filament 5.
 39. Google OAuth uses Laravel Socialite.
@@ -120,3 +120,11 @@
 88. Hosting preflight on 2026-09-30 verified PHP 8.3.33, all Laravel 13 required PHP extensions, HTTPS, a safe readable/writable private sibling outside `public_html`, and PDO MySQL. The host does not expose PDO SQLite; therefore SQLite is development/test only and production uses MySQL/MariaDB.
 89. Host web-PHP disables `proc_open`, `exec` and `shell_exec`. Do not make production deployment depend on server-side Composer or shell execution; build dependencies in CI and upload a prepared release.
 90. Host PHP has `open_basedir` enabled but the verified private sibling layout is accessible. Keep application/private files outside `public_html` and expose only the Laravel public surface.
+
+
+## Backend implementation baseline
+91. Canonical backend application root is `platform/backend`. Bootstrap resolved Laravel Framework 13.34.0 and Filament 5.9.0; `composer.lock` is the reproducible dependency source of truth and must be committed with dependency changes.
+92. Backend changes on `main` must pass `.github/workflows/backend-ci.yml`: Composer validation/install from lock, isolated SQLite migration, framework/admin major checks, tests, locked dependency audit and secret-hygiene checks.
+93. Generated Laravel agent/bootstrap files do not override Armaghan rules. Do not auto-install Laravel Boost, starter kits or other packages unless the project backlog/architecture explicitly selects them.
+94. Never commit backend `.env`, `APP_KEY`, database credentials, production customer data or `vendor/`. Production credentials remain environment/server secrets.
+95. A Filament package being installed does not mean production admin access is complete. Before production exposure, the User model must enforce an explicit panel-access policy and administrator provisioning must use environment/runtime secrets rather than hard-coded repository credentials.
