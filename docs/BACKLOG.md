@@ -21,7 +21,16 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] Make local Vite builds write to `.build/frontend` unless an unfrozen numbered target is explicitly supplied.
 - [x] Exclude Vite-config-only maintenance from automatic numbered-test deployment; explicit workflow dispatch remains available.
 - [x] Propagate terminology rules 75–77 into root `AGENTS.md`.
-- [ ] Confirm the repair commit's GitHub Actions run is green before starting Backend MVP mutations.
+- [x] Confirm the repair commit's GitHub Actions run is green before starting Backend MVP mutations.
+
+### CI/freeze repair delivery record
+
+- [x] Final repair head: `8065ed94aee9f603217e4131ca0460b55aac414d`.
+- [x] GitHub Actions **FTP Deploy Run #244: SUCCESS**.
+- [x] All QA contracts passed, including future-proofed Test 20–25 historical contracts and the frozen Test 26 handoff contract.
+- [x] FTP smoke test passed.
+- [x] `deploy-t` and `deploy-root` were both skipped; Test 26 remained untouched and Test 27 was not published.
+- [x] Runs #241–#243 exposed brittle historical assertions during the repair; all failed before deployment and were used only as feedback to harden the contracts.
 
 ## P0 — Backend hosting preflight
 
