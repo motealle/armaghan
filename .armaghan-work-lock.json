@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20260930-ci-freeze-repair",
-  "scope": "Repair Test 26 freeze protections and CI targeting; add permanent technical-term explanation rule; prepare Backend MVP hosting preflight",
-  "base_ref": "main@62c70910b0071f50337d05b10e9ecfb7da240317",
-  "acquired_at": "2026-09-30T03:12:00Z",
-  "expires_at": null,
-  "released_at": "2026-09-30T03:49:30Z",
-  "note": "Released after CI/freeze repair completed. Final main head de0f9072a4ef66ada445a9c791d5ed3926fc79e6. GitHub Actions Run #245 PASS; no UI deployment occurred. Test 26 remains frozen; next UI lane is Test 27."
+  "run_id": "chat-20260930-hosting-preflight",
+  "scope": "Run real shared-hosting preflight for Laravel 13 Backend MVP without touching Test 26/27 UI",
+  "base_ref": "main@de0f9072a4ef66ada445a9c791d5ed3926fc79e6",
+  "acquired_at": "2026-09-30T06:32:00Z",
+  "expires_at": "2026-09-30T08:02:00Z",
+  "released_at": null,
+  "note": "Temporary hosting probe may be used; it must emit no secrets and must clean up all probe files. No numbered UI deployment is authorized."
 }
