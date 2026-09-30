@@ -354,3 +354,14 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Current Favorites sharing is a versioned product-code URL implemented entirely in the frontend.
 - Current color system already has five-color palettes and semantic CSS variables, but the mapping is fixed in `stores/design.ts`; Backend MVP should persist a safe semantic role mapping instead of exposing arbitrary CSS.
 - Canonical backend plan: `docs/BACKEND-MVP.md`.
+
+## 22. Frozen Test 26 / open Test 27+ CI handoff
+
+- Test 26 is registered as immutable in `docs/IMMUTABLE-TESTS.txt`.
+- Main must never build or deploy `/t/26`; the next CI UI release lane is Test 27.
+- Vite local builds default to `.build/frontend`; numbered output requires an explicit unfrozen `ARMAGHAN_UI_TARGET`.
+- Vite-config-only maintenance does not auto-publish a numbered UI test.
+- Test 22 and Test 26 CI contracts are historical/frozen release contracts rather than assertions about the current evolving frontend source.
+- The mutable launcher remains on Test 26 until an actual Test 27 customer-facing change is intentionally added.
+- Backend MVP and UI changes can proceed in parallel; customer UI corrections go to Test 27+.
+- Communication terminology rules 75–77 apply across chat replies, reports, handoffs, automation summaries and review notes.
