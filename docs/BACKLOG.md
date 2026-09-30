@@ -14,6 +14,7 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 
 - [x] Add Test 26 to the immutable-test registry.
 - [x] Convert the historical Test 22 contract from current-source assumptions to historical release invariants.
+- [x] Future-proof historical Test 20/21/23/24/25 contracts so they no longer enumerate the current build target or stop at Test 26 namespaces.
 - [x] Convert the Test 26 source contract into a frozen-handoff contract that no longer blocks Test 27+ source evolution.
 - [x] Remove active CI build/deploy paths that can regenerate `/t/26` from main.
 - [x] Set Test 27 as the next explicit CI UI release lane while keeping the launcher unchanged until a real Test 27 UI change is approved.
