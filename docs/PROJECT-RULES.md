@@ -96,7 +96,7 @@
 
 
 ## Communication terminology rule
-75. In every user-facing Armaghan report or explanation, the first use of each specialist/technical term must be followed immediately by a short plain-Persian explanation in parentheses. Example: `Feature Flag (کلید تنظیمی برای روشن/خاموش‌کردن یک رفتار بدون حذف کد)`.
+75. In every user-facing Armaghan surface—including chat replies, reports, explanations, handoffs, automation summaries and review notes—the first use of each specialist/technical term must be followed immediately by a short plain-Persian explanation in parentheses. Example: `Feature Flag (کلید تنظیمی برای روشن/خاموش‌کردن یک رفتار بدون حذف کد)`.
 76. Acronyms and implementation jargon follow the same rule on first use in a response. Prefer the shortest explanation that teaches the term without interrupting the answer. Ordinary product labels and already-explained terms in the same response do not need repeated definitions.
 77. When contrasting implementation strategies, distinguish `Feature Flag` / configuration-driven behavior from `hard-coded` behavior precisely: hard-coding is a fixed value/decision embedded directly in code; it is a common contrast to configurable behavior, but it is not the only or formal logical opposite of a feature flag.
 
@@ -108,3 +108,9 @@
 81. Google OAuth, full order/timeline workflow, advanced analytics, MySQL cutover, queues and nonessential integrations are post-MVP unless they become required for delivery.
 82. Brand colors are semantic design tokens, not arbitrary per-element CSS. Admin may assign the approved palette colors to major semantic roles (for example header, primary action, secondary action, highlight, active state and soft surface) with contrast validation and preview.
 83. Token-role reassignment is configuration-driven theming, not a Feature Flag. Feature Flags switch capabilities/behaviors on or off; theme configuration maps values to presentation roles.
+
+## Frozen Test 26 / open Test 27+ release lane
+84. Main-branch frontend development remains open for customer UI changes, but frozen Test 26 must never be rebuilt or redeployed from main. Any new customer-facing UI snapshot starts at Test 27 or higher.
+85. Local Vite builds must default to the non-numbered `.build/frontend` preview directory. A numbered UI output requires explicit `ARMAGHAN_UI_TARGET`; main must reject any numbered target <=26.
+86. GitHub Actions uses `ACTIVE_UI_TEST=27` as the next release lane until Test 27 is explicitly delivered. Advancing the lane requires freezing the delivered test, adding it to `docs/IMMUTABLE-TESTS.txt`, and updating release contracts in the same atomic change.
+87. Backend MVP work and UI evolution are parallel lanes: urgent customer UI requests may proceed in the next unfrozen numbered test without waiting for backend completion, provided the shared lock, regression contracts and deployment scope rules are respected.
