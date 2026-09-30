@@ -12,6 +12,8 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->unique()->constrained()->nullOnDelete();
+            $table->string('name');
+            $table->string('email')->nullable()->index();
             $table->char('country_code', 2)->nullable();
             $table->string('country_name')->nullable();
             $table->string('whatsapp', 64)->nullable();
