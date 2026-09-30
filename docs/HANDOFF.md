@@ -365,3 +365,4 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - The mutable launcher remains on Test 26 until an actual Test 27 customer-facing change is intentionally added.
 - Backend MVP and UI changes can proceed in parallel; customer UI corrections go to Test 27+.
 - Communication terminology rules 75–77 apply across chat replies, reports, handoffs, automation summaries and review notes.
+- Repair validation: GitHub Actions **FTP Deploy Run #244 PASS**; QA and FTP smoke passed, while both deploy jobs were skipped. Test 26 stayed untouched and no Test 27 release was published.
