@@ -683,3 +683,41 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 ### Remaining browser acceptance
 - Real browser Test 27 shared-persistence acceptance remains open because the dedicated browser profile does not yet report a saved signed-in session for armaghantrading.com.
 - Do not request or store the administrator password in chat and do not weaken authentication.
+
+
+## 39. Public catalog API + production bootstrap — live
+
+### Public catalog API
+- Main implementation: `f318225e476de4503f75dd5ea0a83c4265936eea`.
+- Public endpoints: `GET /backend/api/catalog/categories` and `GET /backend/api/catalog/products`.
+- Category/Product JSON is shaped through dedicated API Resources rather than exposing raw Eloquent models.
+- Products support bounded search/filter/pagination; relationships are eager-loaded.
+- API metadata includes every Backend-managed code, including inactive rows. Test 27 uses this to distinguish “not migrated yet” from “explicitly inactive in Backend”.
+- Backend CI #35 PASS.
+- Test 27 Hybrid Sync is live from FTP Deploy #295 PASS: Backend data overlays matching local rows; inactive managed rows suppress stale local rows; unmanaged staged rows remain; local media/specs are fallback; API failure does not blank the storefront.
+- Production catalog smoke was added in `cfd94a0fe0b0271f4d9162e7402b9decb22af7d3`; Backend CI #36 and Backend Code Deploy #4 PASS with both catalog endpoints HTTP 200.
+
+### Guarded production bootstrap
+- Canonical MVP fixture: `platform/backend/database/fixtures/catalog-bootstrap.json`.
+- Command: `armaghan:bootstrap-catalog`; dry-run by default, `--apply` required.
+- The command refuses any non-empty Category/Subcategory/Product state and imports only inside one database transaction.
+- Fixture/count contract: 3 categories, 6 subcategories, 18 products.
+- Backend CI #37 PASS; Backend Code Deploy #5 PASS.
+- One-shot production run: **Catalog Bootstrap Production #1 PASS**.
+- Verified sequence: pre-counts 0/0/0 → consistent SQLite backup → import → post-counts 3/6/18 → representative codes verified.
+- Temporary public helper cleanup PASS.
+- Independent live API read confirmed 3 managed categories, 6 managed subcategories and 18 managed products.
+- Independent JavaScript-rendered Test 27 Products page confirmed 18 products render with intended customer presentation.
+- One-shot workflow was removed immediately after success in `0143e666bdfb1536172d7b0477a3d3220f213046`; reusable bootstrap tooling remains fail-closed on the now-nonempty production catalog.
+- Permanent Backend CI now syntax-checks the bootstrap helper.
+
+### Browser acceptance status
+- The saved browser profile was checked read-only and redirected to `/backend/admin/login`; it was not an authenticated Filament session.
+- Browser Style Profile acceptance remains open but non-blocking. Do not weaken authentication or make delivery depend on this saved browser profile.
+
+### Next P0
+1. production product-media ownership/upload;
+2. minimum customer API/session surface;
+3. favorites/share + Magic Link;
+4. off-host SQLite backup/restore drill;
+5. final QA/handoff.
