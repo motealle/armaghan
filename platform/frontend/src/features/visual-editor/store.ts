@@ -155,13 +155,14 @@ export const useVisualStyleStore=defineStore('visual-style',()=>{
   }
 
   watch(enabled,(value)=>{
-    if(typeof sessionStorage!=='undefined')sessionStorage.setItem(EDITOR_KEY,value?'1':'0')
+    if(typeof sessionStorage==='undefined')return
+    try{sessionStorage.setItem(EDITOR_KEY,value?'1':'0')}catch{}
   })
 
   watch(profile,(value)=>{
     if(typeof localStorage==='undefined')return
     const payload:StoredVisualStyleProfile={...value,css:compileCss(value)}
-    localStorage.setItem(PROFILE_KEY,JSON.stringify(payload))
+    try{localStorage.setItem(PROFILE_KEY,JSON.stringify(payload))}catch{}
   },{deep:true})
 
   return{
