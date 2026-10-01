@@ -1,13 +1,13 @@
 # Armaghan — Current Status
 
-Last reconciled: 2026-10-01 18:45 +03:30  
-Canonical main head at reconciliation start: `79ee20ad14414298be2ce6f129e6c48922017200`
+Last reconciled: 2026-10-02
+Canonical main head at reconciliation start: `e39d5bd6e2b972f2b5980abee820dfdac3ebfad8`
 
 This file is the **current operational source of truth** for the next run. Historical decision records remain useful, but when an older document conflicts with this file, use this file plus the latest `docs/HANDOFF.md` and `docs/BACKLOG.md`.
 
 ## Executive status
 
-Core MVP delivery is approximately **75–80% complete**. The remaining work is mostly admin CRUD/public API wiring, customer share/login flows, production backup/release hardening, and final end-to-end acceptance.
+Core MVP delivery is approximately **82–86% complete**. Core admin CRUD and public catalog reads are live; the remaining work is primarily product media ownership/upload, customer API/session flows, favorites/Magic Link persistence, off-host backup/restore hardening, and final end-to-end acceptance.
 
 Current UI lane:
 - Test 26: frozen/immutable.
@@ -22,8 +22,10 @@ Current backend lane:
 - One real active production administrator exists.
 - Filament login page is live.
 - Category/Subcategory/Product/Customer Filament Resources are implemented and live in production. Taxonomy commit `4281034656...` passed Backend CI #31; Product/Customer commit `de450a15...` passed Backend CI #33; Backend Code Deploy #3 passed with all four Resource routes returning HTTP 200.
-- A guarded code-only Backend update lane is operational: it refuses Composer/migration drift, creates a pre-swap SQLite snapshot, stages private/public code, HTTP-smokes the release and rolls code back on failure. Run #1 deliberately rolled back after a public-permission smoke failure; Runs #2 and #3 passed.
-- Final browser-authenticated Test 27 shared-persistence acceptance is still open.
+- A guarded code-only Backend update lane is operational: it refuses Composer/migration drift, creates a pre-swap SQLite snapshot, stages private/public code, HTTP-smokes the release and rolls code back on failure. Run #1 deliberately rolled back after a public-permission smoke failure; Runs #2–#5 passed.
+- Public catalog API is live at `/backend/api/catalog/categories` and `/backend/api/catalog/products`; production catalog is initialized with **3 categories / 6 subcategories / 18 products**.
+- Test 27 performs non-blocking Hybrid Sync: Backend-managed names/status/active state overlay the browser catalog while existing local media/specs remain fallback. The live Products page independently rendered 18 products after bootstrap.
+- Final browser-authenticated Test 27 Style Profile acceptance is still open but is non-blocking. A read-only check of the saved browser profile redirected to `/backend/admin/login`, so delivery does not rely on that session.
 
 ## Production backend — verified complete
 
@@ -50,6 +52,8 @@ Verified:
   - `/backend/up` → 200
   - `/backend/api/style-profile/staging` → 200
   - `/backend/admin/login` → 200
+  - `/backend/api/catalog/categories` → 200
+  - `/backend/api/catalog/products?per_page=1` → 200
 - Public Laravel permissions normalized to LiteSpeed-safe directories `0755` / files `0644`; private data permissions were not widened.
 
 ## First production administrator — verified complete
@@ -166,15 +170,21 @@ Implemented models/foundation:
 Implemented production-facing controllers:
 - Public Style Profile read controller.
 - Admin Style Profile controller.
+- Public Catalog controller + API Resources for Category/Product reads.
+
+Production catalog state:
+- 3 active categories.
+- 6 active subcategories.
+- 18 active products initialized from the canonical MVP fixture.
+- Public catalog filtering/search/pagination and managed-code metadata are live.
 
 Not yet implemented:
-- Public catalog Product/Category API controllers.
 - Customer public/admin API controllers.
 - Full FavoriteShare HTTP flow.
 - Full MagicLink HTTP/session flow.
 - Production media ownership/upload flow.
 
-The frontend still contains prototype/local browser data paths for customer/catalog/admin experiences until these backend resources/APIs are wired.
+Test 27 catalog reads are backend-aware with a local fallback for staged resilience. Product media/specs remain local fallback until the production media subsystem is wired. Customer/account flows still contain prototype/local browser paths until their APIs and Magic Link session flow are implemented.
 
 ## Persistence policy
 
@@ -186,34 +196,28 @@ Current policy:
 - Primary backups remain SQLite-to-SQLite consistent snapshots.
 - At least one rotated off-host backup + restore drill is still required before final production handoff.
 
-## Remaining core delivery — estimated 5 runs
+## Remaining core delivery — estimated 4 delivery runs + opportunistic browser acceptance
 
-This estimate excludes open-ended new customer UI revisions.
+This estimate excludes open-ended new customer UI revisions. Browser-authenticated Style Profile acceptance remains an opportunistic parallel check rather than a blocker because server-side persistence is already production-verified.
 
-1. **Browser-authenticated editor acceptance**
-   - real Filament session + CSRF;
-   - Test 27 server sync/reload/cross-device;
-   - staging Publish/Restore through the real UI;
-   - fix any browser/session integration bug found.
+1. **Product media + customer API wiring**
+   - production product-media ownership/upload;
+   - keep Test 27 media fallback until server media is proven;
+   - customer public/admin reads/writes needed by the MVP.
 
-2. **Catalog/customer media + public API wiring**
-   - public catalog reads;
-   - Vue customer-facing data from backend;
-   - controlled product image/media flow.
-
-3. **Favorites/WhatsApp + customer Magic Link**
+2. **Favorites/WhatsApp + customer Magic Link**
    - persisted favorite share links;
    - expiry/revoke;
    - safe one-tap customer session;
    - audit trail.
 
-4. **Production hardening**
+3. **Production hardening**
    - rotated off-host SQLite backup;
    - restore drill;
    - code-only backend update lane is complete; add a separate migration-aware guarded lane only when a schema/dependency change is actually required;
    - logs/health verification.
 
-5. **Final end-to-end QA + handoff**
+4. **Final end-to-end QA + handoff**
    - mobile/tablet/desktop;
    - RTL/LTR;
    - light/dark;
@@ -226,10 +230,11 @@ This estimate excludes open-ended new customer UI revisions.
 ## Highest-priority open items
 
 P0:
-1. Complete the real browser-authenticated Test 27 Style Profile cycle.
-2. Wire catalog/customer data to backend APIs without modifying frozen Test 26.
+1. Implement production product media ownership/upload and wire server media into Test 27 without modifying frozen Test 26.
+2. Implement the minimum customer API/session surface needed by customer access and later Magic Link.
 3. Configure rotated off-host SQLite backup and perform a restore drill.
-4. Add a migration-aware guarded backend update path only before the first future schema/dependency-changing release; the code-only updater is already production-proven.
+4. Complete browser-authenticated Test 27 Style Profile acceptance opportunistically when a valid real Filament session is available.
+5. Add a migration-aware guarded backend update path only before the first future schema/dependency-changing release; the code-only updater is already production-proven.
 
 P1:
 - Favorites/WhatsApp persisted share flow.
@@ -253,6 +258,12 @@ P2 / optional:
 - Backend Code Deploy #2: PASS for first live taxonomy deployment after automatic rollback of failed Run #1.
 - Backend CI #33: PASS for Product/Customer Resources.
 - Backend Code Deploy #3: PASS; `/backend/up`, admin login, categories, subcategories, products and customers all HTTP 200.
+- Backend CI #35: PASS for Public Catalog API + Test 27 Hybrid Sync implementation.
+- FTP Deploy #295: PASS; Test 27 type-check/unit/build/deploy completed and root deployment was skipped.
+- Backend CI #36: PASS; Backend Code Deploy #4 PASS with both public catalog endpoints HTTP 200.
+- Backend CI #37: PASS for guarded catalog-bootstrap command/fixture.
+- Backend Code Deploy #5: PASS; bootstrap command deployed with no migration/dependency drift.
+- Catalog Bootstrap Production #1: PASS; pre-state 0/0/0, SQLite snapshot created, post-state 3 categories / 6 subcategories / 18 products, representative codes verified, helper cleanup PASS.
 
 ## Rules for the next run
 
