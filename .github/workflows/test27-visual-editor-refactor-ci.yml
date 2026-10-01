@@ -1,0 +1,48 @@
+name: Test 27 Visual Editor Refactor CI
+
+on:
+  push:
+    branches:
+      - ui/test27-visual-editor-foundation-20261001
+    paths:
+      - ".github/workflows/test27-visual-editor-refactor-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test27-visual-editor-refactor
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify visual editor source contract
+        run: python tests/test_test27_visual_editor_contract.py
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: platform/frontend/package-lock.json
+
+      - name: Install build dependencies
+        run: python -m pip install --disable-pip-version-check pillow
+
+      - name: Install frontend dependencies
+        working-directory: platform/frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Type-check, unit-test and build staged Test 27
+        working-directory: platform/frontend
+        env:
+          ARMAGHAN_UI_TARGET: "27"
+        run: |
+          npm run type-check
+          npm run test:unit
+          npm run build
+          test -f ../../t/27/index.html
