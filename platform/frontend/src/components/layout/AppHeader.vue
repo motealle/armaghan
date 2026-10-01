@@ -8,12 +8,14 @@ import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
 import type { Locale } from '@/services/localeDetection'
+import { useVisualStyleStore } from '@/features/visual-editor/store'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 import MobileMenuDrawer from './MobileMenuDrawer.vue'
 
 const emit=defineEmits<{login:[];help:[]}>()
 const session=useSessionStore()
 const locale=useLocaleStore()
+const visual=useVisualStyleStore()
 const route=useRoute()
 const mobileMenuOpen=ref(false)
 const {profile,policy}=useResolvedAppearance()
@@ -31,7 +33,7 @@ function changeLanguage(event:Event){locale.setManual((event.target as HTMLSelec
 </script>
 
 <template>
-  <header class="sticky top-0 z-[90] border-b border-white/10 bg-[var(--c-primary)] text-white shadow-sm">
+  <header data-style-id="header.shell" data-style-label="نوار بالای سایت" class="sticky top-0 z-[90] border-b border-white/10 bg-[var(--role-brand-chrome)] text-white shadow-sm">
     <div class="mx-auto max-w-[1500px] px-3 py-2.5 md:px-5 lg:px-8">
       <div
         class="app-header-layout"
@@ -40,11 +42,11 @@ function changeLanguage(event:Event){locale.setManual((event.target as HTMLSelec
           `app-header-${profile}`,
         ]"
       >
-        <RouterLink to="/" class="app-header-brand" @pointerdown.stop>
+        <RouterLink to="/" data-style-id="header.brand" data-style-label="لوگو و نام برند" class="app-header-brand" @pointerdown.stop>
           <img class="h-10 w-10 shrink-0 rounded-xl bg-white/10 object-cover" :src="'../../logo.png'" alt="Armaghan" />
           <div v-if="policy.showBrandText" class="min-w-0">
-            <b class="block text-sm">{{locale.t('brandName')}}</b>
-            <span class="block truncate text-[10px] text-white/70">{{locale.t('manufacturer')}}</span>
+            <b data-style-id="header.brand-name" data-style-label="نام برند در هدر" data-editable-text="true" class="block text-sm">{{visual.resolveText('header.brand-name',locale.locale,locale.t('brandName'))}}</b>
+            <span data-style-id="header.manufacturer" data-style-label="زیرعنوان برند در هدر" data-editable-text="true" class="block truncate text-[10px] text-white/70">{{visual.resolveText('header.manufacturer',locale.locale,locale.t('manufacturer'))}}</span>
           </div>
         </RouterLink>
 
