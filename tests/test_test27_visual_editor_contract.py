@@ -44,17 +44,29 @@ assert "visual-editor-active" in sheet_composable
 editor = (EDITOR / "VisualEditor.vue").read_text(encoding="utf-8")
 chooser = (EDITOR / "VisualEditorTargetChooser.vue").read_text(encoding="utf-8")
 inspector = (EDITOR / "VisualEditorInspector.vue").read_text(encoding="utf-8")
+quick_launcher = (EDITOR / "VisualEditorQuickLauncher.vue").read_text(encoding="utf-8")
+target_browser = (EDITOR / "VisualEditorTargetBrowser.vue").read_text(encoding="utf-8")
+target_registry = (EDITOR / "targetRegistry.ts").read_text(encoding="utf-8")
 assert "visual-editor-sheet" in editor
 assert "useVisualEditorSelection" in editor
 assert "useResizableEditorSheet" in editor
 assert "VisualEditorTargetChooser" in editor
 assert "VisualEditorInspector" in editor
+assert "VisualEditorTargetBrowser" in editor
+assert "browserOpen=ref(true)" in editor
 assert "ذخیره خودکار" in editor
 assert "visual.setEnabled(false)" in editor
 assert "چند عنصر نزدیک" in chooser
 assert "عناصر مخفی‌شده" in chooser
 assert "wouldFailContrast" in inspector
 assert "4.5:1" in inspector
+assert "ویرایش ظاهر" in quick_launcher
+assert "visual.setEnabled(true)" in quick_launcher
+assert "router.push('/')" in quick_launcher
+assert "انتخاب منظم عناصر" in target_browser
+assert "toggleVisibility" in target_browser
+for target_id in ("header.shell","hero.title","home.about.title","home.why.title","home.capabilities.title","home.product-banners.title","product.card","footer.shell"):
+    assert target_id in target_registry
 
 profile = (EDITOR / "store.ts").read_text(encoding="utf-8")
 assert "armaghan:test27:visual-style-profile:v1" in profile
@@ -66,6 +78,7 @@ assert "isBrandTokenId" in profile
 app = (SRC / "App.vue").read_text(encoding="utf-8")
 assert 'session.isAdmin&&!session.impersonatedCustomerId' in app
 assert "<VisualStyleRuntime/>" in app
+assert "<VisualEditorQuickLauncher/>" in app
 
 appearance = (SRC / "features/admin/components/AppearanceSettings.vue").read_text(encoding="utf-8")
 assert "openVisualEditor" in appearance
