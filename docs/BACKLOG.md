@@ -132,6 +132,8 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Add persistent admin-only «ویرایش ظاهر» quick launcher so a logged-in admin can open the Test 27 editor from any page and be routed to Home automatically.
 - [x] Add grouped element browser inside the bottom sheet so nearby/nested elements do not need precise finger selection.
 - [x] Branch-only urgent validation PASS: visual-editor contract, TypeScript, unit tests and Test 27 build.
+- [x] **FTP Deploy Run #260 attempt 2: PASS** — Test 27 rebuilt and deployed to `/public_html/t/27`; mutable test index updated; 112 files uploaded; no remote files deleted; root deploy skipped.
+- [x] Run #260 attempt 1 stopped before build/deploy only because the GitHub runner timed out downloading Pillow; failed jobs were retried and the complete pipeline then passed.
 
 ### Style Profile backend delivery record
 
