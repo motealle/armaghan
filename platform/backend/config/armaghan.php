@@ -3,24 +3,21 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Domain persistence
+    | SQLite backup policy
     |--------------------------------------------------------------------------
     |
-    | Customer/catalog/content data starts with the JSON driver. Security-
-    | critical Laravel control-plane data (authentication, sessions, audit,
-    | published style-profile history) remains on Laravel's database layer.
+    | SQLite is the primary Laravel database for the current Armaghan scale.
+    | Production should set DB_DATABASE to an absolute private path outside
+    | public_html. Consistent SQLite backups are written to the private
+    | directory below using SQLite VACUUM INTO.
     |
-    | The domain-store contract is intentionally driver-neutral so SQLite,
-    | MySQL/MariaDB or another repository can replace JSON later without
-    | coupling UI/business services to flat-file details.
+    | JSON remains a portable import/export format only. It is not a custom
+    | database driver and no application service should depend on JSON files
+    | as the runtime source of truth.
     |
     */
-    'domain_store' => [
-        'driver' => env('ARMAGHAN_DOMAIN_STORE', 'json'),
-
-        'json' => [
-            'path' => env('ARMAGHAN_JSON_STORE_PATH')
-                ?: storage_path('app/private/armaghan-domain'),
-        ],
+    'sqlite' => [
+        'backup_path' => env('ARMAGHAN_SQLITE_BACKUP_PATH')
+            ?: storage_path('app/private/sqlite-backups'),
     ],
 ];
