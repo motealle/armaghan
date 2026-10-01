@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watchEffect } from 'vue'
 import { useVisualStyleStore } from './store'
+import { usePublicVisualProfileBaseline } from './composables/usePublicVisualProfileBaseline'
 
 const visual=useVisualStyleStore()
+usePublicVisualProfileBaseline(visual)
 const STYLE_ID='armaghan-visual-style-profile'
 
 function ensureStyle():HTMLStyleElement{
