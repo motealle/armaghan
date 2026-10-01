@@ -4,6 +4,8 @@ import { useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BottomNav from '@/components/layout/BottomNav.vue'
 import HelpSheet from '@/components/layout/HelpSheet.vue'
+import VisualEditor from '@/features/visual-editor/VisualEditor.vue'
+import VisualStyleRuntime from '@/features/visual-editor/VisualStyleRuntime.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 import LoginSheet from '@/features/auth/components/LoginSheet.vue'
@@ -50,6 +52,7 @@ onMounted(async()=>{
 
 <template>
   <div class="min-h-screen">
+    <VisualStyleRuntime/>
     <a class="skip-link" href="#main-content">{{locale.t('skipContent')}}</a>
     <AppHeader @login="loginOpen=true" @help="helpOpen=true"/>
     <main id="main-content" tabindex="-1" class="mx-auto max-w-[1500px] px-3 py-4 md:px-5 md:py-6 lg:px-8 lg:py-8 xl:px-10">
@@ -61,5 +64,6 @@ onMounted(async()=>{
     <BottomNav/>
     <LoginSheet :open="loginOpen" @close="loginOpen=false"/>
     <HelpSheet :open="helpOpen" @close="helpOpen=false"/>
+    <VisualEditor v-if="session.isAdmin&&!session.impersonatedCustomerId"/>
   </div>
 </template>
