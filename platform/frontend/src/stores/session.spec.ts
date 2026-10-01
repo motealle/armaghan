@@ -27,8 +27,8 @@ describe('session store',()=>{
     store.logout()
     expect(store.role).toBe('guest')
     expect(store.impersonatedCustomerId).toBeNull()
-    expect(sessionStorage.getItem('armaghan:test26:role')).toBeNull()
-    expect(sessionStorage.getItem('armaghan:test26:impersonation')).toBeNull()
+    expect(sessionStorage.getItem('armaghan:test27:role')).toBeNull()
+    expect(sessionStorage.getItem('armaghan:test27:impersonation')).toBeNull()
   })
 
   it('supports customer demo login',()=>{
@@ -38,8 +38,8 @@ describe('session store',()=>{
   })
 
   it('restores explicit admin impersonation inside the same browser session',()=>{
-    sessionStorage.setItem('armaghan:test26:role','admin')
-    sessionStorage.setItem('armaghan:test26:impersonation','7')
+    sessionStorage.setItem('armaghan:test27:role','admin')
+    sessionStorage.setItem('armaghan:test27:impersonation','7')
     const store=useSessionStore()
     expect(store.role).toBe('admin')
     expect(store.impersonatedCustomerId).toBe(7)
