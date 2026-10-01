@@ -9,8 +9,8 @@ import type {
   ViewportProfile,
 } from '@/types/appearance'
 
-export const APPEARANCE_KEY='armaghan:test26:appearance'
-export const APPEARANCE_SCHEMA_KEY='armaghan:test26:appearance-schema'
+export const APPEARANCE_KEY='armaghan:test27:appearance'
+export const APPEARANCE_SCHEMA_KEY='armaghan:test27:appearance-schema'
 export const APPEARANCE_SCHEMA_VERSION='4'
 
 export const customerAppearanceDefaults:AppearanceProfiles={
