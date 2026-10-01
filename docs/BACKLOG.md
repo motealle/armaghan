@@ -138,6 +138,7 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Add staging Publish and version-history Restore controls; restore remains create-new-version semantics from the backend.
 - [x] Add sync status UI: checking / local / saving / synced / conflict / error.
 - [x] Branch validation PASS: Test 27 contract, TypeScript, **30/30** Vue unit tests, numbered Test 27 build.
+- [x] **FTP Deploy Run #262: PASS** — active Test 27 rebuilt and deployed to `/public_html/t/27`; 112 files uploaded; no remote files deleted; root deploy skipped.
 - [ ] Activate shared server persistence in live Test 27 after production Laravel/SQLite + real admin session deployment; until then Test 27 correctly remains local-first.
 
 - [x] Add Test 27 to the mutable test launcher after explicit owner approval on 2026-10-01; keep Test 26 frozen.
