@@ -1,0 +1,65 @@
+name: Backend Public Routing Diagnostic
+
+on:
+  push:
+    branches:
+      - backend/production-sqlite-activation-20261001
+    paths:
+      - ".github/workflows/backend-public-routing-diagnostic.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify public backend files by FTP
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import os
+          from ftplib import FTP
+          from urllib.parse import urlparse
+          raw=os.environ["FTP_SERVER"].strip()
+          parsed=urlparse(raw) if "://" in raw else None
+          host=parsed.hostname if parsed else raw
+          port=(parsed.port or 21) if parsed else 21
+          ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"])
+          ftp.cwd("/public_html/backend")
+          names=set(ftp.nlst())
+          required={"index.php",".htaccess"}
+          print("backend_dir_exists: true")
+          print("index_exists:", "index.php" in names)
+          print("htaccess_exists:", ".htaccess" in names)
+          print("public_entry_count:", len(names))
+          ftp.quit()
+          if not required.issubset(names): raise SystemExit(2)
+          PY
+
+      - name: Check public route statuses
+        run: |
+          python - <<'PY'
+          from urllib.request import Request, urlopen
+          from urllib.error import HTTPError, URLError
+          urls=[
+            "https://armaghantrading.com/backend/index.php",
+            "https://armaghantrading.com/backend/",
+            "https://armaghantrading.com/backend/up",
+            "https://armaghantrading.com/backend/api/style-profile/staging",
+            "https://armaghantrading.com/backend/admin/login",
+          ]
+          for url in urls:
+            try:
+              req=Request(url,headers={"User-Agent":"Armaghan-Backend-Diagnostic/1.0","Accept":"application/json,text/html;q=0.9,*/*;q=0.8"})
+              with urlopen(req,timeout=20) as r:
+                body=r.read(4096)
+                print(url.split("armaghantrading.com",1)[1], r.status, r.headers.get_content_type(), len(body))
+            except HTTPError as e:
+              print(url.split("armaghantrading.com",1)[1], e.code, e.headers.get_content_type() if e.headers else "unknown", 0)
+            except URLError:
+              print(url.split("armaghantrading.com",1)[1], "connection-error")
+          PY
