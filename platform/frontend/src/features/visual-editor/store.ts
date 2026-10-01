@@ -13,7 +13,7 @@ export interface ElementStyleOverride{
   hidden?:boolean
 }
 
-interface VisualStyleProfile{
+export interface VisualStyleProfile{
   schema:1
   styles:Record<string,ElementStyleOverride>
   texts:Record<string,Partial<Record<Locale,string>>>
@@ -23,7 +23,7 @@ interface StoredVisualStyleProfile extends VisualStyleProfile{
   css?:string
 }
 
-const emptyProfile=():VisualStyleProfile=>({schema:1,styles:{},texts:{}})
+export const emptyVisualStyleProfile=():VisualStyleProfile=>({schema:1,styles:{},texts:{}})
 
 function validId(id:string):boolean{
   return /^[a-z0-9._-]+$/i.test(id)
@@ -39,29 +39,37 @@ function sanitizeStyle(value:unknown):ElementStyleOverride{
   return result
 }
 
+export function sanitizeVisualStyleProfile(value:unknown):VisualStyleProfile{
+  const parsed=(value&&typeof value==='object'?value:{}) as Partial<StoredVisualStyleProfile>
+  const styles:Record<string,ElementStyleOverride>={}
+  for(const [id,item] of Object.entries(parsed.styles??{})){
+    if(validId(id))styles[id]=sanitizeStyle(item)
+  }
+  const texts:VisualStyleProfile['texts']={}
+  for(const [id,item] of Object.entries(parsed.texts??{})){
+    if(!validId(id)||!item||typeof item!=='object')continue
+    const row:Partial<Record<Locale,string>>={}
+    for(const locale of ['fa','ar','en','ku'] as Locale[]){
+      const candidate=(item as Record<string,unknown>)[locale]
+      if(typeof candidate==='string')row[locale]=candidate.slice(0,4000)
+    }
+    if(Object.keys(row).length)texts[id]=row
+  }
+  return{schema:1,styles,texts}
+}
+
+export function visualProfilesEqual(a:VisualStyleProfile,b:VisualStyleProfile):boolean{
+  return JSON.stringify(a)===JSON.stringify(b)
+}
+
 function readProfile():VisualStyleProfile{
-  if(typeof localStorage==='undefined')return emptyProfile()
+  if(typeof localStorage==='undefined')return emptyVisualStyleProfile()
   try{
     const raw=localStorage.getItem(PROFILE_KEY)
-    if(!raw)return emptyProfile()
-    const parsed=JSON.parse(raw) as Partial<StoredVisualStyleProfile>
-    const styles:Record<string,ElementStyleOverride>={}
-    for(const [id,value] of Object.entries(parsed.styles??{})){
-      if(validId(id))styles[id]=sanitizeStyle(value)
-    }
-    const texts:VisualStyleProfile['texts']={}
-    for(const [id,value] of Object.entries(parsed.texts??{})){
-      if(!validId(id)||!value||typeof value!=='object')continue
-      const row:Partial<Record<Locale,string>>={}
-      for(const locale of ['fa','ar','en','ku'] as Locale[]){
-        const candidate=(value as Record<string,unknown>)[locale]
-        if(typeof candidate==='string')row[locale]=candidate.slice(0,4000)
-      }
-      texts[id]=row
-    }
-    return{schema:1,styles,texts}
+    if(!raw)return emptyVisualStyleProfile()
+    return sanitizeVisualStyleProfile(JSON.parse(raw))
   }catch{
-    return emptyProfile()
+    return emptyVisualStyleProfile()
   }
 }
 
@@ -83,9 +91,14 @@ export const useVisualStyleStore=defineStore('visual-style',()=>{
   const enabled=ref(typeof sessionStorage!=='undefined'&&sessionStorage.getItem(EDITOR_KEY)==='1')
   const profile=ref<VisualStyleProfile>(readProfile())
   const compiledCss=computed(()=>compileCss(profile.value))
+  const hasOverrides=computed(()=>Object.keys(profile.value.styles).length>0||Object.keys(profile.value.texts).length>0)
 
   function setEnabled(value:boolean){
     enabled.value=value
+  }
+
+  function replaceProfile(value:unknown){
+    profile.value=sanitizeVisualStyleProfile(value)
   }
 
   function patchStyle(id:string,patch:Partial<ElementStyleOverride>){
@@ -138,7 +151,7 @@ export const useVisualStyleStore=defineStore('visual-style',()=>{
   }
 
   function resetAll(){
-    profile.value=emptyProfile()
+    profile.value=emptyVisualStyleProfile()
   }
 
   watch(enabled,(value)=>{
@@ -152,8 +165,8 @@ export const useVisualStyleStore=defineStore('visual-style',()=>{
   },{deep:true})
 
   return{
-    enabled,profile,compiledCss,
-    setEnabled,patchStyle,clearStyleProperty,
+    enabled,profile,compiledCss,hasOverrides,
+    setEnabled,replaceProfile,patchStyle,clearStyleProperty,
     setText,textOverride,resolveText,resetElement,resetAll,
   }
 })
