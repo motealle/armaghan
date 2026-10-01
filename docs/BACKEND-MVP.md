@@ -155,7 +155,7 @@ This is configuration-driven theming, not a Feature Flag. A Feature Flag switche
 
 Each implementation run should remain bounded, reversible and committed separately.
 
-## Verified hosting preflight — 2026-09-30
+## Historical hosting preflight — 2026-09-30
 
 - PHP 8.3.33 / LiteSpeed: PASS.
 - All Laravel 13 required PHP extensions: PASS.
@@ -163,8 +163,7 @@ Each implementation run should remain bounded, reversible and committed separate
 - `public_html` document root and private sibling read/write: PASS.
 - PDO MySQL: PASS.
 - SQLite3 extension: present, but PDO SQLite: **absent**.
-- Therefore production SQLite is rejected for this host; SQLite remains local/dev/test only.
-- Production database is promoted to P0 MySQL/MariaDB. Laravel 13 supports MySQL 5.7+ and MariaDB 10.3+; actual server version and credentials must be provisioned before the first production migration.
+- At that date, production SQLite was rejected because PDO SQLite was absent and MySQL/MariaDB was selected as the fallback. This result is historical; the authoritative 2026-10-01 re-probe after hosting changes now passes PDO SQLite and production SQLite.
 - Web-PHP shell functions `proc_open`, `exec`, and `shell_exec` are disabled. Composer/vendor builds must happen in CI.
 - PHP `symlink()` is available.
 - Limits: upload 256M, POST 256M, memory 512M, execution 300s.
@@ -180,7 +179,7 @@ Each implementation run should remain bounded, reversible and committed separate
 - Bootstrap test suite: 2/2 tests passed.
 - Locked dependency security audit: no known vulnerability advisories.
 - Permanent `.github/workflows/backend-ci.yml` now validates backend changes on `main`.
-- SQLite is now selected for local/dev/test/production after the owner enabled host SQLite support; re-probe production PDO SQLite before first migration.
+- SQLite is selected for local/dev/test/production; the authoritative 2026-10-01 production re-probe passed and the first production migration is complete.
 - Generated framework agent instructions were replaced with Armaghan-specific rules; Laravel Boost is not auto-installed.
 - No numbered UI snapshot was changed or deployed.
 - Next implementation batch: domain data model and production-safe admin access foundation.
@@ -188,9 +187,20 @@ Each implementation run should remain bounded, reversible and committed separate
 
 ## SQLite production decision — 2026-10-01
 
-- The owner reports that SQLite/PDO SQLite has now been enabled on the production hosting environment.
-- SQLite is selected as the primary Laravel database for the current project scale.
-- Before the first production migration, re-run the production probe because the 2026-09-30 probe occurred before this hosting change.
+- PDO SQLite enablement was verified by a fresh production probe: SQLite 3.53.4, private file read/write, foreign keys and `VACUUM INTO` all PASS.
+- SQLite is the primary Laravel database for the current project scale.
+- The first production migration and initial consistent snapshot completed successfully.
 - Primary backups are SQLite-to-SQLite consistent snapshots using `VACUUM INTO` through `php artisan armaghan:backup-sqlite`.
 - MySQL/MariaDB is retained as a later optional logical mirror/export target, not the sole backup and not a live dual-write dependency.
 - JSON is a normal import/export interchange format only; the custom JSON runtime-store layer has been removed before any production data used it.
+
+
+## Production Laravel activation — 2026-10-01
+
+- Laravel 13.34.0 is live under the public base path `/backend`.
+- Application code, host-only `.env`, APP_KEY, SQLite database and snapshots remain outside `public_html`; only Laravel's public surface is web-visible.
+- Production migrations: PASS.
+- Initial SQLite snapshot: PASS.
+- Public smoke: backend root, health endpoint, public Style Profile API and Filament login all return HTTP 200.
+- The initial post-deploy 404 was traced to public-directory permissions for LiteSpeed and fixed by normalizing only the public surface to directories `0755` and files `0644`.
+- No production administrator is seeded. First-admin provisioning is the next security-controlled P0 batch.
