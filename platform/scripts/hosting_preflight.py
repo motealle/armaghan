@@ -163,6 +163,8 @@ $result = [
     'sqlite_private_file_rw' => $sqlitePrivateFile,
     'sqlite_foreign_keys' => $sqliteForeignKeys,
     'sqlite_vacuum_into' => $sqliteVacuumInto,
+    'zip_extension' => extension_loaded('zip') && class_exists('ZipArchive'),
+    'phar_extension' => extension_loaded('phar') && class_exists('PharData'),
     'document_root_matches_probe_dir' => isset($_SERVER['DOCUMENT_ROOT'])
         && realpath((string) $_SERVER['DOCUMENT_ROOT']) === realpath(__DIR__),
     'outside_private_marker_readable' => is_readable($marker),
