@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261001-style-profile-backend",
   "scope": "Persist/version Test 27 visual Style Profiles in Laravel: draft, immutable versions, active publication pointer, admin-protected write endpoints, public read endpoint; no Test 26 mutation",
   "base_ref": "main@1fd8a75fd9c272cae1642d21835a8fd258ebd4e6",
   "acquired_at": "2026-10-01T05:33:00Z",
-  "expires_at": "2026-10-01T07:03:00Z",
-  "released_at": null,
-  "note": "Backend persistence batch only. Test 27 frontend may receive adapter contract in a later batch after backend API is validated. backend/admin-core branch remains untouched."
+  "expires_at": null,
+  "released_at": "2026-10-01T06:03:00Z",
+  "note": "Released after versioned Style Profile backend landed on main at 3a314b994ae6f8f992e61a6ddc960c56a185e523. Backend CI Run #13 PASS; FTP Deploy #256 PASS with deploy-root/deploy-t skipped. Public read + admin draft/publish/restore APIs, immutable history, staging/production publication pointers, server-side CSS compiler, checksum conflict protection, and ActivityLog mapping fix are complete. No Test 26/frontend mutation."
 }
