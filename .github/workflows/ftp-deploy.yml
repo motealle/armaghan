@@ -126,6 +126,8 @@ jobs:
         run: python tests/test_test25_bugfix2_contract.py
       - name: Test frozen Test 26 handoff contract
         run: python tests/test_test26_appearance_contract.py
+      - name: Test Test 27 visual editor foundation contract
+        run: python tests/test_test27_visual_editor_contract.py
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
       - name: Check Python syntax
