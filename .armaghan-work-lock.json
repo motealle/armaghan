@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20261001-test27-heading-green-polish",
-  "scope": "Final Test 27 heading-green polish: make strong heading role visually green while preserving contrast; update source contract/docs; deploy Test 27 only",
-  "base_ref": "main@3e08011ae703db993f0459cdeb116c19ecd7f040",
-  "acquired_at": "2026-10-01T16:05:00Z",
-  "expires_at": "2026-10-01T20:12:00Z",
-  "released_at": "2026-10-01T20:12:00Z",
-  "note": "Completed Test 27 customer visual corrections and final heading-green polish. FTP Deploy #282 PASS; final docs-only validation #283 PASS; main docs head a83d08e8ce88fd1b7e17817f4df5cccacdef113d."
+  "run_id": "chat-20261001-filament-taxonomy-crud",
+  "scope": "Implement first bounded Filament 5 admin CRUD batch for Category and Subcategory; preserve Test 26/27 UI; add validation/tests/docs; no production data mutation",
+  "base_ref": "main@a83d08e8ce88fd1b7e17817f4df5cccacdef113d",
+  "acquired_at": "2026-10-01T20:16:00Z",
+  "expires_at": "2026-10-01T21:46:00Z",
+  "released_at": null,
+  "note": "Browser acceptance is blocked only on real user sign-in profile setup; continue with next actionable backend P0."
 }
