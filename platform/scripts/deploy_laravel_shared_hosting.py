@@ -274,6 +274,13 @@ def get_json(url: str, timeout: int = 45) -> dict:
     return json.loads(body.decode("utf-8"))
 
 
+def get_status(url: str, timeout: int = 30) -> tuple[int, str]:
+    req = Request(url, headers={"User-Agent": "Armaghan-Backend-Activator/1.0"})
+    with urlopen(req, timeout=timeout, context=ssl.create_default_context()) as response:
+        response.read(64 * 1024)
+        return int(getattr(response, "status", 200)), response.headers.get_content_type()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--release", required=True)
@@ -332,10 +339,11 @@ def main() -> int:
         if not safe_result["ok"]:
             return 4
 
-        health = get_json(site_url.rstrip("/") + "/backend/up", timeout=30)
+        health_status, health_type = get_status(site_url.rstrip("/") + "/backend/up", timeout=30)
         public_profile = get_json(site_url.rstrip("/") + "/backend/api/style-profile/staging", timeout=30)
         print(json.dumps({
-            "health_http_json": isinstance(health, dict),
+            "health_status": health_status,
+            "health_content_type": health_type,
             "public_style_profile_http_json": isinstance(public_profile, dict),
             "public_style_profile_schema": public_profile.get("schema") if isinstance(public_profile, dict) else None,
         }, indent=2))
