@@ -333,6 +333,8 @@ def main() -> int:
             "subcategories_route": get_status(site_url.rstrip("/") + "/backend/admin/subcategories"),
             "products_route": get_status(site_url.rstrip("/") + "/backend/admin/products"),
             "customers_route": get_status(site_url.rstrip("/") + "/backend/admin/customers"),
+            "catalog_categories": get_status(site_url.rstrip("/") + "/backend/api/catalog/categories"),
+            "catalog_products": get_status(site_url.rstrip("/") + "/backend/api/catalog/products?per_page=1"),
         }
         print("ARMAGHAN_BACKEND_CODE_UPDATE_SMOKE")
         print(json.dumps(checks, indent=2))
@@ -343,6 +345,8 @@ def main() -> int:
             and checks["subcategories_route"] in (200, 302, 303)
             and checks["products_route"] in (200, 302, 303)
             and checks["customers_route"] in (200, 302, 303)
+            and checks["catalog_categories"] == 200
+            and checks["catalog_products"] == 200
         )
         if not smoke_ok:
             rollback = get_json(helper_base + "?" + urlencode({"token": secret, "action": "rollback"}), timeout=120)
