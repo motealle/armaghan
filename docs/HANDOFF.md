@@ -643,3 +643,16 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 - FTP Deploy #275 intentionally stopped before deployment when the historical Test 23 contract detected its stale current-source assumption. FTP Deploy #276 then passed the repaired historical contract. **FTP Deploy #277 PASS** completed the full Test 27 QA/build/smoke/deploy lane.
 - Run #277 uploaded 112 files to `/public_html/t/27` plus the mutable launcher, deleted no remote files and skipped root deployment. Test 26 remained immutable.
 - Final heading-green polish: `13b3dbb5abd32265f752139b9cf670127a8ce5c9`; **FTP Deploy #282 PASS**. The strong heading role now stays visibly dark green on White/Mint while retaining safe contrast; Test 26/root remained untouched.
+
+
+## 37. Filament taxonomy CRUD — first bounded batch
+
+- Commit: `4281034656ead0c0538b4f1dc4e607ea5f161438`.
+- Backend CI #31: **PASS**.
+- FTP Deploy #284: **PASS**, but no Backend production mutation occurred; the generic frontend FTP workflow does not deploy Laravel application code.
+- Added native Filament 5 Resources for Category and Subcategory with dedicated Schema/Table/Page classes.
+- Admin UX supports Create, Edit, List, Search, Sort, Active filter and parent-category relationship selection.
+- Delete and bulk-delete actions are intentionally absent because the database Category → Subcategory foreign key uses cascade-on-delete; destructive taxonomy removal needs an explicit guarded workflow later.
+- Feature tests verify active-admin access to all taxonomy pages, deny inactive/non-admin users, and assert destructive actions are absent.
+- Production activation remains open until the repeatable Backend release/update workflow with pre-migration backup and rollback guard is implemented.
+- Browser-authenticated Test 27 acceptance also remains open; Browser Context Profile `Armaghan Production Admin` was created, but no signed-in session had been saved at the time of this handoff.
