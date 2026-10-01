@@ -305,3 +305,30 @@ Customer-requested color semantics are now live in Test 27:
 - Backend CI Run #19: PASS.
 - FTP Deploy Run #268: PASS.
 - 112 Test 27 files uploaded; no remote deletes; root deploy skipped.
+
+
+## Production persistence acceptance
+
+The server-side persistence path has now been verified against the live production SQLite database.
+
+Production Style Profile Acceptance Run `36878931948`: **PASS**.
+
+The test:
+- used the already deployed Laravel application and real production SQLite connection;
+- required exactly one active administrator and verified the active-admin policy;
+- saved a temporary structured draft;
+- published staging twice with different temporary token values;
+- restored the first temporary version as a new immutable version;
+- verified the staging publication pointer;
+- verified ActivityLog writes;
+- then rolled back the entire outer transaction.
+
+Observed inside the transaction:
+- 3 new immutable versions;
+- 3 new activity records.
+
+After rollback:
+- profile/version/publication/activity logical state exactly matched the state before the test;
+- the short-lived public helper was removed.
+
+This proves production persistence/version/restore semantics without bypassing browser authentication. The only remaining acceptance layer is the real browser session/CSRF path.
