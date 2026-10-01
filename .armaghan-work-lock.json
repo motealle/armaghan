@@ -3,11 +3,11 @@
   "project": "motealle/armaghan",
   "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20260930-admin-core",
-  "scope": "Implement Filament CRUD Resources for core catalog/customers plus secret-driven first-admin provisioning; no production deploy, no UI snapshot mutation",
+  "run_id": "chat-20261001-visual-editor-foundation",
+  "scope": "Test 27 visual style editor foundation: token registry, admin-only editor flag, non-modal bottom sheet inspector, ambiguous touch target chooser; no Test 26 mutation",
   "base_ref": "main@a3f04d0140130b49b05f7da8dbf4d0038ae98e9a",
-  "acquired_at": "2026-09-30T07:19:00Z",
-  "expires_at": "2026-09-30T08:49:00Z",
+  "acquired_at": "2026-10-01T04:03:00Z",
+  "expires_at": "2026-10-01T05:33:00Z",
   "released_at": null,
-  "note": "Admin credentials must never be committed. Provisioning must consume runtime environment values and be safe to rerun."
+  "note": "Reclaimed expired admin-core lease after >20h with no active admin-core workflow. backend/admin-core-20260930 remains untouched and unmerged."
 }
