@@ -70,6 +70,25 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [ ] Next P0: Filament Product/Customer/Category/Subcategory Resources + safe first-admin provisioning.
 
 
+
+
+## P0 — JSON-first domain persistence
+
+Canonical architecture: `docs/JSON-FIRST-PERSISTENCE.md`.
+
+- [x] Select JSON-first domain persistence behind a driver-neutral repository contract; keep security/control-plane state relational.
+- [x] Add `DomainDocumentStore` and atomic/locked `JsonDomainDocumentStore`.
+- [x] Add schema version, revision, checksum and stale-write conflict protection.
+- [x] Default private development path to `storage/app/private/armaghan-domain`; expose production override through `ARMAGHAN_JSON_STORE_PATH`.
+- [x] Add focused JSON store tests and binding test.
+- [ ] Catalog JSON repository/import: Category/Subcategory/Product/spec data.
+- [ ] Customer business/profile JSON repository/import; keep account/auth identity relational.
+- [ ] Filament catalog/customer Resources consume repository-backed services instead of Eloquent-only domain coupling.
+- [ ] Add private production JSON path + backup/restore health checks before live data cutover.
+- [ ] Add explicit JSON schema migration/import/export command before the first production JSON write.
+- [ ] Evaluate SQLite domain driver only if PDO SQLite becomes available on production hosting; otherwise keep SQLite dev/test-only.
+- [ ] Re-evaluate MySQL/PostgreSQL/Supabase only when query/concurrency/realtime requirements materially exceed JSON-first assumptions.
+
 ## P0 — Test 27 visual style editor foundation
 
 Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
@@ -92,6 +111,7 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Add WCAG-normal-text contrast guard at 4.5:1 for explicit token text/background pairs, with blocked unsafe assignments and visible feedback.
 - [x] Persist/version Style Profiles through Laravel with mutable draft, immutable versions, staging/production publication pointers, admin-only writes, server-side safe CSS compilation, activity log and checksum conflict protection.
 - [ ] Connect the Test 27 visual-editor store to the Laravel Style Profile API through a small adapter: server baseline load, debounced draft autosave, expected-checksum conflict handling, staging Publish, history/Restore and local fallback.
+- [ ] Visual editor structured target controls: organized ON/OFF for sections/panels/headings/sentences plus text/background/border/token controls, with hidden targets always recoverable.
 - [ ] Add explicit profile export/import/version-history UX if backend profile history alone is insufficient.
 - [ ] Promote Test 27 into the mutable launcher only after owner/customer review.
 
