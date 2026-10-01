@@ -87,9 +87,9 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Persist a structured style profile plus generated CSS; do not accept arbitrary CSS/HTML/JS input.
 - [x] Isolate Test 27 browser state from Test 26 by moving mutable prototype keys to `armaghan:test27:*`.
 - [x] Add permanent `tests/test_test27_visual_editor_contract.py`.
-- [x] Staged branch validation PASS: source contract, TypeScript, 24 unit tests and Test 27 Vite build.
-- [ ] Expand stable editable-target coverage to remaining customer-requested Home sections, section titles, dividers and major card/panel surfaces in the next bounded UI batch.
-- [ ] Add safe contrast validation/warnings for token assignments.
+- [x] Staged branch validation PASS: source contract, TypeScript, 25 unit tests and Test 27 Vite build.
+- [x] Expand stable editable-target coverage across Home/About/Why/Capabilities/product banners plus major card/panel surfaces; keep domain-owned product/customer values outside free-form visual text.
+- [x] Add WCAG-normal-text contrast guard at 4.5:1 for explicit token text/background pairs, with blocked unsafe assignments and visible feedback.
 - [ ] Persist/version Style Profiles through Laravel so a profile can be reused across later numbered tests and production.
 - [ ] Add explicit profile export/import/version-history UX if backend profile history alone is insufficient.
 - [ ] Promote Test 27 into the mutable launcher only after owner/customer review.
