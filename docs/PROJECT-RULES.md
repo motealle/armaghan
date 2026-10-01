@@ -139,3 +139,12 @@
 102. Hidden elements must remain recoverable from the editor even when they can no longer be tapped on the page. Resetting a target removes its editor overrides and returns control to the normal component/theme value.
 103. Every new numbered UI test must use its own browser-state namespace. A later test served on the same origin must never write keys belonging to a frozen earlier test. Test 27 uses `armaghan:test27:*`; Test 26 keys remain untouched.
 104. The Test 27 visual editor foundation may be deployed to the staged `/t/27` release lane without adding Test 27 to the mutable launcher. Launcher promotion requires explicit review/approval.
+
+## Style Profile persistence rules
+105. Style Profile persistence uses a mutable draft plus immutable versions and explicit publication pointers. Never implement restore by editing/deleting an old version row.
+106. Allowed Style Profile publication channels are `staging` and `production`. A staging publish must never implicitly update production.
+107. Style Profile write endpoints require an authenticated active administrator. Public clients may read only an explicitly published channel.
+108. Never trust or persist arbitrary client CSS/HTML/JavaScript for the visual editor. Persist validated structured overrides/texts and generate CSS server-side from the approved token registry.
+109. Style target identifiers are stable contract keys, not arbitrary selectors. Backend accepts only the restricted id character set and the whitelisted style/text fields documented in `docs/STYLE-PROFILE-BACKEND.md`.
+110. Draft autosave must use checksum-based optimistic concurrency once connected to Laravel. On HTTP 409, surface the conflict and reload/reconcile; never silently overwrite newer server state.
+111. Test 27 frontend integration must retain a local fallback during staged rollout so backend unavailability cannot break the customer-facing page. Server publication becomes the shared source of truth only after successful authenticated sync/deploy validation.
