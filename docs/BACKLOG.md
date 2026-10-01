@@ -157,6 +157,8 @@ Current estimate excludes open-ended new customer redesign requests.
 - [x] Recovery generated the password on-host, encrypted it before mutation, stored only the Laravel hash, and returned only RSA ciphertext through CI.
 - [x] Active-admin policy and password hash verification PASS; `/backend/admin/login` HTTP smoke PASS.
 - [x] One-shot provisioning workflow removed after success.
+- [x] Final main validation: **Backend CI #30 PASS**.
+- [x] **FTP Deploy #270 PASS**; this backend/security batch did not modify or redeploy Test 26/27 UI.
 - [ ] Acceptance remaining: authenticate in the real backend session from the browser and verify Test 27 shared Style Profile save/reload/publish/restore end-to-end.
 
 ## P0 — Test 27 visual style editor foundation
