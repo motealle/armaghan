@@ -75,6 +75,7 @@ function ensure_dir(string $path): void {
 
 function copy_tree(string $source, string $destination): void {
     ensure_dir($destination);
+    @chmod($destination, 0755);
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS),
         RecursiveIteratorIterator::SELF_FIRST
@@ -84,11 +85,14 @@ function copy_tree(string $source, string $destination): void {
         $target = $destination . '/' . $relative;
         if ($item->isDir()) {
             ensure_dir($target);
+            @chmod($target, 0755);
         } else {
             ensure_dir(dirname($target));
+            @chmod(dirname($target), 0755);
             if (!copy($item->getPathname(), $target)) {
                 fail_activation('copy-public');
             }
+            @chmod($target, 0644);
         }
     }
 }
@@ -213,6 +217,7 @@ if (!rename($nextRoot, $appRoot)) {
 }
 
 ensure_dir($publicRoot);
+@chmod($publicRoot, 0755);
 copy_tree($appRoot . '/public', $publicRoot);
 
 $index = <<<'PHP'
@@ -240,6 +245,8 @@ PHP;
 if (file_put_contents($publicRoot . '/index.php', $index . PHP_EOL, LOCK_EX) === false) {
     fail_activation('public-index');
 }
+@chmod($publicRoot . '/index.php', 0644);
+@chmod($publicRoot . '/.htaccess', 0644);
 
 $result = [
     'ok' => true,
