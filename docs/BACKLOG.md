@@ -175,6 +175,7 @@ Current estimate excludes open-ended new customer redesign requests.
 - [x] Outer rollback PASS; logical database state after the test exactly matched the pre-test state.
 - [x] Temporary public helper cleanup PASS.
 - [x] Production Style Profile Acceptance Run `36878931948`: PASS.
+- [x] Main post-merge validation: **FTP Deploy #272 PASS**; QA/smoke passed and both UI/root deploy jobs were skipped.
 - [ ] Only remaining editor persistence acceptance: real browser Filament login/session + CSRF + cross-device UI cycle.
 
 
