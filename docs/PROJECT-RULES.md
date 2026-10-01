@@ -130,7 +130,7 @@
 95. A Filament package being installed does not mean production admin access is complete. Before production exposure, the User model must enforce an explicit panel-access policy and administrator provisioning must use environment/runtime secrets rather than hard-coded repository credentials.
 
 ## Test 27 visual editor rules
-96. The approved base palette is exactly: Brand Green `#21946A`, Brand Blue `#151EDA`, Brand Mint `#C8E3DB`, Brand White `#FFFFFF`, Brand Gold `#FFB514`. These values are canonical visual-editor tokens unless the owner explicitly changes the palette later.
+96. The approved base palette is exactly: Brand Green `#21946A`, Brand Blue / logo-background blue `#0714C2`, Brand Mint `#C8E3DB`, Brand White `#FFFFFF`, Brand Gold `#FFB514`. `#0714C2` was selected from the actual repository logo image by pixel analysis on 2026-10-01 and replaces the earlier `#151EDA` canonical blue. These values are canonical visual-editor tokens unless the owner explicitly changes the palette later.
 97. The Visual Style Editor is an admin-only plugin layer. Turning it off must remove its inspector, selection listeners and edit outlines without removing the saved style/content profile.
 98. On mobile, the primary inspector is a non-modal bottom sheet that coexists with the page. It defaults near half-height, has a drag handle, respects safe areas and keeps the page above scrollable/selectable. A small floating control may be used only as a launcher/shortcut, not as the primary mobile inspector.
 99. Editable page targets require stable `data-style-id` identifiers. Touch selection must not guess when nested/nearby targets are ambiguous: collect candidates from the rendered touch neighborhood and ask the administrator which target was intended.
@@ -167,3 +167,12 @@
 124. Production backend deploys must build Composer/vendor in CI. Host PHP shell functions remain disabled and must not become a deployment dependency.
 125. Before any future production migration, create or verify a consistent SQLite snapshot. A failed remote mirror must never block or corrupt the live SQLite source of truth.
 126. Production backend canonical base path is `/backend`. Public API and Filament paths are therefore under `/backend/api/...` and `/backend/admin/...`.
+
+## Test 27 editor color/saveability rules
+127. Test 27 Home light-mode page background defaults to Brand White through the semantic `--role-page-background` role. The whole Home page background is a registered editor target (`home.page`) and may change only through approved palette tokens.
+128. Primary Home panel surfaces default to Brand Mint through `--role-panel-background`. Individual registered panels may override that role through structured editor token assignments.
+129. `home.page` is a protected non-hideable editor root. Do not allow the administrator to hide the whole page root; use `home.content` for visibility control so the editor always remains recoverable.
+130. The canonical Brand Blue is the actual logo-background blue `#0714C2`. Header, Footer, Hero brand chrome and other semantic Brand Blue usages must resolve through tokens/roles rather than duplicating a hard-coded legacy blue.
+131. Test 27 may export/import the structured Style Profile as plain JSON for portable manual backup/transfer. Import must always pass through the existing sanitizer; JSON is not a runtime database and must not accept arbitrary CSS/HTML/JavaScript.
+132. Test 27 Style Profile API defaults to same-origin `/backend`. Mutating requests must use Laravel session authentication plus CSRF protection. Never treat the local prototype admin credential as backend authentication.
+133. Until the first real Laravel administrator is provisioned, editor changes remain automatically durable in Test 27 browser storage and may be exported as JSON. Shared cross-device persistence is complete only after a real backend admin session successfully saves, reloads and publishes a Style Profile.
