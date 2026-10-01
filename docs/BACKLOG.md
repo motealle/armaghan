@@ -91,19 +91,17 @@ Canonical architecture: `docs/SQLITE-FIRST-PERSISTENCE.md`.
 - [ ] Add optional MySQL logical mirror/export only after the SQLite production path is stable; never dual-write in live requests.
 - [ ] Add mirror verification (row counts/checksums + restore drill) when MySQL mirror is implemented.
 
-## Delivery roadmap — remaining 7–9 core runs
+## Delivery roadmap — remaining ~6 core runs
 
-Current estimate excludes open-ended new customer redesign requests.
+Current estimate excludes open-ended new customer redesign requests. Filament CRUD/media may split into two bounded runs, making the practical range about 6–7 runs.
 
-1. [x] **Urgent Test 27 editor access** — persistent admin quick-launch button, structured target browser, direct visibility toggles, Test 27 redeploy.
-2. [x] **Visual Style Profile frontend adapter** — public staging baseline, debounced authenticated draft save, checksum conflict handling, staging publish/history/restore controls and local fallback implemented; live shared persistence awaits production Laravel/session activation.
-3. [x] **Production SQLite activation** — PDO SQLite/SQLite 3.53.4 re-probed PASS, private DB/backup active, production migrations PASS, initial snapshot PASS, `/backend` health/API/admin-login smoke PASS.
-4. [ ] **Filament admin CRUD** — Product/Category/Subcategory/Customer management + safe first-admin provisioning.
-5. [ ] **Catalog/customer media + public API wiring** — product images, public reads, Vue integration without changing frozen Test 26.
-6. [ ] **Favorites/WhatsApp share** — persisted share records, short public links, revocation/expiry handling.
-7. [ ] **Customer Magic Link** — secure one-tap customer session, revoke/regenerate/audit flow.
-8. [ ] **Delivery hardening** — backup rotation/off-host copy, logs, health, recovery drill, responsive/RTL/LTR/dark-light QA.
-9. [ ] **Final customer handoff/polish** — only if review feedback remains after the above; otherwise this run collapses into delivery documentation.
+1. [x] **Urgent Test 27 editor access** — persistent admin quick-launch button, structured target browser, direct visibility toggles, live Test 27 deployment.
+2. [x] **Visual Style Profile frontend + production service foundation** — local-first adapter, checksum conflict handling, staging Publish/history/Restore UI, production Laravel/SQLite deployment and live service-level persistence acceptance all PASS.
+3. [x] **Production SQLite/Laravel + first admin** — PDO SQLite/SQLite 3.53.4 PASS, private DB/backup active, migrations/snapshot PASS, `/backend` healthy, one real active production admin provisioned securely.
+4. [ ] **Browser-authenticated editor acceptance** — real Filament session + CSRF, Test 27 server autosave, reload/cross-device draft, staging Publish and Restore through the actual UI. This is the only remaining Style Profile persistence acceptance.
+5. [ ] **Filament CRUD + catalog/customer API/media** — Product/Category/Subcategory/Customer Resources, server-side search/pagination, public catalog/customer reads, controlled product-media ownership/upload.
+6. [ ] **Favorites/WhatsApp + Customer Magic Link** — persisted short share links, revoke/expiry, safe one-tap customer session and audit trail.
+7. [ ] **Production hardening + final QA/handoff** — rotated off-host SQLite backup + restore drill, repeatable backend update workflow with pre-migration snapshot/rollback guard, responsive/RTL/LTR/light/dark/permissions QA, final customer handoff.
 
 ### Production backend activation delivery record
 
@@ -185,7 +183,7 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 
 - [x] Create rollback checkpoint `rollback/test26-pre-test27-visual-editor` before the first Test 27 UI change.
 - [x] Select a non-modal resizable Bottom Sheet as the primary mobile inspector; reject a fully draggable floating inspector as the main mobile UI.
-- [x] Add exact approved five-color token registry: `#21946A`, `#151EDA`, `#C8E3DB`, `#FFFFFF`, `#FFB514`.
+- [x] Add approved five-color token registry. Current canonical Test 27 palette: `#21946A`, logo-background Brand Blue `#0714C2`, `#C8E3DB`, `#FFFFFF`, `#FFB514`; the earlier `#151EDA` blue is retired.
 - [x] Route shared navy/blue brand chrome for Header, Footer and Hero text bar through `--role-brand-chrome`.
 - [x] Add admin-only Visual Editor launcher under Appearance; editor is off by default.
 - [x] Keep the editor UI/listeners removable while persisted style/content overrides continue through a separate runtime layer.
@@ -202,7 +200,7 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Persist/version Style Profiles through Laravel with mutable draft, immutable versions, staging/production publication pointers, admin-only writes, server-side safe CSS compilation, activity log and checksum conflict protection.
 - [x] Connect the Test 27 visual-editor store to the Laravel Style Profile API through a local-first adapter: conservative public staging baseline, 900ms debounced authenticated draft autosave, expected-checksum 409 conflict handling, staging Publish, history/Restore and local fallback.
 - [x] Visual editor structured target controls foundation: grouped browser for header/hero/about/why/capabilities/product banners/product cards/footer, direct ON/OFF visibility, text/background/border/token editing through the existing inspector, and hidden targets recoverable.
-- [ ] Add explicit profile export/import/version-history UX if backend profile history alone is insufficient.
+- [x] Add sanitized profile JSON Export/Import plus backend immutable version-history/Restore UX; keep JSON as interchange/backup only, not runtime persistence.
 
 ### Style Profile frontend adapter delivery record
 
@@ -214,7 +212,7 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Add sync status UI: checking / local / saving / synced / conflict / error.
 - [x] Branch validation PASS: Test 27 contract, TypeScript, **30/30** Vue unit tests, numbered Test 27 build.
 - [x] **FTP Deploy Run #262: PASS** — active Test 27 rebuilt and deployed to `/public_html/t/27`; 112 files uploaded; no remote files deleted; root deploy skipped.
-- [ ] Complete shared server persistence acceptance in live Test 27: sign into real Laravel admin session, edit/save, reload, verify cross-device draft, Publish staging and Restore. First real admin and `/backend` API base are now ready.
+- [ ] Complete the only remaining Style Profile acceptance: real browser Filament login/session + CSRF, edit/save in Test 27, reload, verify cross-device draft, Publish staging and Restore. Production server-side save/version/restore semantics are already acceptance-tested PASS.
 
 - [x] Add Test 27 to the mutable test launcher after explicit owner approval on 2026-10-01; keep Test 26 frozen.
 - [x] Add persistent admin-only «ویرایش ظاهر» quick launcher so a logged-in admin can open the Test 27 editor from any page and be routed to Home automatically.
