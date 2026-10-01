@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { ListTree, X } from '@lucide/vue'
 import { useVisualStyleStore } from './store'
 import VisualEditorInspector from './VisualEditorInspector.vue'
 import VisualEditorTargetChooser from './VisualEditorTargetChooser.vue'
 import VisualEditorTargetBrowser from './VisualEditorTargetBrowser.vue'
+import VisualEditorSyncPanel from './VisualEditorSyncPanel.vue'
 import { useVisualEditorSelection } from './composables/useVisualEditorSelection'
 import { useResizableEditorSheet } from './composables/useResizableEditorSheet'
+import { useVisualProfileSync } from './composables/useVisualProfileSync'
 
 const visual=useVisualStyleStore()
 const browserOpen=ref(true)
+const enabledRef=toRef(visual,'enabled')
 const {selected,candidates,choose,chooseHidden}=useVisualEditorSelection(visual.enabled)
 const {height,onResizeStart,onResizeMove,onResizeEnd}=useResizableEditorSheet(visual.enabled)
+const sync=useVisualProfileSync(visual,enabledRef)
+const publishedStagingVersion=computed(()=>sync.publications.value.staging?.version)
 
 const hiddenIds=computed(()=>Object.entries(visual.profile.styles)
   .filter(([,style])=>style.hidden)
@@ -50,7 +55,7 @@ function chooseFromBrowser(candidate:Parameters<typeof choose>[0]){
         <b>ویرایش دیداری</b>
         <small>{{selected?.label ?? (candidates.length?'انتخاب عنصر':'یک بخش از صفحه را لمس کنید')}}</small>
       </div>
-      <span class="visual-editor-autosave">ذخیره خودکار</span>
+      <span class="visual-editor-autosave" :data-state="sync.state.value">{{sync.statusLabel.value}}</span>
       <button
         type="button"
         class="visual-editor-icon-button"
@@ -65,6 +70,20 @@ function chooseFromBrowser(candidate:Parameters<typeof choose>[0]){
     </header>
 
     <div class="visual-editor-body">
+      <VisualEditorSyncPanel
+        :state="sync.state.value"
+        :authenticated="sync.authenticated.value"
+        :message="sync.message.value"
+        :versions="sync.versions.value"
+        :published-version="publishedStagingVersion"
+        :can-publish="sync.canPublish.value"
+        @reconnect="sync.connect(true)"
+        @publish="sync.publishStaging"
+        @restore="sync.restoreVersion"
+        @use-server="sync.useServerVersion"
+        @keep-local="sync.keepLocalVersion"
+      />
+
       <VisualEditorTargetBrowser
         v-if="browserOpen"
         :selected-id="selected?.id"
