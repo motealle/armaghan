@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261001-production-sqlite-activation",
   "scope": "Production SQLite activation: fresh host runtime probe with private file RW + VACUUM INTO, canonical docs correction, production bootstrap/deploy preparation if PASS; no Test 26/27 UI mutation",
   "base_ref": "main@58adaa39c91747c3c5b89ad63992672029c7d63a",
   "acquired_at": "2026-10-01T08:58:00Z",
-  "expires_at": "2026-10-01T10:28:00Z",
-  "released_at": null,
-  "note": "Backend-only bounded run. No production migration before fresh SQLite probe PASS."
+  "expires_at": null,
+  "released_at": "2026-10-01T09:10:00Z",
+  "note": "Released after Production SQLite Reprobe #1. FTP/private sibling/cleanup PASS; PHP runtime verdict INCONCLUSIVE because canonical web URL was not reached. Main docs head fe9289b4ec0062a29ef4411053ef118b1d70cc49. No production migration performed."
 }
