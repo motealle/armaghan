@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261001-test27-editor-urgent-access",
   "scope": "Urgent Test 27 visual editor usability: admin quick launcher, direct appearance access, structured target picker groundwork, backlog/handoff update; no Test 26 mutation",
   "base_ref": "main@bdfcc72f3506a597e570911aa2fba1bb9833c9d0",
   "acquired_at": "2026-10-01T07:48:00Z",
-  "expires_at": "2026-10-01T09:18:00Z",
-  "released_at": null,
-  "note": "Urgent customer UI lane. Backend/SQLite work remains queued and untouched in this bounded run."
+  "expires_at": null,
+  "released_at": "2026-10-01T08:29:00Z",
+  "note": "Released after urgent Test 27 editor access delivery. Main head 431cc20de708028a49877ef82b045705cdf57efa. Branch validation PASS. FTP Deploy Run #260 attempt 2 PASS: Test 27 rebuilt/deployed to /public_html/t/27, test index updated, 112 files uploaded, no remote deletes, root skipped. Attempt 1 failed only on transient Pillow download timeout. Docs-only Run #261 PASS with both deploy jobs skipped. Test 26 untouched. Next UI batch: Style Profile frontend adapter; backend lane remains SQLite production activation + Filament CRUD."
 }
