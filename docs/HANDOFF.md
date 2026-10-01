@@ -511,7 +511,7 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - The first deployment workflow reported failure only because post-deploy HTTP smoke ran before public permissions were corrected; activation, migrations and backup had already succeeded.
 - Root cause of public 404: public Laravel directories were created too restrictively for LiteSpeed. Public permissions were repaired to directories `0755` / files `0644`; private app/data permissions were not widened.
 - Temporary activation, diagnostic and permission-repair files were cleaned up.
-- No first admin is created yet. Next P0 security batch is one-time first-admin provisioning without a seeded/default password; then Test 27 API base should point to `/backend` and shared Style Profile persistence should be verified.
+- First production admin is now provisioned securely as `admin@armaghan.local`; no seeded/default password exists and no plaintext password is stored in Git or repo docs. Next acceptance task is browser login followed by Test 27 shared Style Profile save/reload/publish/restore verification.
 - Test 26 and Test 27 UI files were not modified in this backend activation batch.
 
 - Production SQLite Reprobe #1 (2026-10-01): execution/cleanup PASS, but runtime verdict **INCONCLUSIVE** because the temporary PHP probe was not reachable through the inferred web URLs. FTP reached `public_html`, created a private sibling and removed all temporary objects. Do not claim production PDO SQLite PASS until a probe runs through the confirmed canonical application URL or the deployed backend health route.
@@ -520,7 +520,7 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 ## 32. Test 27 color/saveability handoff
 
 - Production Laravel/SQLite activation is already complete and healthy at `/backend`; SQLite 3.53.4, PDO SQLite, private read/write, foreign keys, `VACUUM INTO`, migrations and an initial private snapshot have passed.
-- The next security blocker for shared editor persistence is **first real administrator provisioning**. No default/seeded production password exists.
+- The first real production administrator is now provisioned securely. No default/seeded password exists; the plaintext credential is intentionally not stored in the repository.
 - Actual repository logo pixel probe result: image-dominant background `#0714C2`; this is now the canonical Brand Blue and replaces the earlier `#151EDA` token.
 - Test 27 light-mode Home background default is Brand White through `--role-page-background`; the root `home.page` target exposes background color only and cannot be hidden.
 - `home.content` is a separate hideable/selectable target so the editor cannot accidentally remove its own recoverable page root.
@@ -545,4 +545,21 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Light Home page default is white; primary Home panels default to Brand Mint; both remain structured token-controlled editor surfaces.
 - `home.page` is protected from Hide, while `home.content` remains independently controllable.
 - Nested Why/Capability text targets, hidden-orphan recovery, per-target Inspector controls, sanitized JSON export/import and same-origin `/backend` Style Profile API/CSRF support are live in Test 27.
-- Shared cross-device saving still requires the first real Laravel admin account and a verified authenticated save/reload/publish/restore cycle.
+- Shared cross-device saving now requires only the verified authenticated browser cycle: log into `/backend/admin/login`, edit Test 27, confirm server sync, reload/cross-device, Publish staging and Restore.
+
+
+## 33. First production administrator provisioning handoff
+
+- Production active-admin account exists: `admin@armaghan.local` / `Armaghan Administrator`, user id 1.
+- The account was created by the Armaghan one-shot bootstrap at 2026-10-01T13:35:31Z.
+- The first bootstrap run created the intended account but failed during credential encryption because a temporary public-key payload was malformed.
+- Recovery was not blind: a read-only inspector first verified there was exactly one active admin and that email, display name and creation timestamp matched that failed bootstrap.
+- Recovery then rotated only that exact account using a strong random on-host password.
+- Credential encryption is now performed before any future account mutation; this prevents an unrecoverable admin if encryption fails.
+- Laravel password hashing verification passed after recovery; active-admin policy passed; `/backend/admin/login` HTTP smoke passed.
+- Plaintext password was never committed and was not emitted to GitHub logs. Only RSA ciphertext was logged and decrypted outside the repository workflow.
+- Persistent tooling added:
+  - `armaghan:provision-first-admin` fail-closed Artisan command for future clean deployments;
+  - `platform/scripts/provision_first_admin_ftp.py` with inspect/provision/guarded-recovery support.
+- The one-shot workflow used for this production bootstrap was deleted after success.
+- Next task: authenticate the browser against the real Filament login and verify Test 27 Style Profile autosave, reload, staging Publish and Restore end-to-end.
