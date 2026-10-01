@@ -47,12 +47,18 @@ inspector = (EDITOR / "VisualEditorInspector.vue").read_text(encoding="utf-8")
 quick_launcher = (EDITOR / "VisualEditorQuickLauncher.vue").read_text(encoding="utf-8")
 target_browser = (EDITOR / "VisualEditorTargetBrowser.vue").read_text(encoding="utf-8")
 target_registry = (EDITOR / "targetRegistry.ts").read_text(encoding="utf-8")
+style_api = (EDITOR / "services/styleProfileApi.ts").read_text(encoding="utf-8")
+sync_composable = (EDITOR / "composables/useVisualProfileSync.ts").read_text(encoding="utf-8")
+public_baseline = (EDITOR / "composables/usePublicVisualProfileBaseline.ts").read_text(encoding="utf-8")
+sync_panel = (EDITOR / "VisualEditorSyncPanel.vue").read_text(encoding="utf-8")
 assert "visual-editor-sheet" in editor
 assert "useVisualEditorSelection" in editor
 assert "useResizableEditorSheet" in editor
 assert "VisualEditorTargetChooser" in editor
 assert "VisualEditorInspector" in editor
 assert "VisualEditorTargetBrowser" in editor
+assert "VisualEditorSyncPanel" in editor
+assert "useVisualProfileSync" in editor
 assert "browserOpen=ref(true)" in editor
 assert "ذخیره خودکار" in editor
 assert "visual.setEnabled(false)" in editor
@@ -64,6 +70,15 @@ assert "ویرایش ظاهر" in quick_launcher
 assert "visual.setEnabled(true)" in quick_launcher
 assert "router.push('/')" in quick_launcher
 assert "انتخاب منظم عناصر" in target_browser
+assert "credentials:'same-origin'" in style_api
+assert "X-XSRF-TOKEN" in style_api
+assert "expected_checksum" in style_api
+assert "saveAdminStyleProfileDraft" in sync_composable
+assert "state.value='conflict'" in sync_composable
+assert "window.setTimeout(()=>{void saveNow()},900)" in sync_composable
+assert "بارگذاری نسخه سرور" in sync_panel
+assert "انتشار نسخه فعلی در staging" in sync_panel
+assert "fetchPublicStyleProfile('staging'" in public_baseline
 assert "toggleVisibility" in target_browser
 for target_id in ("header.shell","hero.title","home.about.title","home.why.title","home.capabilities.title","home.product-banners.title","product.card","footer.shell"):
     assert target_id in target_registry
@@ -93,6 +108,7 @@ why = (SRC / "features/home/components/WhyArmaghanSection.vue").read_text(encodi
 capabilities = (SRC / "features/home/components/CapabilitiesSection.vue").read_text(encoding="utf-8")
 banners = (SRC / "features/home/components/ProductCategoryBanners.vue").read_text(encoding="utf-8")
 css = (SRC / "styles/main.css").read_text(encoding="utf-8")
+runtime = (EDITOR / "VisualStyleRuntime.vue").read_text(encoding="utf-8")
 launcher = (ROOT / "t/index.htm").read_text(encoding="utf-8")
 
 assert 'data-style-id="header.shell"' in header
@@ -109,6 +125,8 @@ assert 'home.product-banner.${category.code}' in banners
 assert "--role-brand-chrome:var(--brand-blue)" in css
 assert "background:var(--role-brand-chrome)" in css
 assert "html.visual-editor-active .bottom-nav{display:none!important}" in css
+assert "usePublicVisualProfileBaseline" in runtime
+assert ".visual-editor-sync-panel{" in css
 assert './27/index.html' in launcher
 assert launcher.index("./27/index.html") < launcher.index("./26/index.html")
 
