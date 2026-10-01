@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { ChevronLeft, ChevronRight, ImagePlus, MoreVertical, PackagePlus, Pencil, Search, Trash2 } from '@lucide/vue'
-import { categories } from '@/data/catalog'
 import { compressImage } from '@/features/admin/services/imageCompression'
 import ProductEditorPanel from '@/features/admin/components/ProductEditorPanel.vue'
 import { useCatalogStore } from '@/stores/catalog'
@@ -22,7 +21,7 @@ const editorOpen=ref(false)
 const editorProductId=ref<number|null>(null)
 const note=ref('')
 
-const availableSubcategories=computed(()=>categories
+const availableSubcategories=computed(()=>catalog.categories
   .filter(category=>!categoryFilter.value||category.code===categoryFilter.value)
   .flatMap(category=>category.subcategories)
 )
@@ -108,7 +107,7 @@ function subcategoryLabel(product:Product){return locale.subcategoryName(product
       <label class="form-field">{{locale.t('categoryLabel')}}
         <select v-model="categoryFilter">
           <option value="">{{locale.t('allCategories')}}</option>
-          <option v-for="category in categories" :key="category.code" :value="category.code">{{locale.categoryName(category.code,category.name)}}</option>
+          <option v-for="category in catalog.categories" :key="category.code" :value="category.code">{{locale.categoryName(category.code,category.name)}}</option>
         </select>
       </label>
       <label class="form-field">{{locale.t('subcategoryLabel')}}
