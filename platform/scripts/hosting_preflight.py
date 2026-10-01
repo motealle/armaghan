@@ -104,6 +104,12 @@ if ($outsideWrite) {{ @unlink($writeTest); }}
 $pdoDrivers = class_exists('PDO') ? PDO::getAvailableDrivers() : [];
 $sqliteVersion = null;
 $sqliteMemory = false;
+$sqlitePrivateFile = false;
+$sqliteForeignKeys = false;
+$sqliteVacuumInto = false;
+$sqliteDbPath = $privateDir . '/preflight.sqlite';
+$sqliteBackupPath = $privateDir . '/preflight-backup.sqlite';
+
 if (in_array('sqlite', $pdoDrivers, true)) {{
     try {{
         $pdo = new PDO('sqlite::memory:');
@@ -111,8 +117,31 @@ if (in_array('sqlite', $pdoDrivers, true)) {{
         $pdo->exec('create table preflight (id integer primary key, value text)');
         $pdo->exec("insert into preflight(value) values ('ok')");
         $sqliteMemory = $pdo->query('select count(*) from preflight')->fetchColumn() === '1';
+
+        $filePdo = new PDO('sqlite:' . $sqliteDbPath);
+        $filePdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $filePdo->exec('PRAGMA foreign_keys = ON');
+        $sqliteForeignKeys = (string) $filePdo->query('PRAGMA foreign_keys')->fetchColumn() === '1';
+        $filePdo->exec('create table parent_record (id integer primary key)');
+        $filePdo->exec('create table child_record (id integer primary key, parent_id integer references parent_record(id))');
+        $filePdo->exec('insert into parent_record(id) values (1)');
+        $filePdo->exec('insert into child_record(id, parent_id) values (1, 1)');
+        $sqlitePrivateFile = $filePdo->query('select count(*) from child_record')->fetchColumn() === '1';
+
+        if (file_exists($sqliteBackupPath)) {{ @unlink($sqliteBackupPath); }}
+        $quotedBackup = $filePdo->quote($sqliteBackupPath);
+        $filePdo->exec('VACUUM INTO ' . $quotedBackup);
+        $sqliteVacuumInto = file_exists($sqliteBackupPath) && filesize($sqliteBackupPath) > 0;
+        $filePdo = null;
     }} catch (Throwable $e) {{
         $sqliteMemory = false;
+        $sqlitePrivateFile = false;
+        $sqliteForeignKeys = false;
+        $sqliteVacuumInto = false;
+    }} finally {{
+        @unlink($sqliteDbPath . '-wal');
+        @unlink($sqliteDbPath . '-shm');
+        @unlink($sqliteDbPath . '-journal');
     }}
 }}
 
