@@ -13,7 +13,7 @@ Current UI lane:
 - Test 26: frozen/immutable.
 - Test 27: active mutable review lane and visible in the test launcher.
 - Test 27 is live under `/t/27`.
-- Customer visual-correction batch is implemented in the active Test 27 source: logo-only footer branding, six-way product labels/unified unavailable state, hidden-by-default subcategory codes, white Products background, Mint cards, strong green heading role, Brand Blue/Gold Why styling; deployment validation is pending the implementation commit workflow.
+- Customer visual-correction batch is live in Test 27: logo-only footer branding, six-way product labels/unified unavailable state, hidden-by-default subcategory codes, white Products background, Mint cards, strong green heading role, Brand Blue/Gold Why styling. FTP Deploy #277 PASS; 112 files uploaded; no remote deletion; root deploy skipped.
 
 Current backend lane:
 - Laravel 13.34.0 is live under `/backend`.
