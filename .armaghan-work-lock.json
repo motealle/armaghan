@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261001-test27-heading-green-polish",
   "scope": "Final Test 27 heading-green polish: make strong heading role visually green while preserving contrast; update source contract/docs; deploy Test 27 only",
   "base_ref": "main@3e08011ae703db993f0459cdeb116c19ecd7f040",
   "acquired_at": "2026-10-01T16:05:00Z",
-  "expires_at": "2026-10-01T17:35:00Z",
-  "released_at": null,
-  "note": "Follow-up polish from same customer visual-correction batch; Test 26 immutable."
+  "expires_at": "2026-10-01T20:12:00Z",
+  "released_at": "2026-10-01T20:12:00Z",
+  "note": "Completed Test 27 customer visual corrections and final heading-green polish. FTP Deploy #282 PASS; final docs-only validation #283 PASS; main docs head a83d08e8ce88fd1b7e17817f4df5cccacdef113d."
 }
