@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
-"""Provision the first production Laravel administrator without logging plaintext credentials.
+"""Secure one-shot first-admin inspection/provision/recovery over FTP.
 
-The workflow supplies FTP credentials plus a temporary RSA public key.
-A short-lived PHP controller:
-- authenticates with an unguessable request token,
-- boots the existing private Laravel app,
-- refuses to run if an active admin already exists,
-- generates a strong random password on-host,
-- creates the first active admin through the existing User model,
-- verifies the stored hash,
-- encrypts the plaintext password to the supplied public key,
-- returns only ciphertext and non-sensitive metadata.
+Plaintext credentials are never printed. The remote PHP helper can:
+- inspect active-admin metadata without mutation;
+- provision the first admin when none exists;
+- recover the exact bootstrap admin created by a failed prior run, but only
+  when email/name match and created_at is at/after a caller-supplied threshold.
 
-The temporary public PHP file is always removed over FTP.
+For provision/recovery, a strong password is generated on-host, encrypted with
+an ephemeral RSA public key before any database mutation, then stored hashed
+through the existing Laravel User model. Only RSA ciphertext leaves the host.
+The temporary public PHP helper is always removed over FTP.
 """
 from __future__ import annotations
 
@@ -46,7 +44,14 @@ def php_quote(value: str) -> str:
     return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'"
 
 
-def bootstrap_php(secret: str, email: str, name: str, public_key_b64: str) -> str:
+def bootstrap_php(
+    secret: str,
+    email: str,
+    name: str,
+    public_key_b64: str,
+    inspect_only: bool = False,
+    recover_after: str = "",
+) -> str:
     template = r"""<?php
 header('Content-Type: application/json; charset=utf-8');
 
@@ -72,6 +77,32 @@ $kernel->bootstrap();
 
 $email = __EMAIL__;
 $name = __NAME__;
+$inspectOnly = __INSPECT_ONLY__;
+$recoverAfter = __RECOVER_AFTER__;
+
+$admins = App\Models\User::query()
+    ->where('role', App\Enums\UserRole::Admin->value)
+    ->where('active', true)
+    ->orderBy('id')
+    ->get(['id', 'name', 'email', 'created_at']);
+
+$adminCount = $admins->count();
+
+if ($inspectOnly) {
+    echo json_encode([
+        'ok' => true,
+        'stage' => 'inspect',
+        'active_admin_count' => $adminCount,
+        'admins' => $admins->map(fn ($admin) => [
+            'id' => $admin->id,
+            'name' => $admin->name,
+            'email' => $admin->email,
+            'created_at' => optional($admin->created_at)->toISOString(),
+        ])->values()->all(),
+    ], JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 $publicKeyPem = base64_decode(__PUBLIC_KEY__, true);
 if (!is_string($publicKeyPem) || $publicKeyPem === '') {
     http_response_code(500);
@@ -79,31 +110,86 @@ if (!is_string($publicKeyPem) || $publicKeyPem === '') {
     exit;
 }
 
-$adminCount = App\Models\User::query()
-    ->where('role', App\Enums\UserRole::Admin->value)
-    ->where('active', true)
-    ->count();
+$password = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
 
-if ($adminCount > 0) {
-    http_response_code(409);
-    echo json_encode([
-        'ok' => false,
-        'stage' => 'existing-admin',
-        'active_admin_count' => $adminCount,
-    ]);
+$publicKey = openssl_pkey_get_public($publicKeyPem);
+if ($publicKey === false) {
+    http_response_code(500);
+    echo json_encode(['ok' => false, 'stage' => 'public-key-load']);
     exit;
 }
 
-if (App\Models\User::query()->whereRaw('LOWER(email) = ?', [strtolower($email)])->exists()) {
+$encrypted = '';
+if (!openssl_public_encrypt(
+    $password,
+    $encrypted,
+    $publicKey,
+    OPENSSL_PKCS1_OAEP_PADDING,
+)) {
+    http_response_code(500);
+    echo json_encode(['ok' => false, 'stage' => 'credential-encryption']);
+    exit;
+}
+
+$recovering = false;
+$recoverUser = null;
+
+if ($adminCount > 0) {
+    if ($adminCount !== 1 || $recoverAfter === '') {
+        http_response_code(409);
+        echo json_encode([
+            'ok' => false,
+            'stage' => 'existing-admin',
+            'active_admin_count' => $adminCount,
+        ]);
+        exit;
+    }
+
+    $candidate = $admins->first();
+    $createdAt = optional($candidate->created_at)->toISOString();
+    $matchesBootstrap = strtolower((string) $candidate->email) === strtolower($email)
+        && (string) $candidate->name === $name
+        && is_string($createdAt)
+        && strcmp($createdAt, $recoverAfter) >= 0;
+
+    if (!$matchesBootstrap) {
+        http_response_code(409);
+        echo json_encode([
+            'ok' => false,
+            'stage' => 'existing-admin-mismatch',
+            'active_admin_count' => $adminCount,
+        ]);
+        exit;
+    }
+
+    $recovering = true;
+    $recoverUser = $candidate;
+}
+
+if (!$recovering && App\Models\User::query()->whereRaw('LOWER(email) = ?', [strtolower($email)])->exists()) {
     http_response_code(409);
     echo json_encode(['ok' => false, 'stage' => 'email-exists']);
     exit;
 }
 
-$password = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
-
 try {
-    $user = Illuminate\Support\Facades\DB::transaction(function () use ($name, $email, $password) {
+    $user = Illuminate\Support\Facades\DB::transaction(function () use (
+        $name,
+        $email,
+        $password,
+        $recovering,
+        $recoverUser
+    ) {
+        if ($recovering) {
+            $user = App\Models\User::query()->lockForUpdate()->findOrFail($recoverUser->id);
+            $user->forceFill([
+                'password' => $password,
+                'remember_token' => Illuminate\Support\Str::random(60),
+            ])->save();
+
+            return $user->fresh();
+        }
+
         $user = App\Models\User::query()->create([
             'name' => $name,
             'email' => strtolower($email),
@@ -128,26 +214,9 @@ try {
         throw new RuntimeException('password-hash');
     }
 
-    $publicKey = openssl_pkey_get_public($publicKeyPem);
-    if ($publicKey === false) {
-        throw new RuntimeException('public-key-load');
-    }
-
-    $encrypted = '';
-    $encryptedOk = openssl_public_encrypt(
-        $password,
-        $encrypted,
-        $publicKey,
-        OPENSSL_PKCS1_OAEP_PADDING,
-    );
-
-    if (!$encryptedOk) {
-        throw new RuntimeException('credential-encryption');
-    }
-
     echo json_encode([
         'ok' => true,
-        'stage' => 'provisioned',
+        'stage' => $recovering ? 'recovered' : 'provisioned',
         'user_id' => $user->id,
         'email' => $user->email,
         'active_admin_count' => App\Models\User::query()
@@ -165,6 +234,8 @@ try {
         template.replace("__SECRET__", php_quote(secret))
         .replace("__EMAIL__", php_quote(email))
         .replace("__NAME__", php_quote(name))
+        .replace("__INSPECT_ONLY__", "true" if inspect_only else "false")
+        .replace("__RECOVER_AFTER__", php_quote(recover_after))
         .replace("__PUBLIC_KEY__", php_quote(public_key_b64))
     )
 
@@ -179,7 +250,6 @@ def get_json(url: str, timeout: int = 45) -> dict:
             body = response.read(256 * 1024)
             return json.loads(body.decode("utf-8"))
     except Exception as exc:
-        # HTTPError may still contain the safe JSON stage response.
         body = getattr(exc, "read", lambda *_: b"")()
         if body:
             try:
@@ -200,6 +270,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--email", default="admin@armaghan.local")
     parser.add_argument("--name", default="Armaghan Administrator")
+    parser.add_argument("--inspect-only", action="store_true")
+    parser.add_argument("--recover-after", default="")
     args = parser.parse_args()
 
     raw_server = env("FTP_SERVER")
@@ -236,6 +308,8 @@ def main() -> int:
             email=args.email,
             name=args.name,
             public_key_b64=public_key_b64,
+            inspect_only=args.inspect_only,
+            recover_after=args.recover_after,
         ).encode("utf-8")
         ftp.storbinary("STOR " + bootstrap_name, io.BytesIO(source))
         uploaded = True
@@ -248,11 +322,14 @@ def main() -> int:
             "email": result.get("email"),
             "active_admin_count": result.get("active_admin_count"),
             "password_ciphertext_b64": result.get("password_ciphertext_b64"),
+            "admins": result.get("admins") if args.inspect_only else None,
         }
         print("ARMAGHAN_FIRST_ADMIN_RESULT")
         print(json.dumps(safe_result, ensure_ascii=False, indent=2))
 
-        if not safe_result["ok"] or not safe_result["password_ciphertext_b64"]:
+        if not safe_result["ok"]:
+            return 4
+        if not args.inspect_only and not safe_result["password_ciphertext_b64"]:
             return 4
 
         return 0
