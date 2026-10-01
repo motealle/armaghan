@@ -515,3 +515,20 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Test 26 and Test 27 UI files were not modified in this backend activation batch.
 
 - Production SQLite Reprobe #1 (2026-10-01): execution/cleanup PASS, but runtime verdict **INCONCLUSIVE** because the temporary PHP probe was not reachable through the inferred web URLs. FTP reached `public_html`, created a private sibling and removed all temporary objects. Do not claim production PDO SQLite PASS until a probe runs through the confirmed canonical application URL or the deployed backend health route.
+
+
+## 32. Test 27 color/saveability handoff
+
+- Production Laravel/SQLite activation is already complete and healthy at `/backend`; SQLite 3.53.4, PDO SQLite, private read/write, foreign keys, `VACUUM INTO`, migrations and an initial private snapshot have passed.
+- The next security blocker for shared editor persistence is **first real administrator provisioning**. No default/seeded production password exists.
+- Actual repository logo pixel probe result: image-dominant background `#0714C2`; this is now the canonical Brand Blue and replaces the earlier `#151EDA` token.
+- Test 27 light-mode Home background default is Brand White through `--role-page-background`; the root `home.page` target exposes background color only and cannot be hidden.
+- `home.content` is a separate hideable/selectable target so the editor cannot accidentally remove its own recoverable page root.
+- Primary Home panel default is Brand Mint through `--role-panel-background`; About copy, Why list and Capability cards consume it.
+- Why reason titles/texts and Capability titles/texts now have stable explicit editor ids and locale-aware text overrides.
+- Structured target browser exposes recoverable hidden orphan targets and marks protected non-hideable roots.
+- Inspector respects per-target allowed controls; protected roots do not show irrelevant text/border/Hide actions.
+- Style Profile API defaults to same-origin `/backend` and bootstraps Laravel CSRF tokens for mutating requests, retrying once on HTTP 419.
+- Browser-local persistence remains automatic. Sanitized JSON Export/Import is available for simple manual backup/transfer and does not create a JSON database.
+- Latest branch validation runs for `ui/test27-editor-color-saveability-20261001` are PASS. Test 26 has not been modified.
+- Remaining acceptance test: provision real admin, authenticate at `/backend/admin/login`, edit Test 27, observe server sync, reload/cross-device, Publish staging and Restore.
