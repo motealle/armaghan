@@ -1,6 +1,6 @@
 # Armaghan Backend MVP
 
-Status: implementation active; hosting preflight and Laravel/Filament bootstrap complete; Test 26 frozen.
+Status: production Laravel/SQLite is active; first admin and Style Profile production persistence are verified; Filament domain CRUD/public API wiring remains active work; Test 26 frozen.
 Frozen source snapshot: `snapshot/test26-final` at `c4f5f507f411138b124cc6feb3bec5ecef1fdc71`.
 
 ## Verified current state
@@ -12,7 +12,7 @@ Frozen source snapshot: `snapshot/test26-final` at `c4f5f507f411138b124cc6feb3be
 - SQLite model draft: present in `platform/database/schema.sql`.
 - Demo SQL seed: present in `platform/database/seed_demo.sql`.
 - SQLite bootstrap helper: present in `platform/scripts/bootstrap_sqlite.py`.
-- Product/customer/admin UX: present as Vue prototype, but persistence is browser-local.
+- Product/customer/admin UX: Vue prototype exists; Style Profile persistence is live, but catalog/customer/admin domain flows are not yet wired to production backend CRUD/APIs.
 - Favorites sharing: present as a frontend URL containing validated product codes.
 - Theme palette: present as five-color sets mapped in code to `--c-primary`, `--c-secondary`, `--c-soft`, `--c-paper`, `--c-accent`.
 
@@ -182,7 +182,7 @@ Each implementation run should remain bounded, reversible and committed separate
 - SQLite is selected for local/dev/test/production; the authoritative 2026-10-01 production re-probe passed and the first production migration is complete.
 - Generated framework agent instructions were replaced with Armaghan-specific rules; Laravel Boost is not auto-installed.
 - No numbered UI snapshot was changed or deployed.
-- Next implementation batch: domain data model and production-safe admin access foundation.
+- Next backend implementation focus: Filament Product/Category/Subcategory/Customer Resources plus catalog/customer API/media wiring. Domain models and production-safe admin provisioning are already complete.
 
 
 ## SQLite production decision — 2026-10-01
@@ -203,4 +203,6 @@ Each implementation run should remain bounded, reversible and committed separate
 - Initial SQLite snapshot: PASS.
 - Public smoke: backend root, health endpoint, public Style Profile API and Filament login all return HTTP 200.
 - The initial post-deploy 404 was traced to public-directory permissions for LiteSpeed and fixed by normalizing only the public surface to directories `0755` and files `0644`.
-- No production administrator is seeded. First-admin provisioning is the next security-controlled P0 batch.
+- One real active production administrator has been provisioned securely. No seeded/default password exists and plaintext credentials are not stored in Git/docs/logs.
+- Production Style Profile save/publish/restore semantics are acceptance-tested PASS against live SQLite.
+- Remaining Style Profile acceptance is browser/session/CSRF only.
