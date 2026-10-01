@@ -2,21 +2,15 @@
 import { CircleHelp, Globe2, Mail, MessageCircleMore, PackageSearch, Send, UsersRound } from '@lucide/vue'
 import { categories } from '@/data/catalog'
 import { useLocaleStore } from '@/stores/locale'
-import { useVisualStyleStore } from '@/features/visual-editor/store'
 
 const emit=defineEmits<{help:[]}>()
 const locale=useLocaleStore()
-const visual=useVisualStyleStore()
 </script>
 
 <template>
   <footer data-style-id="footer.shell" data-style-label="فوتر سایت" class="site-footer test26-site-footer">
-    <div data-style-id="footer.brand" data-style-label="بخش برند فوتر" class="test26-footer-brand">
+    <div data-style-id="footer.brand" data-style-label="لوگوی فوتر" class="test26-footer-brand">
       <img :src="'../../logo.png'" alt="Armaghan">
-      <div>
-        <b data-style-id="footer.brand-name" data-style-label="نام برند در فوتر" data-editable-text="true">{{visual.resolveText('footer.brand-name',locale.locale,locale.t('brandName'))}}</b>
-        <span data-style-id="footer.description" data-style-label="توضیح برند در فوتر" data-editable-text="true">{{visual.resolveText('footer.description',locale.locale,locale.t('footerText'))}}</span>
-      </div>
     </div>
 
     <div data-style-id="footer.columns" data-style-label="ستون‌های فوتر" class="test26-footer-grid">
