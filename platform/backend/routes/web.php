@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\StyleProfileController as AdminStyleProfileController;
+use App\Http\Controllers\PublicCatalogController;
 use App\Http\Controllers\PublicStyleProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,13 @@ Route::get('/api/csrf-token', function () {
 
 Route::get('/api/style-profile/{channel?}', [PublicStyleProfileController::class, 'show'])
     ->where('channel', 'staging|production');
+
+Route::prefix('api/catalog')
+    ->middleware('throttle:120,1')
+    ->group(function (): void {
+        Route::get('/categories', [PublicCatalogController::class, 'categories']);
+        Route::get('/products', [PublicCatalogController::class, 'products']);
+    });
 
 Route::prefix('api/admin/style-profile')
     ->middleware('active.admin')
