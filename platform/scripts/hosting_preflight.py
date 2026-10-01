@@ -163,6 +163,7 @@ def fetch_probe(bases: list[str], probe_name: str, run_token: str) -> tuple[dict
         "https_candidate_reached": False,
         "http_candidate_reached": False,
         "attempt_errors": [],
+        "attempts": [],
     }
     context = ssl.create_default_context()
     for base in bases:
@@ -172,17 +173,37 @@ def fetch_probe(bases: list[str], probe_name: str, run_token: str) -> tuple[dict
             req = Request(url, headers={"User-Agent": "Armaghan-Hosting-Preflight/1.0"})
             with urlopen(req, timeout=12, context=context) as response:
                 body = response.read(64 * 1024)
-                final_scheme = urlparse(response.geturl()).scheme
+                final_url = response.geturl()
+                final_parsed = urlparse(final_url)
+                final_scheme = final_parsed.scheme
                 if final_scheme == "https":
                     diagnostics["https_candidate_reached"] = True
                 else:
                     diagnostics["http_candidate_reached"] = True
+                diagnostics["attempts"].append({
+                    "candidate_index": bases.index(base),
+                    "request_scheme": scheme,
+                    "status": int(getattr(response, "status", 200)),
+                    "final_scheme": final_scheme,
+                    "final_path": final_parsed.path,
+                    "content_type": response.headers.get_content_type(),
+                    "bytes_read": len(body),
+                })
             data = json.loads(body.decode("utf-8"))
             if data.get("probe") == "armaghan-hosting-preflight" and data.get("run") == run_token:
                 return data, diagnostics
             diagnostics["attempt_errors"].append("unexpected-response")
         except HTTPError as exc:
             diagnostics["attempt_errors"].append(f"http-{exc.code}")
+            diagnostics["attempts"].append({
+                "candidate_index": bases.index(base),
+                "request_scheme": scheme,
+                "status": int(exc.code),
+                "final_scheme": urlparse(exc.geturl()).scheme,
+                "final_path": urlparse(exc.geturl()).path,
+                "content_type": exc.headers.get_content_type() if exc.headers else None,
+                "bytes_read": 0,
+            })
         except (URLError, TimeoutError, ssl.SSLError):
             diagnostics["attempt_errors"].append("connection-or-tls")
         except (UnicodeDecodeError, json.JSONDecodeError):
