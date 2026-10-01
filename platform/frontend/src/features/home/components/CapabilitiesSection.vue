@@ -5,27 +5,29 @@ import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import SmartImage from '@/components/media/SmartImage.vue'
 import { capabilities } from '@/data/home26'
 import { useLocaleStore } from '@/stores/locale'
+import { useVisualStyleStore } from '@/features/visual-editor/store'
 
 const locale=useLocaleStore()
+const visual=useVisualStyleStore()
 const selectedId=ref<string|null>(null)
 const icons={production:Factory,export:PackageCheck,trade:FileBadge2}
 const selected=computed(()=>capabilities.find(item=>item.id===selectedId.value)??null)
 </script>
 
 <template>
-  <section class="home-section test26-capabilities">
-    <div class="test26-section-heading">
-      <span>{{locale.t('capabilitiesEyebrow')}}</span>
-      <h2>{{locale.t('capabilitiesTitle')}}</h2>
-      <p>{{locale.t('capabilitiesIntro')}}</p>
+  <section data-style-id="home.capabilities" data-style-label="بخش توانمندی‌ها" class="home-section test26-capabilities">
+    <div data-style-id="home.capabilities.heading" data-style-label="سربرگ توانمندی‌ها" class="test26-section-heading">
+      <span data-style-id="home.capabilities.eyebrow" data-style-label="بالانویس توانمندی‌ها" data-editable-text="true">{{visual.resolveText('home.capabilities.eyebrow',locale.locale,locale.t('capabilitiesEyebrow'))}}</span>
+      <h2 data-style-id="home.capabilities.title" data-style-label="عنوان توانمندی‌ها" data-editable-text="true">{{visual.resolveText('home.capabilities.title',locale.locale,locale.t('capabilitiesTitle'))}}</h2>
+      <p data-style-id="home.capabilities.intro" data-style-label="مقدمه توانمندی‌ها" data-editable-text="true">{{visual.resolveText('home.capabilities.intro',locale.locale,locale.t('capabilitiesIntro'))}}</p>
     </div>
 
-    <div class="test26-capability-grid">
-      <article v-for="item in capabilities" :key="item.id" class="test26-capability-card">
+    <div data-style-id="home.capabilities.grid" data-style-label="شبکه توانمندی‌ها" class="test26-capability-grid">
+      <article v-for="item in capabilities" :key="item.id" :data-style-id="`home.capability.${item.id}`" :data-style-label="`کارت ${locale.t(item.titleKey)}`" class="test26-capability-card">
         <div class="test26-capability-media">
           <SmartImage :src="item.image" :fallback-src="item.fallback" :alt="locale.t(item.titleKey)" :label="locale.t(item.titleKey)" aspect="hero"/>
         </div>
-        <div class="test26-capability-body">
+        <div :data-style-id="`home.capability.${item.id}.body`" :data-style-label="`پنل متن ${locale.t(item.titleKey)}`" class="test26-capability-body">
           <div class="test26-capability-icon"><component :is="icons[item.id]" :size="22"/></div>
           <h3>{{locale.t(item.titleKey)}}</h3>
           <p>{{locale.t(item.summaryKey)}}</p>
