@@ -17,6 +17,10 @@ let resizeState:{pointerId:number;startY:number;startHeight:number}|null=null
 const currentStyle=computed<ElementStyleOverride>(()=>
   selected.value?visual.profile.styles[selected.value.id]??{}:{},
 )
+const hiddenIds=computed(()=>Object.entries(visual.profile.styles)
+  .filter(([,style])=>style.hidden)
+  .map(([id])=>id),
+)
 const textValue=computed(()=>selected.value
   ? visual.textOverride(selected.value.id,locale.locale)
       ?? document.querySelector<HTMLElement>(`[data-style-id="${selected.value.id}"]`)?.textContent?.trim()
@@ -56,6 +60,9 @@ function markSelected(){
 function choose(candidate:EditableCandidate){
   selected.value=candidate
   candidates.value=[]
+}
+function chooseHidden(id:string){
+  choose({id,label:`عنصر مخفی · ${id}`,textEditable:false,tag:'hidden'})
 }
 
 function selectAt(event:PointerEvent){
@@ -195,6 +202,19 @@ watch(selected,markSelected)
     </header>
 
     <div class="visual-editor-body">
+      <section v-if="hiddenIds.length" class="mb-3">
+        <div class="mb-1 text-[11px] font-black text-[var(--c-muted)]">عناصر مخفی‌شده</div>
+        <div class="flex gap-2 overflow-x-auto pb-1">
+          <button
+            v-for="id in hiddenIds"
+            :key="id"
+            type="button"
+            class="min-h-11 shrink-0 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3 text-xs font-bold"
+            @click="chooseHidden(id)"
+          >{{id}}</button>
+        </div>
+      </section>
+
       <section v-if="candidates.length" class="visual-editor-candidates">
         <b>کدام بخش را می‌خواهید؟</b>
         <p>چند عنصر نزدیک به لمس شما پیدا شد.</p>
