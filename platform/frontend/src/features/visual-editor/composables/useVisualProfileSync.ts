@@ -108,6 +108,7 @@ export function useVisualProfileSync(
     const controller=new AbortController()
     try{
       const data=await fetchAdminStyleProfile(controller.signal)
+      initialized.value=true
       applyAdminSnapshot(data,allowAdopt)
     }catch(error){
       if(error instanceof StyleProfileApiError&&(error.status===401||error.status===403)){
