@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261001-test27-customer-ui-corrections",
   "scope": "Implement customer-requested Test 27 visual corrections: footer logo-only branding, strong green headings, product label/status/code styling, feature-flagged category-code visibility, white products background, mint cards, Why Armaghan dividers/numbers, editor-exposed semantic surfaces; update tests/backlog/handoff; deploy Test 27 only",
   "base_ref": "main@40dc89b5aa97bd09fb664b88b1fb8dc9d54c15d9",
   "acquired_at": "2026-10-01T15:40:44Z",
-  "expires_at": "2026-10-01T17:10:44Z",
-  "released_at": null,
-  "note": "Test 26 remains immutable. No root deployment and no remote delete."
+  "expires_at": "2026-10-01T16:04:20Z",
+  "released_at": "2026-10-01T16:04:20Z",
+  "note": "Completed Test 27 customer visual corrections; FTP Deploy #277 PASS; docs validation #281 PASS."
 }
