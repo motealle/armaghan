@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['actor_user_id', 'customer_id', 'action', 'subject_type', 'subject_id', 'metadata'])]
 class ActivityLog extends Model
 {
+    protected $table = 'activity_log';
+
     public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_user_id');
