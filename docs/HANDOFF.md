@@ -445,17 +445,13 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - No production MySQL migration has been run and no Test 26/frontend file was changed in this backend batch.
 - Next safe batch: connect Test 27's existing local visual-editor store through a small adapter to this API, preserving local fallback during staged rollout.
 
+## 28. SQLite-first persistence handoff
 
-## 28. JSON-first domain persistence handoff
-
-- Canonical architecture and remaining delivery plan: `docs/JSON-FIRST-PERSISTENCE.md`.
-- Near-term domain persistence is JSON-first for low-churn catalog/content/customer business-profile data, behind repository/contracts.
-- Laravel security/control-plane state stays relational: auth/users, sessions, password reset, magic-link token lifecycle, immutable Style Profile versions/publications and ActivityLog.
-- Default JSON store binding is `DomainDocumentStore -> JsonDomainDocumentStore`.
-- Development default path is `storage/app/private/armaghan-domain`; production must override `ARMAGHAN_JSON_STORE_PATH` to the verified private sibling outside `public_html`.
-- JSON writes use exclusive `flock`, Laravel atomic `Filesystem::replace()`, document schema version, revision, checksum and expected-revision conflict rejection.
-- No existing catalog/customer runtime was switched to JSON in the foundation batch. Next safe batch is Catalog repository/import so behavior changes are isolated and reversible.
-- SQLite remains local/dev/test fallback; verified production hosting lacks PDO SQLite.
-- MySQL/MariaDB remains the verified production relational control-plane driver.
-- Supabase is deferred as an optional future PostgreSQL/Auth/Storage/Realtime target; no Supabase dependency has been added.
-- Visual editor follow-up requirement is recorded: organized visibility ON/OFF plus text/title/background/border/token controls for stable registered targets; hidden items must remain recoverable.
+- Canonical persistence plan: `docs/SQLITE-FIRST-PERSISTENCE.md`.
+- The owner reports production SQLite support was enabled on 2026-10-01; SQLite is now selected as the primary Laravel database.
+- The earlier custom JSON runtime-store layer was removed before any production data migrated to it. JSON remains ordinary import/export/fixture interchange only.
+- Production `.env` should use `DB_CONNECTION=sqlite` and an absolute `DB_DATABASE` path outside `public_html`.
+- Consistent SQLite snapshots are created with `php artisan armaghan:backup-sqlite`, which uses SQLite `VACUUM INTO`.
+- Before the first production migration, re-probe `pdo_sqlite` and confirm the private database and backup directories are writable by web PHP. The old 2026-09-30 result is historical and predates host enablement.
+- MySQL/MariaDB remains available for a later logical mirror/export. It is not the only backup and must not be live dual-write.
+- Test 27 was explicitly approved for launcher visibility on 2026-10-01; add it above Test 26 in `t/index.htm`. Test 26 remains immutable.
