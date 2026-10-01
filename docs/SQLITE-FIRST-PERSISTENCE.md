@@ -40,11 +40,13 @@ ARMAGHAN_SQLITE_BACKUP_PATH=/absolute/private/path/armaghan/backups
 
 The SQLite database and backups must live outside `public_html`.
 
-The owner reported on 2026-10-01 that SQLite has been enabled on the host. Before the first production migration, run one final runtime probe that confirms:
+Production SQLite was re-probed on 2026-10-01 and is now verified **PASS**. The final runtime probe confirmed:
 - `pdo_sqlite` is loaded;
-- the configured private database directory is writable by web PHP;
-- migrations can open/write the configured file;
-- the backup directory is writable.
+- SQLite 3.53.4 is active;
+- a private SQLite file can be created/read/written by web PHP;
+- foreign keys work;
+- `VACUUM INTO` creates a consistent private snapshot;
+- the private sibling remains writable.
 
 Do not infer success from the previous 2026-09-30 probe, which was performed before SQLite was enabled.
 
@@ -109,3 +111,25 @@ The current ~700-record scale alone is not a reason to leave SQLite.
 - Laravel 13 database documentation: SQLite is a first-party supported database and is configured by an absolute `DB_DATABASE` path.
 - SQLite Online Backup documentation: backup API creates a consistent snapshot while allowing concurrent use.
 - SQLite `VACUUM INTO` documentation: supported alternative for creating a consistent standalone backup file.
+
+
+## Production activation result — 2026-10-01
+
+Production Laravel/SQLite is now active on the hosting account.
+
+- Private Laravel application directory: outside `public_html`.
+- Shared private state: `.env`, SQLite database and backup snapshots live outside `public_html`.
+- Public Laravel surface: `/backend` only.
+- Laravel Framework: **13.34.0**.
+- Production migrations: **PASS**.
+- Initial consistent SQLite snapshot: **PASS**.
+- Required schema checks: `users`, `products`, `customers`, `style_profiles`, `style_profile_versions`, `style_profile_publications` all **PASS**.
+- HTTP smoke:
+  - `/backend/` → 200
+  - `/backend/up` → 200
+  - `/backend/api/style-profile/staging` → 200
+  - `/backend/admin/login` → 200
+
+The first post-deployment HTTP smoke initially returned 404 even though activation, migrations and the initial snapshot had already succeeded. Root cause was public-directory permissions created too restrictively for LiteSpeed. Public Laravel directories/files were normalized to `0755/0644`; private application/data permissions were not widened. The deployment helper now enforces web-safe permissions for the public surface.
+
+No production administrator account is provisioned by this activation step. Administrator provisioning remains a separate security-controlled batch.
