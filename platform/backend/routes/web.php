@@ -8,6 +8,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/api/csrf-token', function () {
+    return response()->json(['token' => csrf_token()])
+        ->header('Cache-Control', 'no-store');
+});
+
 Route::get('/api/style-profile/{channel?}', [PublicStyleProfileController::class, 'show'])
     ->where('channel', 'staging|production');
 
