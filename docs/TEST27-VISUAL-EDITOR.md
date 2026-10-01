@@ -155,3 +155,15 @@ Saved style profile:
 - no production backend persistence yet;
 - no Test 26 mutation;
 - no launcher promotion until Test 27 is explicitly reviewed.
+
+## Staged validation result
+
+- Rollback checkpoint: `rollback/test26-pre-test27-visual-editor`.
+- Temporary branch-only validation workflow Run #4: **PASS**.
+- Test 27 source contract: PASS.
+- TypeScript type-check: PASS.
+- Vue unit tests: **24/24 PASS**.
+- Vite Test 27 build: PASS.
+- The validation workflow had no FTP/deployment step.
+- First failed validation exposed a stale Test 26 session-storage assertion and was corrected by moving the test to the isolated Test 27 namespace.
+- Second failed validation was workflow-only: Pillow was absent from the temporary runner. Product code had already passed type-check/unit tests; the temporary workflow was corrected and the complete build then passed.
