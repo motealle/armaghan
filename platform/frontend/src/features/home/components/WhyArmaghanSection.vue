@@ -23,8 +23,16 @@ const values=[
       <li v-for="(item,index) in values" :key="item[0]" :data-style-id="`home.why.item.${index+1}`" :data-style-label="`کارت دلیل ${index+1}`">
         <span class="test26-why-number">{{index+1}}</span>
         <div>
-          <h3>{{locale.t(item[0])}}</h3>
-          <p>{{locale.t(item[1])}}</p>
+          <h3
+            :data-style-id="`home.why.item.${index+1}.title`"
+            :data-style-label="`عنوان دلیل ${index+1}`"
+            data-editable-text="true"
+          >{{visual.resolveText(`home.why.item.${index+1}.title`,locale.locale,locale.t(item[0]))}}</h3>
+          <p
+            :data-style-id="`home.why.item.${index+1}.text`"
+            :data-style-label="`متن دلیل ${index+1}`"
+            data-editable-text="true"
+          >{{visual.resolveText(`home.why.item.${index+1}.text`,locale.locale,locale.t(item[1]))}}</p>
         </div>
       </li>
     </ol>
