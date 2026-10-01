@@ -18,7 +18,7 @@ const visibleTitle=computed(()=>customerProductLabel(props.product,displaySubcat
 </script>
 
 <template>
-  <!-- Test 23 low-copy card contract: image-first, code-only metadata, icon-only actions. -->
+  <!-- Test 23 low-copy hierarchy stays intact; Test 27 derives customer labels centrally from subcategory/status. -->
   <article data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--role-product-card-background)] shadow-sm">
     <div data-style-id="product.media" data-style-label="بخش تصویر کارت محصول" class="product-card-media">
       <ProductMediaCarousel :product="product" />
