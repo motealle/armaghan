@@ -32,6 +32,9 @@ jobs:
         working-directory: platform/frontend
         run: npm ci --no-audit --no-fund
 
+      - name: Install portrait generator dependency
+        run: python -m pip install --disable-pip-version-check pillow
+
       - name: Type-check, unit-test and build staged Test 27
         working-directory: platform/frontend
         env:
