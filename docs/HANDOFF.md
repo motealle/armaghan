@@ -455,3 +455,6 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Before the first production migration, re-probe `pdo_sqlite` and confirm the private database and backup directories are writable by web PHP. The old 2026-09-30 result is historical and predates host enablement.
 - MySQL/MariaDB remains available for a later logical mirror/export. It is not the only backup and must not be live dual-write.
 - Test 27 was explicitly approved for launcher visibility on 2026-10-01; add it above Test 26 in `t/index.htm`. Test 26 remains immutable.
+
+- SQLite-primary pivot delivery: main implementation head `4cd840e9261fb2b3ee2baf661b67f6958856cc80`; Backend CI Run #17 PASS.
+- Test 27 launcher promotion: FTP Deploy Run #258 PASS; only `/public_html/t/index.htm` uploaded, no remote deletes, root deploy skipped. Test 27 now appears above Test 26 in the mutable test index; Test 26 itself remains immutable.
