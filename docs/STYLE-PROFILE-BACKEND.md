@@ -1,6 +1,6 @@
 # Armaghan — Versioned Style Profile Backend
 
-Status: backend persistence foundation validated; frontend adapter is the next bounded batch.
+Status: production backend + frontend adapter implemented. Live SQLite save/publish/restore semantics are acceptance-tested PASS; only real browser Filament session/CSRF/cross-device acceptance remains.
 
 ## Ranked persistence options
 
@@ -108,7 +108,7 @@ The historical row is never altered.
 
 ## Portability
 
-The persistence model uses Laravel migrations and JSON columns that are exercised on SQLite in CI and intended for MySQL/MariaDB in production. Server CSS compilation is deterministic so equal structured input produces equal checksum/CSS independent of request key order.
+The persistence model uses Laravel migrations and JSON columns on the active production SQLite database. MySQL/MariaDB is only an optional later logical mirror/export target. Server CSS compilation is deterministic so equal structured input produces equal checksum/CSS independent of request key order.
 
 ## Validation record
 
@@ -124,15 +124,27 @@ Backend CI Run #10:
 
 The run also exposed a pre-existing mismatch: the ActivityLog model defaulted to plural `activity_logs` while the established migration created singular `activity_log`. The model now explicitly maps to the existing table; no historical migration was rewritten.
 
-## Next batch
+## Current production acceptance
 
-Add a small frontend persistence adapter around the existing Test 27 Pinia store:
+Production Style Profile Acceptance Run `36878931948`: **PASS**.
 
-- load `staging` publication as server baseline;
-- keep local draft immediately responsive;
-- debounce authenticated admin draft saves;
-- send `expected_checksum` on updates;
-- surface 409 conflicts instead of overwriting;
-- explicit Publish to staging;
-- history + Restore UI in the editor/admin;
-- retain local-only fallback when the backend endpoint is unavailable during staged rollout.
+Verified against the live production SQLite database inside one outer transaction:
+- draft save;
+- first staging Publish;
+- second changed staging Publish;
+- Restore from the first version as a new immutable version;
+- publication-pointer update;
+- ActivityLog writes.
+
+The test observed 3 temporary immutable versions and 3 activity rows, then rolled back the outer transaction. Post-test logical state exactly matched pre-test state and the short-lived helper was cleaned up.
+
+## Remaining acceptance
+
+The frontend adapter is already implemented and live in Test 27. The remaining task is browser-only:
+- authenticate through the real Filament login;
+- verify CSRF-protected Test 27 autosave reaches server-synced state;
+- reload and verify persistence;
+- verify the shared draft from another browser/device session;
+- Publish staging and Restore through the actual UI.
+
+Do not add an authentication bypass for this acceptance.
