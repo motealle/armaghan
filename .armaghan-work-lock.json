@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20261001-backend-code-update-lane",
-  "scope": "Add and execute safe code-only production Backend update lane for current taxonomy Filament resources; fail closed on migration/composer drift; SQLite snapshot; staged private/public swap; HTTP smoke; automatic code rollback; update docs",
-  "base_ref": "main@6832d736c187843c8e50b6a930c884d9f7d047ba",
-  "acquired_at": "2026-10-01T20:30:00Z",
-  "expires_at": "2026-10-01T20:43:00Z",
-  "released_at": "2026-10-01T20:43:00Z",
-  "note": "Completed production-proven code-only Backend updater and live Filament CRUD for Category/Subcategory/Product/Customer. Backend CI #31/#32/#33/#34 PASS; Backend Code Deploy #2/#3 PASS; Run #1 auto-rolled back safely on public permission smoke failure. Browser Test 27 acceptance remains blocked only on user-saved real admin sign-in."
+  "run_id": "chat-20261002-public-catalog-api",
+  "scope": "Implement public read-only catalog API and wire Test 27 product data to production backend with local media/spec fallback; keep Test 26 frozen; no customer-write or media-upload mutation",
+  "base_ref": "main@2d0b2a24a4f84025971075ba75d9d709cd56b154",
+  "acquired_at": "2026-10-01T23:30:00Z",
+  "expires_at": "2026-10-02T01:00:00Z",
+  "released_at": null,
+  "note": "Browser editor acceptance is non-blocking for this run; focus on delivery-critical catalog read wiring."
 }
