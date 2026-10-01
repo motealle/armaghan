@@ -65,7 +65,7 @@ if legacy_home_categories:
 assert "category-showcase" in products
 
 # Dark theme: neutral layered surfaces, while brand primary remains canonical.
-assert "--c-primary:#151EDA" in css
+assert "--brand-blue:#151EDA" in css and "--c-primary:var(--brand-blue)" in css
 dark_tokens = ["--c-bg:#08090c","--c-surface:#111319","--c-surface-2:#171a22","--c-border:#292d36"] if "--c-bg:#08090c" in css else ["--c-bg:#151618","--c-surface:#1e2024","--c-surface-2:#25282d","--c-border:#383c43"]
 for token in dark_tokens:
     assert token in css
