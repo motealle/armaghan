@@ -427,3 +427,20 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Test 27 must not be promoted in the mutable launcher until owner/customer review.
 
 - Test 27 visual-editor modularization/contrast batch landed on main at `d9a6a68353345a34b0379feca77663a240e1c856`; **FTP Deploy Run #254 PASS**. Full QA/build/smoke passed; `deploy-t` published staging `/public_html/t/27`; `deploy-root` skipped; no remote files deleted. Mutable launcher content still points to Test 26 and contains no Test 27 entry.
+
+
+## 27. Versioned Style Profile backend handoff
+
+- Canonical design/validation record: `docs/STYLE-PROFILE-BACKEND.md`.
+- Laravel now has persistent Style Profile storage split into mutable draft, immutable version history and channel publication pointers.
+- Current channels are `staging` and `production`; publishing Test 27 styling to staging does not imply production publication.
+- Public read endpoint: `GET /api/style-profile/{channel}`.
+- Admin endpoints live under `/api/admin/style-profile/*` and require the persisted active-admin identity.
+- Server accepts only structured style/text payloads; arbitrary CSS/HTML/JavaScript is rejected. CSS is generated server-side from the approved token ids only.
+- Draft writes support `expected_checksum` optimistic concurrency. A stale editor receives HTTP 409 rather than overwriting newer work.
+- Restore does not mutate historical rows; it copies the historical payload into the draft and creates a new immutable published version.
+- Publish/restore events are written to ActivityLog.
+- A pre-existing ActivityLog mapping bug was fixed: the model now explicitly uses the existing singular `activity_log` table.
+- Backend CI Run #10: **PASS** — 12 tests / 84 assertions; migrations, API/security/versioning/restore/conflict tests, Composer audit and secret hygiene all passed.
+- No production MySQL migration has been run and no Test 26/frontend file was changed in this backend batch.
+- Next safe batch: connect Test 27's existing local visual-editor store through a small adapter to this API, preserving local fallback during staged rollout.
