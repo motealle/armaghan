@@ -513,3 +513,5 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Temporary activation, diagnostic and permission-repair files were cleaned up.
 - No first admin is created yet. Next P0 security batch is one-time first-admin provisioning without a seeded/default password; then Test 27 API base should point to `/backend` and shared Style Profile persistence should be verified.
 - Test 26 and Test 27 UI files were not modified in this backend activation batch.
+
+- Production SQLite Reprobe #1 (2026-10-01): execution/cleanup PASS, but runtime verdict **INCONCLUSIVE** because the temporary PHP probe was not reachable through the inferred web URLs. FTP reached `public_html`, created a private sibling and removed all temporary objects. Do not claim production PDO SQLite PASS until a probe runs through the confirmed canonical application URL or the deployed backend health route.
