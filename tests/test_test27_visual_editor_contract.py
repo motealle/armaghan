@@ -60,7 +60,8 @@ assert "VisualEditorTargetBrowser" in editor
 assert "VisualEditorSyncPanel" in editor
 assert "useVisualProfileSync" in editor
 assert "browserOpen=ref(true)" in editor
-assert "ذخیره خودکار" in editor
+assert "visual-editor-autosave" in editor
+assert "sync.statusLabel.value" in editor
 assert "visual.setEnabled(false)" in editor
 assert "چند عنصر نزدیک" in chooser
 assert "عناصر مخفی‌شده" in chooser
