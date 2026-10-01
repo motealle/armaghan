@@ -52,7 +52,11 @@ onMounted(async()=>{
 </script>
 
 <template>
-  <div class="min-h-screen">
+  <div
+    class="min-h-screen"
+    :data-style-id="route.path==='/'?'home.page':undefined"
+    :data-style-label="route.path==='/'?'صفحه خانه':undefined"
+  >
     <VisualStyleRuntime/>
     <a class="skip-link" href="#main-content">{{locale.t('skipContent')}}</a>
     <AppHeader @login="loginOpen=true" @help="helpOpen=true"/>
