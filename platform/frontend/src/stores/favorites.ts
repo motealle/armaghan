@@ -4,7 +4,7 @@ import { useCatalogStore } from '@/stores/catalog'
 import { useCustomersStore } from '@/stores/customers'
 import { useSessionStore } from '@/stores/session'
 
-const KEY='armaghan:test26:favorites'
+const KEY='armaghan:test27:favorites'
 
 function load():number[]{
   try{return JSON.parse(localStorage.getItem(KEY)??'[]') as number[]}catch{return[]}
