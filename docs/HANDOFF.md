@@ -565,3 +565,25 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Next task: authenticate the browser against the real Filament login and verify Test 27 Style Profile autosave, reload, staging Publish and Restore end-to-end.
 
 - Final first-admin provisioning validation: **Backend CI #30 PASS**; **FTP Deploy #270 PASS**. No Test 26/27 UI files were changed by this security batch.
+
+
+## 34. Production Style Profile persistence acceptance
+
+- Live production SQLite Style Profile semantics are now independently verified, not merely covered by CI/local tests.
+- Acceptance helper: `platform/scripts/verify_style_profile_ftp.py`.
+- The helper uploads a short-lived random-token PHP probe, boots the deployed Laravel app, and exercises the existing `StyleProfileService` against the live database.
+- It does **not** log an administrator into the browser, expose a password, create an auth bypass, or persist test changes.
+- Production acceptance Run `36878931948`: PASS.
+- Verified inside one outer transaction:
+  - draft save;
+  - staging Publish;
+  - second changed Publish;
+  - Restore from the first version as a new immutable version;
+  - staging publication pointer update;
+  - ActivityLog writes.
+- Inside the transaction the test created 3 versions and 3 activity records as expected.
+- The outer transaction was rolled back and post-test logical state exactly matched pre-test state.
+- Temporary public helper cleanup PASS.
+- This closes uncertainty around production SQLite/Style Profile service behavior.
+- Remaining acceptance is browser-only: establish a real Filament session at `/backend/admin/login`, edit Test 27, verify autosave status, reload/cross-device, Publish staging and Restore through the actual UI/CSRF path.
+- Do not weaken authentication to automate that final browser step.
