@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261001-json-domain-store-foundation",
   "scope": "JSON-first domain persistence foundation: configurable private JSON store, atomic locked writes, revision conflict protection, tests/docs; no Test 26/27 UI mutation and no production data migration",
   "base_ref": "main@3a314b994ae6f8f992e61a6ddc960c56a185e523",
   "acquired_at": "2026-10-01T06:26:00Z",
-  "expires_at": "2026-10-01T07:56:00Z",
-  "released_at": null,
-  "note": "First bounded JSON-first persistence batch. Security/control-plane relational persistence remains unchanged. backend/admin-core branch untouched."
+  "expires_at": null,
+  "released_at": "2026-10-01T06:32:00Z",
+  "note": "Released after JSON-first domain-store foundation landed on main at 6bf77c8e6d0003d0a2ecd5eedd5f46ca36028696. Backend CI Run #15 PASS; FTP Deploy #257 PASS with deploy-root/deploy-t skipped. JSON store contract, atomic locked writes, schema/revision/checksum conflict protection, tests/docs complete. No Test 26/27 UI mutation; no production data migrated."
 }
