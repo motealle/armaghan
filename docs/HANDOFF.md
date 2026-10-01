@@ -472,3 +472,6 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Branch-only urgent validation passed: Test 27 contract, TypeScript type-check, Vue unit tests and numbered Test 27 Vite build.
 - Next UI batch is the Laravel Style Profile frontend adapter (server baseline, debounced draft save, 409 conflict handling, staging publish/history/restore) while retaining local fallback.
 - Backend work remains queued independently: production SQLite re-probe/activation, Filament CRUD, share flow, customer Magic Link and delivery hardening.
+
+- Urgent editor deployment: **FTP Deploy Run #260 attempt 2 PASS**. Test 27 contract, TypeScript, Vue tests, numbered build, FTP smoke and deploy-t passed. `/public_html/t/27` and `/public_html/t/index.htm` were updated; 112 files uploaded; no remote files deleted; root deployment skipped.
+- Run #260 attempt 1 was infrastructure-only feedback: Pillow download from files.pythonhosted.org timed out before frontend build/deploy. Re-running failed jobs succeeded without source changes.
