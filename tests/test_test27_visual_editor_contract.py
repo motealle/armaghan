@@ -90,8 +90,10 @@ assert "fetchPublicStyleProfile('staging'" in public_baseline
 assert "toggleVisibility" in target_browser
 assert "orphanHiddenTargets" in target_browser
 assert "target.hideable!==false" in target_browser
-for target_id in ("home.page","home.content","header.shell","hero.title","home.about.title","home.why.title","home.why.item.1.title","home.capability.production.title","home.product-banners.title","product.card","footer.shell"):
+for target_id in ("home.page","home.content","header.shell","hero.title","home.about.title","home.why.title","home.product-banners.title","product.card","footer.shell"):
     assert target_id in target_registry
+assert "home.why.item.${number}.title" in target_registry
+assert "home.capability.${id}.title" in target_registry
 
 profile = (EDITOR / "store.ts").read_text(encoding="utf-8")
 assert "armaghan:test27:visual-style-profile:v1" in profile
