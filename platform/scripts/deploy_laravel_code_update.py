@@ -85,6 +85,7 @@ function remove_tree(string $path): void {
 function copy_tree(string $source, string $destination): void {
     if (!is_dir($source)) return;
     ensure_dir($destination);
+    @chmod($destination, 0755);
     $it = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS),
         RecursiveIteratorIterator::SELF_FIRST
@@ -341,7 +342,10 @@ def main() -> int:
         )
         if not smoke_ok:
             rollback = get_json(helper_base + "?" + urlencode({"token": secret, "action": "rollback"}), timeout=120)
-            print("ARMAGHAN_BACKEND_CODE_UPDATE_ROLLBACK:", "PASS" if rollback.get("ok") else "FAIL")
+            rollback_health = get_status(site_url.rstrip("/") + "/backend/up")
+            rollback_ok = bool(rollback.get("ok")) and rollback_health == 200
+            print("ARMAGHAN_BACKEND_CODE_UPDATE_ROLLBACK:", "PASS" if rollback_ok else "FAIL")
+            print("ARMAGHAN_BACKEND_CODE_UPDATE_ROLLBACK_HEALTH:", rollback_health)
             activated = False
             return 6
 
@@ -356,7 +360,10 @@ def main() -> int:
         if activated:
             try:
                 rollback = get_json(helper_base + "?" + urlencode({"token": secret, "action": "rollback"}), timeout=120)
-                print("ARMAGHAN_BACKEND_CODE_UPDATE_ROLLBACK:", "PASS" if rollback.get("ok") else "FAIL")
+                rollback_health = get_status(site_url.rstrip("/") + "/backend/up")
+                rollback_ok = bool(rollback.get("ok")) and rollback_health == 200
+                print("ARMAGHAN_BACKEND_CODE_UPDATE_ROLLBACK:", "PASS" if rollback_ok else "FAIL")
+                print("ARMAGHAN_BACKEND_CODE_UPDATE_ROLLBACK_HEALTH:", rollback_health)
             except Exception:
                 print("ARMAGHAN_BACKEND_CODE_UPDATE_ROLLBACK: ERROR")
         return 5
