@@ -444,3 +444,18 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Backend CI Run #10: **PASS** — 12 tests / 84 assertions; migrations, API/security/versioning/restore/conflict tests, Composer audit and secret hygiene all passed.
 - No production MySQL migration has been run and no Test 26/frontend file was changed in this backend batch.
 - Next safe batch: connect Test 27's existing local visual-editor store through a small adapter to this API, preserving local fallback during staged rollout.
+
+
+## 28. JSON-first domain persistence handoff
+
+- Canonical architecture and remaining delivery plan: `docs/JSON-FIRST-PERSISTENCE.md`.
+- Near-term domain persistence is JSON-first for low-churn catalog/content/customer business-profile data, behind repository/contracts.
+- Laravel security/control-plane state stays relational: auth/users, sessions, password reset, magic-link token lifecycle, immutable Style Profile versions/publications and ActivityLog.
+- Default JSON store binding is `DomainDocumentStore -> JsonDomainDocumentStore`.
+- Development default path is `storage/app/private/armaghan-domain`; production must override `ARMAGHAN_JSON_STORE_PATH` to the verified private sibling outside `public_html`.
+- JSON writes use exclusive `flock`, Laravel atomic `Filesystem::replace()`, document schema version, revision, checksum and expected-revision conflict rejection.
+- No existing catalog/customer runtime was switched to JSON in the foundation batch. Next safe batch is Catalog repository/import so behavior changes are isolated and reversible.
+- SQLite remains local/dev/test fallback; verified production hosting lacks PDO SQLite.
+- MySQL/MariaDB remains the verified production relational control-plane driver.
+- Supabase is deferred as an optional future PostgreSQL/Auth/Storage/Realtime target; no Supabase dependency has been added.
+- Visual editor follow-up requirement is recorded: organized visibility ON/OFF plus text/title/background/border/token controls for stable registered targets; hidden items must remain recoverable.
