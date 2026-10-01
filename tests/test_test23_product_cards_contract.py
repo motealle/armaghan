@@ -67,7 +67,7 @@ assert "availability-badge" not in card
 assert "SlidersHorizontal" not in card
 assert "visibleTitle" in card
 assert "props.product.availability==='available'?displayName.value:locale.t('unavailable')" in card
-assert '<div class="product-code-row">' in card and "{{product.code}}" in card
+assert "product-code-row" in card and "{{product.code}}" in card and '<code dir="ltr">' in card
 assert "displaySubcategory" not in card
 assert "card-actions compact" in card
 assert 'size="25.3"' in card
