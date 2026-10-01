@@ -21,7 +21,7 @@ for path in store_files:
     assert "armaghan:test27:" in text, path
 
 tokens = (EDITOR / "tokenRegistry.ts").read_text(encoding="utf-8")
-for color in ("#21946A", "#151EDA", "#C8E3DB", "#FFFFFF", "#FFB514"):
+for color in ("#21946A", "#0714C2", "#C8E3DB", "#FFFFFF", "#FFB514"):
     assert color in tokens
 
 contrast = (EDITOR / "contrast.ts").read_text(encoding="utf-8")
@@ -67,21 +67,30 @@ assert "چند عنصر نزدیک" in chooser
 assert "عناصر مخفی‌شده" in chooser
 assert "wouldFailContrast" in inspector
 assert "4.5:1" in inspector
+assert "visualTargetDefinition" in inspector
+assert "canHide" in inspector
 assert "ویرایش ظاهر" in quick_launcher
 assert "visual.setEnabled(true)" in quick_launcher
 assert "router.push('/')" in quick_launcher
 assert "انتخاب منظم عناصر" in target_browser
 assert "credentials:'same-origin'" in style_api
 assert "X-XSRF-TOKEN" in style_api
+assert "X-CSRF-TOKEN" in style_api
+assert "(rawBase||'/backend')" in style_api
+assert "'/api/csrf-token'" in style_api
 assert "expected_checksum" in style_api
 assert "saveAdminStyleProfileDraft" in sync_composable
 assert "state.value='conflict'" in sync_composable
 assert "window.setTimeout(()=>{void saveNow()},900)" in sync_composable
 assert "بارگذاری نسخه سرور" in sync_panel
 assert "انتشار نسخه فعلی در staging" in sync_panel
+assert "ذخیره فایل JSON" in sync_panel
+assert "بارگذاری JSON" in sync_panel
 assert "fetchPublicStyleProfile('staging'" in public_baseline
 assert "toggleVisibility" in target_browser
-for target_id in ("header.shell","hero.title","home.about.title","home.why.title","home.capabilities.title","home.product-banners.title","product.card","footer.shell"):
+assert "orphanHiddenTargets" in target_browser
+assert "target.hideable!==false" in target_browser
+for target_id in ("home.page","home.content","header.shell","hero.title","home.about.title","home.why.title","home.why.item.1.title","home.capability.production.title","home.product-banners.title","product.card","footer.shell"):
     assert target_id in target_registry
 
 profile = (EDITOR / "store.ts").read_text(encoding="utf-8")
@@ -95,6 +104,7 @@ app = (SRC / "App.vue").read_text(encoding="utf-8")
 assert 'session.isAdmin&&!session.impersonatedCustomerId' in app
 assert "<VisualStyleRuntime/>" in app
 assert "<VisualEditorQuickLauncher/>" in app
+assert 'data-style-id="home.page"' in app or "route.path===\'/\'?\'home.page\'" in app
 
 appearance = (SRC / "features/admin/components/AppearanceSettings.vue").read_text(encoding="utf-8")
 assert "openVisualEditor" in appearance
@@ -108,6 +118,7 @@ about = (SRC / "features/home/components/AboutArmaghanSection.vue").read_text(en
 why = (SRC / "features/home/components/WhyArmaghanSection.vue").read_text(encoding="utf-8")
 capabilities = (SRC / "features/home/components/CapabilitiesSection.vue").read_text(encoding="utf-8")
 banners = (SRC / "features/home/components/ProductCategoryBanners.vue").read_text(encoding="utf-8")
+home_view = (SRC / "views/HomeView.vue").read_text(encoding="utf-8")
 css = (SRC / "styles/main.css").read_text(encoding="utf-8")
 runtime = (EDITOR / "VisualStyleRuntime.vue").read_text(encoding="utf-8")
 launcher = (ROOT / "t/index.htm").read_text(encoding="utf-8")
@@ -123,7 +134,13 @@ assert 'data-style-id="home.capabilities.title"' in capabilities
 assert 'home.capability.${item.id}' in capabilities
 assert 'data-style-id="home.product-banners.title"' in banners
 assert 'home.product-banner.${category.code}' in banners
+assert 'data-style-id="home.content"' in home_view
 assert "--role-brand-chrome:var(--brand-blue)" in css
+assert "--brand-blue:#0714C2" in css
+assert "--role-page-background:var(--brand-white)" in css
+assert "--role-panel-background:var(--brand-mint)" in css
+assert '[data-style-id="home.page"]' in css
+assert "background:var(--role-panel-background)" in css
 assert "background:var(--role-brand-chrome)" in css
 assert "html.visual-editor-active .bottom-nav{display:none!important}" in css
 assert "usePublicVisualProfileBaseline" in runtime
