@@ -36,9 +36,9 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 
 - [x] Verify PHP >= 8.3 and Laravel-required PHP extensions — PHP 8.3.33; all required extensions PASS.
 - [x] Verify safe web/private layout — `public_html` is the active document root and PHP can read/write a private sibling outside it.
-- [x] Verify HTTPS and deployment capabilities — HTTPS PASS; CI-built Composer/vendor path selected; web shell functions are disabled. PDO SQLite FAIL, PDO MySQL PASS.
-- [x] Record result: host is Laravel-capable; original production-SQLite plan FAILS because PDO SQLite is absent. Production DB switched to MySQL/MariaDB.
-- [ ] Provision/verify production MySQL/MariaDB database, server version and credentials before first production migration.
+- [x] Verify HTTPS and deployment capabilities — HTTPS PASS; CI-built Composer/vendor path selected; web shell functions are disabled. Original 2026-09-30 probe had PDO SQLite unavailable and PDO MySQL available.
+- [x] Owner reports PDO SQLite was enabled on 2026-10-01; architecture switched back to SQLite primary.
+- [ ] Re-run production SQLite probe immediately before first production migration: confirm `pdo_sqlite`, private DB path write, foreign keys and backup path write.
 
 ## P0 — Laravel 13 / Filament 5 bootstrap
 
@@ -72,22 +72,21 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 
 
 
-## P0 — JSON-first domain persistence
+## P0 — SQLite-first persistence
 
-Canonical architecture: `docs/JSON-FIRST-PERSISTENCE.md`.
+Canonical architecture: `docs/SQLITE-FIRST-PERSISTENCE.md`.
 
-- [x] Select JSON-first domain persistence behind a driver-neutral repository contract; keep security/control-plane state relational.
-- [x] Add `DomainDocumentStore` and atomic/locked `JsonDomainDocumentStore`.
-- [x] Add schema version, revision, checksum and stale-write conflict protection.
-- [x] Default private development path to `storage/app/private/armaghan-domain`; expose production override through `ARMAGHAN_JSON_STORE_PATH`.
-- [x] Add focused JSON store tests and binding test.
-- [ ] Catalog JSON repository/import: Category/Subcategory/Product/spec data.
-- [ ] Customer business/profile JSON repository/import; keep account/auth identity relational.
-- [ ] Filament catalog/customer Resources consume repository-backed services instead of Eloquent-only domain coupling.
-- [ ] Add private production JSON path + backup/restore health checks before live data cutover.
-- [ ] Add explicit JSON schema migration/import/export command before the first production JSON write.
-- [ ] Evaluate SQLite domain driver only if PDO SQLite becomes available on production hosting; otherwise keep SQLite dev/test-only.
-- [ ] Re-evaluate MySQL/PostgreSQL/Supabase only when query/concurrency/realtime requirements materially exceed JSON-first assumptions.
+- [x] Select SQLite as the primary Laravel database for local/dev/test/production after host SQLite enablement.
+- [x] Remove the superseded custom JSON runtime-store layer before any production data used it.
+- [x] Keep JSON as ordinary import/export/fixture interchange only.
+- [x] Add `armaghan:backup-sqlite` using SQLite `VACUUM INTO` for consistent private snapshots.
+- [x] Add backup command tests.
+- [x] Make production example use an absolute private SQLite path and private backup path.
+- [ ] Re-probe production `pdo_sqlite` and private-path write access before first live migration.
+- [ ] Configure the real production SQLite file path in the host-only `.env`.
+- [ ] Configure backup retention + at least one off-host rotated copy.
+- [ ] Add optional MySQL logical mirror/export only after the SQLite production path is stable; never dual-write in live requests.
+- [ ] Add mirror verification (row counts/checksums + restore drill) when MySQL mirror is implemented.
 
 ## P0 — Test 27 visual style editor foundation
 
@@ -113,7 +112,7 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [ ] Connect the Test 27 visual-editor store to the Laravel Style Profile API through a small adapter: server baseline load, debounced draft autosave, expected-checksum conflict handling, staging Publish, history/Restore and local fallback.
 - [ ] Visual editor structured target controls: organized ON/OFF for sections/panels/headings/sentences plus text/background/border/token controls, with hidden targets always recoverable.
 - [ ] Add explicit profile export/import/version-history UX if backend profile history alone is insufficient.
-- [ ] Promote Test 27 into the mutable launcher only after owner/customer review.
+- [x] Add Test 27 to the mutable test launcher after explicit owner approval on 2026-10-01; keep Test 26 frozen.
 
 ### Style Profile backend delivery record
 
