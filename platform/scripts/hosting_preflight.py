@@ -116,7 +116,7 @@ if (in_array('sqlite', $pdoDrivers, true)) {{
         $sqliteVersion = $pdo->query('select sqlite_version()')->fetchColumn();
         $pdo->exec('create table preflight (id integer primary key, value text)');
         $pdo->exec("insert into preflight(value) values ('ok')");
-        $sqliteMemory = $pdo->query('select count(*) from preflight')->fetchColumn() === '1';
+        $sqliteMemory = (int) $pdo->query('select count(*) from preflight')->fetchColumn() === 1;
 
         $filePdo = new PDO('sqlite:' . $sqliteDbPath);
         $filePdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -126,7 +126,7 @@ if (in_array('sqlite', $pdoDrivers, true)) {{
         $filePdo->exec('create table child_record (id integer primary key, parent_id integer references parent_record(id))');
         $filePdo->exec('insert into parent_record(id) values (1)');
         $filePdo->exec('insert into child_record(id, parent_id) values (1, 1)');
-        $sqlitePrivateFile = $filePdo->query('select count(*) from child_record')->fetchColumn() === '1';
+        $sqlitePrivateFile = (int) $filePdo->query('select count(*) from child_record')->fetchColumn() === 1;
 
         if (file_exists($sqliteBackupPath)) {{ @unlink($sqliteBackupPath); }}
         $quotedBackup = $filePdo->quote($sqliteBackupPath);
