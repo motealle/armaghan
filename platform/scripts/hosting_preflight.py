@@ -190,7 +190,10 @@ def fetch_probe(bases: list[str], probe_name: str, run_token: str) -> tuple[dict
                     "bytes_read": len(body),
                 })
             data = json.loads(body.decode("utf-8"))
-            if data.get("probe") == "armaghan-hosting-preflight" and data.get("run") == run_token:
+            diagnostics["attempts"][-1]["json_keys"] = sorted(str(key) for key in data.keys()) if isinstance(data, dict) else []
+            diagnostics["attempts"][-1]["probe_value"] = data.get("probe") if isinstance(data, dict) else None
+            diagnostics["attempts"][-1]["run_match"] = bool(isinstance(data, dict) and data.get("run") == run_token)
+            if isinstance(data, dict) and data.get("probe") == "armaghan-hosting-preflight" and data.get("run") == run_token:
                 return data, diagnostics
             diagnostics["attempt_errors"].append("unexpected-response")
         except HTTPError as exc:
