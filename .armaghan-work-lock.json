@@ -7,7 +7,7 @@
   "scope": "Test 27 visual style editor foundation: token registry, admin-only editor flag, non-modal bottom sheet inspector, ambiguous touch target chooser; no Test 26 mutation",
   "base_ref": "main@a3f04d0140130b49b05f7da8dbf4d0038ae98e9a",
   "acquired_at": "2026-10-01T04:03:00Z",
-  "expires_at": "2026-10-01T05:33:00Z",
+  "expires_at": "2026-10-01T06:45:00Z",
   "released_at": null,
-  "note": "Reclaimed expired admin-core lease after >20h with no active admin-core workflow. backend/admin-core-20260930 remains untouched and unmerged."
+  "note": "Renewed for Test 27 modular visual-editor cleanup + contrast guard. No Test 26 mutation; admin-core branch remains untouched."
 }
