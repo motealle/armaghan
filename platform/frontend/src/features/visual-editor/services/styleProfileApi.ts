@@ -1,0 +1,141 @@
+import type { VisualStyleProfile } from '../store'
+
+export type StyleProfileChannel='staging'|'production'
+
+export interface StyleProfileVersionSummary{
+  id:number
+  number:number
+  schema:number
+  source_test:string|null
+  checksum:string
+  created_at:string|null
+}
+
+export interface AdminStyleProfileResponse{
+  profile:{id:number;slug:string;name:string;schema:number}
+  draft:{
+    styles:VisualStyleProfile['styles']
+    texts:VisualStyleProfile['texts']
+    css:string
+    checksum:string
+    updated_at:string|null
+  }
+  versions:StyleProfileVersionSummary[]
+  publications:Record<string,{version:number;checksum:string;published_at:string|null}>
+}
+
+export interface PublicStyleProfileResponse{
+  schema:number
+  channel:StyleProfileChannel
+  profile:null|{id:number;slug:string;name:string}
+  version:null|{id:number;number:number;source_test:string|null;published_at:string|null}
+  styles:VisualStyleProfile['styles']
+  texts:VisualStyleProfile['texts']
+  css:string
+  checksum:string|null
+}
+
+export class StyleProfileApiError extends Error{
+  constructor(
+    public readonly status:number,
+    message:string,
+  ){
+    super(message)
+    this.name='StyleProfileApiError'
+  }
+}
+
+const rawBase=(import.meta.env.VITE_ARMAGHAN_API_BASE as string|undefined)?.trim()??''
+const API_BASE=rawBase.replace(/\/$/,'')
+
+function cookie(name:string):string|undefined{
+  if(typeof document==='undefined')return undefined
+  const item=document.cookie.split('; ').find(row=>row.startsWith(name+'='))
+  return item?decodeURIComponent(item.slice(name.length+1)):undefined
+}
+
+async function requestJson<T>(
+  path:string,
+  init:RequestInit={},
+  signal?:AbortSignal,
+):Promise<T>{
+  const headers=new Headers(init.headers)
+  headers.set('Accept','application/json')
+  if(init.body&&!headers.has('Content-Type'))headers.set('Content-Type','application/json')
+  const xsrf=cookie('XSRF-TOKEN')
+  if(xsrf)headers.set('X-XSRF-TOKEN',xsrf)
+
+  const response=await fetch(API_BASE+path,{
+    ...init,
+    headers,
+    credentials:'same-origin',
+    signal,
+  })
+
+  let payload:unknown=null
+  try{payload=await response.json()}catch{}
+
+  if(!response.ok){
+    const message=(
+      payload&&typeof payload==='object'&&'message' in payload&&typeof (payload as {message?:unknown}).message==='string'
+    )?(payload as {message:string}).message:'Style Profile request failed ('+response.status+').'
+    throw new StyleProfileApiError(response.status,message)
+  }
+
+  return payload as T
+}
+
+export function fetchPublicStyleProfile(
+  channel:StyleProfileChannel='staging',
+  signal?:AbortSignal,
+){
+  return requestJson<PublicStyleProfileResponse>('/api/style-profile/'+channel,{},signal)
+}
+
+export function fetchAdminStyleProfile(signal?:AbortSignal){
+  return requestJson<AdminStyleProfileResponse>('/api/admin/style-profile',{},signal)
+}
+
+export function saveAdminStyleProfileDraft(
+  profile:VisualStyleProfile,
+  expectedChecksum:string|null,
+  signal?:AbortSignal,
+){
+  return requestJson<Pick<AdminStyleProfileResponse,'profile'|'draft'>>(
+    '/api/admin/style-profile/draft',
+    {
+      method:'PUT',
+      body:JSON.stringify({
+        name:'Test 27 Visual Style',
+        source_test:'27',
+        expected_checksum:expectedChecksum,
+        styles:profile.styles,
+        texts:profile.texts,
+      }),
+    },
+    signal,
+  )
+}
+
+export function publishAdminStyleProfile(
+  channel:StyleProfileChannel='staging',
+  signal?:AbortSignal,
+){
+  return requestJson<{version:StyleProfileVersionSummary;channel:StyleProfileChannel}>(
+    '/api/admin/style-profile/publish/'+channel,
+    {method:'POST',body:JSON.stringify({source_test:'27'})},
+    signal,
+  )
+}
+
+export function restoreAdminStyleProfileVersion(
+  versionId:number,
+  channel:StyleProfileChannel='staging',
+  signal?:AbortSignal,
+){
+  return requestJson<{version:StyleProfileVersionSummary;channel:StyleProfileChannel;restored_from_version:number}>(
+    '/api/admin/style-profile/versions/'+versionId+'/restore/'+channel,
+    {method:'POST',body:JSON.stringify({source_test:'27'})},
+    signal,
+  )
+}
