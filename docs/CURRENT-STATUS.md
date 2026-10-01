@@ -21,7 +21,8 @@ Current backend lane:
 - Production Style Profile persistence/version/restore semantics are verified against the live SQLite database.
 - One real active production administrator exists.
 - Filament login page is live.
-- Category/Subcategory Filament Resources are implemented and CI-verified in main (`4281034656...`, Backend CI #31 PASS), but are not yet deployed to production because a safe repeatable Backend update lane is still required.
+- Category/Subcategory/Product/Customer Filament Resources are implemented and live in production. Taxonomy commit `4281034656...` passed Backend CI #31; Product/Customer commit `de450a15...` passed Backend CI #33; Backend Code Deploy #3 passed with all four Resource routes returning HTTP 200.
+- A guarded code-only Backend update lane is operational: it refuses Composer/migration drift, creates a pre-swap SQLite snapshot, stages private/public code, HTTP-smokes the release and rolls code back on failure. Run #1 deliberately rolled back after a public-permission smoke failure; Runs #2 and #3 passed.
 - Final browser-authenticated Test 27 shared-persistence acceptance is still open.
 
 ## Production backend — verified complete
@@ -167,10 +168,6 @@ Implemented production-facing controllers:
 - Admin Style Profile controller.
 
 Not yet implemented:
-- Filament Product Resource.
-- Filament Category Resource.
-- Filament Subcategory Resource.
-- Filament Customer Resource.
 - Public catalog Product/Category API controllers.
 - Customer public/admin API controllers.
 - Full FavoriteShare HTTP flow.
@@ -189,7 +186,7 @@ Current policy:
 - Primary backups remain SQLite-to-SQLite consistent snapshots.
 - At least one rotated off-host backup + restore drill is still required before final production handoff.
 
-## Remaining core delivery — estimated 6 runs
+## Remaining core delivery — estimated 5 runs
 
 This estimate excludes open-ended new customer UI revisions.
 
@@ -199,30 +196,24 @@ This estimate excludes open-ended new customer UI revisions.
    - staging Publish/Restore through the real UI;
    - fix any browser/session integration bug found.
 
-2. **Filament CRUD**
-   - Product/Category/Subcategory/Customer Resources;
-   - safe validation and pagination/search;
-   - no duplicate data ownership.
-
-3. **Catalog/customer media + public API wiring**
+2. **Catalog/customer media + public API wiring**
    - public catalog reads;
    - Vue customer-facing data from backend;
    - controlled product image/media flow.
 
-4. **Favorites/WhatsApp + customer Magic Link**
+3. **Favorites/WhatsApp + customer Magic Link**
    - persisted favorite share links;
    - expiry/revoke;
    - safe one-tap customer session;
    - audit trail.
 
-5. **Production hardening**
+4. **Production hardening**
    - rotated off-host SQLite backup;
    - restore drill;
-   - repeatable backend release/update workflow;
-   - pre-migration snapshot + rollback guard;
+   - code-only backend update lane is complete; add a separate migration-aware guarded lane only when a schema/dependency change is actually required;
    - logs/health verification.
 
-6. **Final end-to-end QA + handoff**
+5. **Final end-to-end QA + handoff**
    - mobile/tablet/desktop;
    - RTL/LTR;
    - light/dark;
@@ -231,16 +222,14 @@ This estimate excludes open-ended new customer UI revisions.
    - deployment smoke;
    - final customer changes and documentation.
 
-Filament CRUD/media may require two separate bounded runs; if so, remaining core work becomes approximately 7 runs.
 
 ## Highest-priority open items
 
 P0:
 1. Complete the real browser-authenticated Test 27 Style Profile cycle.
-2. Implement Filament Product/Category/Subcategory/Customer CRUD.
-3. Wire catalog/customer data to backend APIs without modifying frozen Test 26.
-4. Configure rotated off-host SQLite backup and perform a restore drill.
-5. Build a safe repeatable backend update workflow with pre-migration snapshot.
+2. Wire catalog/customer data to backend APIs without modifying frozen Test 26.
+3. Configure rotated off-host SQLite backup and perform a restore drill.
+4. Add a migration-aware guarded backend update path only before the first future schema/dependency-changing release; the code-only updater is already production-proven.
 
 P1:
 - Favorites/WhatsApp persisted share flow.
@@ -260,6 +249,10 @@ P2 / optional:
 - Backend CI #30: PASS for first-admin provisioning tooling.
 - FTP Deploy #270: PASS for first-admin provisioning merge.
 - FTP Deploy #268: PASS for live Test 27 color/saveability update.
+- Backend CI #31: PASS for Category/Subcategory Resources.
+- Backend Code Deploy #2: PASS for first live taxonomy deployment after automatic rollback of failed Run #1.
+- Backend CI #33: PASS for Product/Customer Resources.
+- Backend Code Deploy #3: PASS; `/backend/up`, admin login, categories, subcategories, products and customers all HTTP 200.
 
 ## Rules for the next run
 

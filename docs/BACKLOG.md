@@ -95,15 +95,19 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] DatabaseSeeder no longer creates a default fixed user.
 - [x] Backend CI Run #3: **PASS** — 4 tests / 23 assertions; Composer audit clean.
 - [x] No production MySQL migration and no Test 26/Test 27 change occurred.
-- [ ] Next backend P0 after browser editor acceptance: Filament Product/Customer/Category/Subcategory Resources. First-admin provisioning is already complete.
+- [x] Filament Product/Customer/Category/Subcategory Resources are implemented, CI-verified and live in production. First-admin provisioning remains complete.
 
 - [x] First bounded Filament CRUD batch: Category + Subcategory Resources — commit `4281034656ead0c0538b4f1dc4e607ea5f161438`; Backend CI #31 PASS.
   - create/edit/list/search/sort/filter implemented;
   - parent Category relation uses Filament relationship select;
   - destructive delete actions intentionally omitted because Category → Subcategory cascades;
   - active-admin access tests and non-admin denial tests PASS.
-- [ ] Production activation of the new taxonomy Resources is pending a safe repeatable Backend update workflow; FTP Deploy #284 did not mutate Backend production.
-- [ ] Remaining Filament CRUD: Product + Customer Resources.
+- [x] Taxonomy Resources activated in production through guarded Backend Code Deploy #2; health/login/categories/subcategories HTTP smoke all 200.
+- [x] Product + Customer Resources implemented in commit `de450a15c339cb8a3460c7c3f7f45d01a7074158`; Backend CI #33 PASS.
+- [x] Product + Customer Resources activated through Backend Code Deploy #3; health/login/categories/subcategories/products/customers HTTP smoke all 200.
+- [x] Guarded code-only backend updater production-proven: Composer/migration drift refusal, SQLite pre-swap snapshot, staged code swap, HTTP smoke, automatic rollback and temp cleanup.
+- [x] Backend Code Deploy #1 exposed a public-directory permission regression and automatically rolled back successfully; fix `f6c997ae9496a0cc48ff8be6a1e190278d02e115` normalized public root to 0755 before successful Runs #2/#3.
+- [ ] Add a migration-aware update variant only when a future release actually changes migrations or dependencies; the current code-only lane intentionally fails closed on such drift.
 
 
 
@@ -134,7 +138,7 @@ Current estimate excludes open-ended new customer redesign requests. Filament CR
 2. [x] **Visual Style Profile frontend + production service foundation** — local-first adapter, checksum conflict handling, staging Publish/history/Restore UI, production Laravel/SQLite deployment and live service-level persistence acceptance all PASS.
 3. [x] **Production SQLite/Laravel + first admin** — PDO SQLite/SQLite 3.53.4 PASS, private DB/backup active, migrations/snapshot PASS, `/backend` healthy, one real active production admin provisioned securely.
 4. [ ] **Browser-authenticated editor acceptance** — real Filament session + CSRF, Test 27 server autosave, reload/cross-device draft, staging Publish and Restore through the actual UI. This is the only remaining Style Profile persistence acceptance.
-5. [ ] **Filament CRUD + catalog/customer API/media** — Product/Category/Subcategory/Customer Resources, server-side search/pagination, public catalog/customer reads, controlled product-media ownership/upload.
+5. [~] **Filament CRUD + catalog/customer API/media** — Product/Category/Subcategory/Customer Resources and server-side admin search/filtering are complete/live; public catalog/customer reads and controlled product-media ownership/upload remain.
 6. [ ] **Favorites/WhatsApp + Customer Magic Link** — persisted short share links, revoke/expiry, safe one-tap customer session and audit trail.
 7. [ ] **Production hardening + final QA/handoff** — rotated off-host SQLite backup + restore drill, repeatable backend update workflow with pre-migration snapshot/rollback guard, responsive/RTL/LTR/light/dark/permissions QA, final customer handoff.
 
@@ -154,7 +158,7 @@ Current estimate excludes open-ended new customer redesign requests. Filament CR
 - [x] Point Test 27 Style Profile API base to `/backend`; production SQLite Style Profile save/publish/restore semantics verified transactionally on the live database with full rollback.
 - [ ] Complete the final browser-authenticated acceptance cycle: real Filament session + CSRF, edit Test 27, reload/cross-device, staging Publish and Restore.
 - [ ] Configure rotated off-host SQLite backup copy + restore drill.
-- [ ] Add safe repeatable backend release/update workflow with pre-migration snapshot and rollback guard.
+- [x] Add safe repeatable **code-only** backend release/update workflow with SQLite pre-swap snapshot, fail-closed migration/dependency drift detection, HTTP smoke and automatic code rollback. Migration-aware releases remain intentionally separate.
 
 ## P0 — Test 27 color/saveability customer request
 

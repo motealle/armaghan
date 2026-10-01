@@ -656,3 +656,30 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 - Feature tests verify active-admin access to all taxonomy pages, deny inactive/non-admin users, and assert destructive actions are absent.
 - Production activation remains open until the repeatable Backend release/update workflow with pre-migration backup and rollback guard is implemented.
 - Browser-authenticated Test 27 acceptance also remains open; Browser Context Profile `Armaghan Production Admin` was created, but no signed-in session had been saved at the time of this handoff.
+
+
+## 38. Core Filament CRUD + guarded Backend code-update lane — production live
+
+### CRUD delivery
+- Category/Subcategory implementation: `4281034656ead0c0538b4f1dc4e607ea5f161438`; Backend CI #31 PASS.
+- Product/Customer implementation: `de450a15c339cb8a3460c7c3f7f45d01a7074158`; Backend CI #33 PASS.
+- All four Resources use native Filament 5 Resource/Schema/Table/Page structure with server-side search/sort/filter and active-admin access control.
+- Destructive delete actions are intentionally absent. Customer CRUD does not expose `user_id`; account/session ownership remains separate for the later Magic Link flow.
+- Product names remain internal admin data. Customer-facing Test 27 continues to derive its visible label from the six-way subcategory or unified unavailable/producible state.
+
+### Production update lane
+- Updater: `platform/scripts/deploy_laravel_code_update.py`.
+- Workflow: `.github/workflows/backend-code-deploy.yml`.
+- The lane is deliberately code-only and fail-closed: if production `composer.lock` or migration fingerprints differ from the candidate release, it refuses activation.
+- Before a swap it creates a consistent SQLite `VACUUM INTO` snapshot, stages private and public code, performs directory swaps, runs HTTP smoke checks, and retains the previous code until smoke succeeds.
+- Backend Code Deploy #1 activated the candidate but observed HTTP 404 on the public Laravel surface because the staged public root inherited 0770. The updater automatically rolled back; rollback and temp cleanup passed.
+- Fix `f6c997ae9496a0cc48ff8be6a1e190278d02e115` normalizes the staged public root to 0755 and additionally verifies rollback health.
+- Backend Code Deploy #2: **PASS** — health/login/categories/subcategories HTTP 200; snapshot created; no Composer/migration drift; temp cleanup PASS.
+- Updater validation was added to permanent Backend CI in `420f77ba3b18c74b44c8ea9d02730174623fe478`; Backend CI #32 PASS.
+- Smoke coverage was expanded in `82346c3dd4365f3d0f7f1909cdb14a59c1b80eed`.
+- Backend Code Deploy #3: **PASS** — `/backend/up`, admin login, categories, subcategories, products and customers all returned HTTP 200; snapshot created; no migration/dependency drift; temp cleanup PASS.
+- The code-only lane does not pretend to support schema/dependency-changing releases. Add a separate migration-aware guarded path only immediately before such a release is needed.
+
+### Remaining browser acceptance
+- Real browser Test 27 shared-persistence acceptance remains open because the dedicated browser profile does not yet report a saved signed-in session for armaghantrading.com.
+- Do not request or store the administrator password in chat and do not weaken authentication.
