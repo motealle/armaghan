@@ -76,7 +76,7 @@
 58. Every new numbered test starts from a rollback checkpoint at the last delivered source commit. Never rely on destructive edits as the only way to change a customer-facing choice.
 59. When a customer-requested UI choice conflicts with a reasonable owner-preferred alternative, default to the customer choice and preserve the alternative through a typed setting or mode when doing so is maintainable and does not create impossible UX states.
 60. Device-specific Admin settings use viewport profiles, not user-agent detection. Test 26 profiles are: mobile <48rem, tablet 48–<64rem, desktop >=64rem, aligned with the existing responsive breakpoints.
-61. Only high-value behavioral/layout differences belong in Admin. Do not expose micro-spacing, minor radii, exact shades or other design-token minutiae as content-manager switches.
+61. Only high-value behavioral/layout differences belong in ordinary Admin settings. Do not expose arbitrary micro-spacing, minor radii or free-form color values. The Test 27 Visual Style Editor is the controlled exception for registered page targets: it may assign only approved palette tokens to supported text/background/border roles.
 62. Test 26 unresolved marketing-image slots may use clearly labeled `placehold.co` runtime fallbacks in the numbered prototype only. Every such slot must exist in `docs/TEST26-IMAGE-REQUIREMENTS.md`; final approved assets are local files and catalog photography remains non-hotlinked.
 63. Test 26 sections and alternate modes must remain modular: single hero must not delete the carousel, desktop expanded navigation must not delete the accessible mobile drawer, hidden Home product grid must remain recoverable, and category numbers should be hidden by policy rather than removed from domain data.
 
@@ -128,3 +128,14 @@
 93. Generated Laravel agent/bootstrap files do not override Armaghan rules. Do not auto-install Laravel Boost, starter kits or other packages unless the project backlog/architecture explicitly selects them.
 94. Never commit backend `.env`, `APP_KEY`, database credentials, production customer data or `vendor/`. Production credentials remain environment/server secrets.
 95. A Filament package being installed does not mean production admin access is complete. Before production exposure, the User model must enforce an explicit panel-access policy and administrator provisioning must use environment/runtime secrets rather than hard-coded repository credentials.
+
+## Test 27 visual editor rules
+96. The approved base palette is exactly: Brand Green `#21946A`, Brand Blue `#151EDA`, Brand Mint `#C8E3DB`, Brand White `#FFFFFF`, Brand Gold `#FFB514`. These values are canonical visual-editor tokens unless the owner explicitly changes the palette later.
+97. The Visual Style Editor is an admin-only plugin layer. Turning it off must remove its inspector, selection listeners and edit outlines without removing the saved style/content profile.
+98. On mobile, the primary inspector is a non-modal bottom sheet that coexists with the page. It defaults near half-height, has a drag handle, respects safe areas and keeps the page above scrollable/selectable. A small floating control may be used only as a launcher/shortcut, not as the primary mobile inspector.
+99. Editable page targets require stable `data-style-id` identifiers. Touch selection must not guess when nested/nearby targets are ambiguous: collect candidates from the rendered touch neighborhood and ask the administrator which target was intended.
+100. The editor must not accept arbitrary CSS, HTML, JavaScript or unrestricted color input. Style overrides are structured and may reference only validated approved tokens. Generated CSS is derived output, never trusted free-form input.
+101. Text overrides are content data, not CSS. They are stored separately per locale and are allowed only on elements explicitly marked text-editable. Canonical domain data such as product/customer records remains owned by its domain editor rather than being silently overridden as visual text.
+102. Hidden elements must remain recoverable from the editor even when they can no longer be tapped on the page. Resetting a target removes its editor overrides and returns control to the normal component/theme value.
+103. Every new numbered UI test must use its own browser-state namespace. A later test served on the same origin must never write keys belonging to a frozen earlier test. Test 27 uses `armaghan:test27:*`; Test 26 keys remain untouched.
+104. The Test 27 visual editor foundation may be deployed to the staged `/t/27` release lane without adding Test 27 to the mutable launcher. Launcher promotion requires explicit review/approval.
