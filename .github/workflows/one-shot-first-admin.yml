@@ -27,7 +27,7 @@ jobs:
           python platform/scripts/provision_first_admin_ftp.py \
             --email admin@armaghan.local \
             --name "Armaghan Administrator" \
-            --inspect-only
+            --recover-after "2026-10-01T13:35:00.000000Z"
 
       - name: Verify admin login surface remains healthy
         run: |
