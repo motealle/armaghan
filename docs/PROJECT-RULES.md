@@ -103,9 +103,9 @@
 
 ## Backend MVP phase
 78. Test 26 is frozen at snapshot branch `snapshot/test26-final`. Backend productionization may read/reuse its source patterns but must not mutate or redeploy `/t/26`.
-79. The active delivery phase is Backend MVP: Laravel 13 + JSON-first domain persistence for low-churn catalog/customer/content data behind repository contracts; SQLite remains local/dev/test fallback; MySQL/MariaDB remains the production relational control-plane path for auth/session/token/audit/transactional concerns; Filament 5 remains the admin baseline.
+79. The active delivery phase is Backend MVP: Laravel 13 + SQLite as the primary local/dev/test/production database; Filament 5 remains the admin baseline. JSON is plain import/export only. MySQL/MariaDB is an optional later logical mirror/export target, not a live dual-write dependency.
 80. Minimum production scope is: persistent product CRUD, customer CRUD, product media, public catalog reads, anonymous favorites-share links, one-tap customer magic-link login, WhatsApp handoff, site/theme settings, backup and deployment health.
-81. Google OAuth, full order/timeline workflow, advanced analytics, queues and nonessential integrations are post-MVP unless they become required for delivery. Production MySQL/MariaDB is now P0 because the verified host lacks PDO SQLite.
+81. Google OAuth, full order/timeline workflow, advanced analytics, queues and nonessential integrations are post-MVP unless they become required for delivery. Production SQLite verification and private-path backup readiness are P0 before the first production migration.
 82. Brand colors are semantic design tokens, not arbitrary per-element CSS. Admin may assign the approved palette colors to major semantic roles (for example header, primary action, secondary action, highlight, active state and soft surface) with contrast validation and preview.
 83. Token-role reassignment is configuration-driven theming, not a Feature Flag. Feature Flags switch capabilities/behaviors on or off; theme configuration maps values to presentation roles.
 
@@ -117,7 +117,7 @@
 
 
 ## Verified production-host constraints
-88. Hosting preflight on 2026-09-30 verified PHP 8.3.33, all Laravel 13 required PHP extensions, HTTPS, a safe readable/writable private sibling outside `public_html`, and PDO MySQL. The host does not expose PDO SQLite; therefore SQLite is development/test only and production uses MySQL/MariaDB.
+88. Hosting preflight on 2026-09-30 verified PHP 8.3.33, all Laravel 13 required PHP extensions, HTTPS, a safe readable/writable private sibling outside `public_html`, and PDO MySQL. The owner reports on 2026-10-01 that PDO SQLite has since been enabled. SQLite is now the selected production primary, but a fresh runtime probe confirming `pdo_sqlite` and private-path write access is mandatory before the first production migration.
 89. Host web-PHP disables `proc_open`, `exec` and `shell_exec`. Do not make production deployment depend on server-side Composer or shell execution; build dependencies in CI and upload a prepared release.
 90. Host PHP has `open_basedir` enabled but the verified private sibling layout is accessible. Keep application/private files outside `public_html` and expose only the Laravel public surface.
 
@@ -138,7 +138,7 @@
 101. Text overrides are content data, not CSS. They are stored separately per locale and are allowed only on elements explicitly marked text-editable. Canonical domain data such as product/customer records remains owned by its domain editor rather than being silently overridden as visual text.
 102. Hidden elements must remain recoverable from the editor even when they can no longer be tapped on the page. Resetting a target removes its editor overrides and returns control to the normal component/theme value.
 103. Every new numbered UI test must use its own browser-state namespace. A later test served on the same origin must never write keys belonging to a frozen earlier test. Test 27 uses `armaghan:test27:*`; Test 26 keys remain untouched.
-104. The Test 27 visual editor foundation may be deployed to the staged `/t/27` release lane without adding Test 27 to the mutable launcher. Launcher promotion requires explicit review/approval.
+104. Test 27 is the active mutable UI review lane. The owner explicitly approved adding it to the test launcher on 2026-10-01. Test 26 remains frozen; Test 27 may continue evolving until it is explicitly frozen/delivered.
 
 ## Style Profile persistence rules
 105. Style Profile persistence uses a mutable draft plus immutable versions and explicit publication pointers. Never implement restore by editing/deleting an old version row.
@@ -149,13 +149,13 @@
 110. Draft autosave must use checksum-based optimistic concurrency once connected to Laravel. On HTTP 409, surface the conflict and reload/reconcile; never silently overwrite newer server state.
 111. Test 27 frontend integration must retain a local fallback during staged rollout so backend unavailability cannot break the customer-facing page. Server publication becomes the shared source of truth only after successful authenticated sync/deploy validation.
 
-## JSON-first domain persistence rules
-112. JSON is the default near-term driver for low-churn domain data such as catalog/content/customer business-profile collections, but JSON is not treated as a replacement database engine for every Laravel concern.
-113. Security/control-plane state—including administrator/user authentication, sessions, password reset, magic-link token lifecycle, immutable Style Profile publication history and activity/audit logs—remains on Laravel's relational database layer.
-114. All domain business services must depend on repository/contracts rather than reading/writing JSON files directly. Controllers, Filament Resources and Vue-facing APIs must never depend on the physical JSON file layout.
-115. Production JSON data must live outside `public_html`. The path is environment-configurable; repository defaults are development-safe only.
-116. JSON collection writes must use an exclusive inter-process lock plus atomic replacement. Every document carries schema version, revision and checksum; stale expected revisions fail closed rather than overwriting newer data.
-117. Do not emulate relational joins, transactional order/payment flows or complex many-writer workflows in flat JSON. When such needs become material, move that repository to SQLite/MySQL/PostgreSQL without changing its consumer contract.
-118. SQLite is the second-choice domain driver for local/dev/test and becomes a production candidate only if the host exposes PDO SQLite or hosting changes. The verified current host does not.
-119. MySQL/MariaDB is the third-choice domain driver for the current low-volume catalog, but remains the verified production relational driver for Laravel control-plane/security state unless a later architecture decision replaces it.
-120. Supabase is an optional future PostgreSQL/Auth/Storage/Realtime infrastructure target. Do not introduce it into the MVP unless a concrete requirement (managed Postgres, realtime multi-admin editing, managed media/auth or external API/RLS) justifies the additional backend boundary.
+## SQLite-first persistence rules
+112. SQLite is the primary Laravel database for local, development, test and the current production plan. Keep the production database file at an absolute private path outside `public_html`.
+113. Before the first production migration, re-probe the host and confirm `pdo_sqlite`, foreign-key support and read/write access to both the private database path and private backup directory.
+114. Primary database backups must remain SQLite-to-SQLite consistent snapshots. Prefer SQLite Online Backup API or `VACUUM INTO`; do not rely on a naive raw copy of a live database file.
+115. MySQL/MariaDB may be added later as a logical mirror/export/disaster-recovery target. Do not make normal application requests dual-write to SQLite and MySQL.
+116. A MySQL mirror is not the sole backup. Keep restorable SQLite snapshots and at least one rotated off-host copy before production handoff.
+117. JSON is a normal portable interchange format for import/export, fixtures and optional bundles only. Do not build or maintain a custom JSON database engine, locking protocol, query layer or relational emulation.
+118. Application/domain code should use normal Laravel Eloquent/query services against SQLite. Do not add an unnecessary repository abstraction solely to hide the selected SQLite engine unless a real alternate runtime store becomes required.
+119. If sustained concurrent writes, multi-server deployment or materially heavier reporting makes SQLite unsuitable, re-evaluate MySQL/PostgreSQL based on measured requirements rather than record count alone.
+120. Supabase remains an optional future PostgreSQL/Auth/Storage/Realtime infrastructure target and must not be introduced without a concrete requirement that justifies an additional backend boundary.
