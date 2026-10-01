@@ -103,7 +103,7 @@
 
 ## Backend MVP phase
 78. Test 26 is frozen at snapshot branch `snapshot/test26-final`. Backend productionization may read/reuse its source patterns but must not mutate or redeploy `/t/26`.
-79. The active delivery phase is Backend MVP: Laravel 13 + SQLite for local/dev/test + MySQL/MariaDB for production + Filament 5 admin, while keeping the approved Vue customer experience as the presentation baseline.
+79. The active delivery phase is Backend MVP: Laravel 13 + JSON-first domain persistence for low-churn catalog/customer/content data behind repository contracts; SQLite remains local/dev/test fallback; MySQL/MariaDB remains the production relational control-plane path for auth/session/token/audit/transactional concerns; Filament 5 remains the admin baseline.
 80. Minimum production scope is: persistent product CRUD, customer CRUD, product media, public catalog reads, anonymous favorites-share links, one-tap customer magic-link login, WhatsApp handoff, site/theme settings, backup and deployment health.
 81. Google OAuth, full order/timeline workflow, advanced analytics, queues and nonessential integrations are post-MVP unless they become required for delivery. Production MySQL/MariaDB is now P0 because the verified host lacks PDO SQLite.
 82. Brand colors are semantic design tokens, not arbitrary per-element CSS. Admin may assign the approved palette colors to major semantic roles (for example header, primary action, secondary action, highlight, active state and soft surface) with contrast validation and preview.
@@ -148,3 +148,14 @@
 109. Style target identifiers are stable contract keys, not arbitrary selectors. Backend accepts only the restricted id character set and the whitelisted style/text fields documented in `docs/STYLE-PROFILE-BACKEND.md`.
 110. Draft autosave must use checksum-based optimistic concurrency once connected to Laravel. On HTTP 409, surface the conflict and reload/reconcile; never silently overwrite newer server state.
 111. Test 27 frontend integration must retain a local fallback during staged rollout so backend unavailability cannot break the customer-facing page. Server publication becomes the shared source of truth only after successful authenticated sync/deploy validation.
+
+## JSON-first domain persistence rules
+112. JSON is the default near-term driver for low-churn domain data such as catalog/content/customer business-profile collections, but JSON is not treated as a replacement database engine for every Laravel concern.
+113. Security/control-plane state—including administrator/user authentication, sessions, password reset, magic-link token lifecycle, immutable Style Profile publication history and activity/audit logs—remains on Laravel's relational database layer.
+114. All domain business services must depend on repository/contracts rather than reading/writing JSON files directly. Controllers, Filament Resources and Vue-facing APIs must never depend on the physical JSON file layout.
+115. Production JSON data must live outside `public_html`. The path is environment-configurable; repository defaults are development-safe only.
+116. JSON collection writes must use an exclusive inter-process lock plus atomic replacement. Every document carries schema version, revision and checksum; stale expected revisions fail closed rather than overwriting newer data.
+117. Do not emulate relational joins, transactional order/payment flows or complex many-writer workflows in flat JSON. When such needs become material, move that repository to SQLite/MySQL/PostgreSQL without changing its consumer contract.
+118. SQLite is the second-choice domain driver for local/dev/test and becomes a production candidate only if the host exposes PDO SQLite or hosting changes. The verified current host does not.
+119. MySQL/MariaDB is the third-choice domain driver for the current low-volume catalog, but remains the verified production relational driver for Laravel control-plane/security state unless a later architecture decision replaces it.
+120. Supabase is an optional future PostgreSQL/Auth/Storage/Realtime infrastructure target. Do not introduce it into the MVP unless a concrete requirement (managed Postgres, realtime multi-admin editing, managed media/auth or external API/RLS) justifies the additional backend boundary.
