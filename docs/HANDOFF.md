@@ -407,3 +407,21 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Orders/order timeline remain deferred unless MVP delivery requires them.
 - No production MySQL/MariaDB migration has been executed yet.
 - Next P0 batch: Filament CRUD Resources for catalog/customers plus secret-driven first-admin provisioning that requires no manual user SQL/cPanel work.
+
+
+## 26. Test 27 visual editor foundation handoff
+
+- Test 26 remains immutable; rollback checkpoint before Test 27 UI work: `rollback/test26-pre-test27-visual-editor`.
+- Test 27 visual editor architecture is documented in `docs/TEST27-VISUAL-EDITOR.md`.
+- Approved palette is exactly: green `#21946A`, blue `#151EDA`, mint `#C8E3DB`, white `#FFFFFF`, gold `#FFB514`.
+- Header, Footer and Hero brand-chrome surfaces share the semantic `--role-brand-chrome` token instead of unrelated hard-coded navies.
+- Admin-only visual editor uses a non-modal, resizable mobile bottom sheet. The page remains visible/selectable above it.
+- Dense touch selection samples the rendered touch neighborhood through `elementsFromPoint()`; multiple candidates are presented explicitly rather than guessed.
+- Saved style profile is independent of editor visibility: editor OFF removes the editor UI/listeners but keeps the saved style applied.
+- Text overrides are locale-specific and only allowed on explicitly registered text targets; arbitrary CSS/HTML/JS input is not accepted.
+- Test 27 browser state is isolated under `armaghan:test27:*`; it no longer writes Test 26 mutable-storage keys.
+- Editor internals are modular: shell, target chooser, inspector, selection composable, resizable-sheet composable, contrast utility, persistence store and runtime applier.
+- Explicit token text/background pairs enforce a 4.5:1 contrast floor; unsafe choices are disabled.
+- Editable target coverage now includes Header, Hero, About, Why, Capabilities, product banners, product cards, Footer and main Home surfaces.
+- Latest branch-only validation: source contract PASS, TypeScript PASS, 25/25 Vue unit tests PASS, Vite Test 27 build PASS; no deployment was performed by that temporary validation workflow.
+- Test 27 must not be promoted in the mutable launcher until owner/customer review.
