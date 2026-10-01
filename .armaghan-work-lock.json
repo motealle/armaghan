@@ -7,7 +7,7 @@
   "scope": "Urgent Test 27 visual-editor improvements: derive brand blue from logo background, configurable Home page background default white, mint panel defaults, editor bug audit/fixes, persistence readiness/backlog; no Test 26 mutation",
   "base_ref": "main@fe9289b4ec0062a29ef4411053ef118b1d70cc49",
   "acquired_at": "2026-10-01T09:12:00Z",
-  "expires_at": "2026-10-01T10:42:00Z",
+  "expires_at": "2026-10-01T14:30:00Z",
   "released_at": null,
-  "note": "UI-first bounded batch. Shared-server persistence remains dependent on production Laravel/admin session activation."
+  "note": "Lease renewed by same holder after long FTP deploy wait. Test 27 color/saveability batch deployed successfully in FTP Deploy #268; docs finalization pending."
 }
