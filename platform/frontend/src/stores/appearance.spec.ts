@@ -33,6 +33,7 @@ describe('appearance store',()=>{
     expect(store.profiles.desktop.homeProductGrid).toBe('hidden')
     expect(store.profiles.desktop.heroMode).toBe('single')
     expect(store.profiles.desktop.showCategoryNumbers).toBe(false)
+    expect(store.profiles.desktop.showSubcategoryCodes).toBe(false)
   })
 
   it('migrates schema 3 to the customer defaults for navigation while preserving unrelated choices',()=>{
@@ -52,7 +53,29 @@ describe('appearance store',()=>{
     expect(store.profiles.tablet.showAbout).toBe(false)
     expect(store.profiles.desktop.headerMode).toBe('expanded')
     expect(store.profiles.desktop.showHamburger).toBe(false)
-    expect(localStorage.getItem(APPEARANCE_SCHEMA_KEY)).toBe('4')
+    expect(localStorage.getItem(APPEARANCE_SCHEMA_KEY)).toBe('5')
+  })
+
+  it('migrates schema 4 without resetting existing choices and hides subcategory codes by default',()=>{
+    localStorage.setItem(APPEARANCE_SCHEMA_KEY,'4')
+    localStorage.setItem(APPEARANCE_KEY,JSON.stringify({
+      mobile:{headerMode:'expanded',showHamburger:true,showWhy:false},
+      tablet:{headerMode:'compact-drawer',showHamburger:true,showAbout:false},
+      desktop:{headerMode:'expanded',showHamburger:false,showCategoryNumbers:true},
+    }))
+    setActivePinia(createPinia())
+    const store=useAppearanceStore()
+    expect(store.profiles.mobile.headerMode).toBe('expanded')
+    expect(store.profiles.mobile.showHamburger).toBe(true)
+    expect(store.profiles.mobile.showWhy).toBe(false)
+    expect(store.profiles.tablet.headerMode).toBe('compact-drawer')
+    expect(store.profiles.tablet.showHamburger).toBe(true)
+    expect(store.profiles.tablet.showAbout).toBe(false)
+    expect(store.profiles.desktop.showCategoryNumbers).toBe(true)
+    expect(store.profiles.mobile.showSubcategoryCodes).toBe(false)
+    expect(store.profiles.tablet.showSubcategoryCodes).toBe(false)
+    expect(store.profiles.desktop.showSubcategoryCodes).toBe(false)
+    expect(localStorage.getItem(APPEARANCE_SCHEMA_KEY)).toBe('5')
   })
 
   it('allows reversible per-device header and hamburger changes after migration',()=>{
@@ -68,7 +91,7 @@ describe('appearance store',()=>{
   it('sanitizes invalid persisted values and protects compact navigation',()=>{
     localStorage.setItem(APPEARANCE_KEY,JSON.stringify({
       mobile:{headerMode:'compact-drawer',showHamburger:false,heroMode:'invalid',homeProductGrid:'broken'},
-      desktop:{headerMode:'broken',showCategoryNumbers:'yes'},
+      desktop:{headerMode:'broken',showCategoryNumbers:'yes',showSubcategoryCodes:'yes'},
     }))
     setActivePinia(createPinia())
     const store=useAppearanceStore()
@@ -76,6 +99,7 @@ describe('appearance store',()=>{
     expect(store.profiles.mobile.heroMode).toBe(customerAppearanceDefaults.mobile.heroMode)
     expect(store.profiles.desktop.headerMode).toBe(customerAppearanceDefaults.desktop.headerMode)
     expect(store.profiles.desktop.showCategoryNumbers).toBe(false)
+    expect(store.profiles.desktop.showSubcategoryCodes).toBe(false)
   })
 
   it('resets one viewport without touching the others',()=>{
