@@ -84,8 +84,8 @@ Canonical architecture: `docs/SQLITE-FIRST-PERSISTENCE.md`.
 - [x] FTP Deploy Run #258: PASS; only `/public_html/t/index.htm` uploaded; no remote files deleted; root deployment skipped.
 - [x] Add backup command tests.
 - [x] Make production example use an absolute private SQLite path and private backup path.
-- [ ] Re-probe production `pdo_sqlite` and private-path write access before first live migration.
-- [ ] Configure the real production SQLite file path in the host-only `.env`.
+- [x] Re-probe production `pdo_sqlite` and private-path write access before first live migration — PDO SQLite, SQLite 3.53.4, private file R/W, foreign keys and `VACUUM INTO` all PASS.
+- [x] Configure the real production SQLite file path in the host-only shared `.env`; the path remains private and is not stored in Git.
 - [ ] Configure backup retention + at least one off-host rotated copy.
 - [ ] Add optional MySQL logical mirror/export only after the SQLite production path is stable; never dual-write in live requests.
 - [ ] Add mirror verification (row counts/checksums + restore drill) when MySQL mirror is implemented.
@@ -96,13 +96,30 @@ Current estimate excludes open-ended new customer redesign requests.
 
 1. [x] **Urgent Test 27 editor access** — persistent admin quick-launch button, structured target browser, direct visibility toggles, Test 27 redeploy.
 2. [x] **Visual Style Profile frontend adapter** — public staging baseline, debounced authenticated draft save, checksum conflict handling, staging publish/history/restore controls and local fallback implemented; live shared persistence awaits production Laravel/session activation.
-3. [ ] **Production SQLite activation** — re-probe host PDO SQLite, private DB/backup paths, first migration, health/restore smoke.
+3. [x] **Production SQLite activation** — PDO SQLite/SQLite 3.53.4 re-probed PASS, private DB/backup active, production migrations PASS, initial snapshot PASS, `/backend` health/API/admin-login smoke PASS.
 4. [ ] **Filament admin CRUD** — Product/Category/Subcategory/Customer management + safe first-admin provisioning.
 5. [ ] **Catalog/customer media + public API wiring** — product images, public reads, Vue integration without changing frozen Test 26.
 6. [ ] **Favorites/WhatsApp share** — persisted share records, short public links, revocation/expiry handling.
 7. [ ] **Customer Magic Link** — secure one-tap customer session, revoke/regenerate/audit flow.
 8. [ ] **Delivery hardening** — backup rotation/off-host copy, logs, health, recovery drill, responsive/RTL/LTR/dark-light QA.
 9. [ ] **Final customer handoff/polish** — only if review feedback remains after the above; otherwise this run collapses into delivery documentation.
+
+### Production backend activation delivery record
+
+- [x] Fresh production hosting probe: PASS.
+- [x] Build locked Laravel 13.34.0 + Filament 5 release in CI with production Composer dependencies.
+- [x] Generate and preserve APP_KEY only on the host; no APP_KEY or production `.env` entered GitHub or logs.
+- [x] Create private production SQLite database and private backup directory outside `public_html`.
+- [x] Run production migrations successfully.
+- [x] Create first consistent SQLite snapshot.
+- [x] Verify core schema: users/products/customers/style profile tables.
+- [x] Expose only Laravel `public` surface under `/backend`.
+- [x] Repair public permissions to LiteSpeed-safe `0755/0644`; private state remains private.
+- [x] HTTP smoke PASS: backend root, health, public Style Profile API and Filament login page.
+- [ ] Provision the first real active admin through a one-time secure bootstrap flow; do not seed a default password.
+- [ ] Point Test 27 Style Profile API base to `/backend` and verify authenticated shared persistence after real admin provisioning.
+- [ ] Configure rotated off-host SQLite backup copy + restore drill.
+- [ ] Add safe repeatable backend release/update workflow with pre-migration snapshot and rollback guard.
 
 ## P0 — Test 27 visual style editor foundation
 
@@ -139,7 +156,7 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Add sync status UI: checking / local / saving / synced / conflict / error.
 - [x] Branch validation PASS: Test 27 contract, TypeScript, **30/30** Vue unit tests, numbered Test 27 build.
 - [x] **FTP Deploy Run #262: PASS** — active Test 27 rebuilt and deployed to `/public_html/t/27`; 112 files uploaded; no remote files deleted; root deploy skipped.
-- [ ] Activate shared server persistence in live Test 27 after production Laravel/SQLite + real admin session deployment; until then Test 27 correctly remains local-first.
+- [ ] Activate shared server persistence in live Test 27 after first real admin provisioning and API-base switch to `/backend`; production Laravel/SQLite is now live.
 
 - [x] Add Test 27 to the mutable test launcher after explicit owner approval on 2026-10-01; keep Test 26 frozen.
 - [x] Add persistent admin-only «ویرایش ظاهر» quick launcher so a logged-in admin can open the Test 27 editor from any page and be routed to Home automatically.
