@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "platform/backend/**"
       - "platform/scripts/deploy_laravel_code_update.py"
       - ".github/workflows/backend-code-deploy.yml"
   workflow_dispatch:
