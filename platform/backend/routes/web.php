@@ -11,7 +11,7 @@ Route::get('/', function () {
 Route::get('/api/style-profile/{channel?}', [PublicStyleProfileController::class, 'show'])
     ->where('channel', 'staging|production');
 
-Route::prefix('/api/admin/style-profile')
+Route::prefix('api/admin/style-profile')
     ->middleware('active.admin')
     ->group(function (): void {
         Route::get('/', [AdminStyleProfileController::class, 'show']);
