@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261002-public-catalog-api",
   "scope": "Implement public read-only catalog API and wire Test 27 product data to production backend with local media/spec fallback; keep Test 26 frozen; no customer-write or media-upload mutation",
   "base_ref": "main@2d0b2a24a4f84025971075ba75d9d709cd56b154",
   "acquired_at": "2026-10-01T23:30:00Z",
-  "expires_at": "2026-10-02T01:00:00Z",
-  "released_at": null,
-  "note": "Browser editor acceptance is non-blocking for this run; focus on delivery-critical catalog read wiring."
+  "expires_at": "2026-10-01T23:50:00Z",
+  "released_at": "2026-10-01T23:50:00Z",
+  "note": "Public Catalog API and Test 27 Hybrid Sync live. Production catalog bootstrap PASS: 3 categories, 6 subcategories, 18 products with pre-bootstrap SQLite snapshot. One-shot workflow removed. Backend CI #35/#36/#37/#38 PASS; Backend Code Deploy #4/#5 PASS; FTP Deploy #295 PASS; final docs FTP #304 PASS. Browser Style Profile acceptance remains non-blocking because saved profile redirects to login."
 }
