@@ -15,8 +15,9 @@ Before mutating `platform/backend`:
 
 - Laravel: 13.x.
 - Filament: 5.x Panel Builder.
-- Local/dev/test database: SQLite.
-- Production database: MySQL/MariaDB; the verified host has PDO MySQL and does not have PDO SQLite.
+- Primary database for local/dev/test/production: SQLite.
+- The owner reports PDO SQLite was enabled on the production host on 2026-10-01; re-probe it before the first production migration because the earlier 2026-09-30 probe predated that change.
+- MySQL/MariaDB is reserved for a later optional logical mirror/export, not live dual-write.
 - Production web PHP: PHP 8.3.x on LiteSpeed.
 - Production deployment must not depend on host-side Composer or shell execution; build dependencies in CI.
 - Application/private files stay outside `public_html`; only the Laravel public surface is web-accessible.
