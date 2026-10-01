@@ -90,9 +90,24 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Staged branch validation PASS: source contract, TypeScript, 25 unit tests and Test 27 Vite build.
 - [x] Expand stable editable-target coverage across Home/About/Why/Capabilities/product banners plus major card/panel surfaces; keep domain-owned product/customer values outside free-form visual text.
 - [x] Add WCAG-normal-text contrast guard at 4.5:1 for explicit token text/background pairs, with blocked unsafe assignments and visible feedback.
-- [ ] Persist/version Style Profiles through Laravel so a profile can be reused across later numbered tests and production.
+- [x] Persist/version Style Profiles through Laravel with mutable draft, immutable versions, staging/production publication pointers, admin-only writes, server-side safe CSS compilation, activity log and checksum conflict protection.
+- [ ] Connect the Test 27 visual-editor store to the Laravel Style Profile API through a small adapter: server baseline load, debounced draft autosave, expected-checksum conflict handling, staging Publish, history/Restore and local fallback.
 - [ ] Add explicit profile export/import/version-history UX if backend profile history alone is insufficient.
 - [ ] Promote Test 27 into the mutable launcher only after owner/customer review.
+
+### Style Profile backend delivery record
+
+- [x] Architecture/validation record: `docs/STYLE-PROFILE-BACKEND.md`.
+- [x] Add `style_profiles`, `style_profile_versions`, `style_profile_publications` migrations/models.
+- [x] Public read endpoint for staging/production publications.
+- [x] Admin-only draft/save/publish/restore endpoints using the persisted active-admin gate.
+- [x] Reject arbitrary CSS and unknown payload keys; compile CSS only from approved palette tokens.
+- [x] Add optimistic checksum conflict response (HTTP 409) to prevent stale-editor overwrite.
+- [x] Restore historical versions by creating a new immutable version; do not rewrite history.
+- [x] Fix pre-existing ActivityLog model/table mismatch without rewriting historical migration.
+- [x] Backend CI Run #10: **PASS** — 12 tests / 84 assertions; Composer audit clean; secret hygiene PASS.
+- [ ] Next bounded batch: Vue/Test 27 persistence adapter + staging Publish/history/Restore UX.
+
 
 
 ### Test 26 Run 8 — footer scope + mobile language + terminology rule
