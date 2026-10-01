@@ -2,7 +2,6 @@
 import { computed, ref, watch } from 'vue'
 import { Check, ChevronLeft, Search } from '@lucide/vue'
 import { useRoute } from 'vue-router'
-import { categories } from '@/data/catalog'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
@@ -19,7 +18,7 @@ const availability=ref('all')
 
 watch(()=>route.query.category,(value)=>{category.value=value?String(value):'all';subcategory.value='all'})
 
-const subs=computed(()=>category.value==='all'?[]:categories.find(c=>c.code===category.value)?.subcategories ?? [])
+const subs=computed(()=>category.value==='all'?[]:catalog.categories.find(c=>c.code===category.value)?.subcategories ?? [])
 const filtered=computed(()=>catalog.items.filter(product=>{
   if(category.value!=='all'&&product.categoryCode!==category.value)return false
   if(subcategory.value!=='all'&&product.subcategoryCode!==subcategory.value)return false
@@ -50,7 +49,7 @@ function selectCategory(code:string){
 
       <div class="category-showcase grid grid-cols-3 gap-2.5 md:gap-3">
       <button
-        v-for="cat in categories"
+        v-for="cat in catalog.categories"
         :key="cat.code"
         type="button"
         class="category-card"
