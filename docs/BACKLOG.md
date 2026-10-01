@@ -80,6 +80,8 @@ Canonical architecture: `docs/SQLITE-FIRST-PERSISTENCE.md`.
 - [x] Remove the superseded custom JSON runtime-store layer before any production data used it.
 - [x] Keep JSON as ordinary import/export/fixture interchange only.
 - [x] Add `armaghan:backup-sqlite` using SQLite `VACUUM INTO` for consistent private snapshots.
+- [x] Backend CI Run #17: PASS after SQLite-primary pivot and backup command tests.
+- [x] FTP Deploy Run #258: PASS; only `/public_html/t/index.htm` uploaded; no remote files deleted; root deployment skipped.
 - [x] Add backup command tests.
 - [x] Make production example use an absolute private SQLite path and private backup path.
 - [ ] Re-probe production `pdo_sqlite` and private-path write access before first live migration.
