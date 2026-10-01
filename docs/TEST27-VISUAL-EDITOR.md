@@ -234,3 +234,33 @@ Saved style profile:
 - `deploy-root`: skipped.
 - No remote files were deleted.
 - The deployment process re-uploaded mutable `/t/index.htm`, but its repository content still lists Test 26 first and contains no Test 27 launcher entry. Test 27 therefore remains staging-only pending review.
+
+
+## Laravel/SQLite sync adapter
+
+Test 27 now has a local-first Style Profile adapter.
+
+Behavior:
+
+- Browser editing remains immediate and durable in Test 27 local storage even when the Laravel API is absent.
+- The public `staging` publication is fetched on page load, but is adopted only when there are no local edits or the current browser profile still matches the previously adopted server baseline.
+- A real authenticated Laravel administrator session enables shared draft persistence.
+- Draft changes debounce for 900ms before save.
+- Every authenticated draft save sends the current `expected_checksum`.
+- HTTP 409 is treated as a true concurrency conflict. The editor stops autosaving and asks the administrator to choose either the server version or explicitly replace it with the current device version.
+- Server 401/403 never causes a UI failure or an authentication bypass; the editor returns to local-only mode.
+- Staging Publish and the latest ten immutable versions are exposed in the editor sync panel.
+- Restore calls the backend restore endpoint and therefore creates a new immutable version rather than rewriting history.
+- API calls use same-origin credentials and support Laravel's `XSRF-TOKEN` cookie when present.
+- `VITE_ARMAGHAN_API_BASE` can override the API origin later; the default is same-origin.
+
+Current staged limitation:
+
+The customer-facing Test 27 static bundle is live, but the production Laravel application / real admin session is not yet activated on the host. Therefore the current live Test 27 correctly shows local-only persistence until that backend deployment batch is completed.
+
+Validation:
+
+- Test 27 source contract: PASS.
+- TypeScript: PASS.
+- Vue unit tests: **30/30 PASS**.
+- Numbered Test 27 Vite build: PASS.
