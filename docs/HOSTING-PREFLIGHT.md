@@ -94,3 +94,33 @@ Laravel 13 officially supports MySQL 5.7+ and MariaDB 10.3+. Production MySQL/Ma
 - Keep the Laravel application/private files outside `public_html`; publish only the public entry surface.
 - Because PHP can create symlinks, the public storage link can be established by a controlled one-time deployment hook if hosting CLI access is unavailable.
 - Do not install Laravel into `/t/26` or `/t/27`; numbered UI snapshots remain independent.
+
+
+## Production SQLite re-verification — 2026-10-01
+
+A fresh short-lived production probe was executed after PDO SQLite was enabled on the hosting environment.
+
+Final authoritative result: **PASS**.
+
+| Check | Result |
+|---|---|
+| PHP | 8.3.33 |
+| PDO SQLite | PASS |
+| SQLite3 extension | PASS |
+| SQLite version | 3.53.4 |
+| In-memory SQLite read/write | PASS |
+| Private SQLite file create/read/write | PASS |
+| Foreign keys | PASS |
+| `VACUUM INTO` consistent snapshot | PASS |
+| Private sibling read/write | PASS |
+| HTTPS execution | PASS |
+| `public_html` document root match | PASS |
+| ZipArchive | PASS |
+| PharData | PASS |
+| Temporary cleanup | PASS |
+
+The 2026-09-30 PDO SQLite failure is historical and no longer describes the current host.
+
+The probe itself initially produced false-negative count checks because PDO returned an integer where the first diagnostic comparison expected a string. The probe was corrected to normalize count values to integers and the final run then passed all hard criteria.
+
+Canonical public origin for automated preflight: `https://armaghantrading.com`.
