@@ -18,16 +18,16 @@ const visibleTitle=computed(()=>props.product.availability==='available'?display
 
 <template>
   <!-- Test 23 low-copy card contract: image-first, code-only metadata, icon-only actions. -->
-  <article class="product-card overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] shadow-sm">
-    <div class="product-card-media">
+  <article data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] shadow-sm">
+    <div data-style-id="product.media" data-style-label="بخش تصویر کارت محصول" class="product-card-media">
       <ProductMediaCarousel :product="product" />
     </div>
     <div class="product-card-body">
-      <div class="product-card-title" :class="{unavailable:product.availability!=='available'}">{{visibleTitle}}</div>
-      <div class="product-code-row">
+      <div data-style-id="product.title" data-style-label="عنوان کارت محصول" class="product-card-title" :class="{unavailable:product.availability!=='available'}">{{visibleTitle}}</div>
+      <div data-style-id="product.code" data-style-label="کد محصول" class="product-code-row">
         <code dir="ltr">{{product.code}}</code>
       </div>
-      <div class="card-actions compact grid grid-cols-3 gap-1.5">
+      <div data-style-id="product.actions" data-style-label="دکمه‌های کارت محصول" class="card-actions compact grid grid-cols-3 gap-1.5">
         <button class="wa-card-action rounded-[.75rem]" :aria-label="locale.t('order')" @click="emit('whatsapp',product)">
           <WhatsAppIcon :size="25.3" tone="white"/>
         </button>
