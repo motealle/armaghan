@@ -639,4 +639,6 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 - Strong content headings use an accessibility-aware Brand Green/Brand Blue derived role on light surfaces; dark/image/brand-chrome headings retain safer contrast behavior.
 - Why Armaghan separators are 3px Brand Blue; numbered circles are Brand Blue with Brand Gold numerals.
 - Dedicated presentation unit tests and Test 27 source-contract assertions were added.
-- Main CI/FTP result is pending this implementation commit; record the run after it completes.
+- Delivery sequence: implementation `972d66bcd6e0e3ab72946d2fd14ffe8a6d329052`; historical Test 23 contract repair `fb7ee2a1c4200f8080c68e37e10edb238cda9833`; validated release marker `65b9f1158019aece79438fbc680af4070e0c0665`.
+- FTP Deploy #275 intentionally stopped before deployment when the historical Test 23 contract detected its stale current-source assumption. FTP Deploy #276 then passed the repaired historical contract. **FTP Deploy #277 PASS** completed the full Test 27 QA/build/smoke/deploy lane.
+- Run #277 uploaded 112 files to `/public_html/t/27` plus the mutable launcher, deleted no remote files and skipped root deployment. Test 26 remained immutable.
