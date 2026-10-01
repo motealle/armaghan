@@ -72,8 +72,12 @@ class StyleProfileApiTest extends TestCase
         $saveOne = $this->actingAs($admin)
             ->putJson('/api/admin/style-profile/draft', $draftOne)
             ->assertOk()
-            ->assertJsonPath('profile.slug', 'default')
-            ->assertJsonPath('draft.styles.header.shell.backgroundColor', 'blue');
+            ->assertJsonPath('profile.slug', 'default');
+
+        $this->assertSame(
+            'blue',
+            $saveOne->json('draft.styles')['header.shell']['backgroundColor'],
+        );
 
         $checksumOne = $saveOne->json('draft.checksum');
 
@@ -100,10 +104,14 @@ class StyleProfileApiTest extends TestCase
             'texts' => [],
         ];
 
-        $this->actingAs($admin)
+        $saveTwo = $this->actingAs($admin)
             ->putJson('/api/admin/style-profile/draft', $draftTwo)
-            ->assertOk()
-            ->assertJsonPath('draft.styles.header.shell.backgroundColor', 'green');
+            ->assertOk();
+
+        $this->assertSame(
+            'green',
+            $saveTwo->json('draft.styles')['header.shell']['backgroundColor'],
+        );
 
         $this->actingAs($admin)
             ->postJson('/api/admin/style-profile/publish/staging', ['source_test' => '27'])
@@ -126,11 +134,18 @@ class StyleProfileApiTest extends TestCase
         $publication = StyleProfilePublication::query()->where('channel', 'staging')->firstOrFail();
         $this->assertSame($restore->json('version.id'), $publication->style_profile_version_id);
 
-        $this->getJson('/api/style-profile/staging')
+        $public = $this->getJson('/api/style-profile/staging')
             ->assertOk()
-            ->assertJsonPath('version.number', 3)
-            ->assertJsonPath('styles.header.shell.backgroundColor', 'blue')
-            ->assertJsonPath('texts.home.about.title.fa', 'درباره ارمغان');
+            ->assertJsonPath('version.number', 3);
+
+        $this->assertSame(
+            'blue',
+            $public->json('styles')['header.shell']['backgroundColor'],
+        );
+        $this->assertSame(
+            'درباره ارمغان',
+            $public->json('texts')['home.about.title']['fa'],
+        );
 
         $this->assertDatabaseHas('activity_log', [
             'action' => 'style_profile.restored',
