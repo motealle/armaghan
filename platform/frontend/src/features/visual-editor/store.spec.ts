@@ -22,6 +22,12 @@ describe('visual style profile sanitization',()=>{
         'footer.shell':{
           textColor:'magenta',
         },
+        'home.page':{
+          textColor:'green',
+          backgroundColor:'white',
+          borderColor:'gold',
+          hidden:true,
+        },
       },
       texts:{
         'hero.title':{
@@ -41,7 +47,9 @@ describe('visual style profile sanitization',()=>{
           borderColor:'gold',
           hidden:true,
         },
-        'footer.shell':{},
+        'home.page':{
+          backgroundColor:'white',
+        },
       },
       texts:{
         'hero.title':{
@@ -50,6 +58,21 @@ describe('visual style profile sanitization',()=>{
         },
       },
     })
+  })
+
+  it('protects non-hideable targets and per-target style capabilities',()=>{
+    const profile=sanitizeVisualStyleProfile({
+      styles:{
+        'home.page':{
+          textColor:'green',
+          backgroundColor:'mint',
+          borderColor:'gold',
+          hidden:true,
+        },
+      },
+    })
+
+    expect(profile.styles['home.page']).toEqual({backgroundColor:'mint'})
   })
 
   it('compares normalized profiles deterministically',()=>{
