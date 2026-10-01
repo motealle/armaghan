@@ -118,7 +118,8 @@ Current estimate excludes open-ended new customer redesign requests.
 - [x] Repair public permissions to LiteSpeed-safe `0755/0644`; private state remains private.
 - [x] HTTP smoke PASS: backend root, health, public Style Profile API and Filament login page.
 - [x] Provision the first real active admin through a one-time secure bootstrap flow; no seeded/default password and no plaintext credential stored in Git/repo logs.
-- [ ] Point Test 27 Style Profile API base to `/backend` and verify authenticated shared persistence after real admin provisioning.
+- [x] Point Test 27 Style Profile API base to `/backend`; production SQLite Style Profile save/publish/restore semantics verified transactionally on the live database with full rollback.
+- [ ] Complete the final browser-authenticated acceptance cycle: real Filament session + CSRF, edit Test 27, reload/cross-device, staging Publish and Restore.
 - [ ] Configure rotated off-host SQLite backup copy + restore drill.
 - [ ] Add safe repeatable backend release/update workflow with pre-migration snapshot and rollback guard.
 
@@ -143,7 +144,7 @@ Current estimate excludes open-ended new customer redesign requests.
 - [x] Historical Test 24/25 color contracts made token-value agnostic so a customer-approved Brand Blue value change does not regress frozen semantic contracts.
 - [x] **FTP Deploy Run #268: PASS** — full QA/build/smoke passed; active Test 27 rebuilt and uploaded to `/public_html/t/27`; 112 files uploaded; no remote files deleted; root deploy skipped.
 - [x] Provision the first real Laravel administrator without a seeded/default password; account `admin@armaghan.local` is active in production.
-- [ ] Log into the real backend admin session and verify Test 27 draft autosave to production SQLite.
+- [ ] Log into the real backend admin session and verify Test 27 draft autosave through the browser; **server-side production persistence itself is already acceptance-tested PASS**.
 - [ ] Verify cross-device reload from shared draft, staging Publish and Restore end-to-end.
 - [ ] After successful shared persistence QA, decide whether JSON export/import remains visible by default or moves under an advanced/backup disclosure.
 
@@ -160,6 +161,22 @@ Current estimate excludes open-ended new customer redesign requests.
 - [x] Final main validation: **Backend CI #30 PASS**.
 - [x] **FTP Deploy #270 PASS**; this backend/security batch did not modify or redeploy Test 26/27 UI.
 - [ ] Acceptance remaining: authenticate in the real backend session from the browser and verify Test 27 shared Style Profile save/reload/publish/restore end-to-end.
+
+### Production Style Profile acceptance delivery record
+
+- [x] Add reusable token-protected FTP/HTTP acceptance helper: `platform/scripts/verify_style_profile_ftp.py`.
+- [x] Helper never creates an authenticated browser session and contains no auth bypass.
+- [x] Run the acceptance sequence against the **live production SQLite database** inside one outer transaction.
+- [x] Draft save PASS.
+- [x] Consecutive staging Publish sequence PASS.
+- [x] Restore creates a newer immutable version PASS.
+- [x] Staging publication pointer follows the restored version PASS.
+- [x] Inside the transaction: **3 immutable versions + 3 ActivityLog records** created as expected.
+- [x] Outer rollback PASS; logical database state after the test exactly matched the pre-test state.
+- [x] Temporary public helper cleanup PASS.
+- [x] Production Style Profile Acceptance Run `36878931948`: PASS.
+- [ ] Only remaining editor persistence acceptance: real browser Filament login/session + CSRF + cross-device UI cycle.
+
 
 ## P0 — Test 27 visual style editor foundation
 
