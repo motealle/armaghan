@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use App\Models\User;
+use Closure;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureActiveAdmin
+{
+    public function handle(Request $request, Closure $next): Response|JsonResponse
+    {
+        $user = $request->user();
+
+        if (! $user instanceof User) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        if (! $user->isActiveAdmin()) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
+        return $next($request);
+    }
+}
