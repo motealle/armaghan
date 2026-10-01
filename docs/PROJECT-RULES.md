@@ -184,3 +184,10 @@
 137. Any credential recovery after a partial bootstrap must prove the target account identity before rotation. At minimum require one active admin, exact bootstrap email/name and a creation-time bound that matches the failed bootstrap window.
 138. Credential encryption/key validation must complete before creating or rotating a production administrator. A cryptographic-output failure must not leave behind a new account with an unrecoverable password.
 139. After successful first-admin provisioning, remove any one-shot workflow or temporary public helper. Keep only reusable fail-closed tooling and tested backend commands.
+
+## Current-status memory rules
+140. `docs/CURRENT-STATUS.md` is the canonical summary of the repository's **current** operational state. Every repository mutation run must read it after `docs/PROJECT-RULES.md` and before planning work.
+141. Historical records in HANDOFF/audits/preflight documents remain valid as history, but an older statement must not override a newer verified status in `docs/CURRENT-STATUS.md`, latest HANDOFF, latest BACKLOG or newer successful production acceptance.
+142. After any run that materially changes production capability, active UI test state, deployment readiness, authentication/admin readiness or the next P0 task, update `docs/CURRENT-STATUS.md`, `docs/HANDOFF.md` and `docs/BACKLOG.md` in the same bounded documentation closeout.
+143. Current verified state as of 2026-10-01: production SQLite/Laravel activation is complete; first production admin exists; production Style Profile service semantics are acceptance-tested PASS. The remaining Style Profile acceptance is the real browser Filament session/CSRF/reload/cross-device/Publish/Restore cycle. Do not describe those completed backend capabilities as pending.
+144. Filament Product/Category/Subcategory/Customer Resources, public catalog/customer backend APIs, full FavoriteShare flow, full MagicLink flow, off-host backup rotation/restore drill and repeatable backend release/update workflow remain open until implemented and verified.
