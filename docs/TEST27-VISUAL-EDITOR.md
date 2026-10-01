@@ -383,3 +383,11 @@ Accessibility basis: normal text retains the 4.5:1 target. The product-code caps
 - A stale Test 23 source assertion blocked FTP Deploy #275 before any build/deploy; the historical contract was corrected without changing the frozen Test 23 snapshot.
 - Final validated release marker: `65b9f1158019aece79438fbc680af4070e0c0665`.
 - **FTP Deploy #277 PASS**: Test 11–27 contracts, type-check, unit tests, Test 27 build and FTP smoke passed; 112 files uploaded; no remote files deleted; root deployment skipped.
+
+
+### Final heading-green polish
+
+- The first accessibility-safe light-surface heading mix leaned too blue visually despite passing contrast.
+- Final semantic role uses `color-mix(in srgb,var(--brand-green) 65%,var(--c-text))`, which remains clearly dark green while retaining contrast on White and Mint surfaces.
+- Commit: `13b3dbb5abd32265f752139b9cf670127a8ce5c9`.
+- **FTP Deploy #282 PASS**: Test 11–27 contracts, TypeScript, unit tests, Test 27 production build and FTP smoke passed; `deploy-t` passed; root deployment skipped.

@@ -28,6 +28,7 @@ Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
 - [x] **FTP Deploy #277: SUCCESS** — immutable guard and Test 11–27 contracts PASS; TypeScript, Vue unit tests, generated portrait media and Test 27 production build PASS; FTP smoke PASS; `deploy-t` PASS; `deploy-root` skipped.
 - [x] Deployment uploaded **112 files** to active Test 27 plus mutable launcher and explicitly deleted **0 remote files**.
 - [x] Test 26 and earlier frozen snapshots remained untouched.
+- [x] Final heading-green polish commit: `13b3dbb5abd32265f752139b9cf670127a8ce5c9`; **FTP Deploy #282 PASS** with the full Test 27 QA/build/smoke/deploy lane. Strong light-surface headings now resolve to a visibly dark-green semantic role rather than the earlier blue-leaning mix.
 
 Image requirements: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
