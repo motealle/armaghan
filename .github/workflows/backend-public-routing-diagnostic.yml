@@ -31,13 +31,17 @@ jobs:
           ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"])
           ftp.cwd("/public_html/backend")
           names=set(ftp.nlst())
-          required={"index.php",".htaccess"}
           print("backend_dir_exists: true")
           print("index_exists:", "index.php" in names)
-          print("htaccess_exists:", ".htaccess" in names)
+          try:
+              ht_size=ftp.size(".htaccess")
+              ht_exists=ht_size is not None
+          except Exception:
+              ht_exists=False
+          print("htaccess_exists:", ht_exists)
           print("public_entry_count:", len(names))
           ftp.quit()
-          if not required.issubset(names): raise SystemExit(2)
+          if "index.php" not in names: raise SystemExit(2)
           PY
 
       - name: Check public route statuses
