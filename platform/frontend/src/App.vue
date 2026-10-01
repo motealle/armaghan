@@ -13,6 +13,7 @@ import LoginSheet from '@/features/auth/components/LoginSheet.vue'
 import { useDesignStore } from '@/stores/design'
 import { useSessionStore } from '@/stores/session'
 import { useCustomersStore } from '@/stores/customers'
+import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import { useThemeStore } from '@/stores/theme'
 
@@ -21,6 +22,7 @@ const helpOpen=ref(false)
 const design=useDesignStore()
 const session=useSessionStore()
 const customers=useCustomersStore()
+const catalog=useCatalogStore()
 const locale=useLocaleStore()
 const theme=useThemeStore()
 const route=useRoute()
@@ -36,6 +38,7 @@ onMounted(async()=>{
   theme.apply()
   design.apply()
   await locale.initialize()
+  void catalog.hydrateFromBackend()
   const params=new URLSearchParams(location.search)
   const magic=params.get('magic')
   const customerAccess=params.get('customerAccess')
