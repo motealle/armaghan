@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20261001-style-profile-backend",
-  "scope": "Persist/version Test 27 visual Style Profiles in Laravel: draft, immutable versions, active publication pointer, admin-protected write endpoints, public read endpoint; no Test 26 mutation",
-  "base_ref": "main@1fd8a75fd9c272cae1642d21835a8fd258ebd4e6",
-  "acquired_at": "2026-10-01T05:33:00Z",
-  "expires_at": null,
-  "released_at": "2026-10-01T06:03:00Z",
-  "note": "Released after versioned Style Profile backend landed on main at 3a314b994ae6f8f992e61a6ddc960c56a185e523. Backend CI Run #13 PASS; FTP Deploy #256 PASS with deploy-root/deploy-t skipped. Public read + admin draft/publish/restore APIs, immutable history, staging/production publication pointers, server-side CSS compiler, checksum conflict protection, and ActivityLog mapping fix are complete. No Test 26/frontend mutation."
+  "run_id": "chat-20261001-json-domain-store-foundation",
+  "scope": "JSON-first domain persistence foundation: configurable private JSON store, atomic locked writes, revision conflict protection, tests/docs; no Test 26/27 UI mutation and no production data migration",
+  "base_ref": "main@3a314b994ae6f8f992e61a6ddc960c56a185e523",
+  "acquired_at": "2026-10-01T06:26:00Z",
+  "expires_at": "2026-10-01T07:56:00Z",
+  "released_at": null,
+  "note": "First bounded JSON-first persistence batch. Security/control-plane relational persistence remains unchanged. backend/admin-core branch untouched."
 }
