@@ -623,3 +623,20 @@ Next P0:
 1. browser-authenticated Test 27 Style Profile acceptance;
 2. Filament CRUD;
 3. catalog/customer API/media wiring.
+
+
+## 36. Test 27 customer visual corrections — implementation handoff
+
+Customer-requested Test 27 corrections are implemented on the active mutable UI lane, with Test 26 untouched.
+
+- Rollback checkpoint: `rollback/test27-pre-customer-ui-corrections` → `40dc89b5aa97bd09fb664b88b1fb8dc9d54c15d9`.
+- Footer brand area is logo-only; brand name/description beside the logo are no longer rendered or exposed as phantom editor text targets.
+- Customer-facing product label is derived centrally: available products show the localized subcategory (one of six); unavailable/made-to-order products show a unified localized unavailable/producible label.
+- Domain `Product.name` values remain preserved for admin/backend compatibility.
+- Product codes use Brand Blue capsule + Brand White text + restrained Brand Gold edge.
+- New Appearance Feature Flag: `showSubcategoryCodes`; default OFF on all viewport profiles. Appearance schema is v5; schema-v4 migration preserves existing navigation/section choices.
+- Products light background defaults to Brand White; cards default to Brand Mint; dark-mode defaults remain dark. `products.page` is a structured editor background target and `product.card` remains editor-controlled.
+- Strong content headings use an accessibility-aware Brand Green/Brand Blue derived role on light surfaces; dark/image/brand-chrome headings retain safer contrast behavior.
+- Why Armaghan separators are 3px Brand Blue; numbered circles are Brand Blue with Brand Gold numerals.
+- Dedicated presentation unit tests and Test 27 source-contract assertions were added.
+- Main CI/FTP result is pending this implementation commit; record the run after it completes.
