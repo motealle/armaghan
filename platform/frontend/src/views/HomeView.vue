@@ -15,7 +15,7 @@ const {policy}=useResolvedAppearance()
 </script>
 
 <template>
-  <div data-style-id="home.page" data-style-label="صفحه خانه" class="home-page space-y-10 lg:space-y-16">
+  <div data-style-id="home.content" data-style-label="محتوای صفحه خانه" class="home-page space-y-10 lg:space-y-16">
     <HeroSection/>
 
     <AboutArmaghanSection v-if="policy.showAbout"/>
