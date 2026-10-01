@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { X } from '@lucide/vue'
+import { computed, ref } from 'vue'
+import { ListTree, X } from '@lucide/vue'
 import { useVisualStyleStore } from './store'
 import VisualEditorInspector from './VisualEditorInspector.vue'
 import VisualEditorTargetChooser from './VisualEditorTargetChooser.vue'
+import VisualEditorTargetBrowser from './VisualEditorTargetBrowser.vue'
 import { useVisualEditorSelection } from './composables/useVisualEditorSelection'
 import { useResizableEditorSheet } from './composables/useResizableEditorSheet'
 
 const visual=useVisualStyleStore()
+const browserOpen=ref(true)
 const {selected,candidates,choose,chooseHidden}=useVisualEditorSelection(visual.enabled)
 const {height,onResizeStart,onResizeMove,onResizeEnd}=useResizableEditorSheet(visual.enabled)
 
@@ -18,6 +20,10 @@ const hiddenIds=computed(()=>Object.entries(visual.profile.styles)
 
 function disableEditor(){
   visual.setEnabled(false)
+}
+function chooseFromBrowser(candidate:Parameters<typeof choose>[0]){
+  choose(candidate)
+  browserOpen.value=false
 }
 </script>
 
@@ -45,12 +51,26 @@ function disableEditor(){
         <small>{{selected?.label ?? (candidates.length?'انتخاب عنصر':'یک بخش از صفحه را لمس کنید')}}</small>
       </div>
       <span class="visual-editor-autosave">ذخیره خودکار</span>
+      <button
+        type="button"
+        class="visual-editor-icon-button"
+        :class="{active:browserOpen}"
+        aria-label="فهرست عناصر قابل ویرایش"
+        title="فهرست عناصر"
+        @click="browserOpen=!browserOpen"
+      ><ListTree :size="19"/></button>
       <button type="button" class="visual-editor-icon-button" aria-label="خاموش کردن ادیتور" @click="disableEditor">
         <X :size="19"/>
       </button>
     </header>
 
     <div class="visual-editor-body">
+      <VisualEditorTargetBrowser
+        v-if="browserOpen"
+        :selected-id="selected?.id"
+        @choose="chooseFromBrowser"
+      />
+
       <VisualEditorTargetChooser
         :candidates="candidates"
         :hidden-ids="hiddenIds"
