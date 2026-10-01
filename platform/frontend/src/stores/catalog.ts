@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { products as seedProducts } from '@/data/catalog'
 import type { Product } from '@/types/domain'
 
-const KEY='armaghan:test26:products-v1'
+const KEY='armaghan:test27:products-v1'
 const LEGACY_KEYS=['armaghan:test25:products-v1','armaghan:test24:products-v1','armaghan:test23:products-v1','armaghan:test22:products-v1','armaghan:test21:products-v1','armaghan:test20:products-v4','armaghan:test20:products-v3']
 const legacyCategoryImages=new Set([
   './images/final/categories/category-baby.webp',
