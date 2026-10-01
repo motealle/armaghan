@@ -95,7 +95,7 @@ Canonical architecture: `docs/SQLITE-FIRST-PERSISTENCE.md`.
 Current estimate excludes open-ended new customer redesign requests.
 
 1. [x] **Urgent Test 27 editor access** — persistent admin quick-launch button, structured target browser, direct visibility toggles, Test 27 redeploy.
-2. [ ] **Visual Style Profile frontend adapter** — load staging baseline, debounced save, checksum conflict handling, publish/history/restore with local fallback.
+2. [x] **Visual Style Profile frontend adapter** — public staging baseline, debounced authenticated draft save, checksum conflict handling, staging publish/history/restore controls and local fallback implemented; live shared persistence awaits production Laravel/session activation.
 3. [ ] **Production SQLite activation** — re-probe host PDO SQLite, private DB/backup paths, first migration, health/restore smoke.
 4. [ ] **Filament admin CRUD** — Product/Category/Subcategory/Customer management + safe first-admin provisioning.
 5. [ ] **Catalog/customer media + public API wiring** — product images, public reads, Vue integration without changing frozen Test 26.
@@ -125,9 +125,21 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Expand stable editable-target coverage across Home/About/Why/Capabilities/product banners plus major card/panel surfaces; keep domain-owned product/customer values outside free-form visual text.
 - [x] Add WCAG-normal-text contrast guard at 4.5:1 for explicit token text/background pairs, with blocked unsafe assignments and visible feedback.
 - [x] Persist/version Style Profiles through Laravel with mutable draft, immutable versions, staging/production publication pointers, admin-only writes, server-side safe CSS compilation, activity log and checksum conflict protection.
-- [ ] Connect the Test 27 visual-editor store to the Laravel Style Profile API through a small adapter: server baseline load, debounced draft autosave, expected-checksum conflict handling, staging Publish, history/Restore and local fallback.
+- [x] Connect the Test 27 visual-editor store to the Laravel Style Profile API through a local-first adapter: conservative public staging baseline, 900ms debounced authenticated draft autosave, expected-checksum 409 conflict handling, staging Publish, history/Restore and local fallback.
 - [x] Visual editor structured target controls foundation: grouped browser for header/hero/about/why/capabilities/product banners/product cards/footer, direct ON/OFF visibility, text/background/border/token editing through the existing inspector, and hidden targets recoverable.
 - [ ] Add explicit profile export/import/version-history UX if backend profile history alone is insufficient.
+
+### Style Profile frontend adapter delivery record
+
+- [x] Add same-origin API client with cookie/session credentials and optional XSRF header support; no auth bypass.
+- [x] Public staging profile is adopted only when the local browser has no edits or still matches its previous server baseline; local work is never silently overwritten.
+- [x] Admin sync checks the real Laravel admin endpoint; 401/403 or API absence falls back to browser-local persistence without disabling the editor.
+- [x] Draft changes debounce for 900ms and use `expected_checksum`; HTTP 409 becomes an explicit local-vs-server choice.
+- [x] Add staging Publish and version-history Restore controls; restore remains create-new-version semantics from the backend.
+- [x] Add sync status UI: checking / local / saving / synced / conflict / error.
+- [x] Branch validation PASS: Test 27 contract, TypeScript, **30/30** Vue unit tests, numbered Test 27 build.
+- [ ] Activate shared server persistence in live Test 27 after production Laravel/SQLite + real admin session deployment; until then Test 27 correctly remains local-first.
+
 - [x] Add Test 27 to the mutable test launcher after explicit owner approval on 2026-10-01; keep Test 26 frozen.
 - [x] Add persistent admin-only «ویرایش ظاهر» quick launcher so a logged-in admin can open the Test 27 editor from any page and be routed to Home automatically.
 - [x] Add grouped element browser inside the bottom sheet so nearby/nested elements do not need precise finger selection.
