@@ -1,6 +1,6 @@
 # Test 27 — Visual Style Editor
 
-Status: foundation implementation in progress on `ui/test27-visual-editor-foundation-20261001`. Test 26 remains immutable.
+Status: foundation + modularization/contrast batch validated on `ui/test27-visual-editor-foundation-20261001`. Test 26 remains immutable.
 
 ## Product goal
 
@@ -115,6 +115,46 @@ Foundation targets are intentionally limited and stable:
 
 The registry expands in later bounded batches. Product/catalog text is not made free-form here because canonical product names belong to product/content data, not a style profile.
 
+## Modular implementation layout
+
+The visual editor is split by responsibility:
+
+- `VisualEditor.vue`: composition-only shell and editor lifecycle surface.
+- `VisualEditorTargetChooser.vue`: ambiguous-touch and hidden-target selection UI.
+- `VisualEditorInspector.vue`: text/style controls and contrast feedback.
+- `composables/useVisualEditorSelection.ts`: pointer listeners, selection, candidate lifecycle and selected-target marking.
+- `composables/useResizableEditorSheet.ts`: bottom-sheet height, drag handle and document frame state.
+- `selection.ts`: rendered-geometry candidate discovery.
+- `contrast.ts`: WCAG contrast math and approved-token checks.
+- `store.ts`: validated persistence + generated CSS.
+- `VisualStyleRuntime.vue`: applies the saved profile independently of editor visibility.
+
+This separation keeps the plugin removable, testable and maintainable as target coverage grows.
+
+## Contrast guard
+
+When both text and background are explicitly assigned from the approved token palette, the inspector enforces a minimum **4.5:1** normal-text contrast ratio. Token combinations that would fall below the threshold are disabled instead of silently creating unreadable text.
+
+The implementation deliberately uses the stricter normal-text threshold for all editor text assignments because the editor does not yet classify target font size/weight as large text.
+
+Reference:
+- https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html
+
+## Expanded editable target coverage
+
+The foundation now covers:
+- Header/brand text;
+- Hero shell/media/caption/title;
+- About section shell/heading/title/body/media;
+- Why section shell/heading/intro/list and individual reason cards;
+- Capabilities shell/heading/grid and individual capability cards/body surfaces;
+- Product-banner section/heading and individual banner/copy surfaces;
+- Product-card shell/media/title/code/actions;
+- Footer shell/brand/brand text/columns;
+- Home page/recommended-products section surfaces.
+
+Canonical product/customer data remains owned by its domain editor rather than being overridden as visual free-form text.
+
 ## Mobile behavior
 
 - Default inspector height: approximately 48% of the viewport.
@@ -162,8 +202,20 @@ Saved style profile:
 - Temporary branch-only validation workflow Run #4: **PASS**.
 - Test 27 source contract: PASS.
 - TypeScript type-check: PASS.
-- Vue unit tests: **24/24 PASS**.
+- Initial foundation Vue unit tests: **24/24 PASS**.
 - Vite Test 27 build: PASS.
 - The validation workflow had no FTP/deployment step.
 - First failed validation exposed a stale Test 26 session-storage assertion and was corrected by moving the test to the isolated Test 27 namespace.
 - Second failed validation was workflow-only: Pillow was absent from the temporary runner. Product code had already passed type-check/unit tests; the temporary workflow was corrected and the complete build then passed.
+
+
+### Modularization / contrast validation
+
+- Temporary branch-only refactor validation workflow: **PASS**.
+- Test 27 source contract: PASS.
+- TypeScript type-check: PASS.
+- Vue unit tests: **25/25 PASS**, including dedicated contrast calculations.
+- Vite Test 27 build: PASS.
+- No FTP/deployment step was present in this branch validation.
+- Selection listeners now attach only while editor mode is enabled and are removed when it is disabled/unmounted.
+- Home editable-target coverage was expanded without changing Test 26 or domain-owned product/customer data.
