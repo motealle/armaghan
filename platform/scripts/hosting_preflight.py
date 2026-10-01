@@ -131,6 +131,9 @@ $result = [
     'sqlite3_extension' => extension_loaded('sqlite3'),
     'sqlite_version' => $sqliteVersion,
     'sqlite_memory_rw' => $sqliteMemory,
+    'sqlite_private_file_rw' => $sqlitePrivateFile,
+    'sqlite_foreign_keys' => $sqliteForeignKeys,
+    'sqlite_vacuum_into' => $sqliteVacuumInto,
     'document_root_matches_probe_dir' => isset($_SERVER['DOCUMENT_ROOT'])
         && realpath((string) $_SERVER['DOCUMENT_ROOT']) === realpath(__DIR__),
     'outside_private_marker_readable' => is_readable($marker),
@@ -291,6 +294,9 @@ def main() -> int:
                 "sqlite3_extension": bool(php.get("sqlite3_extension")),
                 "sqlite_3_26_or_newer": sqlite_version_ok,
                 "sqlite_memory_read_write": bool(php.get("sqlite_memory_rw")),
+                "sqlite_private_file_read_write": bool(php.get("sqlite_private_file_rw")),
+                "sqlite_foreign_keys": bool(php.get("sqlite_foreign_keys")),
+                "sqlite_vacuum_into": bool(php.get("sqlite_vacuum_into")),
                 "document_root_is_public_html": bool(php.get("document_root_matches_probe_dir")),
                 "php_can_read_private_sibling": bool(php.get("outside_private_marker_readable")),
                 "php_can_write_private_sibling": bool(php.get("outside_private_dir_writable_by_php")),
@@ -304,6 +310,9 @@ def main() -> int:
                 checks["sqlite3_extension"],
                 checks["sqlite_3_26_or_newer"],
                 checks["sqlite_memory_read_write"],
+                checks["sqlite_private_file_read_write"],
+                checks["sqlite_foreign_keys"],
+                checks["sqlite_vacuum_into"],
                 checks["document_root_is_public_html"],
                 checks["php_can_read_private_sibling"],
                 checks["php_can_write_private_sibling"],
@@ -329,6 +338,11 @@ def main() -> int:
                         if marker_uploaded:
                             safe_delete(ftp, marker_name)
                         safe_delete(ftp, "php-write-test.txt")
+                        safe_delete(ftp, "preflight.sqlite")
+                        safe_delete(ftp, "preflight.sqlite-wal")
+                        safe_delete(ftp, "preflight.sqlite-shm")
+                        safe_delete(ftp, "preflight.sqlite-journal")
+                        safe_delete(ftp, "preflight-backup.sqlite")
                         ftp.cwd("/")
                         ftp.rmd(private_dir)
                     except Exception:
