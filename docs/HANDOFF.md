@@ -458,3 +458,17 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 
 - SQLite-primary pivot delivery: main implementation head `4cd840e9261fb2b3ee2baf661b67f6958856cc80`; Backend CI Run #17 PASS.
 - Test 27 launcher promotion: FTP Deploy Run #258 PASS; only `/public_html/t/index.htm` uploaded, no remote deletes, root deploy skipped. Test 27 now appears above Test 26 in the mutable test index; Test 26 itself remains immutable.
+
+
+## 29. Urgent Test 27 visual-editor access handoff
+
+- Test 27 remains the active mutable review lane; Test 26 is unchanged/frozen.
+- After an administrator signs in on Test 27, a persistent floating `ویرایش ظاهر` button is visible from any page while the editor is off.
+- Pressing that button enables the visual editor and routes to Home, where the non-modal bottom sheet opens.
+- The editor bottom sheet now includes a grouped target browser for Header, Hero, About, Why Armaghan, Capabilities, product banners, product-card surfaces and Footer.
+- Each registered target can be selected without precise touch targeting and can be toggled visible/hidden directly from the browser. The existing inspector continues to handle allowed text editing plus approved-token text/background/border colors and per-target reset.
+- Direct page-touch selection and the ambiguity chooser remain available in parallel.
+- Editor controls remain admin-only; no URL/query-parameter bypass or automatic admin mode was added.
+- Branch-only urgent validation passed: Test 27 contract, TypeScript type-check, Vue unit tests and numbered Test 27 Vite build.
+- Next UI batch is the Laravel Style Profile frontend adapter (server baseline, debounced draft save, 409 conflict handling, staging publish/history/restore) while retaining local fallback.
+- Backend work remains queued independently: production SQLite re-probe/activation, Filament CRUD, share flow, customer Magic Link and delivery hardening.
