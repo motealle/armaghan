@@ -1,0 +1,71 @@
+name: First Production Laravel Deploy
+
+on:
+  push:
+    branches:
+      - backend/production-sqlite-activation-20261001
+    paths:
+      - ".github/workflows/first-production-laravel-deploy.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: first-production-laravel-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3 and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+          tools: composer:v2
+          extensions: ctype,curl,dom,fileinfo,filter,hash,mbstring,openssl,pcre,pdo,session,tokenizer,xml,sqlite3,pdo_sqlite,zip
+
+      - name: Validate deploy controller sources
+        run: |
+          python -m py_compile platform/scripts/deploy_laravel_shared_hosting.py
+          python - <<'PY'
+          import importlib.util
+          spec=importlib.util.spec_from_file_location("deploy","platform/scripts/deploy_laravel_shared_hosting.py")
+          mod=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          open("/tmp/armaghan-activate.php","w",encoding="utf-8").write(
+              mod.activation_php("0123456789abcdef","safe-test-secret","https://armaghantrading.com","release.zip")
+          )
+          PY
+          php -l /tmp/armaghan-activate.php
+
+      - name: Build locked production Laravel release
+        working-directory: platform/backend
+        run: |
+          composer install --no-dev --no-scripts --no-interaction --prefer-dist --no-progress --optimize-autoloader
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+          composer dump-autoload --no-dev --optimize --no-interaction
+          php artisan --version
+          php artisan route:list --path=up --no-ansi | grep -E 'GET|HEAD'
+          php artisan route:list --path=api/style-profile --no-ansi | grep -F 'api/style-profile'
+          rm -f .env
+          rm -f database/database.sqlite
+          rm -rf tests
+          find storage/logs -type f -delete || true
+          find storage/framework -type f -delete || true
+
+      - name: Package production release
+        working-directory: platform/backend
+        run: zip -qr ../../armaghan-backend-release.zip . -x "node_modules/*" ".git/*"
+
+      - name: Deploy and activate Laravel + SQLite
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          ARMAGHAN_SITE_URL: https://armaghantrading.com
+        run: python platform/scripts/deploy_laravel_shared_hosting.py --release armaghan-backend-release.zip
