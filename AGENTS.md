@@ -5,11 +5,12 @@ These instructions apply to every AI chat, coding agent, automation and human-as
 ## Mandatory startup
 Before planning a repository mutation, read:
 1. `docs/PROJECT-RULES.md`
-2. `docs/HANDOFF.md`
-3. `docs/BACKLOG.md`
-4. the current test audit and relevant asset/media documents
+2. `docs/CURRENT-STATUS.md`
+3. `docs/HANDOFF.md`
+4. `docs/BACKLOG.md`
+5. the current test audit and relevant asset/media documents
 
-Repository rules are authoritative; chat memory is secondary.
+Repository rules are authoritative; `docs/CURRENT-STATUS.md` is the canonical current-state summary; chat memory is secondary.
 
 ## Mandatory shared write lock
 Before the first mutating action, follow the canonical concurrency protocol in `docs/PROJECT-RULES.md` rules 64–74.
