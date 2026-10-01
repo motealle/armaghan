@@ -22,7 +22,7 @@ export const designSystems: DesignSystem[] = [
 ]
 export const colorSets: ColorSet[] = [
   { id:'balanced', name:'Brand Balanced', colors:['#0714C2','#21946A','#C8E3DB','#FFFFFF','#FFB514'] },
-  { id:'deep', name:'Deep Royal', colors:['#0E178C','#151EDA','#DDE7F7','#FAFBFF','#F2B300'] },
+  { id:'deep', name:'Deep Royal', colors:['#0E178C','#0714C2','#DDE7F7','#FAFBFF','#F2B300'] },
   { id:'mint', name:'Mint Commerce', colors:['#1B6E59','#21946A','#C8E3DB','#F8FCFB','#E6A90A'] },
   { id:'dark', name:'Dark Premium', colors:['#0D132B','#1C2560','#BFD6CF','#F5F7FA','#FFB514'] },
   { id:'clean', name:'Clean Light', colors:['#2432D9','#2A8F6A','#E3F1EC','#FFFFFF','#FFBF2A'] },
