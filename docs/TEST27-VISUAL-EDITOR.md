@@ -219,3 +219,18 @@ Saved style profile:
 - No FTP/deployment step was present in this branch validation.
 - Selection listeners now attach only while editor mode is enabled and are removed when it is disabled/unmounted.
 - Home editable-target coverage was expanded without changing Test 26 or domain-owned product/customer data.
+
+
+## Main CI / staged deployment
+
+- Main implementation head: `d9a6a68353345a34b0379feca77663a240e1c856`.
+- GitHub Actions **FTP Deploy Run #254: PASS**.
+- Historical Test 11–26 contracts: PASS.
+- Test 27 visual-editor contract: PASS.
+- TypeScript + Vue unit tests: PASS (**25/25**).
+- Vite Test 27 build: PASS.
+- FTP smoke: PASS.
+- `deploy-t`: PASS; generated Test 27 uploaded to `/public_html/t/27`.
+- `deploy-root`: skipped.
+- No remote files were deleted.
+- The deployment process re-uploaded mutable `/t/index.htm`, but its repository content still lists Test 26 first and contains no Test 27 launcher entry. Test 27 therefore remains staging-only pending review.
