@@ -29,8 +29,16 @@ const selected=computed(()=>capabilities.find(item=>item.id===selectedId.value)?
         </div>
         <div :data-style-id="`home.capability.${item.id}.body`" :data-style-label="`پنل متن ${locale.t(item.titleKey)}`" class="test26-capability-body">
           <div class="test26-capability-icon"><component :is="icons[item.id]" :size="22"/></div>
-          <h3>{{locale.t(item.titleKey)}}</h3>
-          <p>{{locale.t(item.summaryKey)}}</p>
+          <h3
+            :data-style-id="`home.capability.${item.id}.title`"
+            :data-style-label="`عنوان ${locale.t(item.titleKey)}`"
+            data-editable-text="true"
+          >{{visual.resolveText(`home.capability.${item.id}.title`,locale.locale,locale.t(item.titleKey))}}</h3>
+          <p
+            :data-style-id="`home.capability.${item.id}.text`"
+            :data-style-label="`متن ${locale.t(item.titleKey)}`"
+            data-editable-text="true"
+          >{{visual.resolveText(`home.capability.${item.id}.text`,locale.locale,locale.t(item.summaryKey))}}</p>
           <button type="button" class="test26-text-link" @click="selectedId=item.id">
             {{locale.t('capabilityMore')}} <ArrowUpLeft :size="16"/>
           </button>
