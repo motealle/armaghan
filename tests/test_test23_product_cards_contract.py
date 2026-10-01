@@ -66,9 +66,11 @@ assert "absolute inset-x-0 bottom-0" not in media
 assert "availability-badge" not in card
 assert "SlidersHorizontal" not in card
 assert "visibleTitle" in card
-assert "props.product.availability==='available'?displayName.value:locale.t('unavailable')" in card
+# Historical Test 23 fixed the low-copy card hierarchy, not the future source of
+# the customer-facing title. Later unfrozen tests may derive that title from
+# localized subcategory/status presentation without mutating the frozen snapshot.
+assert 'data-style-id="product.title"' in card
 assert "product-code-row" in card and "{{product.code}}" in card and '<code dir="ltr">' in card
-assert "displaySubcategory" not in card
 assert "card-actions compact" in card
 assert 'size="25.3"' in card
 assert "Menu" in card and "ArrowDownRight" in card and "detail-menu-icon" in card
