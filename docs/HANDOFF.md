@@ -563,3 +563,5 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
   - `platform/scripts/provision_first_admin_ftp.py` with inspect/provision/guarded-recovery support.
 - The one-shot workflow used for this production bootstrap was deleted after success.
 - Next task: authenticate the browser against the real Filament login and verify Test 27 Style Profile autosave, reload, staging Publish and Restore end-to-end.
+
+- Final first-admin provisioning validation: **Backend CI #30 PASS**; **FTP Deploy #270 PASS**. No Test 26/27 UI files were changed by this security batch.
