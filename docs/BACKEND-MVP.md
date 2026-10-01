@@ -110,7 +110,7 @@ This is configuration-driven theming, not a Feature Flag. A Feature Flag switche
 
 ### P0 — must ship
 1. Hosting/PHP preflight.
-2. Laravel 13 + SQLite for local/dev/test + MySQL/MariaDB for production + migrations/models/seed.
+2. Laravel 13 + SQLite as the primary local/dev/test/production database + migrations/models/seed.
 3. Filament admin login.
 4. Product CRUD + image upload.
 5. Customer CRUD + notes/status.
@@ -143,7 +143,7 @@ This is configuration-driven theming, not a Feature Flag. A Feature Flag switche
 
 ## Safe implementation batches
 
-1. **COMPLETE** — Backend bootstrap: host preflight, Laravel 13, SQLite local/dev/test, MySQL/MariaDB production configuration contract, Filament 5 panel, health route and permanent backend CI.
+1. **COMPLETE** — Backend bootstrap: host preflight, Laravel 13, SQLite-first application baseline, Filament 5 panel, health route and permanent backend CI.
 2. Data model: migrations/models/seed from approved SQL draft.
 3. Admin core: Filament + admin user + Product/Customer resources.
 4. Media + public reads: product images and catalog/settings endpoints.
@@ -180,7 +180,17 @@ Each implementation run should remain bounded, reversible and committed separate
 - Bootstrap test suite: 2/2 tests passed.
 - Locked dependency security audit: no known vulnerability advisories.
 - Permanent `.github/workflows/backend-ci.yml` now validates backend changes on `main`.
-- Local/dev/test remains SQLite; production remains MySQL/MariaDB.
+- SQLite is now selected for local/dev/test/production after the owner enabled host SQLite support; re-probe production PDO SQLite before first migration.
 - Generated framework agent instructions were replaced with Armaghan-specific rules; Laravel Boost is not auto-installed.
 - No numbered UI snapshot was changed or deployed.
 - Next implementation batch: domain data model and production-safe admin access foundation.
+
+
+## SQLite production decision — 2026-10-01
+
+- The owner reports that SQLite/PDO SQLite has now been enabled on the production hosting environment.
+- SQLite is selected as the primary Laravel database for the current project scale.
+- Before the first production migration, re-run the production probe because the 2026-09-30 probe occurred before this hosting change.
+- Primary backups are SQLite-to-SQLite consistent snapshots using `VACUUM INTO` through `php artisan armaghan:backup-sqlite`.
+- MySQL/MariaDB is retained as a later optional logical mirror/export target, not the sole backup and not a live dual-write dependency.
+- JSON is a normal import/export interchange format only; the custom JSON runtime-store layer has been removed before any production data used it.
