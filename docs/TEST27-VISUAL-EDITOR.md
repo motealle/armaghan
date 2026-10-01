@@ -276,3 +276,32 @@ Validation:
 - 112 files uploaded; no remote files deleted.
 - `deploy-root`: skipped.
 - Until production Laravel + real admin session are deployed, the live sync panel intentionally reports local-only storage while all editor functions remain available.
+
+
+## Logo-blue / Home color customer request
+
+Customer-requested color semantics are now live in Test 27:
+
+- Repository-logo pixel probe selected `#0714C2` as the dominant logo-background blue.
+- Canonical Brand Blue now resolves to `#0714C2`; the previous `#151EDA` canonical value is retired.
+- Header / Footer / Hero brand chrome continue to resolve through `--role-brand-chrome -> --brand-blue`.
+- Home page light-mode default is Brand White through `--role-page-background`.
+- Primary Home panel default is Brand Mint through `--role-panel-background`.
+- The Home page root can change background color but cannot be hidden.
+- Why-item and Capability title/body text targets are independently editable per locale.
+- Hidden dynamic targets remain recoverable from the structured browser.
+
+### Saveability hardening
+
+- API base defaults to same-origin `/backend`.
+- Mutating Style Profile requests bootstrap a Laravel CSRF token and retry once on HTTP 419.
+- Browser-local autosave remains active independently of backend availability.
+- Sanitized JSON export/import provides a simple manual portable backup without creating a JSON runtime database.
+- Real shared persistence remains gated by real Laravel admin authentication.
+
+### Validation / deployment
+
+- Latest dedicated branch CI: PASS.
+- Backend CI Run #19: PASS.
+- FTP Deploy Run #268: PASS.
+- 112 Test 27 files uploaded; no remote deletes; root deploy skipped.
