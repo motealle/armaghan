@@ -15,7 +15,7 @@ const {policy}=useResolvedAppearance()
 </script>
 
 <template>
-  <div class="home-page space-y-10 lg:space-y-16">
+  <div data-style-id="home.page" data-style-label="صفحه خانه" class="home-page space-y-10 lg:space-y-16">
     <HeroSection/>
 
     <AboutArmaghanSection v-if="policy.showAbout"/>
@@ -23,7 +23,7 @@ const {policy}=useResolvedAppearance()
     <CapabilitiesSection v-if="policy.showCapabilities"/>
     <ProductCategoryBanners v-if="policy.showProductBanners"/>
 
-    <section v-if="policy.homeProductGrid==='recommended-6'" class="home-section">
+    <section v-if="policy.homeProductGrid==='recommended-6'" data-style-id="home.recommended" data-style-label="بخش محصولات پیشنهادی" class="home-section">
       <div class="mb-4 flex items-end justify-between gap-3">
         <div>
           <h2 class="text-xl font-black leading-tight text-[var(--c-text)] lg:text-2xl">{{locale.t('recommended')}}</h2>
