@@ -14,6 +14,15 @@ class StyleProfileApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_csrf_token_endpoint_is_available(): void
+    {
+        $this->getJson('/api/csrf-token')
+            ->assertOk()
+            ->assertJsonStructure(['token'])
+            ->assertHeader('Cache-Control', 'no-store, private');
+    }
+
+
     public function test_public_style_profile_endpoint_is_safe_when_nothing_is_published(): void
     {
         $this->getJson('/api/style-profile/staging')
