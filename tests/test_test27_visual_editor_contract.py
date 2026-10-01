@@ -90,7 +90,7 @@ assert "fetchPublicStyleProfile('staging'" in public_baseline
 assert "toggleVisibility" in target_browser
 assert "orphanHiddenTargets" in target_browser
 assert "target.hideable!==false" in target_browser
-for target_id in ("home.page","home.content","header.shell","hero.title","home.about.title","home.why.title","home.product-banners.title","product.card","footer.shell"):
+for target_id in ("home.page","home.content","header.shell","hero.title","home.about.title","home.why.title","home.product-banners.title","products.page","product.card","footer.shell"):
     assert target_id in target_registry
 assert "home.why.item.${number}.title" in target_registry
 assert "home.capability.${id}.title" in target_registry
@@ -121,6 +121,8 @@ why = (SRC / "features/home/components/WhyArmaghanSection.vue").read_text(encodi
 capabilities = (SRC / "features/home/components/CapabilitiesSection.vue").read_text(encoding="utf-8")
 banners = (SRC / "features/home/components/ProductCategoryBanners.vue").read_text(encoding="utf-8")
 home_view = (SRC / "views/HomeView.vue").read_text(encoding="utf-8")
+products_view = (SRC / "views/ProductsView.vue").read_text(encoding="utf-8")
+appearance_store = (SRC / "stores/appearance.ts").read_text(encoding="utf-8")
 css = (SRC / "styles/main.css").read_text(encoding="utf-8")
 runtime = (EDITOR / "VisualStyleRuntime.vue").read_text(encoding="utf-8")
 launcher = (ROOT / "t/index.htm").read_text(encoding="utf-8")
@@ -128,8 +130,10 @@ launcher = (ROOT / "t/index.htm").read_text(encoding="utf-8")
 assert 'data-style-id="header.shell"' in header
 assert "var(--role-brand-chrome)" in header
 assert 'data-style-id="footer.shell"' in footer
+assert 'footer.brand-name' not in footer and 'footer.description' not in footer
 assert 'data-style-id="hero.title"' in hero and 'data-editable-text="true"' in hero
 assert 'data-style-id="product.card"' in product and 'data-style-id="product.title"' in product
+assert "customerProductLabel" in product and "unavailableOrProducible" in product
 assert 'data-style-id="home.about.title"' in about and 'data-editable-text="true"' in about
 assert 'data-style-id="home.why.title"' in why and 'data-style-id="home.why.list"' in why
 assert 'data-style-id="home.capabilities.title"' in capabilities
@@ -137,15 +141,26 @@ assert 'home.capability.${item.id}' in capabilities
 assert 'data-style-id="home.product-banners.title"' in banners
 assert 'home.product-banner.${category.code}' in banners
 assert 'data-style-id="home.content"' in home_view
+assert 'data-style-id="products.page"' in products_view
+assert "policy.showSubcategoryCodes" in products_view
+assert "APPEARANCE_SCHEMA_VERSION=\'5\'" in appearance_store
+assert "showSubcategoryCodes:false" in appearance_store
 assert "--role-brand-chrome:var(--brand-blue)" in css
 assert "--brand-blue:#0714C2" in css
 assert "--role-page-background:var(--brand-white)" in css
 assert "--role-panel-background:var(--brand-mint)" in css
+assert "--role-products-page-background:var(--brand-white)" in css
+assert "--role-product-card-background:var(--brand-mint)" in css
+assert "--role-heading-strong:color-mix(in srgb,var(--brand-green) 64%,var(--brand-blue))" in css
+assert ".test26-why-list{border-block:3px solid var(--brand-blue)}" in css
+assert ".test26-why-number{border:1px solid" in css and "background:var(--brand-blue);color:var(--brand-gold)" in css
+assert ".product-code-row code{border:1px solid" in css and "background:var(--brand-blue)" in css and "color:var(--brand-white)" in css
 assert '[data-style-id="home.page"]' in css
 assert "background:var(--role-panel-background)" in css
 assert "background:var(--role-brand-chrome)" in css
 assert "html.visual-editor-active .bottom-nav{display:none!important}" in css
 assert "usePublicVisualProfileBaseline" in runtime
+assert (SRC / "features/catalog/presentation.spec.ts").exists()
 assert ".visual-editor-sync-panel{" in css
 assert './27/index.html' in launcher
 assert launcher.index("./27/index.html") < launcher.index("./26/index.html")
