@@ -1,4 +1,4 @@
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { fetchPublicStyleProfile } from '../services/styleProfileApi'
 import {
   sanitizeVisualStyleProfile,
@@ -39,8 +39,9 @@ function writeBaseline(value:BaselineRecord){
 }
 
 export function usePublicVisualProfileBaseline(visual:VisualStoreLike){
+  const controller=new AbortController()
+
   onMounted(async()=>{
-    const controller=new AbortController()
     try{
       const data=await fetchPublicStyleProfile('staging',controller.signal)
       if(!data.checksum||!data.profile)return
@@ -62,4 +63,6 @@ export function usePublicVisualProfileBaseline(visual:VisualStoreLike){
       // Test 27 must remain fully usable when the Laravel API is not deployed yet.
     }
   })
+
+  onUnmounted(()=>controller.abort())
 }
