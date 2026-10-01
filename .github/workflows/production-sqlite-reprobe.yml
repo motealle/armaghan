@@ -20,7 +20,7 @@ jobs:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          ARMAGHAN_SITE_URL: ${{ secrets.ARMAGHAN_SITE_URL }}
+          ARMAGHAN_SITE_URL: https://armaghantrading.com
           SITE_URL: ${{ secrets.SITE_URL }}
           APP_URL: ${{ secrets.APP_URL }}
           ARMAGHAN_SITE_URL_VAR: ${{ vars.ARMAGHAN_SITE_URL }}
