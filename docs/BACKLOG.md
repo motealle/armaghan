@@ -4,6 +4,23 @@ Priority: **P0 current**, P1 next, P2 later.
 Current implementation targets: **Backend MVP productionization** + **Test 27 visual-editor/UI lane**. Test 26 is frozen.
 Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
 
+## P0 — Public catalog API + production bootstrap — 2026-10-02
+
+- [x] Add read-only Public Catalog API Resources/Controller for active categories and products.
+- [x] Add bounded product filtering/search/pagination and API throttling.
+- [x] Return managed-code metadata so an intentionally inactive Backend row suppresses stale local fallback data.
+- [x] Add Test 27 Hybrid Sync: Backend-managed product/taxonomy data overlays local state; Backend failure keeps the existing customer page usable.
+- [x] Preserve local product media/specs during staged sync; Backend domain data owns names/status/active state.
+- [x] Backend CI #35 PASS; FTP Deploy #295 PASS with TypeScript/unit/Test 27 production build and `/t/27` deployment; root skipped.
+- [x] Backend Code Deploy #4 PASS; public catalog category/product endpoints both HTTP 200.
+- [x] Add guarded `armaghan:bootstrap-catalog` command with dry-run default, exact empty-table precondition, transaction and 3/6/18 count contract.
+- [x] Backend CI #37 + Backend Code Deploy #5 PASS.
+- [x] Catalog Bootstrap Production #1 PASS: before 0/0/0 → consistent SQLite snapshot → after 3/6/18; representative category/subcategory/product codes verified; temporary helper cleanup PASS.
+- [x] Independently re-read live API: 3 managed categories, 6 managed subcategories, 18 managed products.
+- [x] Independently render live Test 27 Products page after bootstrap: 18 products displayed with customer-facing subcategory/unavailable presentation intact.
+- [x] Remove one-shot production bootstrap workflow after successful initialization; reusable helper remains fail-closed because production catalog is no longer empty.
+- [ ] Next: production product-media ownership/upload + customer API/session surface.
+
 ## P0 — Test 27 customer visual corrections — 2026-10-01
 
 - [x] Create rollback checkpoint `rollback/test27-pre-customer-ui-corrections`.
@@ -126,7 +143,7 @@ Canonical architecture: `docs/SQLITE-FIRST-PERSISTENCE.md`.
 - [x] Make production example use an absolute private SQLite path and private backup path.
 - [x] Re-probe production `pdo_sqlite` and private-path write access before first live migration — PDO SQLite, SQLite 3.53.4, private file R/W, foreign keys and `VACUUM INTO` all PASS.
 - [x] Configure the real production SQLite file path in the host-only shared `.env`; the path remains private and is not stored in Git.
-- [ ] Configure backup retention + at least one off-host rotated copy.
+- [ ] Configure backup retention + at least one off-host rotated copy. Production code deploys and catalog bootstrap already create consistent on-host SQLite snapshots.
 - [ ] Add optional MySQL logical mirror/export only after the SQLite production path is stable; never dual-write in live requests.
 - [ ] Add mirror verification (row counts/checksums + restore drill) when MySQL mirror is implemented.
 
@@ -138,7 +155,7 @@ Current estimate excludes open-ended new customer redesign requests. Filament CR
 2. [x] **Visual Style Profile frontend + production service foundation** — local-first adapter, checksum conflict handling, staging Publish/history/Restore UI, production Laravel/SQLite deployment and live service-level persistence acceptance all PASS.
 3. [x] **Production SQLite/Laravel + first admin** — PDO SQLite/SQLite 3.53.4 PASS, private DB/backup active, migrations/snapshot PASS, `/backend` healthy, one real active production admin provisioned securely.
 4. [ ] **Browser-authenticated editor acceptance** — real Filament session + CSRF, Test 27 server autosave, reload/cross-device draft, staging Publish and Restore through the actual UI. This is the only remaining Style Profile persistence acceptance.
-5. [~] **Filament CRUD + catalog/customer API/media** — Product/Category/Subcategory/Customer Resources and server-side admin search/filtering are complete/live; public catalog/customer reads and controlled product-media ownership/upload remain.
+5. [~] **Filament CRUD + catalog/customer API/media** — Product/Category/Subcategory/Customer Resources and public catalog reads are complete/live; production product-media ownership/upload and customer API/session wiring remain.
 6. [ ] **Favorites/WhatsApp + Customer Magic Link** — persisted short share links, revoke/expiry, safe one-tap customer session and audit trail.
 7. [ ] **Production hardening + final QA/handoff** — rotated off-host SQLite backup + restore drill, repeatable backend update workflow with pre-migration snapshot/rollback guard, responsive/RTL/LTR/light/dark/permissions QA, final customer handoff.
 
