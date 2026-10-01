@@ -1,6 +1,6 @@
 # Armaghan — Backend Hosting Preflight
 
-Status: active P0 preflight. No Laravel installation is authorized until this preflight is recorded.
+Status: completed historical preflight + completed 2026-10-01 SQLite re-verification. Production Laravel/SQLite is now active; see `docs/CURRENT-STATUS.md` for current state.
 
 ## Current official requirements
 
@@ -72,7 +72,7 @@ GitHub Actions Hosting Preflight Run #1 completed successfully as an execution r
 
 `open_basedir` is enabled, but the probe proved that the intended private sibling outside `public_html` is still readable and writable by PHP. This is the important practical check for the split deployment layout.
 
-## Production database decision — ranked options
+## Historical production database decision — 2026-09-30 (superseded)
 
 | Rank | Option | Score | Why |
 |---:|---|---:|---|
@@ -82,17 +82,16 @@ GitHub Actions Hosting Preflight Run #1 completed successfully as an execution r
 | 4 | Use the native SQLite3 extension through custom database code | 1.5 | Bypasses Laravel's normal PDO database layer and increases maintenance risk |
 | 5 | Replace persistence with JSON/files | 0.5 | Unsafe for concurrent product/customer administration and not an acceptable production database |
 
-**Selected:** option 1.
+**Historical selection on 2026-09-30:** option 1. This was superseded after PDO SQLite was enabled and re-verified on 2026-10-01.
 
-Laravel 13 officially supports MySQL 5.7+ and MariaDB 10.3+. Production MySQL/MariaDB server version and credentials still need to be provisioned/verified before the first production migration. This is now a deployment prerequisite, not a blocker for creating the Laravel application in the repository.
+The MySQL fallback remains useful only as an optional future logical mirror/export target. It is no longer a prerequisite for the active production application.
 
-## Deployment implications
+## Current deployment implications
 
-- Keep SQLite as the zero-credential developer/test database.
-- Configure production through environment-only `DB_CONNECTION=mysql` and `DB_*` secrets.
+- Production uses private SQLite outside `public_html`.
 - Build Composer dependencies in GitHub Actions; do not depend on Composer or shell commands in web PHP.
-- Keep the Laravel application/private files outside `public_html`; publish only the public entry surface.
-- Because PHP can create symlinks, the public storage link can be established by a controlled one-time deployment hook if hosting CLI access is unavailable.
+- Keep the Laravel application/private files outside `public_html`; expose only the Laravel public surface under `/backend`.
+- Keep SQLite snapshots private and use a consistent SQLite backup mechanism.
 - Do not install Laravel into `/t/26` or `/t/27`; numbered UI snapshots remain independent.
 
 
