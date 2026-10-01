@@ -1,6 +1,6 @@
 # Test 27 — Visual Style Editor
 
-Status: foundation + modularization/contrast batch validated on `ui/test27-visual-editor-foundation-20261001`. Test 26 remains immutable.
+Status: Test 27 is live and remains the active mutable UI review lane. Production Laravel/SQLite and Style Profile service semantics are live/verified; only the real browser Filament session + CSRF + reload/cross-device/Publish/Restore acceptance remains. Test 26 remains immutable.
 
 ## Product goal
 
@@ -8,12 +8,12 @@ Give an administrator a mobile-first WYSIWYG-style visual editor that edits the 
 
 ## Approved base palette
 
-The authoritative five-color palette supplied by the owner is:
+The current authoritative five-color palette is:
 
 | Token | Value | Intended baseline role |
 |---|---|---|
 | Brand Green | `#21946A` | action / secondary brand |
-| Brand Blue | `#151EDA` | primary brand / brand chrome |
+| Brand Blue / logo-background blue | `#0714C2` | primary brand / brand chrome |
 | Brand Mint | `#C8E3DB` | soft surfaces |
 | Brand White | `#FFFFFF` | light surfaces |
 | Brand Gold | `#FFB514` | accent / selection |
@@ -183,7 +183,7 @@ Editor OFF:
 Saved style profile:
 - remains applied through `VisualStyleRuntime.vue`;
 - is independent from editor visibility;
-- can later be persisted by Laravel as a versioned site-style profile.
+- is persisted by Laravel as a versioned Style Profile when a real authenticated backend admin session is active.
 
 ## Deliberate non-goals for this foundation
 
@@ -192,9 +192,9 @@ Saved style profile:
 - no drag/drop page builder;
 - no raw HTML editing;
 - no unrestricted font/spacing/radius knobs;
-- no production backend persistence yet;
+- no authentication bypass or anonymous server write;
 - no Test 26 mutation;
-- no launcher promotion until Test 27 is explicitly reviewed.
+- no free-form page-builder features outside the registered target/token model.
 
 ## Staged validation result
 
@@ -254,9 +254,9 @@ Behavior:
 - API calls use same-origin credentials and support Laravel's `XSRF-TOKEN` cookie when present.
 - `VITE_ARMAGHAN_API_BASE` can override the API origin later; the default is same-origin.
 
-Current staged limitation:
+Current production integration state:
 
-The customer-facing Test 27 static bundle is live, but the production Laravel application / real admin session is not yet activated on the host. Therefore the current live Test 27 correctly shows local-only persistence until that backend deployment batch is completed.
+Production Laravel/SQLite is live at `/backend`, the first real active administrator exists, and the Style Profile service has passed live transactional save/publish/restore acceptance against production SQLite. The only remaining acceptance layer is the actual browser session path: Filament login, CSRF-protected Test 27 autosave, reload/cross-device verification, staging Publish and Restore through the UI.
 
 Validation:
 
@@ -275,7 +275,7 @@ Validation:
 - `deploy-t`: PASS; Test 27 uploaded to `/public_html/t/27`.
 - 112 files uploaded; no remote files deleted.
 - `deploy-root`: skipped.
-- Until production Laravel + real admin session are deployed, the live sync panel intentionally reports local-only storage while all editor functions remain available.
+- Production Laravel and the real admin account are now available. The remaining check is to verify the live browser session/CSRF cycle end-to-end; local browser fallback remains available if the authenticated backend session is absent.
 
 
 ## Logo-blue / Home color customer request
@@ -332,3 +332,16 @@ After rollback:
 - the short-lived public helper was removed.
 
 This proves production persistence/version/restore semantics without bypassing browser authentication. The only remaining acceptance layer is the real browser session/CSRF path.
+
+
+## Current authoritative state — 2026-10-01
+
+- Test 27 is live and visible in the mutable launcher.
+- Canonical Brand Blue is logo-background blue `#0714C2`; `#151EDA` is retired.
+- Home light background defaults to Brand White.
+- Primary Home panels default to Brand Mint.
+- Production Laravel 13.34.0 + SQLite is live at `/backend`.
+- One real active production administrator exists.
+- Production Style Profile service semantics passed live transactional acceptance (Run `36878931948`) with complete rollback.
+- Remaining editor persistence acceptance is browser-only: real Filament session + CSRF, edit/save, reload/cross-device, staging Publish and Restore.
+- Canonical cross-project current status: `docs/CURRENT-STATUS.md`.
