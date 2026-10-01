@@ -731,7 +731,7 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .visual-editor-sheet{position:fixed;z-index:180;inset-inline:0;bottom:0;display:flex;min-height:190px;max-height:78dvh;flex-direction:column;border-top:1px solid color-mix(in srgb,var(--c-border) 88%,transparent);border-radius:1.35rem 1.35rem 0 0;background:color-mix(in srgb,var(--c-surface) 98%,transparent);color:var(--c-text);box-shadow:0 -18px 54px rgba(4,8,22,.28);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .visual-editor-handle{display:grid;width:100%;height:28px;flex:0 0 28px;place-items:center;touch-action:none;cursor:ns-resize}
 .visual-editor-handle span{display:block;width:3.3rem;height:.28rem;border-radius:999px;background:var(--c-border)}
-.visual-editor-header{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:.6rem;border-bottom:1px solid var(--c-border);padding:.55rem .85rem .7rem}
+.visual-editor-header{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;align-items:center;gap:.5rem;border-bottom:1px solid var(--c-border);padding:.55rem .85rem .7rem}
 .visual-editor-header>div{display:grid;min-width:0}
 .visual-editor-header b{font-size:.82rem}
 .visual-editor-header small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--c-muted);font-size:.64rem}
@@ -768,3 +768,28 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .visual-token-grid>button:disabled{cursor:not-allowed;opacity:.38;filter:saturate(.45)}
 .visual-editor-contrast{margin:-.25rem 0 .85rem;border:1px solid color-mix(in srgb,var(--brand-green) 20%,var(--c-border));border-radius:.7rem;background:color-mix(in srgb,var(--brand-green) 6%,var(--c-surface));padding:.55rem .65rem;color:var(--brand-green);font-size:.62rem;font-weight:800;line-height:1.7}
 .visual-editor-contrast.bad{border-color:color-mix(in srgb,#dc2626 24%,var(--c-border));background:color-mix(in srgb,#dc2626 6%,var(--c-surface));color:#b91c1c}
+
+
+/* Test 27 urgent editor access + structured target browser */
+.visual-editor-quick-launcher{position:fixed;z-index:165;inset-inline-end:1rem;bottom:calc(5rem + env(safe-area-inset-bottom));display:inline-flex;min-height:48px;align-items:center;gap:.5rem;border:1px solid color-mix(in srgb,var(--brand-gold) 65%,var(--c-border));border-radius:999px;background:var(--role-brand-chrome);padding:.65rem .9rem;color:#fff;font-size:.76rem;font-weight:950;box-shadow:0 14px 34px rgba(5,10,35,.28)}
+.visual-editor-quick-launcher:focus-visible{outline:3px solid var(--brand-gold);outline-offset:3px}
+.visual-editor-icon-button.active{border-color:var(--c-primary);background:color-mix(in srgb,var(--c-primary) 8%,var(--c-surface));color:var(--c-primary)}
+.visual-editor-target-browser{display:grid;gap:.5rem;margin-bottom:.8rem}
+.visual-editor-browser-heading{display:grid;gap:.1rem;border:1px solid color-mix(in srgb,var(--c-primary) 18%,var(--c-border));border-radius:.85rem;background:color-mix(in srgb,var(--c-primary) 5%,var(--c-surface));padding:.65rem .75rem}
+.visual-editor-browser-heading b{font-size:.76rem;color:var(--c-text)}
+.visual-editor-browser-heading small{font-size:.6rem;line-height:1.7;color:var(--c-muted)}
+.visual-editor-target-group{overflow:hidden;border:1px solid var(--c-border);border-radius:.8rem;background:var(--c-surface)}
+.visual-editor-target-group>summary{min-height:44px;cursor:pointer;padding:.7rem .75rem;color:var(--c-text);font-size:.72rem;font-weight:900;list-style-position:inside}
+.visual-editor-target-group[open]>summary{border-bottom:1px solid var(--c-border);background:var(--c-surface-2)}
+.visual-editor-target-list{display:grid}
+.visual-editor-target-row{display:grid;grid-template-columns:minmax(0,1fr) 46px;align-items:stretch;border-bottom:1px solid var(--c-border)}
+.visual-editor-target-row:last-child{border-bottom:0}
+.visual-editor-target-row.active{background:color-mix(in srgb,var(--c-primary) 7%,var(--c-surface))}
+.visual-editor-target-select{display:grid;min-height:52px;align-content:center;gap:.1rem;padding:.55rem .7rem;text-align:start}
+.visual-editor-target-select b{font-size:.69rem;color:var(--c-text)}
+.visual-editor-target-select small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--c-muted);font-size:.56rem}
+.visual-editor-target-visibility{display:grid;min-width:46px;place-items:center;border-inline-start:1px solid var(--c-border);color:var(--c-muted)}
+.visual-editor-target-visibility:hover,.visual-editor-target-visibility:focus-visible{background:var(--c-surface-2);color:var(--c-primary)}
+@media (min-width:48rem){
+  .visual-editor-quick-launcher{bottom:1.25rem}
+}
