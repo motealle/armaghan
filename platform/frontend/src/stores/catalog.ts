@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import { products as seedProducts } from '@/data/catalog'
-import type { Product } from '@/types/domain'
+import { categories as seedCategories, products as seedProducts } from '@/data/catalog'
+import { fetchCatalogSnapshot, mergeCatalogSnapshot } from '@/features/catalog/services/catalogApi'
+import type { Category, Product } from '@/types/domain'
 
 const KEY='armaghan:test27:products-v1'
 const LEGACY_KEYS=['armaghan:test25:products-v1','armaghan:test24:products-v1','armaghan:test23:products-v1','armaghan:test22:products-v1','armaghan:test21:products-v1','armaghan:test20:products-v4','armaghan:test20:products-v3']
@@ -28,6 +29,9 @@ function load(): Product[] {
 
 export const useCatalogStore=defineStore('catalog',()=>{
   const items=ref<Product[]>(load())
+  const categories=ref<Category[]>(structuredClone(seedCategories))
+  const syncState=ref<'local'|'loading'|'synced'|'error'>('local')
+  const lastSyncAt=ref<string|null>(null)
 
   function add(product: Product){items.value=[...items.value,product]}
   function update(product: Product){
@@ -40,8 +44,40 @@ export const useCatalogStore=defineStore('catalog',()=>{
     const product=items.value.find(p=>p.id===id)
     if(product)product.image=image
   }
-  function reset(){items.value=structuredClone(seedProducts)}
+  function reset(){
+    items.value=structuredClone(seedProducts)
+    categories.value=structuredClone(seedCategories)
+    syncState.value='local'
+    lastSyncAt.value=null
+  }
+
+  async function hydrateFromBackend(){
+    if(syncState.value==='loading')return
+    syncState.value='loading'
+    try{
+      const snapshot=await fetchCatalogSnapshot()
+      const merged=mergeCatalogSnapshot(snapshot,items.value,categories.value)
+      items.value=merged.products
+      categories.value=merged.categories
+      syncState.value='synced'
+      lastSyncAt.value=new Date().toISOString()
+    }catch{
+      syncState.value='error'
+    }
+  }
 
   watch(items,(value)=>localStorage.setItem(KEY,JSON.stringify(value)),{deep:true})
-  return{items,add,update,remove,removeMany,updateImage,reset}
+  return{
+    items,
+    categories,
+    syncState,
+    lastSyncAt,
+    add,
+    update,
+    remove,
+    removeMany,
+    updateImage,
+    reset,
+    hydrateFromBackend,
+  }
 })
