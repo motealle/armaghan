@@ -176,3 +176,11 @@
 131. Test 27 may export/import the structured Style Profile as plain JSON for portable manual backup/transfer. Import must always pass through the existing sanitizer; JSON is not a runtime database and must not accept arbitrary CSS/HTML/JavaScript.
 132. Test 27 Style Profile API defaults to same-origin `/backend`. Mutating requests must use Laravel session authentication plus CSRF protection. Never treat the local prototype admin credential as backend authentication.
 133. Until the first real Laravel administrator is provisioned, editor changes remain automatically durable in Test 27 browser storage and may be exported as JSON. Shared cross-device persistence is complete only after a real backend admin session successfully saves, reloads and publishes a Style Profile.
+
+## First-production-admin provisioning rules
+134. First-production-admin provisioning must fail closed when any active administrator already exists. Never seed or commit a default production password.
+135. Plaintext administrator credentials must never be written to repository files, GitHub logs, artifacts or documentation. Production bootstrap credentials may be generated on-host and only returned through encrypted transport.
+136. The canonical bootstrap account may use a temporary operational email such as `admin@armaghan.local` until the owner replaces it with a real mailbox; do not assume password-reset email delivery works before that change.
+137. Any credential recovery after a partial bootstrap must prove the target account identity before rotation. At minimum require one active admin, exact bootstrap email/name and a creation-time bound that matches the failed bootstrap window.
+138. Credential encryption/key validation must complete before creating or rotating a production administrator. A cryptographic-output failure must not leave behind a new account with an unrecoverable password.
+139. After successful first-admin provisioning, remove any one-shot workflow or temporary public helper. Keep only reusable fail-closed tooling and tested backend commands.
