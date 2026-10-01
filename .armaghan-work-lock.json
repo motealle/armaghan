@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20261001-editor-color-saveability",
-  "scope": "Urgent Test 27 visual-editor improvements: derive brand blue from logo background, configurable Home page background default white, mint panel defaults, editor bug audit/fixes, persistence readiness/backlog; no Test 26 mutation",
-  "base_ref": "main@fe9289b4ec0062a29ef4411053ef118b1d70cc49",
-  "acquired_at": "2026-10-01T09:12:00Z",
-  "expires_at": null,
-  "released_at": "2026-10-01T13:02:00Z",
-  "note": "Released after Test 27 editor color/saveability batch. Main head 78bc2ab4abbba5312abc9b667dfe9745e4f2edfc. Logo pixel probe selected #0714C2 as canonical Brand Blue. Home page white/default, primary panels Mint/default, protected home root, nested editor targets, hidden-target recovery, sanitized JSON export/import, /backend API base + CSRF bootstrap. Backend CI #19 PASS; FTP Deploy #268 PASS with 112 Test 27 files uploaded, no remote deletes, root skipped; docs-only FTP Deploy #269 PASS. First real Laravel admin provisioning remains next blocker for shared cross-device Style Profile persistence. Test 26 untouched."
+  "run_id": "chat-20261001-first-admin-provisioning",
+  "scope": "Secure first production Laravel admin provisioning + acceptance preparation for shared Test 27 Style Profile persistence; no default password, no Test 26 mutation",
+  "base_ref": "main@78bc2ab4abbba5312abc9b667dfe9745e4f2edfc",
+  "acquired_at": "2026-10-01T16:52:00+03:30",
+  "expires_at": "2026-10-01T18:22:00+03:30",
+  "released_at": null,
+  "note": "Production backend already healthy on /backend. This batch must fail closed if any active admin already exists."
 }
