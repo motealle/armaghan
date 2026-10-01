@@ -122,6 +122,28 @@ Current estimate excludes open-ended new customer redesign requests.
 - [ ] Configure rotated off-host SQLite backup copy + restore drill.
 - [ ] Add safe repeatable backend release/update workflow with pre-migration snapshot and rollback guard.
 
+## P0 — Test 27 color/saveability customer request
+
+- [x] Derive the canonical blue from the actual repository logo rather than guessing. Pixel probe result: image-dominant logo background `#0714C2`.
+- [x] Replace canonical Brand Blue `#151EDA` with logo-background blue `#0714C2` in Test 27 semantic tokens/default balanced palette.
+- [x] Add semantic Home page background role; light-mode default = Brand White.
+- [x] Make the whole Home page background a registered editor target (`home.page`) with background-color control.
+- [x] Add `home.content` separately so Home content can be controlled without hiding the page root.
+- [x] Protect `home.page` from Hide to prevent an unrecoverable/blank editing state.
+- [x] Add semantic panel-background role; default primary Home panels = Brand Mint.
+- [x] Apply Mint panel default to About copy, Why list and Capability cards while retaining token-based per-target overrides.
+- [x] Expand nested editable targets for Why items and Capability card titles/texts.
+- [x] Recover hidden dynamic/unregistered targets through the structured target browser.
+- [x] Restrict Inspector controls per target; e.g. page root exposes only background color.
+- [x] Default Test 27 Style Profile API base to same-origin `/backend`.
+- [x] Add CSRF token bootstrap/retry for authenticated backend Style Profile writes.
+- [x] Add sanitized Style Profile JSON export/import as a simple portable backup/transfer mechanism; do not revive JSON runtime persistence.
+- [x] Branch CI: latest Test 27 Editor Color Saveability runs PASS.
+- [ ] Provision the first real Laravel administrator without a seeded/default password.
+- [ ] Log into the real backend admin session and verify Test 27 draft autosave to production SQLite.
+- [ ] Verify cross-device reload from shared draft, staging Publish and Restore end-to-end.
+- [ ] After successful shared persistence QA, decide whether JSON export/import remains visible by default or moves under an advanced/backup disclosure.
+
 ## P0 — Test 27 visual style editor foundation
 
 Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
