@@ -488,3 +488,6 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - API client uses same-origin credentials and forwards `X-XSRF-TOKEN` when Laravel has issued an XSRF cookie.
 - Branch validation passed: Test 27 contract, TypeScript, 30/30 Vue unit tests and numbered Test 27 build.
 - Live shared persistence still depends on the next backend lane: production SQLite re-probe/activation, Laravel deployment and a real admin session. Until then the live editor should report local-only storage and remain fully usable.
+
+- Style Profile adapter staged deployment: **FTP Deploy Run #262 PASS**. Test 27 QA/build/smoke passed; `/public_html/t/27` updated; 112 files uploaded; no remote files deleted; root deployment skipped.
+- Live Test 27 now contains the sync/status/conflict/publish/history/restore UI, but shared server writes remain dormant until the real Laravel backend/admin session is deployed. Local editing remains fully functional.
