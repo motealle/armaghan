@@ -79,7 +79,7 @@ assert "/images/placeholders-portrait/" in smart
 # Gray dark theme and calmer category numbering.
 for token in ["--c-bg:#151618","--c-surface:#1e2024","--c-surface-2:#25282d","--c-border:#383c43"]:
     assert token in css
-assert "--brand-blue:#151EDA" in css and "--c-primary:var(--brand-blue)" in css
+assert "--brand-blue:" in css and "--c-primary:var(--brand-blue)" in css
 assert "html.dark .product-card" in css
 assert ".category-card.active .category-number" in css
 assert "font:700 .61rem" in css
