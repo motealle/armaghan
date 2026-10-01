@@ -21,6 +21,7 @@ Current backend lane:
 - Production Style Profile persistence/version/restore semantics are verified against the live SQLite database.
 - One real active production administrator exists.
 - Filament login page is live.
+- Category/Subcategory Filament Resources are implemented and CI-verified in main (`4281034656...`, Backend CI #31 PASS), but are not yet deployed to production because a safe repeatable Backend update lane is still required.
 - Final browser-authenticated Test 27 shared-persistence acceptance is still open.
 
 ## Production backend — verified complete
