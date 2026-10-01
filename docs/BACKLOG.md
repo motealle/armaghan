@@ -68,7 +68,7 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] DatabaseSeeder no longer creates a default fixed user.
 - [x] Backend CI Run #3: **PASS** — 4 tests / 23 assertions; Composer audit clean.
 - [x] No production MySQL migration and no Test 26/Test 27 change occurred.
-- [ ] Next P0: Filament Product/Customer/Category/Subcategory Resources; safe first-admin provisioning is complete.
+- [ ] Next backend P0 after browser editor acceptance: Filament Product/Customer/Category/Subcategory Resources. First-admin provisioning is already complete.
 
 
 
