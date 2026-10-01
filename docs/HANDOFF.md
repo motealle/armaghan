@@ -636,7 +636,7 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 - Product codes use Brand Blue capsule + Brand White text + restrained Brand Gold edge.
 - New Appearance Feature Flag: `showSubcategoryCodes`; default OFF on all viewport profiles. Appearance schema is v5; schema-v4 migration preserves existing navigation/section choices.
 - Products light background defaults to Brand White; cards default to Brand Mint; dark-mode defaults remain dark. `products.page` is a structured editor background target and `product.card` remains editor-controlled.
-- Strong content headings use an accessibility-aware Brand Green/Brand Blue derived role on light surfaces; dark/image/brand-chrome headings retain safer contrast behavior.
+- Strong content headings use an accessibility-aware dark-green role derived primarily from Brand Green plus the neutral text role on light surfaces; dark/image/brand-chrome headings retain safer contrast behavior.
 - Why Armaghan separators are 3px Brand Blue; numbered circles are Brand Blue with Brand Gold numerals.
 - Dedicated presentation unit tests and Test 27 source-contract assertions were added.
 - Delivery sequence: implementation `972d66bcd6e0e3ab72946d2fd14ffe8a6d329052`; historical Test 23 contract repair `fb7ee2a1c4200f8080c68e37e10edb238cda9833`; validated release marker `65b9f1158019aece79438fbc680af4070e0c0665`.

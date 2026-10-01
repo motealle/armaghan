@@ -151,7 +151,7 @@ assert "--role-page-background:var(--brand-white)" in css
 assert "--role-panel-background:var(--brand-mint)" in css
 assert "--role-products-page-background:var(--brand-white)" in css
 assert "--role-product-card-background:var(--brand-mint)" in css
-assert "--role-heading-strong:color-mix(in srgb,var(--brand-green) 64%,var(--brand-blue))" in css
+assert "--role-heading-strong:color-mix(in srgb,var(--brand-green) 65%,var(--c-text))" in css
 assert ".test26-why-list{border-block:3px solid var(--brand-blue)}" in css
 assert ".test26-why-number{border:1px solid" in css and "background:var(--brand-blue);color:var(--brand-gold)" in css
 assert ".product-code-row code{border:1px solid" in css and "background:var(--brand-blue)" in css and "color:var(--brand-white)" in css

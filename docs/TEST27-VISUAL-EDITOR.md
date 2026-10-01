@@ -369,7 +369,7 @@ Implementation contract:
 - Subcategory codes 11/12/21/22/31/32 are controlled by `showSubcategoryCodes`; customer default is OFF for mobile/tablet/desktop.
 - Appearance schema v5 preserves schema-v4 choices and only introduces the new subcategory-code default.
 - Products page light background defaults to Brand White; product cards default to Brand Mint. Both remain structured editor surfaces.
-- Light-surface headings use an accessibility-safe strong heading role derived from Brand Green + Brand Blue. Dark mode keeps Brand Green directly.
+- Light-surface headings use an accessibility-safe dark-green role derived primarily from Brand Green plus the current neutral text role, keeping the result visibly green on White/Mint. Dark mode keeps Brand Green directly.
 - Why Armaghan separators use a 3px Brand Blue rule; numbered circles use Brand Blue with Brand Gold numbers.
 - Image-overlay and Brand Blue footer/hero headings keep their high-contrast light treatment rather than forcing green where it would reduce legibility.
 

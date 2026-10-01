@@ -838,7 +838,7 @@ html.visual-editor-active .bottom-nav{display:none!important}
 :root{
   --role-products-page-background:var(--brand-white);
   --role-product-card-background:var(--brand-mint);
-  --role-heading-strong:color-mix(in srgb,var(--brand-green) 64%,var(--brand-blue));
+  --role-heading-strong:color-mix(in srgb,var(--brand-green) 65%,var(--c-text));
 }
 .dark{
   --role-products-page-background:var(--c-bg);
