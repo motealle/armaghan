@@ -1,10 +1,13 @@
 export type VisualTargetKind='section'|'panel'|'title'|'text'|'media'|'control'
+export type VisualStyleControl='textColor'|'backgroundColor'|'borderColor'
 
 export interface VisualTargetDefinition{
   id:string
   label:string
   kind:VisualTargetKind
   textEditable?:boolean
+  hideable?:boolean
+  styleControls?:VisualStyleControl[]
 }
 
 export interface VisualTargetGroup{
@@ -13,7 +16,49 @@ export interface VisualTargetGroup{
   targets:VisualTargetDefinition[]
 }
 
+const whyItemTargets:VisualTargetDefinition[]=Array.from({length:4},(_,offset)=>{
+  const number=offset+1
+  return[
+    {id:`home.why.item.${number}`,label:`پنل دلیل ${number}`,kind:'panel'},
+    {id:`home.why.item.${number}.title`,label:`عنوان دلیل ${number}`,kind:'title',textEditable:true},
+    {id:`home.why.item.${number}.text`,label:`متن دلیل ${number}`,kind:'text',textEditable:true},
+  ]
+}).flat()
+
+const capabilityLabels={
+  production:'تولید',
+  export:'آماده‌سازی صادرات',
+  trade:'اسناد تجاری',
+} as const
+
+const capabilityTargets:VisualTargetDefinition[]=Object.entries(capabilityLabels).flatMap(([id,label])=>[
+  {id:`home.capability.${id}`,label:`کارت توانمندی ${label}`,kind:'panel'},
+  {id:`home.capability.${id}.body`,label:`پنل متن ${label}`,kind:'panel'},
+  {id:`home.capability.${id}.title`,label:`عنوان ${label}`,kind:'title',textEditable:true},
+  {id:`home.capability.${id}.text`,label:`متن ${label}`,kind:'text',textEditable:true},
+])
+
+const bannerLabels={'1':'نوزادی','2':'بچگانه','3':'زنانه'} as const
+const bannerTargets:VisualTargetDefinition[]=Object.entries(bannerLabels).flatMap(([id,label])=>[
+  {id:`home.product-banner.${id}`,label:`بنر ${label}`,kind:'panel'},
+  {id:`home.product-banner.${id}.copy`,label:`پنل متن بنر ${label}`,kind:'panel'},
+])
+
 export const visualTargetGroups:VisualTargetGroup[]=[
+  {
+    id:'home',
+    label:'صفحه خانه',
+    targets:[
+      {
+        id:'home.page',
+        label:'زمینه کل صفحه خانه',
+        kind:'section',
+        hideable:false,
+        styleControls:['backgroundColor'],
+      },
+      {id:'home.content',label:'محتوای صفحه خانه',kind:'section'},
+    ],
+  },
   {
     id:'header',
     label:'هدر و برند',
@@ -56,7 +101,8 @@ export const visualTargetGroups:VisualTargetGroup[]=[
       {id:'home.why.eyebrow',label:'بالانویس چرا ارمغان',kind:'text',textEditable:true},
       {id:'home.why.title',label:'عنوان چرا ارمغان',kind:'title',textEditable:true},
       {id:'home.why.intro',label:'مقدمه چرا ارمغان',kind:'text',textEditable:true},
-      {id:'home.why.list',label:'فهرست دلایل',kind:'panel'},
+      {id:'home.why.list',label:'پنل فهرست دلایل',kind:'panel'},
+      ...whyItemTargets,
     ],
   },
   {
@@ -69,6 +115,7 @@ export const visualTargetGroups:VisualTargetGroup[]=[
       {id:'home.capabilities.title',label:'عنوان توانمندی‌ها',kind:'title',textEditable:true},
       {id:'home.capabilities.intro',label:'مقدمه توانمندی‌ها',kind:'text',textEditable:true},
       {id:'home.capabilities.grid',label:'شبکه کارت‌های توانمندی',kind:'panel'},
+      ...capabilityTargets,
     ],
   },
   {
@@ -80,6 +127,7 @@ export const visualTargetGroups:VisualTargetGroup[]=[
       {id:'home.product-banners.eyebrow',label:'بالانویس بنرها',kind:'text',textEditable:true},
       {id:'home.product-banners.title',label:'عنوان بنرها',kind:'title',textEditable:true},
       {id:'home.product-banners.intro',label:'مقدمه بنرها',kind:'text',textEditable:true},
+      ...bannerTargets,
     ],
   },
   {
@@ -105,3 +153,11 @@ export const visualTargetGroups:VisualTargetGroup[]=[
     ],
   },
 ]
+
+export const visualTargetById=new Map(
+  visualTargetGroups.flatMap(group=>group.targets.map(target=>[target.id,target] as const)),
+)
+
+export function visualTargetDefinition(id:string):VisualTargetDefinition|undefined{
+  return visualTargetById.get(id)
+}
