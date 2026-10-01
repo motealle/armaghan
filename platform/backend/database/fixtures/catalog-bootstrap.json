@@ -1,0 +1,184 @@
+{
+  "schema": 1,
+  "categories": [
+    {
+      "code": "1",
+      "name_fa": "نوزادی",
+      "sort_order": 10,
+      "subcategories": [
+        {
+          "code": "11",
+          "name_fa": "لباس نوزادی",
+          "sort_order": 10
+        },
+        {
+          "code": "12",
+          "name_fa": "پتوی نوزادی",
+          "sort_order": 20
+        }
+      ]
+    },
+    {
+      "code": "2",
+      "name_fa": "بچگانه",
+      "sort_order": 20,
+      "subcategories": [
+        {
+          "code": "21",
+          "name_fa": "دخترانه",
+          "sort_order": 10
+        },
+        {
+          "code": "22",
+          "name_fa": "پسرانه",
+          "sort_order": 20
+        }
+      ]
+    },
+    {
+      "code": "3",
+      "name_fa": "زنانه",
+      "sort_order": 30,
+      "subcategories": [
+        {
+          "code": "31",
+          "name_fa": "زیرسارافون (تونیک)",
+          "sort_order": 10
+        },
+        {
+          "code": "32",
+          "name_fa": "لباس راحتی (ورزشی)",
+          "sort_order": 20
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "code": "11001",
+      "subcategory_code": "11",
+      "name_fa": "ست نوزادی آرام",
+      "availability": "available",
+      "sort_order": 10
+    },
+    {
+      "code": "11002",
+      "subcategory_code": "11",
+      "name_fa": "بادی نوزادی پایه",
+      "availability": "available",
+      "sort_order": 20
+    },
+    {
+      "code": "11003",
+      "subcategory_code": "11",
+      "name_fa": "ست بیمارستانی نوزاد",
+      "availability": "made_to_order",
+      "sort_order": 30
+    },
+    {
+      "code": "12001",
+      "subcategory_code": "12",
+      "name_fa": "پتوی نوزادی نرم",
+      "availability": "available",
+      "sort_order": 10
+    },
+    {
+      "code": "12002",
+      "subcategory_code": "12",
+      "name_fa": "پتوی دورپیچ نوزاد",
+      "availability": "available",
+      "sort_order": 20
+    },
+    {
+      "code": "12003",
+      "subcategory_code": "12",
+      "name_fa": "پتوی سبک چهارفصل",
+      "availability": "made_to_order",
+      "sort_order": 30
+    },
+    {
+      "code": "21001",
+      "subcategory_code": "21",
+      "name_fa": "ست دخترانه روزمره",
+      "availability": "available",
+      "sort_order": 10
+    },
+    {
+      "code": "21002",
+      "subcategory_code": "21",
+      "name_fa": "تونیک دخترانه",
+      "availability": "made_to_order",
+      "sort_order": 20
+    },
+    {
+      "code": "21003",
+      "subcategory_code": "21",
+      "name_fa": "ست راحتی دخترانه",
+      "availability": "available",
+      "sort_order": 30
+    },
+    {
+      "code": "22001",
+      "subcategory_code": "22",
+      "name_fa": "ست پسرانه شهری",
+      "availability": "unavailable",
+      "sort_order": 10
+    },
+    {
+      "code": "22002",
+      "subcategory_code": "22",
+      "name_fa": "تی‌شرت و شلوارک پسرانه",
+      "availability": "available",
+      "sort_order": 20
+    },
+    {
+      "code": "22003",
+      "subcategory_code": "22",
+      "name_fa": "ست راحتی پسرانه",
+      "availability": "made_to_order",
+      "sort_order": 30
+    },
+    {
+      "code": "31001",
+      "subcategory_code": "31",
+      "name_fa": "تونیک زنانه مودست",
+      "availability": "available",
+      "sort_order": 10
+    },
+    {
+      "code": "31002",
+      "subcategory_code": "31",
+      "name_fa": "زیرسارافون مینیمال",
+      "availability": "made_to_order",
+      "sort_order": 20
+    },
+    {
+      "code": "31003",
+      "subcategory_code": "31",
+      "name_fa": "تونیک روزمره بلند",
+      "availability": "available",
+      "sort_order": 30
+    },
+    {
+      "code": "32001",
+      "subcategory_code": "32",
+      "name_fa": "ست راحتی زنانه",
+      "availability": "available",
+      "sort_order": 10
+    },
+    {
+      "code": "32002",
+      "subcategory_code": "32",
+      "name_fa": "ست ورزشی مودست",
+      "availability": "made_to_order",
+      "sort_order": 20
+    },
+    {
+      "code": "32003",
+      "subcategory_code": "32",
+      "name_fa": "بلوز و شلوار راحتی",
+      "availability": "available",
+      "sort_order": 30
+    }
+  ]
+}
