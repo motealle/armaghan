@@ -152,6 +152,11 @@ function setProductGrid(event:Event){
             <span>{{locale.t('showCategoryNumbersLabel')}}</span>
           </label>
 
+          <label class="flex min-h-11 items-center gap-3 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-sm">
+            <input type="checkbox" :checked="current.showSubcategoryCodes" @change="setBoolean('showSubcategoryCodes',$event)">
+            <span>{{locale.t('showSubcategoryCodesLabel')}}</span>
+          </label>
+
           <div class="mt-1 text-xs font-black text-[var(--c-muted)]">{{locale.t('homeSectionsLabel')}}</div>
           <label v-for="item in sectionToggles" :key="item.key" class="flex min-h-11 items-center gap-3 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-sm">
             <input
