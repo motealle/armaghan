@@ -9,7 +9,7 @@ export interface BrandToken{
 
 export const brandTokens:BrandToken[]=[
   {id:'green',label:'سبز برند',value:'#21946A',cssVar:'--brand-green'},
-  {id:'blue',label:'آبی برند',value:'#151EDA',cssVar:'--brand-blue'},
+  {id:'blue',label:'آبی زمینه لوگو',value:'#0714C2',cssVar:'--brand-blue'},
   {id:'mint',label:'مینت روشن',value:'#C8E3DB',cssVar:'--brand-mint'},
   {id:'white',label:'سفید',value:'#FFFFFF',cssVar:'--brand-white'},
   {id:'gold',label:'طلایی',value:'#FFB514',cssVar:'--brand-gold'},
