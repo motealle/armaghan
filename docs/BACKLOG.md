@@ -3,6 +3,22 @@
 Priority: **P0 current**, P1 next, P2 later.  
 Current implementation targets: **Backend MVP productionization** + **Test 27 visual-editor/UI lane**. Test 26 is frozen.
 Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
+
+## P0 — Test 27 customer visual corrections — 2026-10-01
+
+- [x] Create rollback checkpoint `rollback/test27-pre-customer-ui-corrections`.
+- [x] Make Footer brand area logo-only; remove customer-facing brand name/description beside the logo.
+- [x] Centralize customer product labels: available → localized six-way subcategory; non-available/made-to-order → unified unavailable/producible label.
+- [x] Keep canonical `Product.name` data intact for backend/admin ownership.
+- [x] Restyle product codes as high-contrast Brand Blue/White capsules with restrained Brand Gold border.
+- [x] Add persisted `showSubcategoryCodes` Feature Flag; defaults OFF on mobile/tablet/desktop; preserve schema-v4 choices during migration.
+- [x] Default Products page to Brand White and product cards to Brand Mint in light mode; preserve dark-mode surfaces.
+- [x] Register `products.page` and existing `product.card` as structured visual-editor surfaces.
+- [x] Apply strong brand-derived green heading role on light content surfaces without reducing contrast on dark/image/brand-chrome surfaces.
+- [x] Make Why Armaghan dividers 3px Brand Blue and number circles Brand Blue with Brand Gold numbers.
+- [x] Add unit/source-contract coverage for presentation helper, schema migration, feature flag, editor targets and semantic CSS roles.
+- [ ] Confirm main CI/build/FTP deploy of Test 27 and record the workflow run.
+
 Image requirements: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
 Rollback checkpoint: `rollback/test25-pre-test26` → `328f6c48ea9c4f1346702282ddb6d21ae1685a16`.

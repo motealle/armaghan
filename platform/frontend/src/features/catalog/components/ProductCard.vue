@@ -6,19 +6,20 @@ import { useFavoritesStore } from '@/stores/favorites'
 import { useLocaleStore } from '@/stores/locale'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import ProductMediaCarousel from './ProductMediaCarousel.vue'
+import { customerProductLabel } from '../presentation'
 
 const props=defineProps<{product:Product}>()
 const emit=defineEmits<{detail:[product:Product];whatsapp:[product:Product]}>()
 const favorites=useFavoritesStore()
 const locale=useLocaleStore()
 const isFavorite=computed(()=>favorites.has(props.product.id))
-const displayName=computed(()=>locale.productName(props.product.code,props.product.name,props.product.names))
-const visibleTitle=computed(()=>props.product.availability==='available'?displayName.value:locale.t('unavailable'))
+const displaySubcategory=computed(()=>locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName))
+const visibleTitle=computed(()=>customerProductLabel(props.product,displaySubcategory.value,locale.t('unavailableOrProducible')))
 </script>
 
 <template>
   <!-- Test 23 low-copy card contract: image-first, code-only metadata, icon-only actions. -->
-  <article data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] shadow-sm">
+  <article data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--role-product-card-background)] shadow-sm">
     <div data-style-id="product.media" data-style-label="بخش تصویر کارت محصول" class="product-card-media">
       <ProductMediaCarousel :product="product" />
     </div>

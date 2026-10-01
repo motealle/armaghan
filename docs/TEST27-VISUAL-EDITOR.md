@@ -345,3 +345,32 @@ This proves production persistence/version/restore semantics without bypassing b
 - Production Style Profile service semantics passed live transactional acceptance (Run `36878931948`) with complete rollback.
 - Remaining editor persistence acceptance is browser-only: real Filament session + CSRF, edit/save, reload/cross-device, staging Publish and Restore.
 - Canonical cross-project current status: `docs/CURRENT-STATUS.md`.
+
+
+## Customer visual-correction batch — 2026-10-01
+
+### Ranked implementation strategies
+
+| Rank | Method | Score | Why |
+|---:|---|---:|---|
+| 1 | **Semantic design roles + centralized customer product-label helper + persisted Feature Flag** | **10.0** | Keeps content, theme and behavior separate; preserves domain data; remains editor-compatible and rollback-safe |
+| 2 | CSS overrides plus inline template conditions | 7.8 | Fast, but duplicates presentation logic and is harder to test |
+| 3 | Delete/replace `Product.name` in catalog data | 5.4 | Makes the UI look right but damages admin/backend data ownership and future migration |
+| 4 | Scatter hard-coded colors and `v-if` checks across components | 3.2 | High regression risk and conflicts with the token/editor architecture |
+| 5 | Fork a second customer-only theme/page | 2.1 | Creates parallel UI paths and long-term maintenance cost |
+
+**Selected:** option 1.
+
+Implementation contract:
+- Footer brand block is logo-only; no brand name or descriptive sentence is rendered beside it.
+- Available products display their localized six-way subcategory label; unavailable or made-to-order products display one localized unified unavailable/producible label.
+- Underlying `Product.name` data remains intact for admin/backend compatibility; only customer presentation changes.
+- Product code uses a Brand Blue capsule with Brand White text and a restrained Brand Gold border.
+- Subcategory codes 11/12/21/22/31/32 are controlled by `showSubcategoryCodes`; customer default is OFF for mobile/tablet/desktop.
+- Appearance schema v5 preserves schema-v4 choices and only introduces the new subcategory-code default.
+- Products page light background defaults to Brand White; product cards default to Brand Mint. Both remain structured editor surfaces.
+- Light-surface headings use an accessibility-safe strong heading role derived from Brand Green + Brand Blue. Dark mode keeps Brand Green directly.
+- Why Armaghan separators use a 3px Brand Blue rule; numbered circles use Brand Blue with Brand Gold numbers.
+- Image-overlay and Brand Blue footer/hero headings keep their high-contrast light treatment rather than forcing green where it would reduce legibility.
+
+Accessibility basis: normal text retains the 4.5:1 target. The product-code capsule and unavailable badge use Brand Blue pairings instead of placing white/gold directly on Mint.

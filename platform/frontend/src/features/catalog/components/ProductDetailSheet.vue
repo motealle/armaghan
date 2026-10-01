@@ -4,11 +4,12 @@ import { LockKeyhole, SlidersHorizontal } from '@lucide/vue'
 import type { Product } from '@/types/domain'
 import BaseSheet from '@/components/ui/BaseSheet.vue'
 import { useLocaleStore } from '@/stores/locale'
+import { customerProductLabel } from '../presentation'
 
 const props=defineProps<{open:boolean;product:Product|null}>()
 defineEmits<{close:[]}>()
 const locale=useLocaleStore()
-const title=computed(()=>props.product?locale.productName(props.product.code,props.product.name):locale.t('productSpecs'))
+const title=computed(()=>props.product?customerProductLabel(props.product,locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName),locale.t('unavailableOrProducible')):locale.t('productSpecs'))
 const availability=computed(()=>props.product?.availability==='available'?locale.t('available'):props.product?.availability==='unavailable'?locale.t('unavailable'):locale.t('madeToOrder'))
 </script>
 

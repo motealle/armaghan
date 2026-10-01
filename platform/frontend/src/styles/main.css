@@ -832,3 +832,32 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .visual-editor-profile-file-actions button{display:flex;min-height:44px;align-items:center;justify-content:center;gap:.4rem;border:1px solid var(--c-border);border-radius:.72rem;background:var(--c-surface-2);padding:.45rem .55rem;color:var(--c-text);font-size:.62rem;font-weight:850}
 .visual-editor-profile-file-actions button:hover,.visual-editor-profile-file-actions button:focus-visible{border-color:color-mix(in srgb,var(--c-primary) 32%,var(--c-border));color:var(--c-primary)}
 .visual-editor-file-status{display:block;margin-top:-.15rem;color:var(--c-muted);font-size:.58rem;line-height:1.7}
+
+
+/* Test 27 customer visual corrections — semantic, editor-safe defaults */
+:root{
+  --role-products-page-background:var(--brand-white);
+  --role-product-card-background:var(--brand-mint);
+  --role-heading-strong:color-mix(in srgb,var(--brand-green) 64%,var(--brand-blue));
+}
+.dark{
+  --role-products-page-background:var(--c-bg);
+  --role-product-card-background:var(--c-surface);
+  --role-heading-strong:var(--brand-green);
+}
+[data-style-id="products.page"]{background:var(--role-products-page-background)}
+.products-page{background:var(--role-products-page-background)}
+.products-intro-surface{background:var(--role-products-page-background)}
+.product-card{background:var(--role-product-card-background)}
+.products-page h1,
+.test26-section-heading h2,
+.test26-why-list h3,
+.test26-capability-body h3,
+.category-card-title,
+.product-card-title{color:var(--role-heading-strong)}
+.product-card-title.unavailable{display:inline-flex;width:max-content;max-width:100%;height:auto;min-height:1.55rem;align-items:center;border-radius:999px;background:var(--brand-blue);padding:.08rem .52rem;color:var(--brand-gold);line-height:1.35}
+.product-code-row code{border:1px solid color-mix(in srgb,var(--brand-gold) 58%,transparent);border-radius:999px;background:var(--brand-blue);padding:.2rem .58rem;color:var(--brand-white);box-shadow:0 4px 12px color-mix(in srgb,var(--brand-blue) 16%,transparent)}
+.test26-why-list{border-block:3px solid var(--brand-blue)}
+.test26-why-list li{border-bottom:3px solid var(--brand-blue)}
+.test26-why-number{border:1px solid color-mix(in srgb,var(--brand-gold) 70%,transparent);background:var(--brand-blue);color:var(--brand-gold)}
+.subcategory-code{font-family:Inter,Roboto,ui-sans-serif,sans-serif;font-weight:800;direction:ltr}

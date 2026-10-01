@@ -6,26 +6,27 @@ import { buildProductMessage, requestPathTitle, whatsappUrl } from '@/services/w
 import BaseSheet from '@/components/ui/BaseSheet.vue'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import { useLocaleStore } from '@/stores/locale'
+import { customerProductLabel } from '../presentation'
 
 const props=defineProps<{open:boolean;product:Product|null}>()
 defineEmits<{close:[]}>()
 const locale=useLocaleStore()
 const path=ref<Extract<RequestPath,'simple'|'available'|'unavailable'>|null>(null)
+const displaySubcategory=computed(()=>props.product?locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName):'')
+const displayName=computed(()=>props.product?customerProductLabel(props.product,displaySubcategory.value,locale.t('unavailableOrProducible')):'')
 
 watch(()=>props.open,(open)=>{if(open)path.value=null})
 const preview=computed(()=>{
   if(!props.product||!path.value)return ''
   const localized={
     ...props.product,
-    name:locale.productName(props.product.code,props.product.name,props.product.names),
+    name:customerProductLabel(props.product,locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName),locale.t('unavailableOrProducible')),
     categoryName:locale.categoryName(props.product.categoryCode,props.product.categoryName),
     subcategoryName:locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName),
   }
   return buildProductMessage(localized,path.value,locale.locale)
 })
 const href=computed(()=>preview.value?whatsappUrl(preview.value):'#')
-const displayName=computed(()=>props.product?locale.productName(props.product.code,props.product.name,props.product.names):'')
-const displaySubcategory=computed(()=>props.product?locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName):'')
 const options=computed<Array<{id:Extract<RequestPath,'simple'|'available'|'unavailable'>;icon:typeof ShoppingBag;desc:string}>>(()=>[
   {id:'simple',icon:ShoppingBag,desc:locale.t('simplePathDesc')},
   {id:'available',icon:PackageCheck,desc:locale.t('availablePathDesc')},

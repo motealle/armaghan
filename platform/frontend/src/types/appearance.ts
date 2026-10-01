@@ -13,6 +13,7 @@ export interface ViewportAppearance{
   heroMode:HeroMode
   homeProductGrid:HomeProductGridMode
   showCategoryNumbers:boolean
+  showSubcategoryCodes:boolean
   showAbout:boolean
   showWhy:boolean
   showCapabilities:boolean

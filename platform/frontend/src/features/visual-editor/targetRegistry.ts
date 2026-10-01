@@ -132,8 +132,9 @@ export const visualTargetGroups:VisualTargetGroup[]=[
   },
   {
     id:'products',
-    label:'کارت محصول',
+    label:'محصولات',
     targets:[
+      {id:'products.page',label:'زمینه صفحه محصولات',kind:'section',hideable:false,styleControls:['backgroundColor']},
       {id:'product.card',label:'قاب همه کارت‌های محصول',kind:'panel'},
       {id:'product.media',label:'بخش تصویر کارت',kind:'media'},
       {id:'product.title',label:'عنوان کارت محصول',kind:'title'},
@@ -146,9 +147,7 @@ export const visualTargetGroups:VisualTargetGroup[]=[
     label:'فوتر',
     targets:[
       {id:'footer.shell',label:'کل فوتر',kind:'section'},
-      {id:'footer.brand',label:'بخش برند فوتر',kind:'panel'},
-      {id:'footer.brand-name',label:'نام برند در فوتر',kind:'title',textEditable:true},
-      {id:'footer.description',label:'توضیح برند در فوتر',kind:'text',textEditable:true},
+      {id:'footer.brand',label:'لوگوی فوتر',kind:'panel'},
       {id:'footer.columns',label:'ستون‌های فوتر',kind:'panel'},
     ],
   },
