@@ -353,7 +353,7 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - `composer.json` and `composer.lock` are committed; `.env` and `vendor/` remain ignored.
 - Permanent Backend CI validates Composer metadata, local SQLite migrations, framework/admin major versions, tests, security audit and secret hygiene.
 - Local/dev/test uses SQLite. Verified production hosting lacks PDO SQLite but has PDO MySQL, so production uses MySQL/MariaDB.
-- Domain Product/Customer/favorites/magic-link/theme models and Filament Resources are **not implemented yet**; the current Vue prototype data is still browser-local.
+- Core domain models now exist for Customer, Category, Subcategory, Product, specification definitions/values, FavoriteShare, MagicLink and ActivityLog. Filament CRUD Resources/admin-core are still a separate unmerged backend batch; current Vue customer-facing catalog/customer data remains browser-local until API wiring.
 - Current Favorites sharing is still a versioned product-code URL implemented entirely in the frontend until the persisted share flow is built.
 - Current color system already has five-color palettes and semantic CSS variables, but the mapping is fixed in `stores/design.ts`; Backend MVP should persist a safe semantic role mapping instead of exposing arbitrary CSS.
 - Canonical backend plan: `docs/BACKEND-MVP.md`; bootstrap analysis/result: `docs/BACKEND-BOOTSTRAP.md`.
@@ -425,3 +425,5 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Editable target coverage now includes Header, Hero, About, Why, Capabilities, product banners, product cards, Footer and main Home surfaces.
 - Latest branch-only validation: source contract PASS, TypeScript PASS, 25/25 Vue unit tests PASS, Vite Test 27 build PASS; no deployment was performed by that temporary validation workflow.
 - Test 27 must not be promoted in the mutable launcher until owner/customer review.
+
+- Test 27 visual-editor modularization/contrast batch landed on main at `d9a6a68353345a34b0379feca77663a240e1c856`; **FTP Deploy Run #254 PASS**. Full QA/build/smoke passed; `deploy-t` published staging `/public_html/t/27`; `deploy-root` skipped; no remote files deleted. Mutable launcher content still points to Test 26 and contains no Test 27 entry.
