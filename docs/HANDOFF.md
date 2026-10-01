@@ -491,3 +491,25 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 
 - Style Profile adapter staged deployment: **FTP Deploy Run #262 PASS**. Test 27 QA/build/smoke passed; `/public_html/t/27` updated; 112 files uploaded; no remote files deleted; root deployment skipped.
 - Live Test 27 now contains the sync/status/conflict/publish/history/restore UI, but shared server writes remain dormant until the real Laravel backend/admin session is deployed. Local editing remains fully functional.
+
+
+## 31. Production SQLite / Laravel activation handoff
+
+- Fresh production SQLite probe on 2026-10-01: **PASS**.
+- Verified web runtime: PHP 8.3.33, PDO SQLite, SQLite3, SQLite 3.53.4, private file read/write, foreign keys, `VACUUM INTO`, HTTPS, private sibling access, ZipArchive and PharData.
+- Laravel Framework 13.34.0 is now deployed on the host with application/shared state outside `public_html`.
+- Shared host-only `.env` and APP_KEY were generated/preserved on the host and were never committed or logged.
+- Production SQLite database was created in private shared storage; migrations completed successfully.
+- Initial consistent SQLite snapshot completed successfully.
+- Core schema existence checks passed: users, products, customers, style_profiles, style_profile_versions, style_profile_publications.
+- Public backend surface is `https://armaghantrading.com/backend`.
+- HTTP smoke after permission repair:
+  - `/backend/` → 200
+  - `/backend/up` → 200
+  - `/backend/api/style-profile/staging` → 200
+  - `/backend/admin/login` → 200
+- The first deployment workflow reported failure only because post-deploy HTTP smoke ran before public permissions were corrected; activation, migrations and backup had already succeeded.
+- Root cause of public 404: public Laravel directories were created too restrictively for LiteSpeed. Public permissions were repaired to directories `0755` / files `0644`; private app/data permissions were not widened.
+- Temporary activation, diagnostic and permission-repair files were cleaned up.
+- No first admin is created yet. Next P0 security batch is one-time first-admin provisioning without a seeded/default password; then Test 27 API base should point to `/backend` and shared Style Profile persistence should be verified.
+- Test 26 and Test 27 UI files were not modified in this backend activation batch.
