@@ -36,7 +36,7 @@ function selectCategory(code:string){
 </script>
 
 <template>
-  <section class="products-page">
+  <section data-style-id="products.page" data-style-label="زمینه صفحه محصولات" class="products-page">
     <div class="products-intro-surface">
       <div class="mb-4 flex items-end justify-between gap-3">
         <div>
@@ -74,7 +74,7 @@ function selectCategory(code:string){
     <div class="products-mobile-controls mt-3 lg:hidden">
       <div class="chip-scroller flex gap-2 overflow-x-auto pb-1">
         <button class="filter-chip" :class="{active:subcategory==='all'}" @click="subcategory='all'">{{locale.t('allSubs')}}</button>
-        <button v-for="sub in subs" :key="sub.code" class="filter-chip" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code">{{sub.code}} · {{locale.subcategoryName(sub.code,sub.name)}}</button>
+        <button v-for="sub in subs" :key="sub.code" class="filter-chip" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code"><span v-if="policy.showSubcategoryCodes" class="subcategory-code">{{sub.code}} · </span>{{locale.subcategoryName(sub.code,sub.name)}}</button>
       </div>
 
       <div class="products-filter-row mt-4 flex flex-wrap gap-2">
@@ -104,7 +104,7 @@ function selectCategory(code:string){
             <span>{{locale.t('allSubs')}}</span><Check v-if="subcategory==='all'" :size="15"/>
           </button>
           <button v-for="sub in subs" :key="sub.code" class="desktop-filter-option" :class="{active:subcategory===sub.code}" @click="subcategory=sub.code">
-            <span>{{sub.code}} · {{locale.subcategoryName(sub.code,sub.name)}}</span><Check v-if="subcategory===sub.code" :size="15"/>
+            <span><span v-if="policy.showSubcategoryCodes" class="subcategory-code">{{sub.code}} · </span>{{locale.subcategoryName(sub.code,sub.name)}}</span><Check v-if="subcategory===sub.code" :size="15"/>
           </button>
         </div>
 
