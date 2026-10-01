@@ -5,6 +5,7 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import BottomNav from '@/components/layout/BottomNav.vue'
 import HelpSheet from '@/components/layout/HelpSheet.vue'
 import VisualEditor from '@/features/visual-editor/VisualEditor.vue'
+import VisualEditorQuickLauncher from '@/features/visual-editor/VisualEditorQuickLauncher.vue'
 import VisualStyleRuntime from '@/features/visual-editor/VisualStyleRuntime.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
@@ -64,6 +65,9 @@ onMounted(async()=>{
     <BottomNav/>
     <LoginSheet :open="loginOpen" @close="loginOpen=false"/>
     <HelpSheet :open="helpOpen" @close="helpOpen=false"/>
-    <VisualEditor v-if="session.isAdmin&&!session.impersonatedCustomerId"/>
+    <template v-if="session.isAdmin&&!session.impersonatedCustomerId">
+      <VisualEditorQuickLauncher/>
+      <VisualEditor/>
+    </template>
   </div>
 </template>
