@@ -24,8 +24,7 @@ function choose(target:VisualTargetDefinition){
   })
 }
 
-function toggleVisibility(target:VisualTargetDefinition,event:MouseEvent){
-  event.stopPropagation()
+function toggleVisibility(target:VisualTargetDefinition){
   const hidden=hiddenIds.value.has(target.id)
   visual.patchStyle(target.id,{hidden:!hidden})
 }
@@ -41,29 +40,27 @@ function toggleVisibility(target:VisualTargetDefinition,event:MouseEvent){
     <details v-for="group in visualTargetGroups" :key="group.id" class="visual-editor-target-group">
       <summary>{{group.label}}</summary>
       <div class="visual-editor-target-list">
-        <button
+        <div
           v-for="target in group.targets"
           :key="target.id"
-          type="button"
           class="visual-editor-target-row"
           :class="{active:selectedId===target.id}"
-          @click="choose(target)"
         >
-          <span>
+          <button type="button" class="visual-editor-target-select" @click="choose(target)">
             <b>{{target.label}}</b>
             <small>{{target.kind}} · {{target.id}}</small>
-          </span>
-          <i
-            role="button"
-            tabindex="0"
+          </button>
+          <button
+            type="button"
+            class="visual-editor-target-visibility"
             :aria-label="hiddenIds.has(target.id)?'نمایش عنصر':'مخفی کردن عنصر'"
-            @click="toggleVisibility(target,$event)"
-            @keydown.enter.prevent="toggleVisibility(target,$event as unknown as MouseEvent)"
+            :title="hiddenIds.has(target.id)?'نمایش عنصر':'مخفی کردن عنصر'"
+            @click="toggleVisibility(target)"
           >
             <Eye v-if="hiddenIds.has(target.id)" :size="17"/>
             <EyeOff v-else :size="17"/>
-          </i>
-        </button>
+          </button>
+        </div>
       </div>
     </details>
   </section>
