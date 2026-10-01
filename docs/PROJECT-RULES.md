@@ -117,7 +117,7 @@
 
 
 ## Verified production-host constraints
-88. Hosting preflight on 2026-09-30 verified PHP 8.3.33, all Laravel 13 required PHP extensions, HTTPS, a safe readable/writable private sibling outside `public_html`, and PDO MySQL. The owner reports on 2026-10-01 that PDO SQLite has since been enabled. SQLite is now the selected production primary, but a fresh runtime probe confirming `pdo_sqlite` and private-path write access is mandatory before the first production migration.
+88. Hosting preflight on 2026-09-30 originally found no PDO SQLite. A fresh authoritative probe on 2026-10-01 after the hosting change verified PDO SQLite, SQLite 3.53.4, private file read/write, foreign keys and `VACUUM INTO`; production SQLite is now PASS and active.
 89. Host web-PHP disables `proc_open`, `exec` and `shell_exec`. Do not make production deployment depend on server-side Composer or shell execution; build dependencies in CI and upload a prepared release.
 90. Host PHP has `open_basedir` enabled but the verified private sibling layout is accessible. Keep application/private files outside `public_html` and expose only the Laravel public surface.
 
@@ -159,3 +159,11 @@
 118. Application/domain code should use normal Laravel Eloquent/query services against SQLite. Do not add an unnecessary repository abstraction solely to hide the selected SQLite engine unless a real alternate runtime store becomes required.
 119. If sustained concurrent writes, multi-server deployment or materially heavier reporting makes SQLite unsuitable, re-evaluate MySQL/PostgreSQL based on measured requirements rather than record count alone.
 120. Supabase remains an optional future PostgreSQL/Auth/Storage/Realtime infrastructure target and must not be introduced without a concrete requirement that justifies an additional backend boundary.
+
+## Production backend activation rules
+121. Production Laravel is deployed with the application and shared state outside `public_html`; only the Laravel public surface is exposed under `/backend`.
+122. Production SQLite, `.env`, APP_KEY and backup snapshots must remain outside `public_html`; no future deploy may package or overwrite the host-managed shared `.env` or database file.
+123. Public Laravel directories/files must use web-readable permissions compatible with LiteSpeed (`0755` directories, `0644` files). Do not widen private application/data permissions merely to fix public serving.
+124. Production backend deploys must build Composer/vendor in CI. Host PHP shell functions remain disabled and must not become a deployment dependency.
+125. Before any future production migration, create or verify a consistent SQLite snapshot. A failed remote mirror must never block or corrupt the live SQLite source of truth.
+126. Production backend canonical base path is `/backend`. Public API and Filament paths are therefore under `/backend/api/...` and `/backend/admin/...`.
