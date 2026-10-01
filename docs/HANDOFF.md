@@ -532,3 +532,17 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Browser-local persistence remains automatic. Sanitized JSON Export/Import is available for simple manual backup/transfer and does not create a JSON database.
 - Latest branch validation runs for `ui/test27-editor-color-saveability-20261001` are PASS. Test 26 has not been modified.
 - Remaining acceptance test: provision real admin, authenticate at `/backend/admin/login`, edit Test 27, observe server sync, reload/cross-device, Publish staging and Restore.
+
+
+### Test 27 color/saveability live delivery
+
+- Main implementation before final docs: `7c688673b52d9ffe6108f53e80544e95d474da4b`.
+- **Backend CI Run #19: PASS**.
+- **FTP Deploy Run #268: PASS**.
+- Full historical Test 11–27 QA, TypeScript/unit/build pipeline and FTP smoke passed.
+- Active Test 27 was rebuilt and uploaded to `/public_html/t/27`; 112 files uploaded; no remote files deleted; root deployment skipped.
+- Live Test 27 now uses logo-background blue `#0714C2` as canonical Brand Blue.
+- Light Home page default is white; primary Home panels default to Brand Mint; both remain structured token-controlled editor surfaces.
+- `home.page` is protected from Hide, while `home.content` remains independently controllable.
+- Nested Why/Capability text targets, hidden-orphan recovery, per-target Inspector controls, sanitized JSON export/import and same-origin `/backend` Style Profile API/CSRF support are live in Test 27.
+- Shared cross-device saving still requires the first real Laravel admin account and a verified authenticated save/reload/publish/restore cycle.
