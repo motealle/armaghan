@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261001-style-profile-frontend-adapter",
   "scope": "Test 27 Style Profile frontend adapter: local-first sync, backend capability detection, debounced authenticated draft save, checksum conflict handling, staging publish/history/restore controls, public staging baseline fallback; no Test 26 mutation",
   "base_ref": "main@431cc20de708028a49877ef82b045705cdf57efa",
   "acquired_at": "2026-10-01T08:36:00Z",
-  "expires_at": "2026-10-01T10:06:00Z",
-  "released_at": null,
-  "note": "Bounded frontend integration batch. No auth bypass, no production publish automation, no backend schema mutation."
+  "expires_at": null,
+  "released_at": "2026-10-01T08:55:00Z",
+  "note": "Released after Test 27 Style Profile frontend adapter. Main head 58adaa39c91747c3c5b89ad63992672029c7d63a. Branch validation PASS: contract, TypeScript, 30/30 Vue unit tests, Test 27 build. FTP Deploy Run #262 PASS: /public_html/t/27 updated, 112 files uploaded, no remote deletes, root skipped. Docs-only Run #263 PASS with deploy jobs skipped. Adapter is local-first with real Laravel admin-session detection, 900ms debounced draft save, expected-checksum conflicts, staging publish/history/restore UI, and conservative public staging baseline. Shared server persistence remains dormant until production Laravel/SQLite + real admin session activation. Test 26 untouched."
 }
