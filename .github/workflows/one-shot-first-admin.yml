@@ -1,0 +1,40 @@
+name: One-shot First Admin Provision
+
+on:
+  push:
+    branches:
+      - backend/first-admin-provisioning-20261001
+    paths:
+      - ".github/workflows/one-shot-first-admin.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Provision first production administrator
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          ARMAGHAN_SITE_URL: ${{ secrets.ARMAGHAN_SITE_URL }}
+          ARMAGHAN_BOOTSTRAP_PUBLIC_KEY_B64: "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFyQ2x5bWtWUnNzaVZwbjA3L3JPMApHNWtYSVlsNEZWRWlwR0s2TXNJcmZKcUQ5ZVJMUGxKWkVrRjRoOXZRYW9zK0NuNjQ2Y2ZGYThFNHNYVUpaYkM5Cml5ek51b05iUkEvYWdyTlFzMTAvczdTWk41SmxXWVppS21NY1ZUa1YvRWhYSXZISlF3TzRwaC9OQ24rTk9zaXUKVXpHc05NbXdHN1FJcVoyaDQrWi9sdVB0SjNxM362OW1oS3Vrb1h2V0IxUVllSnVTVzdQaEVHMGhTajBOakthSwpLN3hSQW90eEkzOElVKzZVMEtOb0NFQUY2czl1SjNUa0RjNlRhMVlIRVpxcGdpc24vWW1YS0RZcG9KYnplMkhvCk5LaS9iSyt6R1pYL0k1UVhFQjhuMGQ2bjFheWZTeEVkdnVDek1WenNaa1NuOCtVSHlISjV5dzJDdWNVeUQ4cGQKbndJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg=="
+        run: |
+          python platform/scripts/provision_first_admin_ftp.py \
+            --email admin@armaghan.local \
+            --name "Armaghan Administrator"
+
+      - name: Verify admin login surface remains healthy
+        run: |
+          python - <<'PY'
+          from urllib.request import Request, urlopen
+          req=Request("https://armaghantrading.com/backend/admin/login",headers={"User-Agent":"Armaghan-Admin-Smoke/1.0"})
+          with urlopen(req,timeout=30) as r:
+              if int(getattr(r,"status",200)) != 200:
+                  raise SystemExit("Admin login HTTP smoke failed")
+          print("ADMIN_LOGIN_SURFACE: PASS")
+          PY
