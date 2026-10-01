@@ -475,3 +475,16 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 
 - Urgent editor deployment: **FTP Deploy Run #260 attempt 2 PASS**. Test 27 contract, TypeScript, Vue tests, numbered build, FTP smoke and deploy-t passed. `/public_html/t/27` and `/public_html/t/index.htm` were updated; 112 files uploaded; no remote files deleted; root deployment skipped.
 - Run #260 attempt 1 was infrastructure-only feedback: Pillow download from files.pythonhosted.org timed out before frontend build/deploy. Re-running failed jobs succeeded without source changes.
+
+
+## 30. Test 27 Style Profile frontend adapter handoff
+
+- Test 27 now includes a local-first adapter to the existing Laravel Style Profile API.
+- Public staging publication loading is conservative: an existing local edit is never silently replaced. A browser profile may be refreshed from server only when it is empty or still equals the last adopted public baseline.
+- A real active-admin Laravel session enables 900ms debounced draft autosave with `expected_checksum`.
+- HTTP 409 stops autosave and exposes explicit conflict actions: load server version or explicitly replace server draft with this device version.
+- 401/403/API absence falls back to local browser persistence; no local Test 27 admin credential is treated as a Laravel backend login.
+- The editor has staging Publish plus up to ten recent immutable versions with Restore.
+- API client uses same-origin credentials and forwards `X-XSRF-TOKEN` when Laravel has issued an XSRF cookie.
+- Branch validation passed: Test 27 contract, TypeScript, 30/30 Vue unit tests and numbered Test 27 build.
+- Live shared persistence still depends on the next backend lane: production SQLite re-probe/activation, Laravel deployment and a real admin session. Until then the live editor should report local-only storage and remain fully usable.
