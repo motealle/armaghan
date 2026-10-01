@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20261002-public-catalog-api",
-  "scope": "Implement public read-only catalog API and wire Test 27 product data to production backend with local media/spec fallback; keep Test 26 frozen; no customer-write or media-upload mutation",
-  "base_ref": "main@2d0b2a24a4f84025971075ba75d9d709cd56b154",
-  "acquired_at": "2026-10-01T23:30:00Z",
-  "expires_at": "2026-10-01T23:50:00Z",
-  "released_at": "2026-10-01T23:50:00Z",
-  "note": "Public Catalog API and Test 27 Hybrid Sync live. Production catalog bootstrap PASS: 3 categories, 6 subcategories, 18 products with pre-bootstrap SQLite snapshot. One-shot workflow removed. Backend CI #35/#36/#37/#38 PASS; Backend Code Deploy #4/#5 PASS; FTP Deploy #295 PASS; final docs FTP #304 PASS. Browser Style Profile acceptance remains non-blocking because saved profile redirects to login."
+  "run_id": "chat-20261002-product-media",
+  "scope": "Implement production product media ownership/upload with official Spatie Media Library + Filament integration, public catalog media reads, Test 27 backend media preference/fallback, and reconcile repo memory; keep Test 26 frozen.",
+  "base_ref": "main@f305aa3871b293d77d2327bb50afea5900b504e6",
+  "acquired_at": "2026-10-02T00:00:00Z",
+  "expires_at": "2026-10-02T01:30:00Z",
+  "released_at": null,
+  "note": "P0 product-media vertical slice. Dependency/migration changes must use a guarded migration-aware release path; no root UI deploy."
 }
