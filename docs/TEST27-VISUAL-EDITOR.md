@@ -374,3 +374,12 @@ Implementation contract:
 - Image-overlay and Brand Blue footer/hero headings keep their high-contrast light treatment rather than forcing green where it would reduce legibility.
 
 Accessibility basis: normal text retains the 4.5:1 target. The product-code capsule and unavailable badge use Brand Blue pairings instead of placing white/gold directly on Mint.
+
+
+### Customer visual-correction delivery
+
+- Rollback checkpoint: `rollback/test27-pre-customer-ui-corrections` → `40dc89b5aa97bd09fb664b88b1fb8dc9d54c15d9`.
+- Main implementation: `972d66bcd6e0e3ab72946d2fd14ffe8a6d329052`.
+- A stale Test 23 source assertion blocked FTP Deploy #275 before any build/deploy; the historical contract was corrected without changing the frozen Test 23 snapshot.
+- Final validated release marker: `65b9f1158019aece79438fbc680af4070e0c0665`.
+- **FTP Deploy #277 PASS**: Test 11–27 contracts, type-check, unit tests, Test 27 build and FTP smoke passed; 112 files uploaded; no remote files deleted; root deployment skipped.
