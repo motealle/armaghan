@@ -139,6 +139,9 @@ Current estimate excludes open-ended new customer redesign requests.
 - [x] Add CSRF token bootstrap/retry for authenticated backend Style Profile writes.
 - [x] Add sanitized Style Profile JSON export/import as a simple portable backup/transfer mechanism; do not revive JSON runtime persistence.
 - [x] Branch CI: latest Test 27 Editor Color Saveability runs PASS.
+- [x] Backend CI Run #19: **PASS** after adding the CSRF bootstrap endpoint and Style Profile API test coverage.
+- [x] Historical Test 24/25 color contracts made token-value agnostic so a customer-approved Brand Blue value change does not regress frozen semantic contracts.
+- [x] **FTP Deploy Run #268: PASS** — full QA/build/smoke passed; active Test 27 rebuilt and uploaded to `/public_html/t/27`; 112 files uploaded; no remote files deleted; root deploy skipped.
 - [ ] Provision the first real Laravel administrator without a seeded/default password.
 - [ ] Log into the real backend admin session and verify Test 27 draft autosave to production SQLite.
 - [ ] Verify cross-device reload from shared draft, staging Publish and Restore end-to-end.
