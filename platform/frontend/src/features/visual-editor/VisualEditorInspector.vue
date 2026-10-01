@@ -4,6 +4,7 @@ import { Eye, EyeOff, Palette, RotateCcw, Type } from '@lucide/vue'
 import { useLocaleStore } from '@/stores/locale'
 import { brandTokens, type BrandTokenId } from './tokenRegistry'
 import { NORMAL_TEXT_MIN_CONTRAST, tokenContrastRatio } from './contrast'
+import { visualTargetDefinition, type VisualStyleControl } from './targetRegistry'
 import type { EditableCandidate } from './selection'
 import { useVisualStyleStore, type ElementStyleOverride } from './store'
 
@@ -12,6 +13,10 @@ const visual=useVisualStyleStore()
 const locale=useLocaleStore()
 
 const currentStyle=computed<ElementStyleOverride>(()=>visual.profile.styles[props.selected.id]??{})
+const targetDefinition=computed(()=>visualTargetDefinition(props.selected.id))
+const allowedStyleControls=computed<VisualStyleControl[]|null>(()=>targetDefinition.value?.styleControls??null)
+const allowsStyle=(key:VisualStyleControl)=>allowedStyleControls.value===null||allowedStyleControls.value.includes(key)
+const canHide=computed(()=>targetDefinition.value?.hideable!==false)
 const explicitContrast=computed(()=>{
   const text=currentStyle.value.textColor
   const background=currentStyle.value.backgroundColor
@@ -69,7 +74,7 @@ function resetSelected(){
     <small>متن برای زبان فعلی ذخیره می‌شود و پیش‌نمایش زنده دارد.</small>
   </section>
 
-  <section class="visual-editor-control-group">
+  <section v-if="allowsStyle('textColor')" class="visual-editor-control-group">
     <div class="visual-editor-control-title"><Palette :size="17"/><b>رنگ متن</b></div>
     <div class="visual-token-grid">
       <button type="button" :class="{active:!currentStyle.textColor}" @click="clearToken('textColor')">پیش‌فرض</button>
@@ -87,7 +92,7 @@ function resetSelected(){
     </div>
   </section>
 
-  <section class="visual-editor-control-group">
+  <section v-if="allowsStyle('backgroundColor')" class="visual-editor-control-group">
     <div class="visual-editor-control-title"><Palette :size="17"/><b>رنگ زمینه</b></div>
     <div class="visual-token-grid">
       <button type="button" :class="{active:!currentStyle.backgroundColor}" @click="clearToken('backgroundColor')">پیش‌فرض</button>
@@ -106,11 +111,12 @@ function resetSelected(){
   </section>
 
   <p
+    v-if="allowsStyle('textColor')&&allowsStyle('backgroundColor')"
     class="visual-editor-contrast"
     :class="{bad:explicitContrast!==null&&explicitContrast<NORMAL_TEXT_MIN_CONTRAST}"
   >{{contrastLabel}}</p>
 
-  <section class="visual-editor-control-group">
+  <section v-if="allowsStyle('borderColor')" class="visual-editor-control-group">
     <div class="visual-editor-control-title"><Palette :size="17"/><b>رنگ خط/جداکننده</b></div>
     <div class="visual-token-grid">
       <button type="button" :class="{active:!currentStyle.borderColor}" @click="clearToken('borderColor')">پیش‌فرض</button>
@@ -127,7 +133,7 @@ function resetSelected(){
   </section>
 
   <section class="visual-editor-row-actions">
-    <button type="button" class="visual-editor-action" @click="toggleHidden">
+    <button v-if="canHide" type="button" class="visual-editor-action" @click="toggleHidden">
       <Eye v-if="currentStyle.hidden" :size="17"/><EyeOff v-else :size="17"/>
       {{currentStyle.hidden?'نمایش دوباره':'مخفی کردن'}}
     </button>
