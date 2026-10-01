@@ -1,6 +1,6 @@
 # Armaghan — SQLite-first persistence
 
-Status: selected production baseline after the owner enabled SQLite support on the hosting environment.
+Status: active production baseline. Laravel/SQLite is live and verified on the hosting environment.
 
 ## Ranked architecture
 
@@ -132,4 +132,4 @@ Production Laravel/SQLite is now active on the hosting account.
 
 The first post-deployment HTTP smoke initially returned 404 even though activation, migrations and the initial snapshot had already succeeded. Root cause was public-directory permissions created too restrictively for LiteSpeed. Public Laravel directories/files were normalized to `0755/0644`; private application/data permissions were not widened. The deployment helper now enforces web-safe permissions for the public surface.
 
-No production administrator account is provisioned by this activation step. Administrator provisioning remains a separate security-controlled batch.
+A real production active administrator has since been provisioned securely through the separate fail-closed bootstrap/recovery flow. No default password is stored in the repository. The remaining editor acceptance is the real browser Filament session/CSRF/cross-device cycle, not database activation.
