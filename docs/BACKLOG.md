@@ -1,7 +1,7 @@
 # Armaghan — Product Backlog
 
 Priority: **P0 current**, P1 next, P2 later.  
-Current implementation target: **Backend MVP productionization**. Test 26 is frozen; any new UI snapshot starts at Test 27.
+Current implementation targets: **Backend MVP productionization** + **Test 27 visual-editor/UI lane**. Test 26 is frozen.
 Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
 Image requirements: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
@@ -68,6 +68,32 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] Backend CI Run #3: **PASS** — 4 tests / 23 assertions; Composer audit clean.
 - [x] No production MySQL migration and no Test 26/Test 27 change occurred.
 - [ ] Next P0: Filament Product/Customer/Category/Subcategory Resources + safe first-admin provisioning.
+
+
+## P0 — Test 27 visual style editor foundation
+
+Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
+
+- [x] Create rollback checkpoint `rollback/test26-pre-test27-visual-editor` before the first Test 27 UI change.
+- [x] Select a non-modal resizable Bottom Sheet as the primary mobile inspector; reject a fully draggable floating inspector as the main mobile UI.
+- [x] Add exact approved five-color token registry: `#21946A`, `#151EDA`, `#C8E3DB`, `#FFFFFF`, `#FFB514`.
+- [x] Route shared navy/blue brand chrome for Header, Footer and Hero text bar through `--role-brand-chrome`.
+- [x] Add admin-only Visual Editor launcher under Appearance; editor is off by default.
+- [x] Keep the editor UI/listeners removable while persisted style/content overrides continue through a separate runtime layer.
+- [x] Add touch-neighborhood selection with `document.elementsFromPoint()` and an explicit candidate chooser for nested/nearby elements.
+- [x] Add text editing for explicitly registered text targets, stored per locale.
+- [x] Add approved-token text/background/border controls, hide/show and per-element reset.
+- [x] Keep hidden targets recoverable from a dedicated hidden-elements list.
+- [x] Persist a structured style profile plus generated CSS; do not accept arbitrary CSS/HTML/JS input.
+- [x] Isolate Test 27 browser state from Test 26 by moving mutable prototype keys to `armaghan:test27:*`.
+- [x] Add permanent `tests/test_test27_visual_editor_contract.py`.
+- [x] Staged branch validation PASS: source contract, TypeScript, 24 unit tests and Test 27 Vite build.
+- [ ] Expand stable editable-target coverage to remaining customer-requested Home sections, section titles, dividers and major card/panel surfaces in the next bounded UI batch.
+- [ ] Add safe contrast validation/warnings for token assignments.
+- [ ] Persist/version Style Profiles through Laravel so a profile can be reused across later numbered tests and production.
+- [ ] Add explicit profile export/import/version-history UX if backend profile history alone is insufficient.
+- [ ] Promote Test 27 into the mutable launcher only after owner/customer review.
+
 
 ### Test 26 Run 8 — footer scope + mobile language + terminology rule
 
