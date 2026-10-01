@@ -19,6 +19,7 @@ export type ProductNames = Partial<Record<'fa'|'ar'|'en'|'ku',string>>
 
 export interface Product {
   id: number
+  backendId?: number
   code: string
   name: string
   names?: ProductNames
