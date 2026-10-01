@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20261001-first-admin-provisioning",
-  "scope": "Secure first production Laravel admin provisioning + acceptance preparation for shared Test 27 Style Profile persistence; no default password, no Test 26 mutation",
-  "base_ref": "main@78bc2ab4abbba5312abc9b667dfe9745e4f2edfc",
-  "acquired_at": "2026-10-01T16:52:00+03:30",
-  "expires_at": null,
-  "released_at": "2026-10-01T16:51:00+03:30",
-  "note": "Released after secure first production admin provisioning. Main head 82711c7cf832b606964785bea4f984b4b2d83630. Production admin id=1 email admin@armaghan.local active; password generated on-host, hashed by Laravel, plaintext never committed/logged. Bootstrap recovery was guarded by exact email/name/created_at proof after an initial encryption-handoff failure. Backend CI #30 PASS, FTP Deploy #270 PASS; docs-only FTP Deploy #271 PASS with deploy-t/root skipped. One-shot workflow removed. Next acceptance: real browser login at /backend/admin/login then Test 27 Style Profile save/reload/publish/restore."
+  "run_id": "chat-20261001-style-profile-production-acceptance",
+  "scope": "Production Style Profile transactional acceptance on live SQLite with rollback; update backlog/handoff; no auth bypass, no Test 26/27 UI mutation",
+  "base_ref": "main@82711c7cf832b606964785bea4f984b4b2d83630",
+  "acquired_at": "2026-10-01T18:05:00+03:30",
+  "expires_at": "2026-10-01T19:35:00+03:30",
+  "released_at": null,
+  "note": "Production acceptance helper only. Must leave database byte-logical state unchanged after rollback and remove temporary public helper."
 }
