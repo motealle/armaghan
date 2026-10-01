@@ -97,6 +97,14 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] No production MySQL migration and no Test 26/Test 27 change occurred.
 - [ ] Next backend P0 after browser editor acceptance: Filament Product/Customer/Category/Subcategory Resources. First-admin provisioning is already complete.
 
+- [x] First bounded Filament CRUD batch: Category + Subcategory Resources — commit `4281034656ead0c0538b4f1dc4e607ea5f161438`; Backend CI #31 PASS.
+  - create/edit/list/search/sort/filter implemented;
+  - parent Category relation uses Filament relationship select;
+  - destructive delete actions intentionally omitted because Category → Subcategory cascades;
+  - active-admin access tests and non-admin denial tests PASS.
+- [ ] Production activation of the new taxonomy Resources is pending a safe repeatable Backend update workflow; FTP Deploy #284 did not mutate Backend production.
+- [ ] Remaining Filament CRUD: Product + Customer Resources.
+
 
 
 
