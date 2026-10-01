@@ -11,7 +11,7 @@ import type {
 
 export const APPEARANCE_KEY='armaghan:test27:appearance'
 export const APPEARANCE_SCHEMA_KEY='armaghan:test27:appearance-schema'
-export const APPEARANCE_SCHEMA_VERSION='4'
+export const APPEARANCE_SCHEMA_VERSION='5'
 
 export const customerAppearanceDefaults:AppearanceProfiles={
   mobile:{
@@ -24,6 +24,7 @@ export const customerAppearanceDefaults:AppearanceProfiles={
     heroMode:'single',
     homeProductGrid:'hidden',
     showCategoryNumbers:false,
+    showSubcategoryCodes:false,
     showAbout:true,
     showWhy:true,
     showCapabilities:true,
@@ -40,6 +41,7 @@ export const customerAppearanceDefaults:AppearanceProfiles={
     heroMode:'single',
     homeProductGrid:'hidden',
     showCategoryNumbers:false,
+    showSubcategoryCodes:false,
     showAbout:true,
     showWhy:true,
     showCapabilities:true,
@@ -56,6 +58,7 @@ export const customerAppearanceDefaults:AppearanceProfiles={
     heroMode:'single',
     homeProductGrid:'hidden',
     showCategoryNumbers:false,
+    showSubcategoryCodes:false,
     showAbout:true,
     showWhy:true,
     showCapabilities:true,
@@ -89,6 +92,7 @@ export function sanitizeViewportAppearance(value:unknown,fallback:ViewportAppear
     heroMode:isHeroMode(row.heroMode)?row.heroMode:fallback.heroMode,
     homeProductGrid:isGridMode(row.homeProductGrid)?row.homeProductGrid:fallback.homeProductGrid,
     showCategoryNumbers:booleanOr(row.showCategoryNumbers,fallback.showCategoryNumbers),
+    showSubcategoryCodes:booleanOr(row.showSubcategoryCodes,fallback.showSubcategoryCodes),
     showAbout:booleanOr(row.showAbout,fallback.showAbout),
     showWhy:booleanOr(row.showWhy,fallback.showWhy),
     showCapabilities:booleanOr(row.showCapabilities,fallback.showCapabilities),
@@ -120,6 +124,15 @@ function migrateLegacyProfiles(value:unknown):unknown{
   }
 }
 
+function migrateSchema4Profiles(value:unknown):unknown{
+  const source=(value&&typeof value==='object'?value:{}) as Partial<Record<ViewportProfile,unknown>>
+  const migrate=(profile:ViewportProfile)=>{
+    const row=(source[profile]&&typeof source[profile]==='object'?source[profile]:{}) as Partial<ViewportAppearance>
+    return {...row,showSubcategoryCodes:false}
+  }
+  return{mobile:migrate('mobile'),tablet:migrate('tablet'),desktop:migrate('desktop')}
+}
+
 function readStoredProfiles():AppearanceProfiles{
   if(typeof localStorage==='undefined')return cloneDefaults()
   try{
@@ -130,7 +143,7 @@ function readStoredProfiles():AppearanceProfiles{
       return cloneDefaults()
     }
     const parsed=JSON.parse(raw)
-    const migrated=schema===APPEARANCE_SCHEMA_VERSION?parsed:migrateLegacyProfiles(parsed)
+    const migrated=schema===APPEARANCE_SCHEMA_VERSION?parsed:schema==='4'?migrateSchema4Profiles(parsed):migrateLegacyProfiles(parsed)
     const sanitized=sanitizeAppearanceProfiles(migrated)
     if(schema!==APPEARANCE_SCHEMA_VERSION){
       localStorage.setItem(APPEARANCE_KEY,JSON.stringify(sanitized))
