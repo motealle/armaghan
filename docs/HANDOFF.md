@@ -1,5 +1,7 @@
 # Armaghan Trading B2B Catalog — Project Handoff
 
+**Current-state pointer:** read `docs/CURRENT-STATUS.md` first. Older numbered sections below preserve useful history; when an older statement conflicts with the current-status file or a later handoff section, the newer verified state wins.
+
 ## 1. Project identity
 
 - Repository: `motealle/armaghan`
@@ -487,10 +489,10 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - The editor has staging Publish plus up to ten recent immutable versions with Restore.
 - API client uses same-origin credentials and forwards `X-XSRF-TOKEN` when Laravel has issued an XSRF cookie.
 - Branch validation passed: Test 27 contract, TypeScript, 30/30 Vue unit tests and numbered Test 27 build.
-- Live shared persistence still depends on the next backend lane: production SQLite re-probe/activation, Laravel deployment and a real admin session. Until then the live editor should report local-only storage and remain fully usable.
+- Historical adapter-stage note: this dependency has since been resolved at the backend/service level. Production Laravel/SQLite and a real admin now exist; only browser session/CSRF/cross-device acceptance remains.
 
 - Style Profile adapter staged deployment: **FTP Deploy Run #262 PASS**. Test 27 QA/build/smoke passed; `/public_html/t/27` updated; 112 files uploaded; no remote files deleted; root deployment skipped.
-- Live Test 27 now contains the sync/status/conflict/publish/history/restore UI, but shared server writes remain dormant until the real Laravel backend/admin session is deployed. Local editing remains fully functional.
+- Historical adapter-stage note: the Laravel backend/admin deployment is now complete and production Style Profile service semantics are acceptance-tested PASS. Browser-authenticated UI acceptance remains open.
 
 
 ## 31. Production SQLite / Laravel activation handoff
@@ -514,7 +516,7 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - First production admin is now provisioned securely as `admin@armaghan.local`; no seeded/default password exists and no plaintext password is stored in Git or repo docs. Next acceptance task is browser login followed by Test 27 shared Style Profile save/reload/publish/restore verification.
 - Test 26 and Test 27 UI files were not modified in this backend activation batch.
 
-- Production SQLite Reprobe #1 (2026-10-01): execution/cleanup PASS, but runtime verdict **INCONCLUSIVE** because the temporary PHP probe was not reachable through the inferred web URLs. FTP reached `public_html`, created a private sibling and removed all temporary objects. Do not claim production PDO SQLite PASS until a probe runs through the confirmed canonical application URL or the deployed backend health route.
+- Historical note: an early Production SQLite Reprobe attempt was INCONCLUSIVE because the temporary probe URL could not be reached. A later authoritative canonical-URL probe passed PDO SQLite, private file R/W, foreign keys and `VACUUM INTO`; production SQLite activation is complete.
 
 
 ## 32. Test 27 color/saveability handoff
@@ -531,7 +533,7 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - Style Profile API defaults to same-origin `/backend` and bootstraps Laravel CSRF tokens for mutating requests, retrying once on HTTP 419.
 - Browser-local persistence remains automatic. Sanitized JSON Export/Import is available for simple manual backup/transfer and does not create a JSON database.
 - Latest branch validation runs for `ui/test27-editor-color-saveability-20261001` are PASS. Test 26 has not been modified.
-- Remaining acceptance test: provision real admin, authenticate at `/backend/admin/login`, edit Test 27, observe server sync, reload/cross-device, Publish staging and Restore.
+- Remaining acceptance test: authenticate the already-provisioned real admin at `/backend/admin/login`, edit Test 27, observe server sync, reload/cross-device, Publish staging and Restore.
 
 
 ### Test 27 color/saveability live delivery
@@ -590,3 +592,34 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 
 - Final merge head before this handoff note: `0fe333ad3ea7e2cdf21c9245ac99fbe22f9c3507`.
 - Main post-merge validation: **FTP Deploy #272 PASS**; QA/smoke passed, `deploy-root` skipped and `deploy-t` skipped. No UI release was touched by this acceptance batch.
+
+
+## 35. Consolidated current status reconciliation — 2026-10-01 18:45 +03:30
+
+Canonical current-state file: `docs/CURRENT-STATUS.md`.
+
+Verified current state:
+- main at reconciliation start: `79ee20ad14414298be2ce6f129e6c48922017200`;
+- Test 26 frozen;
+- Test 27 live/active mutable review lane;
+- canonical Brand Blue `#0714C2`, Home light background white, primary Home panels Brand Mint;
+- Laravel 13.34.0 live under `/backend`;
+- production SQLite active and verified;
+- first real active production administrator exists;
+- Style Profile production draft/publish/restore semantics acceptance-tested PASS with rollback;
+- final editor persistence acceptance is browser-only: real Filament session + CSRF + reload/cross-device + staging Publish/Restore.
+
+Still open in backend/domain delivery:
+- no Filament Product/Category/Subcategory/Customer Resource classes exist yet;
+- no public catalog/customer backend controllers exist yet;
+- FavoriteShare and MagicLink have domain models but not complete HTTP/session flows;
+- product-media ownership/upload flow remains open;
+- rotated off-host SQLite backup + restore drill remains open;
+- safe repeatable backend update workflow with pre-migration snapshot/rollback guard remains open.
+
+Estimated remaining core work: about 6 runs, or 6–7 if Filament CRUD/media is split into two bounded runs.
+
+Next P0:
+1. browser-authenticated Test 27 Style Profile acceptance;
+2. Filament CRUD;
+3. catalog/customer API/media wiring.
