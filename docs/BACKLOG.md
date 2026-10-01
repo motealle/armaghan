@@ -17,7 +17,17 @@ Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
 - [x] Apply strong brand-derived green heading role on light content surfaces without reducing contrast on dark/image/brand-chrome surfaces.
 - [x] Make Why Armaghan dividers 3px Brand Blue and number circles Brand Blue with Brand Gold numbers.
 - [x] Add unit/source-contract coverage for presentation helper, schema migration, feature flag, editor targets and semantic CSS roles.
-- [ ] Confirm main CI/build/FTP deploy of Test 27 and record the workflow run.
+- [x] Confirm main CI/build/FTP deploy of Test 27 and record the workflow run — FTP Deploy #277 PASS; 112 files uploaded to `/public_html/t/27` + launcher; no remote delete; root deploy skipped.
+
+### Test 27 customer visual corrections delivery record
+
+- [x] Main implementation commit: `972d66bcd6e0e3ab72946d2fd14ffe8a6d329052`.
+- [x] FTP Deploy #275 stopped before build/deploy because the historical Test 23 contract still asserted the old current-source title expression; no remote mutation occurred in that failed run.
+- [x] Historical Test 23 contract was future-proofed in `fb7ee2a1c4200f8080c68e37e10edb238cda9833`; FTP Deploy #276 QA path PASS.
+- [x] Validated release marker: `65b9f1158019aece79438fbc680af4070e0c0665`.
+- [x] **FTP Deploy #277: SUCCESS** — immutable guard and Test 11–27 contracts PASS; TypeScript, Vue unit tests, generated portrait media and Test 27 production build PASS; FTP smoke PASS; `deploy-t` PASS; `deploy-root` skipped.
+- [x] Deployment uploaded **112 files** to active Test 27 plus mutable launcher and explicitly deleted **0 remote files**.
+- [x] Test 26 and earlier frozen snapshots remained untouched.
 
 Image requirements: `docs/TEST26-IMAGE-REQUIREMENTS.md`.
 Customer clarification script: `docs/TEST26-CUSTOMER-QUESTIONS.md`.
