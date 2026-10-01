@@ -46,7 +46,8 @@ export class StyleProfileApiError extends Error{
 }
 
 const rawBase=(import.meta.env.VITE_ARMAGHAN_API_BASE as string|undefined)?.trim()??''
-const API_BASE=rawBase.replace(/\/$/,'')
+const API_BASE=(rawBase||'/backend').replace(/\/$/,'')
+let csrfToken:string|null=null
 
 function cookie(name:string):string|undefined{
   if(typeof document==='undefined')return undefined
@@ -54,23 +55,57 @@ function cookie(name:string):string|undefined{
   return item?decodeURIComponent(item.slice(name.length+1)):undefined
 }
 
+function isMutating(method:string):boolean{
+  return !['GET','HEAD','OPTIONS'].includes(method.toUpperCase())
+}
+
+async function fetchCsrfToken(signal?:AbortSignal):Promise<string>{
+  const response=await fetch(API_BASE+'/api/csrf-token',{
+    method:'GET',
+    headers:{Accept:'application/json'},
+    credentials:'same-origin',
+    signal,
+  })
+  if(!response.ok)throw new StyleProfileApiError(response.status,'CSRF token request failed.')
+  const payload=await response.json() as {token?:unknown}
+  if(typeof payload.token!=='string'||!payload.token)throw new StyleProfileApiError(500,'CSRF token is unavailable.')
+  csrfToken=payload.token
+  return payload.token
+}
+
 async function requestJson<T>(
   path:string,
   init:RequestInit={},
   signal?:AbortSignal,
+  allowCsrfRetry=true,
 ):Promise<T>{
+  const method=(init.method??'GET').toUpperCase()
   const headers=new Headers(init.headers)
   headers.set('Accept','application/json')
   if(init.body&&!headers.has('Content-Type'))headers.set('Content-Type','application/json')
-  const xsrf=cookie('XSRF-TOKEN')
-  if(xsrf)headers.set('X-XSRF-TOKEN',xsrf)
+
+  if(isMutating(method)){
+    const xsrf=cookie('XSRF-TOKEN')
+    if(xsrf)headers.set('X-XSRF-TOKEN',xsrf)
+    if(!xsrf){
+      const token=csrfToken??await fetchCsrfToken(signal)
+      headers.set('X-CSRF-TOKEN',token)
+    }
+  }
 
   const response=await fetch(API_BASE+path,{
     ...init,
+    method,
     headers,
     credentials:'same-origin',
     signal,
   })
+
+  if(response.status===419&&isMutating(method)&&allowCsrfRetry){
+    csrfToken=null
+    await fetchCsrfToken(signal)
+    return requestJson<T>(path,init,signal,false)
+  }
 
   let payload:unknown=null
   try{payload=await response.json()}catch{}
