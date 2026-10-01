@@ -25,11 +25,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(Customer::class);
     }
 
+    public function isActiveAdmin(): bool
+    {
+        return $this->active && $this->role === UserRole::Admin;
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return $panel->getId() === 'admin'
-            && $this->active
-            && $this->role === UserRole::Admin;
+        return $panel->getId() === 'admin' && $this->isActiveAdmin();
     }
 
     /**
