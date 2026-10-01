@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { RotateCcw } from '@lucide/vue'
+import { Paintbrush, RotateCcw } from '@lucide/vue'
+import { useRouter } from 'vue-router'
 import { useAppearanceStore } from '@/stores/appearance'
 import { useLocaleStore } from '@/stores/locale'
+import { useVisualStyleStore } from '@/features/visual-editor/store'
 import type {
   HeaderMode,
   HeroMode,
@@ -17,6 +19,8 @@ type BooleanAppearanceKey={
 
 const appearance=useAppearanceStore()
 const locale=useLocaleStore()
+const visual=useVisualStyleStore()
+const router=useRouter()
 const target=ref<ViewportProfile>('mobile')
 const current=computed(()=>appearance.profiles[target.value])
 
@@ -33,6 +37,10 @@ const sectionToggles:{key:BooleanAppearanceKey;label:string}[]=[
   {key:'showFooter',label:'showFooterLabel'},
 ]
 
+async function openVisualEditor(){
+  visual.setEnabled(true)
+  await router.push('/')
+}
 function checked(event:Event){return (event.target as HTMLInputElement).checked}
 function setBoolean(key:BooleanAppearanceKey,event:Event){
   appearance.updateProfile(target.value,{[key]:checked(event)} as Partial<ViewportAppearance>)
@@ -72,6 +80,18 @@ function setProductGrid(event:Event){
         >{{locale.t(item.label)}}</button>
       </div>
     </div>
+
+    <article class="admin-surface rounded-2xl p-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <div>
+          <h3 class="text-base font-black text-[var(--c-text)]">ویرایش دیداری صفحه</h3>
+          <p class="mt-1 max-w-3xl text-xs leading-6 text-[var(--c-muted)]">صفحه را مستقیم لمس کنید؛ تنظیمات عنصر انتخاب‌شده در پنل پایین باز می‌شود. خاموش‌کردن ادیتور، استایل‌های ذخیره‌شده را پاک نمی‌کند.</p>
+        </div>
+        <button class="mini-action ms-auto bg-[var(--c-primary)] text-white" type="button" @click="openVisualEditor">
+          <Paintbrush :size="16"/>باز کردن ادیتور
+        </button>
+      </div>
+    </article>
 
     <div class="grid gap-4 lg:grid-cols-2">
       <article class="admin-surface rounded-2xl p-4">
