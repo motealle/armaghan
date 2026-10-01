@@ -39,6 +39,7 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] Verify HTTPS and deployment capabilities — HTTPS PASS; CI-built Composer/vendor path selected; web shell functions are disabled. Original 2026-09-30 probe had PDO SQLite unavailable and PDO MySQL available.
 - [x] Owner reports PDO SQLite was enabled on 2026-10-01; architecture switched back to SQLite primary.
 - [ ] Re-run production SQLite probe immediately before first production migration: confirm `pdo_sqlite`, private DB path write, foreign keys and backup path write.
+- [ ] **Production SQLite Reprobe #1: INCONCLUSIVE** — FTP/private sibling/cleanup PASS, but the temporary PHP probe could not be reached through a canonical web URL. Do not treat this as SQLite FAIL or PASS. Retry later using the confirmed canonical application URL or deployed backend health route.
 
 ## P0 — Laravel 13 / Filament 5 bootstrap
 
