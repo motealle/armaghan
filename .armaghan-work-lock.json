@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20261001-style-profile-production-acceptance",
-  "scope": "Production Style Profile transactional acceptance on live SQLite with rollback; update backlog/handoff; no auth bypass, no Test 26/27 UI mutation",
-  "base_ref": "main@82711c7cf832b606964785bea4f984b4b2d83630",
-  "acquired_at": "2026-10-01T18:05:00+03:30",
-  "expires_at": null,
-  "released_at": "2026-10-01T18:21:00+03:30",
-  "note": "Released after production Style Profile transactional acceptance. Main head 79ee20ad14414298be2ce6f129e6c48922017200. Live production SQLite acceptance Run 36878931948 PASS: draft save, two staging publishes, restore-as-new-version, publication pointer and ActivityLog all verified inside an outer transaction; 3 versions + 3 activity rows observed, then full rollback restored exact pre-test logical state; temporary public helper cleanup PASS. FTP Deploy #272 PASS and final docs-only #273 PASS with UI/root deploy skipped. No Test 26/27 UI mutation. Remaining editor acceptance is browser-only real Filament session + CSRF + cross-device UI cycle."
+  "run_id": "chat-20261001-repo-status-reconciliation",
+  "scope": "Reconcile CURRENT-STATUS, BACKLOG, HANDOFF and stale project docs against main/recent production acceptance; docs only; no UI/backend/test snapshot mutation",
+  "base_ref": "main@79ee20ad14414298be2ce6f129e6c48922017200",
+  "acquired_at": "2026-10-01T18:45:00+03:30",
+  "expires_at": "2026-10-01T20:15:00+03:30",
+  "released_at": null,
+  "note": "Documentation/status reconciliation only."
 }
