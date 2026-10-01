@@ -587,3 +587,6 @@ Run 4 deployment record: women banner choice 8-2 is live in Test 26. Commit `a35
 - This closes uncertainty around production SQLite/Style Profile service behavior.
 - Remaining acceptance is browser-only: establish a real Filament session at `/backend/admin/login`, edit Test 27, verify autosave status, reload/cross-device, Publish staging and Restore through the actual UI/CSRF path.
 - Do not weaken authentication to automate that final browser step.
+
+- Final merge head before this handoff note: `0fe333ad3ea7e2cdf21c9245ac99fbe22f9c3507`.
+- Main post-merge validation: **FTP Deploy #272 PASS**; QA/smoke passed, `deploy-root` skipped and `deploy-t` skipped. No UI release was touched by this acceptance batch.
