@@ -90,6 +90,20 @@ Canonical architecture: `docs/SQLITE-FIRST-PERSISTENCE.md`.
 - [ ] Add optional MySQL logical mirror/export only after the SQLite production path is stable; never dual-write in live requests.
 - [ ] Add mirror verification (row counts/checksums + restore drill) when MySQL mirror is implemented.
 
+## Delivery roadmap — remaining 7–9 core runs
+
+Current estimate excludes open-ended new customer redesign requests.
+
+1. [x] **Urgent Test 27 editor access** — persistent admin quick-launch button, structured target browser, direct visibility toggles, Test 27 redeploy.
+2. [ ] **Visual Style Profile frontend adapter** — load staging baseline, debounced save, checksum conflict handling, publish/history/restore with local fallback.
+3. [ ] **Production SQLite activation** — re-probe host PDO SQLite, private DB/backup paths, first migration, health/restore smoke.
+4. [ ] **Filament admin CRUD** — Product/Category/Subcategory/Customer management + safe first-admin provisioning.
+5. [ ] **Catalog/customer media + public API wiring** — product images, public reads, Vue integration without changing frozen Test 26.
+6. [ ] **Favorites/WhatsApp share** — persisted share records, short public links, revocation/expiry handling.
+7. [ ] **Customer Magic Link** — secure one-tap customer session, revoke/regenerate/audit flow.
+8. [ ] **Delivery hardening** — backup rotation/off-host copy, logs, health, recovery drill, responsive/RTL/LTR/dark-light QA.
+9. [ ] **Final customer handoff/polish** — only if review feedback remains after the above; otherwise this run collapses into delivery documentation.
+
 ## P0 — Test 27 visual style editor foundation
 
 Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
@@ -112,9 +126,12 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Add WCAG-normal-text contrast guard at 4.5:1 for explicit token text/background pairs, with blocked unsafe assignments and visible feedback.
 - [x] Persist/version Style Profiles through Laravel with mutable draft, immutable versions, staging/production publication pointers, admin-only writes, server-side safe CSS compilation, activity log and checksum conflict protection.
 - [ ] Connect the Test 27 visual-editor store to the Laravel Style Profile API through a small adapter: server baseline load, debounced draft autosave, expected-checksum conflict handling, staging Publish, history/Restore and local fallback.
-- [ ] Visual editor structured target controls: organized ON/OFF for sections/panels/headings/sentences plus text/background/border/token controls, with hidden targets always recoverable.
+- [x] Visual editor structured target controls foundation: grouped browser for header/hero/about/why/capabilities/product banners/product cards/footer, direct ON/OFF visibility, text/background/border/token editing through the existing inspector, and hidden targets recoverable.
 - [ ] Add explicit profile export/import/version-history UX if backend profile history alone is insufficient.
 - [x] Add Test 27 to the mutable test launcher after explicit owner approval on 2026-10-01; keep Test 26 frozen.
+- [x] Add persistent admin-only «ویرایش ظاهر» quick launcher so a logged-in admin can open the Test 27 editor from any page and be routed to Home automatically.
+- [x] Add grouped element browser inside the bottom sheet so nearby/nested elements do not need precise finger selection.
+- [x] Branch-only urgent validation PASS: visual-editor contract, TypeScript, unit tests and Test 27 build.
 
 ### Style Profile backend delivery record
 
