@@ -264,3 +264,15 @@ Validation:
 - TypeScript: PASS.
 - Vue unit tests: **30/30 PASS**.
 - Numbered Test 27 Vite build: PASS.
+
+
+### Adapter staged deployment
+
+- Main implementation head: `fb6f8e92406c7c805edb88d11800ca4f50f2150f`.
+- **FTP Deploy Run #262: PASS**.
+- Full Test 27 contract/TypeScript/unit/build QA: PASS.
+- FTP smoke: PASS.
+- `deploy-t`: PASS; Test 27 uploaded to `/public_html/t/27`.
+- 112 files uploaded; no remote files deleted.
+- `deploy-root`: skipped.
+- Until production Laravel + real admin session are deployed, the live sync panel intentionally reports local-only storage while all editor functions remain available.
