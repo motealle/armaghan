@@ -55,7 +55,7 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] Confirm no Test 26/Test 27/launcher mutation during bootstrap.
 - [x] Build the Armaghan core domain migrations/models from the approved schema draft, adapted portably for SQLite dev/test + MySQL/MariaDB production.
 - [x] Add production-safe Filament access gate: only active users with admin role can enter the admin panel; no repository credential is seeded.
-- [ ] Add secret-driven administrator provisioning for first deployment without user-side manual SQL/cPanel work.
+- [x] Add secret-free-in-repo first-administrator provisioning: fail-closed Artisan command + encrypted one-shot production provisioner; no seeded/default password.
 
 
 
@@ -68,7 +68,7 @@ Detailed ranked analysis: `docs/CI-FREEZE-REPAIR.md`.
 - [x] DatabaseSeeder no longer creates a default fixed user.
 - [x] Backend CI Run #3: **PASS** — 4 tests / 23 assertions; Composer audit clean.
 - [x] No production MySQL migration and no Test 26/Test 27 change occurred.
-- [ ] Next P0: Filament Product/Customer/Category/Subcategory Resources + safe first-admin provisioning.
+- [ ] Next P0: Filament Product/Customer/Category/Subcategory Resources; safe first-admin provisioning is complete.
 
 
 
@@ -117,7 +117,7 @@ Current estimate excludes open-ended new customer redesign requests.
 - [x] Expose only Laravel `public` surface under `/backend`.
 - [x] Repair public permissions to LiteSpeed-safe `0755/0644`; private state remains private.
 - [x] HTTP smoke PASS: backend root, health, public Style Profile API and Filament login page.
-- [ ] Provision the first real active admin through a one-time secure bootstrap flow; do not seed a default password.
+- [x] Provision the first real active admin through a one-time secure bootstrap flow; no seeded/default password and no plaintext credential stored in Git/repo logs.
 - [ ] Point Test 27 Style Profile API base to `/backend` and verify authenticated shared persistence after real admin provisioning.
 - [ ] Configure rotated off-host SQLite backup copy + restore drill.
 - [ ] Add safe repeatable backend release/update workflow with pre-migration snapshot and rollback guard.
@@ -142,10 +142,22 @@ Current estimate excludes open-ended new customer redesign requests.
 - [x] Backend CI Run #19: **PASS** after adding the CSRF bootstrap endpoint and Style Profile API test coverage.
 - [x] Historical Test 24/25 color contracts made token-value agnostic so a customer-approved Brand Blue value change does not regress frozen semantic contracts.
 - [x] **FTP Deploy Run #268: PASS** — full QA/build/smoke passed; active Test 27 rebuilt and uploaded to `/public_html/t/27`; 112 files uploaded; no remote files deleted; root deploy skipped.
-- [ ] Provision the first real Laravel administrator without a seeded/default password.
+- [x] Provision the first real Laravel administrator without a seeded/default password; account `admin@armaghan.local` is active in production.
 - [ ] Log into the real backend admin session and verify Test 27 draft autosave to production SQLite.
 - [ ] Verify cross-device reload from shared draft, staging Publish and Restore end-to-end.
 - [ ] After successful shared persistence QA, decide whether JSON export/import remains visible by default or moves under an advanced/backup disclosure.
+
+
+### First-admin provisioning delivery record
+
+- [x] Backend CI: secure provisioning command/tests, PHP helper syntax, dependency audit and secret hygiene PASS.
+- [x] First bootstrap attempt created the intended admin but failed before credential handoff because the temporary RSA public key was malformed; no plaintext credential was logged.
+- [x] Inspector run confirmed the only active admin exactly matched the bootstrap identity and timestamp: `admin@armaghan.local`, `Armaghan Administrator`, created at 2026-10-01T13:35:31Z.
+- [x] Guarded recovery rotated only that exact account using email + name + creation-time proof.
+- [x] Recovery generated the password on-host, encrypted it before mutation, stored only the Laravel hash, and returned only RSA ciphertext through CI.
+- [x] Active-admin policy and password hash verification PASS; `/backend/admin/login` HTTP smoke PASS.
+- [x] One-shot provisioning workflow removed after success.
+- [ ] Acceptance remaining: authenticate in the real backend session from the browser and verify Test 27 shared Style Profile save/reload/publish/restore end-to-end.
 
 ## P0 — Test 27 visual style editor foundation
 
@@ -182,7 +194,7 @@ Detailed architecture and ranked decisions: `docs/TEST27-VISUAL-EDITOR.md`.
 - [x] Add sync status UI: checking / local / saving / synced / conflict / error.
 - [x] Branch validation PASS: Test 27 contract, TypeScript, **30/30** Vue unit tests, numbered Test 27 build.
 - [x] **FTP Deploy Run #262: PASS** — active Test 27 rebuilt and deployed to `/public_html/t/27`; 112 files uploaded; no remote files deleted; root deploy skipped.
-- [ ] Activate shared server persistence in live Test 27 after first real admin provisioning and API-base switch to `/backend`; production Laravel/SQLite is now live.
+- [ ] Complete shared server persistence acceptance in live Test 27: sign into real Laravel admin session, edit/save, reload, verify cross-device draft, Publish staging and Restore. First real admin and `/backend` API base are now ready.
 
 - [x] Add Test 27 to the mutable test launcher after explicit owner approval on 2026-10-01; keep Test 26 frozen.
 - [x] Add persistent admin-only «ویرایش ظاهر» quick launcher so a logged-in admin can open the Test 27 editor from any page and be routed to Home automatically.
