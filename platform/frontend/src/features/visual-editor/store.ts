@@ -2,6 +2,7 @@ import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import type { Locale } from '@/services/localeDetection'
 import { isBrandTokenId, tokenVar, type BrandTokenId } from './tokenRegistry'
+import { visualTargetDefinition } from './targetRegistry'
 
 const PROFILE_KEY='armaghan:test27:visual-style-profile:v1'
 const EDITOR_KEY='armaghan:test27:visual-editor-enabled'
@@ -29,13 +30,15 @@ function validId(id:string):boolean{
   return /^[a-z0-9._-]+$/i.test(id)
 }
 
-function sanitizeStyle(value:unknown):ElementStyleOverride{
+function sanitizeStyle(id:string,value:unknown):ElementStyleOverride{
   const source=(value&&typeof value==='object'?value:{}) as Record<string,unknown>
+  const definition=visualTargetDefinition(id)
+  const allowed=definition?.styleControls??null
   const result:ElementStyleOverride={}
-  if(isBrandTokenId(source.textColor))result.textColor=source.textColor
-  if(isBrandTokenId(source.backgroundColor))result.backgroundColor=source.backgroundColor
-  if(isBrandTokenId(source.borderColor))result.borderColor=source.borderColor
-  if(typeof source.hidden==='boolean')result.hidden=source.hidden
+  if(isBrandTokenId(source.textColor)&&(allowed===null||allowed.includes('textColor')))result.textColor=source.textColor
+  if(isBrandTokenId(source.backgroundColor)&&(allowed===null||allowed.includes('backgroundColor')))result.backgroundColor=source.backgroundColor
+  if(isBrandTokenId(source.borderColor)&&(allowed===null||allowed.includes('borderColor')))result.borderColor=source.borderColor
+  if(typeof source.hidden==='boolean'&&definition?.hideable!==false)result.hidden=source.hidden
   return result
 }
 
@@ -43,7 +46,9 @@ export function sanitizeVisualStyleProfile(value:unknown):VisualStyleProfile{
   const parsed=(value&&typeof value==='object'?value:{}) as Partial<StoredVisualStyleProfile>
   const styles:Record<string,ElementStyleOverride>={}
   for(const [id,item] of Object.entries(parsed.styles??{})){
-    if(validId(id))styles[id]=sanitizeStyle(item)
+    if(!validId(id))continue
+    const sanitized=sanitizeStyle(id,item)
+    if(Object.keys(sanitized).length)styles[id]=sanitized
   }
   const texts:VisualStyleProfile['texts']={}
   for(const [id,item] of Object.entries(parsed.texts??{})){
@@ -104,14 +109,11 @@ export const useVisualStyleStore=defineStore('visual-style',()=>{
   function patchStyle(id:string,patch:Partial<ElementStyleOverride>){
     if(!validId(id))return
     const current=profile.value.styles[id]??{}
-    const next={...current,...patch}
-    for(const key of Object.keys(next) as (keyof ElementStyleOverride)[]){
-      if(next[key]===undefined)delete next[key]
-    }
-    profile.value={
-      ...profile.value,
-      styles:{...profile.value.styles,[id]:next},
-    }
+    const next=sanitizeStyle(id,{...current,...patch})
+    const styles={...profile.value.styles}
+    if(Object.keys(next).length)styles[id]=next
+    else delete styles[id]
+    profile.value={...profile.value,styles}
   }
 
   function clearStyleProperty(id:string,key:keyof ElementStyleOverride){
