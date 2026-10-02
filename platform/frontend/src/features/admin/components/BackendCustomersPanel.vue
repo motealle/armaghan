@@ -103,7 +103,7 @@ onMounted(()=>load())
         <p v-if="error" role="alert" class="auth-error">{{error}}</p>
         <div class="sticky bottom-0 z-10 flex justify-end gap-2 border-t border-[var(--c-border)] bg-[var(--c-surface)] py-3">
           <button type="button" class="mini-action" :disabled="saving" @click="close">{{locale.t('cancel')}}</button>
-          <button class="mini-action" :disabled="saving||loading"><Save :size="17"/>{{locale.t(saving?'adminLoading':'save')}}</button>
+          <button class="mini-action" :disabled="saving||loading||!draft.company_name?.trim()"><Save :size="17"/>{{locale.t(saving?'adminLoading':'save')}}</button>
         </div>
       </form>
     </AdaptivePanel>
