@@ -99,7 +99,9 @@ class CustomAdminProductsTest extends TestCase
         $original = file_get_contents($file->getRealPath());
         // Embed a JPEG comment which must not survive re-encoding.
         $comment = 'private-metadata-marker';
-        file_put_contents($file->getRealPath(), substr($original, 0, 2)."\xff\xfe".pack('n', strlen($comment) + 2).$comment.substr($original, 2));
+        $offset = 4 + unpack('n', substr($original, 4, 2))[1];
+        file_put_contents($file->getRealPath(), substr($original, 0, $offset)."\xff\xfe".pack('n', strlen($comment) + 2).$comment.substr($original, $offset));
+        $this->assertSame('image/jpeg', $file->getMimeType());
         $response = $this->postJson('/api/admin/products/'.$product->id.'/images', ['revision' => $row['revision'], 'image' => $file])
             ->assertCreated()->assertJsonCount(1, 'product.media');
         $media = $product->fresh()->getFirstMedia(Product::MEDIA_COLLECTION);
@@ -134,7 +136,7 @@ class CustomAdminProductsTest extends TestCase
         $a = $product->addMedia(UploadedFile::fake()->image('a.jpg', 10, 10))->toMediaCollection(Product::MEDIA_COLLECTION);
         $b = $product->addMedia(UploadedFile::fake()->image('b.jpg', 10, 10))->toMediaCollection(Product::MEDIA_COLLECTION);
         $foreign = $other->addMedia(UploadedFile::fake()->image('c.jpg', 10, 10))->toMediaCollection(Product::MEDIA_COLLECTION);
-        $foreignOrder = $foreign->sort_order;
+        $foreignOrder = $foreign->order_column;
         $row = $this->row($product); $url = '/api/admin/products/'.$product->id.'/images/order';
         foreach ([[$a->id], [$a->id, $a->id], [$foreign->id, $b->id]] as $ids) {
             $this->putJson($url, ['revision' => $row['revision'], 'media_ids' => $ids])->assertUnprocessable();
@@ -142,7 +144,7 @@ class CustomAdminProductsTest extends TestCase
         $this->putJson($url, ['revision' => $row['revision'], 'media_ids' => [$b->id, $a->id]])->assertOk()->assertJsonPath('product.media.0.id', $b->id);
         $this->putJson($url, ['revision' => $row['revision'], 'media_ids' => [$a->id, $b->id]])->assertConflict();
         $this->getJson('/api/catalog/products?q=11099')->assertOk()->assertJsonPath('data.0.media.0.id', (string) $b->uuid);
-        $this->assertSame($foreignOrder, $foreign->fresh()->sort_order);
+        $this->assertSame($foreignOrder, $foreign->fresh()->order_column);
     }
 
     public function test_failed_processing_removes_only_new_files_and_rolls_back_audit(): void

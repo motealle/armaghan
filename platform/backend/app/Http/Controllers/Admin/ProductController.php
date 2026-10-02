@@ -125,7 +125,7 @@ class ProductController extends Controller
             $owned = $media->keys()->map(fn ($id) => (int) $id)->all();
             $sorted = $submitted; sort($sorted); sort($owned);
             if ($sorted !== $owned) throw ValidationException::withMessages(['media_ids' => 'Order must contain exactly this product gallery.']);
-            foreach ($submitted as $i => $id) $media[$id]->forceFill(['sort_order' => $i + 1])->save();
+            foreach ($submitted as $i => $id) $media[$id]->forceFill(['order_column' => $i + 1])->save();
             $this->audit($request, $row, 'admin.product.images-ordered', ['media']);
             return $row;
         });
@@ -155,7 +155,7 @@ class ProductController extends Controller
     {
         return hash('sha256', json_encode([$product->only(array_merge(['id', 'updated_at'], self::FIELDS)),
             // Media has appended URL attributes; serializing a partial model would require its missing disk fields.
-            $product->media()->where('collection_name', Product::MEDIA_COLLECTION)->orderBy('sort_order')->orderBy('id')->get(['id', 'sort_order', 'updated_at'])->map(fn ($m) => $m->only(['id', 'sort_order', 'updated_at']))->all(),
+            $product->media()->where('collection_name', Product::MEDIA_COLLECTION)->orderBy('order_column')->orderBy('id')->get(['id', 'order_column', 'updated_at'])->map(fn ($m) => $m->only(['id', 'order_column', 'updated_at']))->all(),
             $product->specValues()->orderBy('id')->get(['id', 'spec_definition_id', 'value_text', 'updated_at'])->toArray()], JSON_THROW_ON_ERROR));
     }
 
@@ -163,7 +163,7 @@ class ProductController extends Controller
     {
         return array_merge(['id' => $product->id], $product->only(self::FIELDS), ['revision' => $this->revision($product),
             'subcategory_code' => $product->subcategory->code, 'category_code' => $product->subcategory->category->code,
-            'media' => $product->getMedia(Product::MEDIA_COLLECTION)->sortBy('sort_order')->values()->map(fn ($m) => [
+            'media' => $product->getMedia(Product::MEDIA_COLLECTION)->sortBy('order_column')->values()->map(fn ($m) => [
                 'id' => $m->id, 'url' => $m->hasGeneratedConversion('card') ? $m->getUrl('card') : $m->getUrl(),
                 'thumb_url' => $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl()])->all()]);
     }
