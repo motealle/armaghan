@@ -1,11 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261002-google-return-fix",
   "scope": "Repair Google callback frontend redirect under backend subdirectory; regression tests and guarded code deploy",
   "base_ref": "bc195272361c5706086de02bccd1866fac8e8fe1",
   "acquired_at": "2026-10-02T15:46:27.183Z",
-  "expires_at": "2026-10-02T17:16:27.184Z"
+  "expires_at": "2026-10-02T17:16:27.184Z",
+  "released_at": "2026-10-02T15:54:12.371Z",
+  "result_ref": "cf4198a7edf88ad593d0ab9b4459237e80b6f451"
 }
