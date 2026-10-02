@@ -1,0 +1,97 @@
+name: SQLite Off-host Backup
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 1 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sqlite-offhost-backup-production
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP for helper validation
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+          extensions: openssl,sqlite3,pdo_sqlite
+
+      - name: Validate off-host backup helper
+        run: |
+          python -m py_compile platform/scripts/sqlite_offhost_backup.py
+          python - <<'PY'
+          import base64
+          import importlib.util
+          from pathlib import Path
+          path=Path("platform/scripts/sqlite_offhost_backup.py")
+          spec=importlib.util.spec_from_file_location("offhost_backup",path)
+          module=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          Path("/tmp/armaghan-offhost-backup.php").write_text(
+              module.helper_php(
+                  "safe-ci-helper-secret",
+                  "0123456789abcdef",
+                  base64.b64encode(b"x"*32).decode("ascii"),
+              ),
+              encoding="utf-8",
+          )
+          PY
+          php -l /tmp/armaghan-offhost-backup.php
+
+      - name: Create encrypted production SQLite backup
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          ARMAGHAN_BACKUP_PASSPHRASE: ${{ secrets.ARMAGHAN_BACKUP_PASSPHRASE }}
+          ARMAGHAN_SITE_URL: https://armaghantrading.com
+        run: |
+          python platform/scripts/sqlite_offhost_backup.py backup \
+            --out "$RUNNER_TEMP/armaghan-offhost"
+
+      - name: Upload encrypted off-host artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: armaghan-sqlite-backup-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/armaghan-offhost/backup.sqlite.enc
+            ${{ runner.temp }}/armaghan-offhost/manifest.json
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+
+  restore-drill:
+    needs: backup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP for isolated restore
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+          extensions: openssl,sqlite3,pdo_sqlite
+
+      - name: Download encrypted artifact round-trip
+        uses: actions/download-artifact@v4
+        with:
+          name: armaghan-sqlite-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/armaghan-restore
+
+      - name: Restore and verify isolated SQLite copy
+        env:
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          ARMAGHAN_BACKUP_PASSPHRASE: ${{ secrets.ARMAGHAN_BACKUP_PASSPHRASE }}
+        run: |
+          python platform/scripts/sqlite_offhost_backup.py restore-drill \
+            --input "$RUNNER_TEMP/armaghan-restore"
