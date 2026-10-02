@@ -31,6 +31,15 @@ class CustomAdminProductsTest extends TestCase
             'name_ar' => null, 'name_ku' => null, 'availability' => 'available', 'active' => true, 'sort_order' => 0];
     }
 
+    public function test_upload_budget_is_separate_from_admin_reads_and_remains_rate_limited(): void
+    {
+        $this->actingAs(User::factory()->admin()->create()); $product = Product::create($this->fields());
+        for ($i = 0; $i < 15; $i++) $this->getJson('/api/admin/products')->assertOk();
+        for ($i = 0; $i < 10; $i++) $this->postJson('/api/admin/products/'.$product->id.'/images', [])->assertUnprocessable();
+        $this->postJson('/api/admin/products/'.$product->id.'/images', [])->assertTooManyRequests();
+        $this->getJson('/api/admin/products')->assertOk();
+    }
+
     private function row(Product $product): array
     {
         return $this->getJson('/api/admin/products?search='.$product->code)->assertOk()->json('products.0');
