@@ -7,6 +7,13 @@ return [
         'magic_fragment_path' => env('ARMAGHAN_CUSTOMER_MAGIC_FRAGMENT_PATH', '/t/27/#/magic/'),
     ],
 
+    'favorite_share' => [
+        'fragment_path' => env('ARMAGHAN_FAVORITE_SHARE_FRAGMENT_PATH', '/t/27/#/favorites/share/'),
+        'guest_ttl_days' => (int) env('ARMAGHAN_FAVORITE_SHARE_GUEST_TTL_DAYS', 7),
+        'customer_ttl_days' => (int) env('ARMAGHAN_FAVORITE_SHARE_CUSTOMER_TTL_DAYS', 30),
+        'max_products' => (int) env('ARMAGHAN_FAVORITE_SHARE_MAX_PRODUCTS', 30),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | SQLite backup policy
