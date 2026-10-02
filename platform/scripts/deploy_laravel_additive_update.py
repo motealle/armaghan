@@ -128,9 +128,12 @@ function migration_map(string $root): array {
 function additive_migration_is_safe(string $path): bool {
     $source = (string) file_get_contents($path);
     $upPos = strpos($source, 'function up');
-    $downPos = strpos($source, 'function down');
-    if ($upPos === false || $downPos === false || $downPos <= $upPos) return false;
-    $up = strtolower(substr($source, $upPos, $downPos - $upPos));
+    if ($upPos === false) return false;
+    $downPos = strpos($source, 'function down', $upPos + 1);
+    $upSource = ($downPos === false || $downPos <= $upPos)
+        ? substr($source, $upPos)
+        : substr($source, $upPos, $downPos - $upPos);
+    $up = strtolower($upSource);
 
     if (!str_contains($up, 'schema::create')) return false;
 
