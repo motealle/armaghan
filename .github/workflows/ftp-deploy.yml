@@ -130,6 +130,8 @@ jobs:
         run: python tests/test_test27_visual_editor_contract.py
       - name: Test Test 27 customer auth/session contract
         run: python tests/test_test27_customer_auth_contract.py
+      - name: Test Test 27 persisted FavoriteShare contract
+        run: python tests/test_test27_favorite_share_contract.py
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
       - name: Check Python syntax
