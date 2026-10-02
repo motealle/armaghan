@@ -868,3 +868,5 @@ html.visual-editor-active .bottom-nav{display:none!important}
 [data-style-id="home.capabilities.eyebrow"],
 [data-style-id="home.product-banners.eyebrow"]{display:none}
 .product-card .product-card-title.unavailable{display:flex;margin-inline:auto;justify-content:center;text-align:center;font-size:.7rem;font-weight:400}
+
+/* Test29 root release shares these requested customer defaults. */
