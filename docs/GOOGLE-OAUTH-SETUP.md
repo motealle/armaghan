@@ -25,7 +25,7 @@ Backend Laravel and Filament are live. Official Laravel Socialite is included in
 - Production credentials are not deployed or overwritten by ordinary releases. The switch defaults OFF. Code/deployment tests do not prove a real Google account login.
 
 ## Evidence
-Dependency resolution run 37007410283 passed. Eleven automated backend cases cover disabled state, redirect allowlist, signup/repeat identity, existing-email/admin denial, authenticated linking, unverified/inactive denial, independent sessions, invalid state and cancellation. Backend deploy and actual credential readiness are pending closeout.
+Dependency resolution run 37007410283 passed. Eleven automated backend cases cover disabled state, redirect allowlist, signup/repeat identity, existing-email/admin denial, authenticated linking, unverified/inactive denial, independent sessions, invalid state and cancellation. Backend CI 37008505779 and Additive Deploy 37008505784 PASS (49 tests, 348 assertions). Live readiness check in FTP 37009477221 reports enabled:false; actual credentials and real Google login remain OPEN.
 
 Sources: https://laravel.com/framework/docs/socialite and https://developers.google.com/identity/openid-connect/openid-connect .
 

@@ -1,5 +1,22 @@
 # Armaghan — Product Backlog
 
+## Root Test29 release — current
+
+- [x] Owner-authorized guarded root selector; preserve /t and frozen 01–28.
+- [x] Root 29 and /t/29 deployment + exact HTML/initial asset verification; eight rollback/version tests.
+- [x] Hide four Home eyebrows by default; editor shows them again with one action.
+- [x] Concise producible badge: smaller, weight 400, centered; verified at root.
+- [x] Keep root navigation/skip links at root; initial Home imagery loads.
+- [x] Direct real Filament product/photo/customer navigation; retain backend authentication boundaries.
+- [x] Official Google Socialite dependency, stable identity table, signup/sign-in, no admin/email-only linking; 49 backend tests + guarded additive deployment PASS.
+- [x] Root only accepts real customer sessions; 49 frontend tests PASS.
+- [ ] Owner configures Google Cloud client + exact callback and private host credentials. Live status is enabled:false.
+- [ ] Actual Google signup/repeat login, authenticated product upload/customer edit; automation does not prove these.
+- [ ] Verify/update customer Magic Link/FavoriteShare canonical root fragment paths against private environment; source historical defaults still /t/27.
+- [ ] Complete deferred mobile/tablet and broad multilingual/theme visual acceptance.
+
+# Armaghan — Product Backlog
+
 ## Test29 nonvisual release — current
 
 - [x] Read actual state; preserve completed backend work.
