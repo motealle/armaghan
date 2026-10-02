@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { ClipboardCopy, Globe2, KeyRound, LogIn, UserPlus } from '@lucide/vue'
+import { Globe2, KeyRound, LogIn, UserPlus } from '@lucide/vue'
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useCustomersStore } from '@/stores/customers'
@@ -20,12 +20,11 @@ const name=ref('')
 const email=ref('')
 const error=ref('')
 const message=ref('')
-const magicUrl=ref('')
 
 const title=computed(()=>mode.value==='register'?locale.t('register'):mode.value==='magic'?locale.t('magicLink'):locale.t('loginTitle'))
 
 watch(()=>props.open,(open)=>{
-  if(open){mode.value='signin';error.value='';message.value='';magicUrl.value=''}
+  if(open){mode.value='signin';error.value='';message.value=''}
 })
 
 function complete(){
@@ -49,16 +48,6 @@ function register(){
   }
   customers.add({name:name.value.trim(),email:email.value.trim().toLowerCase(),whatsapp:''})
   complete()
-}
-function makeMagic(){
-  error.value='';message.value=''
-  if(!email.value.includes('@')){error.value=locale.t('invalidLogin');return}
-  magicUrl.value=session.createMagicLink(email.value,'expiring',72)
-  message.value=locale.t('magicLinkReady')
-}
-async function copyMagic(){
-  if(!magicUrl.value)return
-  try{await navigator.clipboard.writeText(magicUrl.value);message.value=locale.t('magicLinkReady')}catch{}
 }
 function googleInfo(){
   error.value=locale.t('googleBackendRequired')
@@ -92,16 +81,11 @@ function googleInfo(){
       <button class="auth-primary"><UserPlus :size="19"/>{{locale.t('createAccount')}}</button>
     </form>
 
-    <form v-else class="mt-4 space-y-4" @submit.prevent="makeMagic">
-      <p class="text-xs leading-6 text-[var(--c-muted)]">{{locale.t('registerHelp')}}</p>
-      <label class="form-field">{{locale.t('email')}}<input v-model="email" type="email" autocomplete="email" autofocus/></label>
-      <p v-if="error" class="auth-error">{{error}}</p>
-      <p v-if="message" class="auth-success">{{message}}</p>
-      <button class="auth-primary"><KeyRound :size="19"/>{{locale.t('generateLink')}}</button>
-      <div v-if="magicUrl" class="magic-link-box">
-        <input :value="magicUrl" readonly dir="ltr"/>
-        <button type="button" :aria-label="locale.t('copy')" @click="copyMagic"><ClipboardCopy :size="18"/></button>
+    <div v-else class="mt-4 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface-2)] p-4">
+      <div class="flex items-start gap-3">
+        <KeyRound :size="21" class="mt-0.5 shrink-0 text-[var(--c-primary)]"/>
+        <p class="text-sm leading-7 text-[var(--c-text)]">{{locale.t('magicLinkRequestHelp')}}</p>
       </div>
-    </form>
+    </div>
   </BaseModal>
 </template>
