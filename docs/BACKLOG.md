@@ -1,5 +1,13 @@
 # Armaghan — Product Backlog
 
+## Completed — bounded operational-memory reconciliation — 2026-10-02
+
+- [x] Reconcile current main, latest handoff, backlog, Test28 hardening audit and shared lock.
+- [x] Correct CURRENT-STATUS next-run instructions: Tests 01–27 frozen; Test28 active; backup/restore hardening already complete.
+- [x] Correct HANDOFF opening phase pointer and record ranked method + exact remaining acceptance evidence (section 44).
+- [x] Keep all final live QA tasks open; no inferred browser acceptance and no UI/backend/deployment changes.
+
+
 ## P0 — Final end-to-end QA + delivery handoff — next
 
 - [ ] Validate Test28 mobile/tablet/desktop layout and interaction.

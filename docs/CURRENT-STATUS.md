@@ -1,7 +1,7 @@
 # Armaghan — Current Status
 
 Last reconciled: 2026-10-02
-Canonical main head at reconciliation start: `72a45224e0bd6fd6547f30f2fa9983e6f1424a0b`
+Canonical main head at reconciliation start: `9ee3a20697d109194ca8ff25e172f072f3688a38`
 
 This file is the **current operational source of truth** for the next run. Historical decision records remain useful, but when an older document conflicts with this file, use this file plus the latest `docs/HANDOFF.md` and `docs/BACKLOG.md`.
 
@@ -315,9 +315,16 @@ P2 / optional:
 4. Do not claim Style Profile server persistence is pending; its production service semantics are verified.
 5. The remaining Style Profile task is browser/session/CSRF acceptance.
 6. Keep Test 26 immutable.
-7. Keep Test 27 as the active mutable UI lane.
+7. Keep Tests 01–27 immutable. Test 28 is the only active mutable UI lane; use only `armaghan:test28:*` browser-state keys.
 8. Never store production plaintext credentials in Git, docs, logs or artifacts.
-9. Do not rebuild product-media ownership, Customer/Magic Link or FavoriteShare/WhatsApp; all are live. The next P0 is off-host backup/restore hardening.
-10. Do not claim the 18 current Products have server media yet: their API `media` arrays are currently empty and Test 27 intentionally falls back to local media until an admin uploads images.
+9. Do not rebuild product-media ownership, Customer/Magic Link, FavoriteShare/WhatsApp or off-host backup/restore; all are live. The next P0 is final end-to-end QA + delivery handoff.
+10. Do not claim the 18 current Products have server media yet: their last verified API `media` arrays were empty and Test 28 retains local media fallback until an admin uploads images. Recheck current catalog data before any new media-state claim.
 11. Use the guarded additive lane for future approved create-only migration/dependency changes; ordinary Backend changes stay on the code-only lane.
 
+
+## 2026-10-02 bounded documentation reconciliation
+
+- Compared canonical status, latest handoff, backlog, Test28 hardening audit and released shared lease with main `9ee3a206...`.
+- Corrected stale next-run instructions that still called Test27 mutable and off-host backup pending. Historical deployment evidence remains unchanged.
+- GitHub Actions run `36975429480` for the inspected main head is completed/success; this is prior-run evidence, not a new browser acceptance.
+- No live multi-device or authenticated browser acceptance was performed in this documentation run. Final QA remains open; do not infer completion from existing unit/build/route checks.

@@ -8,7 +8,7 @@
 - Current prototype/development scope: `/t`
 - Root website (`/public_html`) is a protected landing page and must remain untouched by prototype work.
 - Test 26 customer-facing UX is frozen pending customer feedback; do not mutate `/t/26`.
-- The active phase is now Backend MVP productionization. Any later UI change, including customer feedback, must start in Test 27 or higher.
+- Core Backend MVP productionization is complete. The active phase is final Test28 QA and delivery handoff. Tests 01–27 are frozen; any current UI correction belongs only in Test28.
 
 ## 2. Deployment and hosting contract
 
@@ -877,3 +877,35 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 - Contract-only fix: `72a45224e0bd6fd6547f30f2fa9983e6f1424a0b` changed the historical assertion to require a frozen range that still includes Test26.
 - FTP #322: PASS; QA complete, frontend build skipped, `/t` deploy skipped, root deploy skipped.
 - Repository memory now points to final QA/handoff as the sole remaining core run.
+
+
+## 44. Bounded status reconciliation — 2026-10-02
+
+Read-only evidence: main `9ee3a20697d109194ca8ff25e172f072f3688a38`; latest FTP workflow `36975429480` completed/success. Shared coordination lease was released before this run acquired its own SHA-guarded lease.
+
+Corrected the CURRENT-STATUS next-run list: Test27 is frozen, Test28 is active, and encrypted off-host backup/restore hardening is complete. Updated this document's opening phase pointer. No frontend, backend, frozen snapshot, launcher or production data changed.
+
+### Selected bounded method
+
+| Rank | Method | Score | Benefit / limitation |
+|---:|---|---:|---|
+| 1 | Reconcile stale operational instructions and preserve explicit QA evidence boundaries | 9.5 | Prevents accidental Test27 mutation and repeated completed work; does not close live QA |
+| 2 | Live responsive/language/theme acceptance | 9.0 | Closes customer-facing risk; needs browser evidence |
+| 3 | Authenticated editor acceptance | 8.0 | Verifies shared draft/reload/publish/restore; needs a valid real admin session |
+| 4 | Additional CRUD work | 5.0 | Current core CRUD is already implemented |
+| 5 | New visual redesign | 3.0 | Adds scope and regression risk before delivery |
+
+Selected automatically: option 1. Reference for small changes checked by existing workflows: https://docs.github.com/en/actions/get-started/continuous-integration.
+
+### Exact next acceptance scope
+
+| Area | Required evidence | Status after this run |
+|---|---|---|
+| Responsive layout | Mobile/tablet/desktop: Home, products, details; mobile bottom nav, top nav transition, hero and footer | OPEN; no live browser check in this run |
+| Languages and themes | Persian/Arabic/Sorani RTL, English LTR; light/dark readable controls | OPEN |
+| Guest boundaries | Guest customer-session 401; POST-only token routes; invalid-token UI; no admin editor exposure to guest | Historical route/UI evidence exists; fresh acceptance OPEN |
+| Catalog/media | Backend inactive records suppress local copies; empty server gallery uses fallback | Implemented; final browser acceptance OPEN |
+| Real authenticated flows | Editor save/reload/publish/restore, one product image, one customer Magic Link | Opportunistic; requires real session; never bypass auth |
+| Release/recovery | Frozen 01–27, Test28-first launcher, root skipped, encrypted backup round-trip | Prior documented PASS; record evidence in final handoff |
+
+Keep the final QA backlog unchecked until each result has direct evidence. This run does not replace multi-device acceptance with documentation or route/unit tests.
