@@ -1,13 +1,13 @@
 # Armaghan — Current Status
 
 Last reconciled: 2026-10-02
-Canonical main head at reconciliation start: `e39d5bd6e2b972f2b5980abee820dfdac3ebfad8`
+Canonical main head at reconciliation start: `8ed3f26bd4841feae3a020f2df263d28fe720f15`
 
 This file is the **current operational source of truth** for the next run. Historical decision records remain useful, but when an older document conflicts with this file, use this file plus the latest `docs/HANDOFF.md` and `docs/BACKLOG.md`.
 
 ## Executive status
 
-Core MVP delivery is approximately **82–86% complete**. Core admin CRUD and public catalog reads are live; the remaining work is primarily product media ownership/upload, customer API/session flows, favorites/Magic Link persistence, off-host backup/restore hardening, and final end-to-end acceptance.
+Core MVP delivery is approximately **87–90% complete**. Core admin CRUD, public catalog reads, guarded schema/dependency deployment and production product-media ownership/upload are live. The remaining work is customer API/session flows, persisted favorites/Magic Link behavior, off-host backup/restore hardening, and final end-to-end acceptance.
 
 Current UI lane:
 - Test 26: frozen/immutable.
@@ -24,7 +24,10 @@ Current backend lane:
 - Category/Subcategory/Product/Customer Filament Resources are implemented and live in production. Taxonomy commit `4281034656...` passed Backend CI #31; Product/Customer commit `de450a15...` passed Backend CI #33; Backend Code Deploy #3 passed with all four Resource routes returning HTTP 200.
 - A guarded code-only Backend update lane is operational: it refuses Composer/migration drift, creates a pre-swap SQLite snapshot, stages private/public code, HTTP-smokes the release and rolls code back on failure. Run #1 deliberately rolled back after a public-permission smoke failure; Runs #2–#5 passed.
 - Public catalog API is live at `/backend/api/catalog/categories` and `/backend/api/catalog/products`; production catalog is initialized with **3 categories / 6 subcategories / 18 products**.
-- Test 27 performs non-blocking Hybrid Sync: Backend-managed names/status/active state overlay the browser catalog while existing local media/specs remain fallback. The live Products page independently rendered 18 products after bootstrap.
+- Test 27 performs non-blocking Hybrid Sync: Backend-managed names/status/active state overlay the browser catalog. Server product media now overrides the local gallery when present; local media/specs remain fallback while a server gallery is empty or the API is unavailable.
+- Production product media is live through Spatie Media Library + the official Filament integration: ordered `product-gallery`, JPEG/PNG/WebP validation, 8 MiB and 5000×5000 limits, metadata-stripping re-encode, non-cropping/non-upscaling card/thumb conversions, and public delivery through `/backend/storage`.
+- The production `media` table is migrated and the public-storage symlink is verified. The current 18 bootstrapped products still have zero server media rows until an authenticated administrator uploads real product images; Test 27 therefore continues to show the existing local fallback images without regression.
+- A guarded additive Backend deploy lane is production-proven for create-only migrations/dependency changes. Backend Additive Deploy #3 created a consistent SQLite snapshot, applied exactly one additive media migration, verified the public storage link, passed all HTTP smokes, and cleaned temporary files.
 - Final browser-authenticated Test 27 Style Profile acceptance is still open but is non-blocking. A read-only check of the saved browser profile redirected to `/backend/admin/login`, so delivery does not rely on that session.
 
 ## Production backend — verified complete
@@ -46,7 +49,9 @@ Verified:
 - Production SQLite database created outside `public_html`.
 - Production migrations: PASS.
 - Initial consistent SQLite snapshot: PASS.
-- Core schema checks: users, products, customers, Style Profile tables.
+- Core schema checks: users, products, customers, Style Profile tables, media table.
+- Production image runtime requirements: GD + EXIF accepted by the guarded Media deployment preflight.
+- Public product media link: `/backend/storage` active.
 - Public backend smoke:
   - `/backend/` → 200
   - `/backend/up` → 200
@@ -179,12 +184,11 @@ Production catalog state:
 - Public catalog filtering/search/pagination and managed-code metadata are live.
 
 Not yet implemented:
-- Customer public/admin API controllers.
+- Customer public/admin API controllers needed by customer self-service/session flows.
 - Full FavoriteShare HTTP flow.
 - Full MagicLink HTTP/session flow.
-- Production media ownership/upload flow.
 
-Test 27 catalog reads are backend-aware with a local fallback for staged resilience. Product media/specs remain local fallback until the production media subsystem is wired. Customer/account flows still contain prototype/local browser paths until their APIs and Magic Link session flow are implemented.
+Product media ownership/upload is implemented and live. The public catalog now returns a `media` array per Product and Test 27 prefers that server gallery when non-empty. Because the current production Products do not yet have uploaded server media, local media/specs remain the visible fallback. Customer/account flows still contain prototype/local browser paths until their APIs and Magic Link session flow are implemented.
 
 ## Persistence policy
 
@@ -196,26 +200,25 @@ Current policy:
 - Primary backups remain SQLite-to-SQLite consistent snapshots.
 - At least one rotated off-host backup + restore drill is still required before final production handoff.
 
-## Remaining core delivery — estimated 4 delivery runs + opportunistic browser acceptance
+## Remaining core delivery — estimated 3 aggressive / 4 conservative runs + opportunistic browser acceptance
 
-This estimate excludes open-ended new customer UI revisions. Browser-authenticated Style Profile acceptance remains an opportunistic parallel check rather than a blocker because server-side persistence is already production-verified.
+This estimate excludes open-ended new customer UI revisions. The conservative plan keeps Customer/Magic Link and Favorites/WhatsApp as separate bounded runs; the aggressive 3-run path combines them only if the first vertical batch stays within the safety/time budget. Browser-authenticated Style Profile acceptance remains an opportunistic parallel check rather than a blocker because server-side persistence is already production-verified.
 
-1. **Product media + customer API wiring**
-   - production product-media ownership/upload;
-   - keep Test 27 media fallback until server media is proven;
-   - customer public/admin reads/writes needed by the MVP.
+1. **Customer API/session + Magic Link core**
+   - minimum customer reads/writes required by self-service;
+   - safe one-tap customer session, expiry/revoke and audit;
+   - remove browser-only customer identity dependencies from the MVP path.
 
-2. **Favorites/WhatsApp + customer Magic Link**
-   - persisted favorite share links;
-   - expiry/revoke;
-   - safe one-tap customer session;
-   - audit trail.
+2. **Favorites/WhatsApp persisted share flow**
+   - persisted favorite-share links;
+   - guest/customer ownership and expiry/revoke;
+   - WhatsApp handoff against server-backed shares.
 
 3. **Production hardening**
    - rotated off-host SQLite backup;
    - restore drill;
-   - code-only backend update lane is complete; add a separate migration-aware guarded lane only when a schema/dependency change is actually required;
-   - logs/health verification.
+   - logs/health verification;
+   - additive and code-only deploy lanes are already production-proven.
 
 4. **Final end-to-end QA + handoff**
    - mobile/tablet/desktop;
@@ -230,16 +233,15 @@ This estimate excludes open-ended new customer UI revisions. Browser-authenticat
 ## Highest-priority open items
 
 P0:
-1. Implement production product media ownership/upload and wire server media into Test 27 without modifying frozen Test 26.
-2. Implement the minimum customer API/session surface needed by customer access and later Magic Link.
+1. Implement the minimum customer API/session surface and Magic Link core without modifying frozen Test 26.
+2. Implement persisted FavoriteShare/WhatsApp handoff.
 3. Configure rotated off-host SQLite backup and perform a restore drill.
-4. Complete browser-authenticated Test 27 Style Profile acceptance opportunistically when a valid real Filament session is available.
-5. Add a migration-aware guarded backend update path only before the first future schema/dependency-changing release; the code-only updater is already production-proven.
+4. Complete browser-authenticated Test 27 Style Profile + one real Filament product-image upload acceptance opportunistically when a valid real admin session is available.
+5. Keep both Backend deployment lanes green: code-only for ordinary changes, guarded additive for approved create-only migration/dependency changes.
 
 P1:
 - Favorites/WhatsApp persisted share flow.
 - Customer Magic Link session flow.
-- Product media ownership/upload subsystem.
 
 P2 / optional:
 - MySQL logical mirror/export with verification.
@@ -264,6 +266,15 @@ P2 / optional:
 - Backend CI #37: PASS for guarded catalog-bootstrap command/fixture.
 - Backend Code Deploy #5: PASS; bootstrap command deployed with no migration/dependency drift.
 - Catalog Bootstrap Production #1: PASS; pre-state 0/0/0, SQLite snapshot created, post-state 3 categories / 6 subcategories / 18 products, representative codes verified, helper cleanup PASS.
+- Backend CI #39/#40: PASS for additive-deploy infrastructure and up-only additive migration validator.
+- Backend CI #41: PASS on the pre-merge Product Media PR; official locked Spatie/Filament dependencies, media migration and feature tests all passed.
+- Product Media merge: `4d8f660a06df7b4e4a340502d6d65255b41cc949`.
+- Backend CI #42: PASS after merge.
+- Backend Code Deploy #7: code-only deployment correctly skipped because Composer/migration drift was detected.
+- Backend Additive Deploy #3: PASS — backup created, dependency changed=true, exactly 1 create-only migration applied, `public_storage_link=true`, health/login/products/catalog smokes all 200, temp cleanup PASS.
+- FTP Deploy #307: intentionally failed before Test27 deployment because the anti-hotlink policy rejected an external-domain URL used only in a unit-test fixture; no `/t/27` mutation occurred.
+- Test-fixture repair: `b3722d3f4643ee403972b7a03215339e5aa802ad`.
+- FTP Deploy #308: PASS — immutable contracts, web-stock policy, TypeScript, Vue unit tests, Test27 production build and FTP smoke all passed; `deploy-t` PASS; `deploy-root` skipped.
 
 ## Rules for the next run
 
@@ -275,3 +286,6 @@ P2 / optional:
 6. Keep Test 26 immutable.
 7. Keep Test 27 as the active mutable UI lane.
 8. Never store production plaintext credentials in Git, docs, logs or artifacts.
+9. Do not rebuild product-media ownership; it is live. The next P0 is customer API/session + Magic Link core.
+10. Do not claim the 18 current Products have server media yet: their API `media` arrays are currently empty and Test 27 intentionally falls back to local media until an admin uploads images.
+11. Use the guarded additive lane for future approved create-only migration/dependency changes; ordinary Backend changes stay on the code-only lane.

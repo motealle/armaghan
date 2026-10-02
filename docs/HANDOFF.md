@@ -721,3 +721,41 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 3. favorites/share + Magic Link;
 4. off-host SQLite backup/restore drill;
 5. final QA/handoff.
+
+
+## 40. Production Product Media + guarded additive deployment — live
+
+### Architecture and ownership
+- Product media is now owned by Spatie Media Library on `App\Models\Product`, collection `product-gallery`, administered through the official Filament Spatie Media Library plugin.
+- Product media uses the public disk and the model-specific path generator `media/products/<media-id>/`; conversions remain inside each unique media directory.
+- Filament allows up to 6 ordered JPEG/PNG/WebP images per Product, max 8 MiB and 5000×5000 each. Drag order determines primary image.
+- Every accepted original is decoded and re-encoded through GD before it becomes canonical, stripping embedded metadata and normalizing common JPEG EXIF orientation.
+- `card` and `thumb` conversions are synchronous, aspect-ratio preserving, non-cropping and capped at the original width to avoid upscaling.
+
+### Public catalog + Test 27
+- Public Product API eager-loads Media and returns an ordered `media` array with card + thumb URLs.
+- Test 27 server media is authoritative when a Product has at least one server media item; otherwise its existing local media/spec fallback remains active.
+- Independent live read after deployment confirmed the production API now exposes `media: []` on current Products and still reports all 18 managed Products.
+- No real Product image has been uploaded to production yet because the saved browser profile is not authenticated. This is an acceptance item, not an implementation blocker.
+
+### Additive deployment lane
+- Infrastructure commit before Media: `905e5a073962dcfa37f334b13318739e36f0a2cf`; validator follow-up `3ec1c50eac8c0e65ba0a562e37e556d96c589c5e`.
+- Code-only deploy now plans first and skips when Composer or migration drift exists.
+- Additive updater requires all existing migrations to be byte-identical and currently allows only new create-only migrations. It snapshots SQLite before migration, restores the snapshot if migration execution itself fails, preserves previous code/public roots until smoke succeeds, and maintains the public storage symlink.
+- Production image capability is fail-closed on missing GD or EXIF.
+
+### Delivery record
+- Draft PR #6 used only for pre-merge validation; Backend CI #41 PASS.
+- Product Media squash merge: `4d8f660a06df7b4e4a340502d6d65255b41cc949`.
+- Backend CI #42 PASS.
+- Backend Code Deploy #7: plan PASS; deploy correctly skipped on Composer/migration drift.
+- Backend Additive Deploy #3: **PASS** — `backup_created=true`, `dependency_changed=true`, `added_migrations=1`, `schema_policy=additive-create-only`, `public_storage_link=true`; health/admin/products/catalog HTTP smokes all 200; temp cleanup PASS.
+- FTP Deploy #307 failed before deployment because `test_web_stock_policy.py` correctly rejected an external-domain URL used only by the new frontend unit-test fixture. Test 27/root were not changed.
+- Fixture repair: `b3722d3f4643ee403972b7a03215339e5aa802ad` uses a same-origin `/backend/storage/...` test URL.
+- FTP Deploy #308: **PASS** — frozen-test guard and Test11–27 contracts PASS, web-stock policy PASS, TypeScript/Vue unit tests/Test27 production build PASS, FTP smoke PASS, `deploy-t` PASS, `deploy-root` skipped.
+
+### Next bounded delivery
+- Conservative estimate: 4 runs remain; aggressive estimate: 3 if customer API/session + Magic Link + FavoriteShare can be combined without exceeding the safety/time budget.
+- Next P0 is customer API/session + Magic Link core. Favorites/WhatsApp persistence follows unless it safely fits the same bounded vertical slice.
+- Off-host SQLite backup/restore drill and final end-to-end QA/handoff remain after customer flows.
+- Browser Style Profile acceptance and one real Filament product-image upload remain opportunistic parallel acceptance tasks when a valid real admin session is available.

@@ -4,6 +4,27 @@ Priority: **P0 current**, P1 next, P2 later.
 Current implementation targets: **Backend MVP productionization** + **Test 27 visual-editor/UI lane**. Test 26 is frozen.
 Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
 
+## P0 — Production product media + additive backend deploy — 2026-10-02
+
+- [x] Select official Spatie Media Library + official Filament integration; lock dependencies through Composer, not hand-written package versions.
+- [x] Add guarded additive Backend deployment lane: existing migrations byte-identical, new migration create-only, pre-migration SQLite snapshot, restore-on-migration-failure, code/public rollback and HTTP smoke.
+- [x] Route Composer/migration drift away from the code-only updater; verify ordinary code-only lane remains green.
+- [x] Add Product `product-gallery` ownership on public disk with paths under `media/products/<media-id>/`.
+- [x] Limit uploads to JPEG/PNG/WebP, 8 MiB, 5000×5000, maximum 6 ordered files.
+- [x] Re-decode and re-encode stored originals to strip metadata; normalize JPEG orientation.
+- [x] Generate synchronous `card`/`thumb` conversions without destructive crop or upscaling.
+- [x] Add official Filament multi-upload/reorder UI and product-list thumbnail.
+- [x] Eager-load media in Public Catalog API and expose ordered `media` URLs.
+- [x] Make Test 27 prefer the server gallery when present and retain local fallback only when server media is empty/API unavailable.
+- [x] Backend CI #41 pre-merge and #42 post-merge PASS.
+- [x] Backend Code Deploy #7 correctly skipped deployment on dependency/migration drift.
+- [x] Backend Additive Deploy #3 PASS: snapshot, dependency change, 1 additive migration, public storage link, all HTTP smokes and cleanup PASS.
+- [x] FTP Deploy #307 stopped before deployment on an external-URL unit-test fixture; no customer UI mutation occurred.
+- [x] Same-origin fixture fix `b3722d3f...`; FTP Deploy #308 PASS with full Test27 build/smoke/deploy; root skipped.
+- [x] Live API independently verified: all 18 Products return a `media` field; current arrays are empty until real admin uploads occur, so Test 27 fallback remains intact.
+- [ ] Opportunistic acceptance when a real admin session is available: upload/reorder one real product image in Filament and verify it appears in Test 27 after reload.
+- [ ] Next P0: minimum customer API/session + Magic Link core.
+
 ## P0 — Public catalog API + production bootstrap — 2026-10-02
 
 - [x] Add read-only Public Catalog API Resources/Controller for active categories and products.
@@ -19,7 +40,7 @@ Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
 - [x] Independently re-read live API: 3 managed categories, 6 managed subcategories, 18 managed products.
 - [x] Independently render live Test 27 Products page after bootstrap: 18 products displayed with customer-facing subcategory/unavailable presentation intact.
 - [x] Remove one-shot production bootstrap workflow after successful initialization; reusable helper remains fail-closed because production catalog is no longer empty.
-- [ ] Next: production product-media ownership/upload + customer API/session surface.
+- [x] Production product-media ownership/upload capability completed and wired to Test 27; customer API/session is now the next P0.
 
 ## P0 — Test 27 customer visual corrections — 2026-10-01
 
