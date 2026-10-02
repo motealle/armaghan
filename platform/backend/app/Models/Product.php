@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 #[Fillable([
     'subcategory_id',
@@ -21,9 +24,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'active',
     'sort_order',
 ])]
-class Product extends Model
+class Product extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
+
+    public const MEDIA_COLLECTION = 'product-gallery';
 
     public function subcategory(): BelongsTo
     {
@@ -40,6 +46,42 @@ class Product extends Model
         return $this->belongsToMany(FavoriteShare::class)
             ->withPivot('sort_order')
             ->withTimestamps();
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection(self::MEDIA_COLLECTION)
+            ->useDisk('public')
+            ->acceptsMimeTypes([
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+            ]);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        if ($media === null || $media->collection_name !== self::MEDIA_COLLECTION) {
+            return;
+        }
+
+        $size = @getimagesize($media->getPath());
+        $sourceWidth = is_array($size) ? max(1, (int) ($size[0] ?? 1)) : 1;
+
+        $this
+            ->addMediaConversion('card')
+            ->performOnCollections(self::MEDIA_COLLECTION)
+            ->width(min(960, $sourceWidth))
+            ->keepOriginalImageFormat()
+            ->nonQueued();
+
+        $this
+            ->addMediaConversion('thumb')
+            ->performOnCollections(self::MEDIA_COLLECTION)
+            ->width(min(320, $sourceWidth))
+            ->keepOriginalImageFormat()
+            ->nonQueued();
     }
 
     protected function casts(): array
