@@ -16,6 +16,13 @@ class CustomAdminProductsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // The suite reuses isolated user IDs; do not carry throttle counters between test cases.
+        \Illuminate\Support\Facades\Cache::flush();
+    }
+
     private function fields(string $code = '11099'): array
     {
         $category = Category::firstOrCreate(['code' => '1'], ['name_fa' => 'نوزادی']);
