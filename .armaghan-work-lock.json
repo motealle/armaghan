@@ -1,13 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261002-live-qa",
-  "scope": "Bounded live Test28 guest browser QA and evidence documentation; no deploy",
-  "base_ref": "main",
-  "acquired_at": "2026-10-02T11:23:46.695Z",
-  "expires_at": "2026-10-02T12:53:46.695Z",
-  "released_at": "2026-10-02T11:38:29.593Z",
-  "note": "Test28 live guest QA and dark-heading repair 88d4172e; FTP #325 PASS, 41 tests, fresh live mint color confirmed. Documentation closeout 1fafd963, run 37002034467 PASS. Mobile/tablet/authenticated acceptance remain open."
+  "run_id": "codex-20261002-test29-nonvisual",
+  "scope": "Freeze Test28; promote isolated Test29; locale corrections and automated contracts; no visual QA",
+  "base_ref": "1fafd9638777e26796acedc60b27dfd545736794",
+  "acquired_at": "2026-10-02T11:48:57.162Z",
+  "expires_at": "2026-10-02T13:18:57.162Z"
 }
