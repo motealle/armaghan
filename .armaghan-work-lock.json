@@ -1,13 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261002-test29-nonvisual",
-  "scope": "Freeze Test28; promote isolated Test29; locale corrections and automated contracts; no visual QA",
-  "base_ref": "1fafd9638777e26796acedc60b27dfd545736794",
-  "acquired_at": "2026-10-02T11:48:57.162Z",
-  "expires_at": "2026-10-02T12:06:42.673Z",
-  "released_at": "2026-10-02T12:06:42.673Z",
-  "result_ref": "7f158daa1bc17a2727fb90354eb486270ce41e31"
+  "run_id": "codex-20261002-root29-google",
+  "scope": "Owner-authorized root version selector; Test29 urgent copy/default fixes; real admin navigation; Google OAuth preparation",
+  "base_ref": "7f158daa1bc17a2727fb90354eb486270ce41e31",
+  "acquired_at": "2026-10-02T12:28:16.944Z",
+  "expires_at": "2026-10-02T13:58:16.944Z"
 }
