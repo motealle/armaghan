@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20261002-favorite-share-whatsapp",
-  "scope": "Implement persisted FavoriteShare + WhatsApp handoff end-to-end with hash-only share tokens, guest/customer ownership, expiry/revoke, fixed resolve endpoint and Test27 integration; preserve Test26/root.",
-  "base_ref": "main@c5b782732363408e7a6b000884d42455bfdf179c",
-  "acquired_at": "2026-10-02T03:05:00Z",
-  "expires_at": "2026-10-02T03:20:00Z",
-  "released_at": "2026-10-02T03:20:00Z",
-  "note": "Persisted FavoriteShare + WhatsApp vertical slice complete. PR #9 merge 76f80179292f743cb54443e540602bba47c4d8bb; Backend CI #51/#52 PASS; Backend Code Deploy #11 PASS with SQLite snapshot/no drift and FavoriteShare resolve POST-only smoke 405; independent Production probes confirmed issue/resolve POST-only; FTP #316 PASS with Test27 FavoriteShare contract/type/unit/build/deploy and root skipped; live read-only invalid-token shared-route acceptance PASS; docs/rules closeout f5dfb9c4d531a82db8d5cd4463583ef60cdde7b3; docs-only FTP #317 PASS with deploy-t/root skipped. Next P0: off-host SQLite backup/restore hardening."
+  "run_id": "chat-20261002-test28-backup-hardening",
+  "scope": "Freeze Test27, promote active mutable UI lane to Test28, implement encrypted off-host SQLite backup + isolated restore drill + retention/verification, deploy Test28 only, preserve root and frozen tests.",
+  "base_ref": "main@f5dfb9c4d531a82db8d5cd4463583ef60cdde7b3",
+  "acquired_at": "2026-10-02T06:20:00Z",
+  "expires_at": "2026-10-02T07:50:00Z",
+  "released_at": null,
+  "note": "P0 production hardening + Test28 promotion. Use VACUUM INTO consistent snapshot. Public repo: never upload plaintext DB artifact. Encrypt before off-host artifact upload; no secrets/raw DB in Git/logs. Test27 becomes immutable."
 }
