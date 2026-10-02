@@ -1,5 +1,19 @@
 # Armaghan — Product Backlog
 
+## P0 — Persisted FavoriteShare + WhatsApp — 2026-10-02
+
+- [x] Select architecture: Backend FavoriteShare record + SHA-256 token hash + ordered product pivot + fragment-held share token + fixed POST resolve + WhatsApp handoff.
+- [ ] Add bounded issue/resolve/revoke service with active-product validation, guest/customer ownership, expiry and audit logging.
+- [ ] Use shorter guest TTL than authenticated-customer TTL because guest shares have no authenticated revoke surface.
+- [ ] Add CSRF-protected/rate-limited fixed POST issue + resolve endpoints and authenticated customer revoke endpoint.
+- [ ] Keep raw share token out of SQLite/logs/query strings/server paths; only the browser fragment may carry it.
+- [ ] Replace Test27 product-code-in-URL sharing with Backend persisted shares and a `/favorites/share/:token` route.
+- [ ] Add one-tap WhatsApp handoff using the server-backed share URL and the existing seller WhatsApp path.
+- [ ] Fix Favorites customer attribution to use the real `currentCustomerId`, never hard-coded Customer #1.
+- [ ] Add Backend lifecycle tests + frontend unit/source contracts for ordering, expiry, revoke, ownership and shared-page resolution.
+- [ ] Deploy through guarded code-only Backend lane + Test27 FTP lane; root/Test26 untouched.
+- [ ] Reconcile CURRENT-STATUS/HANDOFF/BACKLOG/rules and release shared lock.
+
 ## P0 — Customer session + Magic Link — 2026-10-02
 
 - [x] Select architecture: same-origin Laravel session + database-backed high-entropy hashed one-time Magic Link; no customer password dependency and no new auth package.
