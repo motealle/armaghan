@@ -1,11 +1,14 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261002-custom-admin",
   "scope": "Preserved custom admin UI: real server admin session and customer management integration",
   "base_ref": "4b19f5da25734a47facd68396ed6538bf79fc207",
   "acquired_at": "2026-10-02T18:56:08.288Z",
-  "expires_at": "2026-10-02T20:26:08.288Z"
+  "expires_at": "2026-10-02T20:26:08.288Z",
+  "released_at": "2026-10-02T19:21:56.730Z",
+  "result_ref": "b2d0b7cdf12d0359789b98d95cce995a1901f475",
+  "summary": "Preserved custom admin customer slice delivered on Test29 and root. Backend70/538 and frontend53 tests PASS; finalFTP351/backendcode18 PASS. Guest protections verified; actual owner authenticated browser acceptance open. Next: existing custom product/media forms, then settings/editor."
 }
