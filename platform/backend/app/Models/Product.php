@@ -35,8 +35,6 @@ class Product extends Model implements HasMedia
 
     protected static function booting(): void
     {
-        parent::booting();
-
         PathGeneratorFactory::setCustomPathGenerators(
             static::class,
             ProductPathGenerator::class,
