@@ -1,14 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261002-password-admin",
-  "scope": "Real email/password signup/login; verified Google owner admins; badge and footer repair",
-  "base_ref": "c77313b12fbc6bd832fb00e8ea1efdc1201b6f80",
-  "acquired_at": "2026-10-02T18:09:29.892Z",
-  "expires_at": "2026-10-02T19:39:29.892Z",
-  "released_at": "2026-10-02T18:32:23.640Z",
-  "result_ref": "4b19f5da25734a47facd68396ed6538bf79fc207",
-  "summary": "Real password signup/login and verified Google owner administrator access deployed; Test29/root and backend/frontend checks PASS; next preserved admin UI integration queued, actual owner authenticated acceptance remains open."
+  "run_id": "codex-20261002-custom-admin",
+  "scope": "Preserved custom admin UI: real server admin session and customer management integration",
+  "base_ref": "4b19f5da25734a47facd68396ed6538bf79fc207",
+  "acquired_at": "2026-10-02T18:56:08.288Z",
+  "expires_at": "2026-10-02T20:26:08.288Z"
 }
