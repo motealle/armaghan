@@ -20,7 +20,7 @@ export const useFavoritesStore=defineStore('favorites',()=>{
   function toggle(id:number){
     ids.value=ids.value.includes(id)?ids.value.filter(value=>value!==id):[...ids.value,id]
     if(session.isAdmin&&!session.impersonatedCustomerId)return
-    const customerId=session.impersonatedCustomerId??(session.isCustomer?1:undefined)
+    const customerId=session.impersonatedCustomerId??(session.isCustomer?(session.currentCustomerId??undefined):undefined)
     const customer=customerId?customers.items.find(item=>item.id===customerId):undefined
     customers.recordWishlistChange({customerId,label:customer?.name,favoritesCount:ids.value.length})
   }
