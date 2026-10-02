@@ -92,4 +92,53 @@ describe('session store',()=>{
     expect(store.role).toBe('admin')
   })
 
+  it('consumes a backend Magic Link token through the fixed POST endpoint',async()=>{
+    const token='A'.repeat(64)
+    const fetchMock=vi.fn()
+      .mockResolvedValueOnce({
+        ok:true,
+        status:200,
+        json:async()=>({token:'csrf-test-token'}),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok:true,
+        status:200,
+        json:async()=>({
+          customer:{
+            id:12,
+            company_name:'Magic Buyer',
+            whatsapp:'+9647222222222',
+            country_code:'IQ',
+            country_name:'Iraq',
+          },
+        }),
+      } as Response)
+    vi.stubGlobal('fetch',fetchMock)
+
+    const store=useSessionStore()
+    expect(await store.consumeBackendMagicLink(token)).toBe(true)
+    expect(store.backendAuthenticated).toBe(true)
+    expect(store.currentCustomerId).toBe(12)
+    expect(store.role).toBe('customer')
+
+    expect(fetchMock).toHaveBeenNthCalledWith(2,
+      '/backend/api/customer/magic-link/consume',
+      expect.objectContaining({
+        method:'POST',
+        credentials:'same-origin',
+      }),
+    )
+    const secondCall=fetchMock.mock.calls[1]
+    expect(JSON.parse(String((secondCall[1] as RequestInit).body))).toEqual({token})
+  })
+
+  it('rejects malformed Magic Link tokens before any network call',async()=>{
+    const fetchMock=vi.fn()
+    vi.stubGlobal('fetch',fetchMock)
+
+    const store=useSessionStore()
+    expect(await store.consumeBackendMagicLink('short')).toBe(false)
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
 })
