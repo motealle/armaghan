@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CustomerMagicLinkController as AdminCustomerMagic
 use App\Http\Controllers\Admin\StyleProfileController as AdminStyleProfileController;
 use App\Http\Controllers\CustomerMagicLinkController;
 use App\Http\Controllers\CustomerSessionController;
+use App\Http\Controllers\FavoriteShareController;
 use App\Http\Controllers\PublicCatalogController;
 use App\Http\Controllers\PublicStyleProfileController;
 use Illuminate\Support\Facades\Route;
@@ -29,7 +30,16 @@ Route::prefix('api/customer')
             ->middleware('throttle:30,1');
         Route::post('/logout', [CustomerSessionController::class, 'logout'])
             ->middleware('throttle:30,1');
+        Route::delete('/favorite-shares/{favoriteShare}', [FavoriteShareController::class, 'destroy'])
+            ->middleware('throttle:30,1');
     });
+
+Route::prefix('api/favorite-shares')->group(function (): void {
+    Route::post('/', [FavoriteShareController::class, 'store'])
+        ->middleware('throttle:15,1');
+    Route::post('/resolve', [FavoriteShareController::class, 'resolve'])
+        ->middleware('throttle:60,1');
+});
 
 Route::get('/api/style-profile/{channel?}', [PublicStyleProfileController::class, 'show'])
     ->where('channel', 'staging|production');
