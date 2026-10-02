@@ -95,7 +95,7 @@ class CustomAdminProductsTest extends TestCase
         Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());
         $product = Product::create($this->fields()); $row = $this->row($product);
         $source = UploadedFile::fake()->image('source.jpg', 24, 36);
-        $file = new UploadedFile($source->getRealPath(), 'unsafe.php', 'image/jpeg', null, true);
+        $file = new UploadedFile($source->getRealPath(), 'original-label.jpg', 'image/jpeg', null, true);
         $original = file_get_contents($file->getRealPath());
         // Embed a JPEG comment which must not survive re-encoding.
         $comment = 'private-metadata-marker';
@@ -106,7 +106,7 @@ class CustomAdminProductsTest extends TestCase
             ->assertCreated()->assertJsonCount(1, 'product.media');
         $media = $product->fresh()->getFirstMedia(Product::MEDIA_COLLECTION);
         $this->assertNotNull($media); $this->assertStringEndsWith('.jpg', $media->file_name);
-        $this->assertStringNotContainsString('unsafe', $media->file_name);
+        $this->assertStringNotContainsString('original-label', $media->file_name);
         $this->assertStringNotContainsString($comment, file_get_contents($media->getPath()));
         $this->assertTrue($media->hasGeneratedConversion('card')); $this->assertTrue($media->hasGeneratedConversion('thumb'));
         $this->assertSame(24, getimagesize($media->getPath('card'))[0]);
@@ -118,7 +118,9 @@ class CustomAdminProductsTest extends TestCase
     {
         Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());
         $product = Product::create($this->fields()); $row = $this->row($product);
-        foreach ([UploadedFile::fake()->createWithContent('bad.jpg', '<?php echo 1;'),
+        $source = UploadedFile::fake()->image('source.jpg', 10, 10);
+        $riskyName = new UploadedFile($source->getRealPath(), 'unsafe.php', 'image/jpeg', null, true);
+        foreach ([$riskyName, UploadedFile::fake()->createWithContent('bad.jpg', '<?php echo 1;'),
             UploadedFile::fake()->create('large.jpg', 8193, 'image/jpeg'), UploadedFile::fake()->image('wide.jpg', 5001, 1)] as $file) {
             $this->postJson('/api/admin/products/'.$product->id.'/images', ['revision' => $row['revision'], 'image' => $file])->assertUnprocessable();
         }
