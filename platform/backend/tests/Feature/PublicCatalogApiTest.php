@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Subcategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PublicCatalogApiTest extends TestCase
@@ -78,7 +80,7 @@ class PublicCatalogApiTest extends TestCase
             'active' => false,
         ]);
 
-        Product::create([
+        $availableProduct = Product::create([
             'subcategory_id' => $subcategory->id,
             'code' => '11001',
             'name_fa' => 'محصول موجود',
@@ -109,6 +111,16 @@ class PublicCatalogApiTest extends TestCase
             'active' => true,
         ]);
 
+        Storage::fake('public');
+        $availableProduct
+            ->addMedia(UploadedFile::fake()->image('front.jpg', 640, 960))
+            ->toMediaCollection(Product::MEDIA_COLLECTION);
+
+        $media = $availableProduct->getFirstMedia(Product::MEDIA_COLLECTION);
+        $this->assertNotNull($media);
+        $this->assertTrue($media->hasGeneratedConversion('card'));
+        $this->assertTrue($media->hasGeneratedConversion('thumb'));
+
         $page = $this->getJson('/api/catalog/products?per_page=1')
             ->assertOk()
             ->assertJsonCount(1, 'data')
@@ -117,7 +129,11 @@ class PublicCatalogApiTest extends TestCase
             ->assertJsonPath('meta.total', 2)
             ->assertJsonPath('data.0.code', '11001')
             ->assertJsonPath('data.0.category.code', '1')
-            ->assertJsonPath('data.0.subcategory.code', '11');
+            ->assertJsonCount(1, 'data.0.media')
+            ->assertJsonPath('data.0.media.0.id', (string) ($media->uuid ?: $media->id));
+
+        $this->assertStringContainsString('/storage/', $page->json('data.0.media.0.url'));
+        $this->assertStringContainsString('/storage/', $page->json('data.0.media.0.thumb_url'));
 
         foreach (['11001', '11002', '11003', '12001'] as $code) {
             $this->assertContains($code, $page->json('catalog.managed_codes'));
