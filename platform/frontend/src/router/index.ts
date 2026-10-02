@@ -6,8 +6,13 @@ import FavoritesView from '@/views/FavoritesView.vue'
 import TrackingView from '@/views/TrackingView.vue'
 import MagicLinkView from '@/views/MagicLinkView.vue'
 
+const pagePath=window.location.pathname+window.location.search
+const history=createWebHashHistory(pagePath)
+// Asset <base> must not send native/new-tab RouterLinks into the numbered lane.
+history.createHref=(location)=>pagePath+'#'+location
+
 export const router=createRouter({
-  history:createWebHashHistory(window.location.pathname+window.location.search),
+  history,
   routes:[
     {path:'/',name:'home',component:HomeView},
     {path:'/products',name:'products',component:ProductsView},

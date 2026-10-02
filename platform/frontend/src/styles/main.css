@@ -53,7 +53,7 @@ button,a,input,textarea,select{font:inherit}
 button,a{touch-action:manipulation}
 button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid color-mix(in srgb,var(--c-primary) 32%,transparent);outline-offset:2px}
 #main-content:focus{outline:none}
-[data-style-id="home.page"]{min-height:100svh;background:var(--role-page-background)}
+.test26-section-heading [data-style-id="home.page"]{min-height:100svh;background:var(--role-page-background)}
 #main-content{direction:rtl;padding-bottom:calc(var(--bottom-nav-space) + env(safe-area-inset-bottom) + 1rem)}
 html[data-locale="en"] #main-content :where(h1,h2,h3,h4,p,small,label,input,textarea,select,pre,code){direction:ltr;text-align:left}
 html[data-locale="en"] .product-card,
@@ -863,10 +863,8 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .subcategory-code{font-family:Inter,Roboto,ui-sans-serif,sans-serif;font-weight:800;direction:ltr}
 
 /* Owner Test29 defaults; explicit editor visibility remains reversible. */
-[data-style-id="home.about.eyebrow"],
-[data-style-id="home.why.eyebrow"],
-[data-style-id="home.capabilities.eyebrow"],
-[data-style-id="home.product-banners.eyebrow"]{display:none}
+.test26-section-heading [data-style-id="home.about.eyebrow"],
+.test26-section-heading [data-style-id="home.why.eyebrow"],
+.test26-section-heading [data-style-id="home.capabilities.eyebrow"],
+.test26-section-heading [data-style-id="home.product-banners.eyebrow"]{display:none}
 .product-card .product-card-title.unavailable{display:flex;margin-inline:auto;justify-content:center;text-align:center;font-size:.7rem;font-weight:400}
-
-/* Test29 root release shares these requested customer defaults. */

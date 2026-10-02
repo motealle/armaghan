@@ -78,6 +78,13 @@ function readProfile():VisualStyleProfile{
   }
 }
 
+export const defaultHiddenTargetIds:string[]=[
+  'home.about.eyebrow','home.why.eyebrow','home.capabilities.eyebrow','home.product-banners.eyebrow',
+]
+export function targetIsHidden(profile:VisualStyleProfile,id:string):boolean{
+  return profile.styles[id]?.hidden??defaultHiddenTargetIds.includes(id)
+}
+
 function compileCss(profile:VisualStyleProfile):string{
   const blocks:string[]=[]
   for(const [id,style] of Object.entries(profile.styles)){

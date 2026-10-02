@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import {
   sanitizeVisualStyleProfile,
   useVisualStyleStore,
+  targetIsHidden,
   visualProfilesEqual,
 } from './store'
 
@@ -105,5 +106,18 @@ describe('visual style profile sanitization',()=>{
     visual.patchStyle('home.about.eyebrow',{hidden:true})
     expect(visual.compiledCss).toContain('display:none!important')
     expect(visual.compiledCss).not.toContain('display:revert!important')
+  })
+})
+
+ describe('effective heading visibility',()=>{
+  it('shows default-hidden targets with one explicit show and restores the default on reset',()=>{
+    setActivePinia(createPinia())
+    const visual=useVisualStyleStore()
+    expect(targetIsHidden(visual.profile,'home.about.eyebrow')).toBe(true)
+    visual.patchStyle('home.about.eyebrow',{hidden:false})
+    expect(targetIsHidden(visual.profile,'home.about.eyebrow')).toBe(false)
+    visual.resetElement('home.about.eyebrow')
+    expect(targetIsHidden(visual.profile,'home.about.eyebrow')).toBe(true)
+    expect(targetIsHidden(visual.profile,'home.about.title')).toBe(false)
   })
 })

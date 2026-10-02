@@ -17,6 +17,7 @@ import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import { useThemeStore } from '@/stores/theme'
 
+const pagePath=window.location.pathname+window.location.search
 const loginOpen=ref(false)
 const helpOpen=ref(false)
 const design=useDesignStore()
@@ -56,7 +57,7 @@ onMounted(async()=>{
     :data-style-label="route.path==='/'?'صفحه خانه':undefined"
   >
     <VisualStyleRuntime/>
-    <a class="skip-link" href="#main-content">{{locale.t('skipContent')}}</a>
+    <a class="skip-link" :href="pagePath+'#main-content'">{{locale.t('skipContent')}}</a>
     <AppHeader @login="loginOpen=true" @help="helpOpen=true"/>
     <main id="main-content" tabindex="-1" class="mx-auto max-w-[1500px] px-3 py-4 md:px-5 md:py-6 lg:px-8 lg:py-8 xl:px-10">
       <RouterView v-slot="{ Component }">

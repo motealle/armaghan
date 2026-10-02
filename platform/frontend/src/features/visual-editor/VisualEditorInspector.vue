@@ -6,7 +6,7 @@ import { brandTokens, type BrandTokenId } from './tokenRegistry'
 import { NORMAL_TEXT_MIN_CONTRAST, tokenContrastRatio } from './contrast'
 import { visualTargetDefinition, type VisualStyleControl } from './targetRegistry'
 import type { EditableCandidate } from './selection'
-import { useVisualStyleStore, type ElementStyleOverride } from './store'
+import { useVisualStyleStore, targetIsHidden, type ElementStyleOverride } from './store'
 
 const props=defineProps<{selected:EditableCandidate}>()
 const visual=useVisualStyleStore()
@@ -16,6 +16,7 @@ const currentStyle=computed<ElementStyleOverride>(()=>visual.profile.styles[prop
 const targetDefinition=computed(()=>visualTargetDefinition(props.selected.id))
 const allowedStyleControls=computed<VisualStyleControl[]|null>(()=>targetDefinition.value?.styleControls??null)
 const allowsStyle=(key:VisualStyleControl)=>allowedStyleControls.value===null||allowedStyleControls.value.includes(key)
+const isHidden=computed(()=>targetIsHidden(visual.profile,props.selected.id))
 const canHide=computed(()=>targetDefinition.value?.hideable!==false)
 const explicitContrast=computed(()=>{
   const text=currentStyle.value.textColor
@@ -54,7 +55,7 @@ function updateText(event:Event){
   visual.setText(props.selected.id,locale.locale,(event.target as HTMLTextAreaElement).value)
 }
 function toggleHidden(){
-  visual.patchStyle(props.selected.id,{hidden:!currentStyle.value.hidden})
+  visual.patchStyle(props.selected.id,{hidden:!isHidden.value})
 }
 function resetSelected(){
   visual.resetElement(props.selected.id)
@@ -134,8 +135,8 @@ function resetSelected(){
 
   <section class="visual-editor-row-actions">
     <button v-if="canHide" type="button" class="visual-editor-action" @click="toggleHidden">
-      <Eye v-if="currentStyle.hidden" :size="17"/><EyeOff v-else :size="17"/>
-      {{currentStyle.hidden?'نمایش دوباره':'مخفی کردن'}}
+      <Eye v-if="isHidden" :size="17"/><EyeOff v-else :size="17"/>
+      {{isHidden?'نمایش دوباره':'مخفی کردن'}}
     </button>
     <button type="button" class="visual-editor-action" @click="resetSelected">
       <RotateCcw :size="17"/>بازنشانی این عنصر

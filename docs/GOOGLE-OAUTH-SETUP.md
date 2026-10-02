@@ -30,3 +30,5 @@ Dependency resolution run 37007410283 passed. Eleven automated backend cases cov
 Sources: https://laravel.com/framework/docs/socialite and https://developers.google.com/identity/openid-connect/openid-connect .
 
 Dependency preparation uses `composer require laravel/socialite:^5.27 --no-install --no-scripts`; deployment installs the validated lock. The client secret exists only in the private server environment.
+
+Production endpoints: `/backend/auth/google/redirect` and `/backend/auth/google/callback`; readiness: `/backend/api/auth/google/status`.
