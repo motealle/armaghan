@@ -2,10 +2,12 @@
 
 ## Test28 live QA follow-up — 2026-10-02
 
+- [ ] Localize the Persian Home English eyebrow "Why Armaghan?"; retain broad Home language acceptance as open.
+
 - [x] Confirm completed core capabilities from canonical repository state; no reimplementation.
 - [x] Live desktop guest checks: 18 products, search 1 result, category filter 6 results, detail open/close, four locale directions, guest favorites reload, invalid-share state.
 - [x] Measure dark-title defect: 4.279:1 on card surface; select approved mint semantic default; numeric check fails before and passes after repair.
-- [ ] Confirm this run's guarded build/deploy and fresh live dark-title color; see CURRENT-STATUS/HANDOFF section 45 evidence.
+- [x] Confirm this run's guarded build/deploy and fresh live dark-title color; see CURRENT-STATUS/HANDOFF section 45 evidence.
 - [ ] Complete mobile/tablet acceptance and broader language/theme matrix; existing broad final QA tasks remain open.
 - [ ] Authenticated editor save/reload/publish/restore, real product upload and customer Magic Link remain untested in this browser (login form, no session).
 
@@ -1006,3 +1008,11 @@ Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 - [x] `/public_html/t/19/index.html` and `/public_html/t/index.htm` were uploaded.
 - [x] `deploy-root` was skipped.
 - [x] Deployment log confirms: **No remote files were deleted.**
+
+### Verified closeout for this bounded run
+- Implementation commit: `88d4172e50413dec3d8951ba093535894b659db4`.
+- FTP Deploy #325, run `37001349371`: QA, type-check, 41 Vue tests, active Test28 build, FTP smoke and deploy-t PASS; deploy-root SKIPPED. Frozen snapshot guard PASS for all 27 frozen tests.
+- Fresh live browser read after deployment: heading/category/product title RGB(200,227,219), card RGB(30,32,36), no horizontal overflow at 1363 CSS px; repaired default is live (12.015:1 on card).
+- Fresh guest request to `/backend/admin/products` redirected to `/backend/admin/login`; no authenticated-admin acceptance is inferred.
+- Additional observed copy follow-up: Persian Home still displays the English eyebrow "Why Armaghan?". Keep the broad multilingual Home acceptance open and localize that label in the next bounded fix.
+- Mobile/tablet and valid customer/admin/share/WhatsApp end-to-end acceptance remain open. This run advances partial final QA; it does not declare final project delivery.
