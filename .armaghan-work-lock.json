@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261002-test28-backup-hardening",
   "scope": "Freeze Test27, promote active mutable UI lane to Test28, implement encrypted off-host SQLite backup + isolated restore drill + retention/verification, deploy Test28 only, preserve root and frozen tests.",
   "base_ref": "main@f5dfb9c4d531a82db8d5cd4463583ef60cdde7b3",
   "acquired_at": "2026-10-02T06:20:00Z",
-  "expires_at": "2026-10-02T07:50:00Z",
-  "released_at": null,
-  "note": "P0 production hardening + Test28 promotion. Use VACUUM INTO consistent snapshot. Public repo: never upload plaintext DB artifact. Encrypt before off-host artifact upload; no secrets/raw DB in Git/logs. Test27 becomes immutable."
+  "expires_at": "2026-10-02T06:46:00Z",
+  "released_at": "2026-10-02T06:46:00Z",
+  "note": "Test28 + production backup hardening complete. Test27 frozen; Test28 live and independently verified. Backend CI #53/#54/#55 PASS. SQLite Off-host Backup #1 run 36974268704 PASS: VACUUM INTO, AES-256-GCM before transfer, encrypted artifact 11212796186 with 14-day retention, isolated artifact-download restore drill PASS (checksums/integrity/FK/table inventory/write rollback; no persisted plaintext). FTP #318/#319 stopped pre-deploy on stale historical/test fixtures; fixes were contract-only. FTP #320 PASS: Test28 build/deploy 112 files, no remote deletes, root skipped. Docs closeout dd38e120 + final contract fix 72a45224; FTP #322/#323 PASS with deploys skipped. Next P0: final end-to-end QA + delivery handoff."
 }
