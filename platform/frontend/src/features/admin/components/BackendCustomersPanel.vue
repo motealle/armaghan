@@ -97,7 +97,7 @@ onMounted(()=>load())
           <div v-if="selected" class="text-sm"><b>{{selected.name}}</b><p dir="ltr">{{selected.email}}</p></div>
           <label class="flex items-center gap-2"><input v-model="draft.active" type="checkbox" :disabled="saving">{{locale.t('active')}}</label>
           <label class="flex items-center gap-2"><input v-model="draft.direct_link_enabled" type="checkbox" :disabled="saving">{{locale.t('directAccess')}}</label>
-          <label class="form-field md:col-span-2">{{locale.t('internalNotes')}}<textarea v-model="draft.notes" rows="5" maxlength="10000" :disabled="saving"></textarea></label>
+          <label class="form-field md:col-span-2">{{locale.t('notes')}}<textarea v-model="draft.notes" rows="5" maxlength="10000" :disabled="saving"></textarea></label>
           <p class="text-xs md:col-span-2">{{locale.t('adminArchiveHelp')}}</p>
         </section>
         <p v-if="error" role="alert" class="auth-error">{{error}}</p>
