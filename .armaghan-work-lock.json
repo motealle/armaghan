@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "ChatGPT GPT-5.6 Sol",
-  "run_id": "chat-20261002-customer-magic-link",
-  "scope": "Implement minimum customer API/session and one-tap Magic Link core end-to-end, wire Test27 away from browser-only customer identity where safe, preserve Test26, deploy through guarded lanes, update repo memory.",
-  "base_ref": "main@21cade27f0915434b1f751cd676ee9458c1bf97a",
-  "acquired_at": "2026-10-02T02:40:00Z",
-  "expires_at": "2026-10-02T03:00:00Z",
-  "released_at": "2026-10-02T03:00:00Z",
-  "note": "Customer session + one-time Magic Link core complete. PR #7 merged initial core; Backend Code Deploy #8 PASS. Follow-up #9 exposed real token-in-path 404 and rolled back safely. Repair PR #8 merge 10d040c7 uses browser fragment + fixed CSRF-protected POST consume endpoint. Backend CI #49/#50 PASS; Backend Code Deploy #10 PASS with guest session 401 and POST-only route GET 405; FTP #314 PASS Test27 deploy, root skipped; docs/rules closeout c5b78273 and FTP #315 PASS with UI deploys skipped. Next P0 FavoriteShare/WhatsApp."
+  "run_id": "chat-20261002-favorite-share-whatsapp",
+  "scope": "Implement persisted FavoriteShare + WhatsApp handoff end-to-end with hash-only share tokens, guest/customer ownership, expiry/revoke, fixed resolve endpoint and Test27 integration; preserve Test26/root.",
+  "base_ref": "main@c5b782732363408e7a6b000884d42455bfdf179c",
+  "acquired_at": "2026-10-02T03:05:00Z",
+  "expires_at": "2026-10-02T04:35:00Z",
+  "released_at": null,
+  "note": "P0 FavoriteShare/WhatsApp vertical slice. Selected architecture: Backend share record + SHA-256 token hash + ordered product pivot + browser-fragment share token + fixed POST resolve + WhatsApp prefilled handoff. No migration expected; keep Test26 frozen and root deploy skipped."
 }
