@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261002-test28-final-qa",
   "scope": "Final bounded QA and handoff preparation. No mutation of frozen tests 01-27. Test28 only if required.",
   "base_ref": "main@72a45224e0bd6fd6547f30f2fa9983e6f1424a0b",
   "acquired_at": "2026-10-02T10:45:00Z",
   "expires_at": "2026-10-02T12:15:00Z",
-  "released_at": null,
-  "note": "Starting from verified Test28 production-hardening state."
+  "released_at": "2026-10-02T10:55:00Z",
+  "note": "Preflight completed: verified repository state, current status, handoff, backlog and lock protocol. No code mutation performed in this bounded run because remaining P0 requires live browser/device acceptance rather than speculative changes."
 }
