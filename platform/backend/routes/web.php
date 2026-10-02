@@ -71,6 +71,11 @@ Route::prefix('api/admin/customers')
     });
 
 
+Route::post('/api/auth/login', [\App\Http\Controllers\PasswordAuthController::class, 'login'])->middleware('throttle:password-login');
+Route::post('/api/auth/register', [\App\Http\Controllers\PasswordAuthController::class, 'register'])->middleware('throttle:5,1');
+Route::get('/account/security', [\App\Http\Controllers\PasswordAuthController::class, 'security'])->middleware('throttle:60,1');
+Route::post('/account/password', [\App\Http\Controllers\PasswordAuthController::class, 'password'])->middleware('throttle:10,1');
+
 Route::get('/api/auth/google/status', [\App\Http\Controllers\GoogleCustomerAuthController::class, 'status'])->middleware('throttle:60,1');
 Route::get('/auth/google/redirect', [\App\Http\Controllers\GoogleCustomerAuthController::class, 'redirect'])->middleware('throttle:15,1')->name('auth.google.redirect');
 Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleCustomerAuthController::class, 'callback'])->middleware('throttle:30,1')->name('auth.google.callback');

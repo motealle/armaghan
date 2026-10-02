@@ -1,112 +1,72 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Globe2, KeyRound, LogIn, UserPlus } from '@lucide/vue'
+import { Globe2, LogIn, UserPlus, ShieldCheck } from '@lucide/vue'
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
-import { useCustomersStore } from '@/stores/customers'
 import { useLocaleStore } from '@/stores/locale'
+import { registerWithPassword, signInWithPassword, CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
 import BaseModal from '@/components/ui/BaseModal.vue'
 
 const props=defineProps<{open:boolean}>()
 const emit=defineEmits<{close:[]}>()
 const session=useSessionStore()
-const customers=useCustomersStore()
 const locale=useLocaleStore()
 const router=useRouter()
-const mode=ref<'signin'|'register'|'magic'>('signin')
-const username=ref('')
-const password=ref('')
-const name=ref('')
+const mode=ref<'signin'|'register'>('signin')
 const email=ref('')
+const password=ref('')
+const confirmation=ref('')
+const name=ref('')
 const error=ref('')
-const productionEntry=window.location.pathname==='/'||window.location.pathname==='/index.html'
-const googleBusy=ref(false)
-
-const title=computed(()=>mode.value==='register'?locale.t('register'):mode.value==='magic'?locale.t('magicLink'):locale.t('loginTitle'))
-
-watch(()=>props.open,(open)=>{
-  if(open){mode.value='signin';error.value=''}
-})
-
-function complete(){
-  emit('close')
-  router.push('/tracking')
-}
-function submit(){
-  error.value=''
-  if(!session.login(username.value.trim(),password.value)){
-    error.value=locale.t('invalidLogin');return
-  }
-  complete()
-}
-function register(){
-  error.value=''
-  const nextCustomerId=Math.max(0,...customers.items.map(item=>item.id))+1
-  const result=session.register(name.value,email.value,password.value,nextCustomerId)
-  if(!result.ok){
-    error.value=result.reason==='exists'?locale.t('invalidLogin'):locale.t('registerHelp')
-    return
-  }
-  customers.add({name:name.value.trim(),email:email.value.trim().toLowerCase(),whatsapp:''})
-  complete()
+const busy=ref(false)
+const title=computed(()=>locale.t(mode.value==='register'?'register':'loginTitle'))
+watch(()=>props.open,()=>{mode.value='signin';error.value='';password.value='';confirmation.value=''})
+async function submit(){
+  if(busy.value)return
+  error.value='';busy.value=true
+  try{
+    if(mode.value==='register'){
+      await registerWithPassword(name.value.trim(),email.value.trim(),password.value,confirmation.value)
+    }else{
+      const result=await signInWithPassword(email.value.trim(),password.value)
+      if(result.redirect==='/backend/admin'){password.value='';window.location.assign(result.redirect);return}
+    }
+    if(!await session.hydrateFromBackend())throw new Error('Session unavailable')
+    password.value='';confirmation.value='';emit('close');router.push('/tracking')
+  }catch(e){
+    error.value=e instanceof CustomerSessionApiError&&e.status===429?locale.t('loginRateLimited'):locale.t(mode.value==='register'?'registrationFailed':'invalidLogin')
+  }finally{busy.value=false}
 }
 async function googleInfo(){
-  error.value=''
-  googleBusy.value=true
+  if(busy.value)return
+  error.value='';busy.value=true
   try{
     const response=await fetch('/backend/api/auth/google/status',{credentials:'same-origin',cache:'no-store'})
     const data=await response.json() as {enabled?:boolean}
     if(!response.ok||data.enabled!==true){error.value=locale.t('googleBackendRequired');return}
-    const path=productionEntry?'/':window.location.pathname.replace(/index\.html?$/,'')
+    const path=window.location.pathname.replace(/index\.html?$/,'')
     const returnPath=/^\/t\/(?:0[1-9]|[1-9][0-9]*)\/$/.test(path)?path:'/'
     window.location.assign('/backend/auth/google/redirect?return_path='+encodeURIComponent(returnPath))
   }catch{error.value=locale.t('googleBackendRequired')}
-  finally{googleBusy.value=false}
+  finally{busy.value=false}
 }
 </script>
-
 <template>
   <BaseModal :open="open" :title="title" @close="emit('close')">
     <div class="auth-tabs" role="tablist">
-      <button :class="{active:mode==='signin'}" @click="mode='signin';error=''">{{locale.t('signIn')}}</button>
-      <button :class="{active:mode==='register'}" @click="mode='register';error=''">{{locale.t('register')}}</button>
-      <button :class="{active:mode==='magic'}" @click="mode='magic';error=''">{{locale.t('magicLink')}}</button>
+      <button type="button" role="tab" :aria-selected="mode==='signin'" :class="{active:mode==='signin'}" :disabled="busy" @click="mode='signin';error=''">{{locale.t('signIn')}}</button>
+      <button type="button" role="tab" :aria-selected="mode==='register'" :class="{active:mode==='register'}" :disabled="busy" @click="mode='register';error=''">{{locale.t('register')}}</button>
     </div>
-
-    <div v-if="productionEntry" class="mt-4 space-y-4">
-      <button type="button" class="modal-secondary-action w-full" :disabled="googleBusy" @click="googleInfo">
-        <Globe2 :size="17"/>{{locale.t('google')}}
-      </button>
-      <p class="text-sm leading-7">{{locale.t('magicLinkRequestHelp')}}</p>
-      <p v-if="error" class="auth-error">{{error}}</p>
-      <a class="mini-action" href="/backend/admin">{{locale.t('adminOverview')}}</a>
-    </div>
-
-    <form v-else-if="mode==='signin'" class="mt-4 space-y-4" @submit.prevent="submit">
-      <label class="form-field">{{locale.t('loginIdentifier')}}<input v-model="username" autocomplete="username" inputmode="email" autofocus/></label>
-      <label class="form-field">{{locale.t('password')}}<input v-model="password" type="password" autocomplete="current-password"/></label>
-      <p v-if="error" class="auth-error">{{error}}</p>
-      <button class="auth-primary"><LogIn :size="19"/>{{locale.t('signIn')}}</button>
-      <button type="button" class="modal-secondary-action w-full" data-backend-endpoint="/backend/auth/google/redirect" :disabled="googleBusy" @click="googleInfo">
-        <Globe2 :size="17"/>{{locale.t('google')}}
-      </button>
+    <form class="mt-4 space-y-4" @submit.prevent="submit">
+      <label v-if="mode==='register'" class="form-field">{{locale.t('fullName')}}<input v-model="name" autocomplete="name" maxlength="255" required :disabled="busy"></label>
+      <label class="form-field">{{locale.t('email')}}<input v-model="email" type="email" autocomplete="username" dir="ltr" maxlength="255" required :disabled="busy"></label>
+      <label class="form-field">{{locale.t('password')}}<input v-model="password" type="password" :autocomplete="mode==='register'?'new-password':'current-password'" dir="ltr" :minlength="mode==='register'?12:undefined" maxlength="255" required :disabled="busy"></label>
+      <label v-if="mode==='register'" class="form-field">{{locale.t('confirmPassword')}}<input v-model="confirmation" type="password" autocomplete="new-password" dir="ltr" required :disabled="busy"></label>
+      <p v-if="mode==='register'" class="text-xs leading-6 text-[var(--c-muted)]">{{locale.t('passwordRequirements')}}</p>
+      <p v-if="error" role="alert" class="auth-error">{{error}}</p>
+      <button class="auth-primary" :disabled="busy"><component :is="mode==='register'?UserPlus:LogIn" :size="19"/>{{locale.t(mode==='register'?'createAccount':'signIn')}}</button>
+      <button type="button" class="modal-secondary-action w-full" data-backend-endpoint="/backend/auth/google/redirect" :disabled="busy" @click="googleInfo"><Globe2 :size="17"/>{{locale.t('google')}}</button>
     </form>
-
-    <form v-else-if="mode==='register'" class="mt-4 space-y-4" @submit.prevent="register">
-      <p class="text-xs leading-6 text-[var(--c-muted)]">{{locale.t('registerHelp')}}</p>
-      <label class="form-field">{{locale.t('fullName')}}<input v-model="name" autocomplete="name" autofocus/></label>
-      <label class="form-field">{{locale.t('email')}}<input v-model="email" type="email" autocomplete="email"/></label>
-      <label class="form-field">{{locale.t('password')}}<input v-model="password" type="password" autocomplete="new-password"/></label>
-      <p v-if="error" class="auth-error">{{error}}</p>
-      <button class="auth-primary"><UserPlus :size="19"/>{{locale.t('createAccount')}}</button>
-      <button type="button" class="modal-secondary-action w-full" :disabled="googleBusy" @click="googleInfo"><Globe2 :size="17"/>{{locale.t('google')}}</button>
-    </form>
-
-    <div v-else class="mt-4 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface-2)] p-4">
-      <div class="flex items-start gap-3">
-        <KeyRound :size="21" class="mt-0.5 shrink-0 text-[var(--c-primary)]"/>
-        <p class="text-sm leading-7 text-[var(--c-text)]">{{locale.t('magicLinkRequestHelp')}}</p>
-      </div>
-    </div>
+    <a class="mini-action mt-4" href="/backend/admin/login"><ShieldCheck :size="17"/>{{locale.t('adminSignIn')}}</a>
   </BaseModal>
 </template>

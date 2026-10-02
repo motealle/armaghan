@@ -9,9 +9,6 @@ const locale=useLocaleStore()
 
 <template>
   <footer data-style-id="footer.shell" data-style-label="فوتر سایت" class="site-footer test26-site-footer">
-    <div data-style-id="footer.brand" data-style-label="لوگوی فوتر" class="test26-footer-brand">
-      <img :src="'../../logo.png'" alt="Armaghan">
-    </div>
 
     <div data-style-id="footer.columns" data-style-label="ستون‌های فوتر" class="test26-footer-grid">
       <section>
@@ -43,6 +40,9 @@ const locale=useLocaleStore()
         </div>
         <small class="test26-footer-social-note">{{locale.t('footerSocialPending')}}</small>
       </section>
+    </div>
+    <div data-style-id="footer.brand" data-style-label="لوگوی فوتر" class="test26-footer-brand">
+      <img :src="'../../logo.png'" alt="Armaghan">
     </div>
   </footer>
 </template>

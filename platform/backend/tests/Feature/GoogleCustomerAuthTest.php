@@ -184,4 +184,47 @@ class GoogleCustomerAuthTest extends TestCase
         $this->assertSame('buyer@example.test',Customer::query()->sole()->user->email);
     }
 
+    public function test_only_verified_owner_google_identities_provision_admin_and_preserve_password_on_repeat(): void
+    {
+        $this->configureGoogle();
+        foreach (config('owner-access.google_admin_emails') as $index => $email) {
+            $provider=Mockery::mock();
+            $provider->shouldReceive('user')->once()->andReturn($this->identity('owner-'.$index,$email));
+            Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
+            $this->get('/auth/google/callback?code=test')->assertRedirect('https://armaghantrading.com/backend/account/security');
+            $user=User::where('email',$email)->firstOrFail();
+            $this->assertTrue($user->isActiveAdmin());
+            $this->assertNotNull($user->email_verified_at);
+            $this->assertAuthenticatedAs($user);
+            $this->assertNull(session(CustomerSession::KEY));
+            $this->get('/account/security')->assertOk()->assertSee('ورود به مدیریت');
+        }
+        $this->assertDatabaseCount('customers',0);
+        $service=app(\App\Services\GoogleAdminIdentityService::class);
+        $user=User::where('email','motealle@gmail.com')->firstOrFail();
+        $hash=$user->password;
+        $this->assertSame($user->id,$service->resolve($this->identity('owner-0','motealle@gmail.com'))->id);
+        $this->assertSame($hash,$user->fresh()->password);
+    }
+    public function test_unverified_owner_and_disabled_owner_cannot_be_elevated(): void
+    {
+        $service=app(\App\Services\GoogleAdminIdentityService::class);
+        try { $service->resolve($this->identity('owner','motealle@gmail.com',false)); $this->fail('Unverified owner accepted'); }
+        catch (DomainException) { $this->assertDatabaseCount('users',0); }
+        $user=User::factory()->create(['email'=>'motealle@gmail.com','active'=>false]);
+        try { $service->resolve($this->identity('owner','motealle@gmail.com')); $this->fail('Disabled owner accepted'); }
+        catch (DomainException) { $this->assertFalse($user->fresh()->isActiveAdmin()); }
+        $this->assertNull($service->resolve($this->identity('other','other@gmail.com')));
+    }
+    public function test_owner_promotion_revokes_prior_customer_session_and_old_password(): void
+    {
+        $user=User::factory()->create(['email'=>'motealle@gmail.com','password'=>'OldCustomerPassword2026']);
+        $customer=Customer::create(['user_id'=>$user->id,'active'=>true]);
+        app(\App\Services\GoogleAdminIdentityService::class)->resolve($this->identity('owner','motealle@gmail.com'));
+        $this->assertTrue($user->fresh()->isActiveAdmin());
+        $this->assertFalse($customer->fresh()->active);
+        $this->assertFalse(\Illuminate\Support\Facades\Hash::check('OldCustomerPassword2026',$user->fresh()->password));
+        $this->withSession([CustomerSession::KEY=>$customer->id])->getJson('/api/customer/session')->assertUnauthorized();
+    }
+
 }

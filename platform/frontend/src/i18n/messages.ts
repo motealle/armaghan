@@ -4,6 +4,13 @@ export type TranslationMap = Record<string,string>
 
 export const baseMessages: Record<Locale, TranslationMap> = {
   fa: {
+    confirmPassword:"تکرار رمز",
+    passwordRequirements:"حداقل ۱۲ نویسه، شامل حرف و عدد.",
+    registrationFailed:"ثبت‌نام انجام نشد. تکرار رمز و شرایط رمز را بررسی کنید؛ برای حساب موجود یا ایمیل مدیر، از گزینه ورود استفاده کنید.",
+    loginRateLimited:"تلاش‌ها زیاد شده است؛ کمی بعد دوباره امتحان کنید.",
+    adminSignIn:"ورود مدیر",
+    accountPassword:"تعیین یا تغییر رمز حساب",
+
     googleSignInFailed:'انجام ورود گوگل کامل نشد. از دکمه ورود دوباره شروع کنید.',
     googleSignInExpired:'این درخواست ورود منقضی یا قبلاً مصرف شده است. از دکمه ورود دوباره شروع کنید؛ به صفحه قبلی گوگل برنگردید.',
     logoutFailed:'خروج انجام نشد. دوباره تلاش کنید.',
@@ -39,6 +46,13 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'ارمغان · تولید و صادرات پوشاک',footerContact:'ارتباط فروش و پیگیری سفارش از مسیرهای داخل سایت انجام می‌شود.',skipContent:'پرش به محتوای اصلی'
   },
   ar: {
+    confirmPassword:"تأكيد كلمة المرور",
+    passwordRequirements:"١٢ حرفاً على الأقل، تتضمن حروفاً وأرقاماً.",
+    registrationFailed:"لم يكتمل التسجيل. تحقق من كلمة المرور وتأكيدها؛ للحساب الحالي أو الإداري استخدم تسجيل الدخول.",
+    loginRateLimited:"محاولات كثيرة. حاول مجدداً بعد قليل.",
+    adminSignIn:"دخول المدير",
+    accountPassword:"تعيين أو تغيير كلمة المرور",
+
     googleSignInFailed:'لم يكتمل دخول Google. ابدأ مجدداً من زر الدخول.',
     googleSignInExpired:'انتهى طلب الدخول أو استُخدم سابقاً. ابدأ مجدداً من زر الدخول ولا ترجع إلى صفحة Google السابقة.',
     logoutFailed:'تعذر الخروج. حاول مرة أخرى.',
@@ -74,6 +88,13 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'أرمغان · إنتاج وتصدير الملابس',footerContact:'يمكن التواصل مع المبيعات ومتابعة الطلب من داخل الموقع.',skipContent:'تخطي إلى المحتوى'
   },
   en: {
+    confirmPassword:"Confirm password",
+    passwordRequirements:"At least 12 characters, including letters and numbers.",
+    registrationFailed:"Registration failed. Check your password and confirmation; for an existing or administrator account, use sign in.",
+    loginRateLimited:"Too many attempts. Please try again shortly.",
+    adminSignIn:"Administrator sign in",
+    accountPassword:"Set or change account password",
+
     googleSignInFailed:'Google sign-in did not complete. Start again using the sign-in button.',
     googleSignInExpired:'This sign-in request expired or was already used. Start again with the sign-in button instead of going back to the previous Google page.',
     logoutFailed:'Sign-out failed. Please try again.',
@@ -109,6 +130,13 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'Armaghan · Garment manufacturing & export',footerContact:'Sales contact and order tracking are available through the site.',skipContent:'Skip to main content'
   },
   ku: {
+    confirmPassword:"دووبارەکردنەوەی وشەی نهێنی",
+    passwordRequirements:"لانیکەم ١٢ پیت، لەگەڵ پیت و ژمارە.",
+    registrationFailed:"تۆمارکردن تەواو نەبوو. وشەی نهێنی و دووبارەکردنەوەکە بپشکنە؛ بۆ هەژماری پێشوو یان بەڕێوەبەر بچۆ ژوورەوە.",
+    loginRateLimited:"هەوڵەکان زۆرن. کەمێکی تر هەوڵ بدەرەوە.",
+    adminSignIn:"چوونەژوورەوەی بەڕێوەبەر",
+    accountPassword:"دانان یان گۆڕینی وشەی نهێنی",
+
     googleSignInFailed:'چوونەژوورەوە بە Google تەواو نەبوو. لە دوگمەی چوونەژوورەوە دووبارە دەست پێ بکە.',
     googleSignInExpired:'داواکاری چوونەژوورەوە بەسەرچووە یان پێشتر بەکارهاتووە. لە دوگمەی چوونەژوورەوە دووبارە دەست پێ بکە.',
     logoutFailed:'چوونەدەرەوە سەرکەوتوو نەبوو. دووبارە هەوڵ بدە.',

@@ -79,6 +79,13 @@ async function requestJson<T>(path:string,init:RequestInit={},allowCsrfRetry=tru
   return payload as T
 }
 
+export async function signInWithPassword(email:string,password:string):Promise<{redirect?:string}>{
+  return requestJson('/api/auth/login',{method:'POST',body:JSON.stringify({email,password})})
+}
+export async function registerWithPassword(name:string,email:string,password:string,password_confirmation:string):Promise<void>{
+  await requestJson('/api/auth/register',{method:'POST',body:JSON.stringify({name,email,password,password_confirmation})})
+}
+
 export async function consumeCustomerMagicLink(token:string):Promise<BackendCustomerSession>{
   const response=await requestJson<SessionResponse>('/api/customer/magic-link/consume',{
     method:'POST',

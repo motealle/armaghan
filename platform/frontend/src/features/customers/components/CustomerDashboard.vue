@@ -52,6 +52,7 @@ async function saveProfile(){
         <label v-if="!session.backendAuthenticated" class="form-field">{{locale.t('address')}}<input v-model="profile.address"></label>
         <label v-if="!session.backendAuthenticated" class="form-field md:col-span-2">{{locale.t('location')}}<input v-model="profile.location"></label>
       </div>
+      <div v-if="session.backendAuthenticated" class="mt-3"><a class="mini-action" href="/backend/account/security">{{locale.t('accountPassword')}}</a></div>
       <div class="mt-3 flex justify-end"><button class="mini-action bg-[var(--c-primary)] text-white" @click="saveProfile"><Save :size="15"/>{{locale.t('save')}}</button></div>
     </section>
 

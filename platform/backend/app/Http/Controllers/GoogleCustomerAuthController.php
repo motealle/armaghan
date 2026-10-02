@@ -2,7 +2,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
+use App\Models\User;
 use App\Services\GoogleCustomerIdentityService;
+use App\Services\GoogleAdminIdentityService;
+use Illuminate\Support\Facades\Auth;
 use App\Support\CustomerSession;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -43,6 +46,16 @@ class GoogleCustomerAuthController extends Controller
         try {
             // Stateful Socialite validates the one-use session state. Never use stateless().
             $identity = Socialite::driver('google')->user();
+            $admin = app(GoogleAdminIdentityService::class)->resolve($identity);
+            if ($admin) {
+                Auth::guard('web')->login($admin);
+                $request->session()->forget([CustomerSession::KEY, 'password_hash_web']);
+                $request->session()->regenerate(true);
+                $request->session()->put('armaghan.password_setup_user_id', $admin->id);
+                $request->session()->put('armaghan.password_setup_until', now()->addMinutes(10)->timestamp);
+                ActivityLog::create(['action' => 'admin.google.signed_in', 'subject_type' => User::class, 'subject_id' => $admin->id]);
+                return redirect()->away('https://armaghantrading.com/backend/account/security');
+            }
             $customer = $identities->resolve($identity, CustomerSession::current($request));
             ActivityLog::create([
                 'customer_id' => $customer->id,
@@ -51,6 +64,8 @@ class GoogleCustomerAuthController extends Controller
                 'subject_id' => $customer->id,
             ]);
             CustomerSession::login($request, $customer);
+            $request->session()->put('armaghan.password_setup_user_id', $customer->user_id);
+            $request->session()->put('armaghan.password_setup_until', now()->addMinutes(10)->timestamp);
         } catch (InvalidStateException) {
             $request->session()->forget('state');
             return $this->frontendReturn($path, true, true);

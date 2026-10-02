@@ -34,7 +34,12 @@ assert "hasBackendCustomerSession=await session.hydrateFromBackend()" in app
 assert "!hasBackendCustomerSession&&customerAccess" in app
 assert "params.get('magic')" not in app
 
-assert "magicLinkRequestHelp" in login
+assert "registerWithPassword" in login
+assert "signInWithPassword" in login
+assert "mode=ref<'signin'|'register'>" in login
+assert "mode==='magic'" not in login
+assert "session.login(" not in login
+assert "session.register(" not in login
 assert "session.createMagicLink" not in login
 assert "makeMagic()" not in login
 

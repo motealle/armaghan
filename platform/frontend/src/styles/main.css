@@ -877,3 +877,8 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .test26-why-list.test29-why-list h3{font-size:1rem;line-height:1.7;font-weight:800}
 .test26-why-list.test29-why-list p{margin-top:.45rem;font-size:.86rem;line-height:1.95;color:color-mix(in srgb,var(--c-text) 82%,var(--c-muted))}
 .test26-why-list.test29-why-list .test26-why-number{width:1.85rem;height:1.85rem;margin-top:.25rem;font-size:.7rem}
+
+/* Owner-requested Test29 presentation; preserved historical selectors above. */
+.product-card .product-card-title.unavailable{background:transparent;border:0;box-shadow:none;border-radius:0;padding-inline:0;color:var(--brand-gold)}
+.site-footer.test26-site-footer .test26-footer-brand{justify-self:right;justify-content:flex-end;align-self:end}
+.site-footer.test26-site-footer .test26-footer-brand img{width:6.9rem;height:6.9rem;max-width:100%;object-fit:contain;background:transparent;border-radius:0}
