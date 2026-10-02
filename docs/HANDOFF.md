@@ -759,3 +759,39 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 - Next P0 is customer API/session + Magic Link core. Favorites/WhatsApp persistence follows unless it safely fits the same bounded vertical slice.
 - Off-host SQLite backup/restore drill and final end-to-end QA/handoff remain after customer flows.
 - Browser Style Profile acceptance and one real Filament product-image upload remain opportunistic parallel acceptance tasks when a valid real admin session is available.
+
+
+## 41. Customer session + one-time Magic Link — production live
+
+### Security/architecture
+- Customer identity uses the normal Laravel same-origin session with a separate `armaghan.customer_id` session key; it does not replace or log out a simultaneously authenticated Filament administrator.
+- Customer session login/logout rotates the session identifier; logout clears only the customer identity and regenerates CSRF state rather than invalidating unrelated admin auth.
+- Magic Link tokens are 64 high-entropy alphanumeric characters. SQLite stores only SHA-256 hashes; raw tokens exist only at issue/click time.
+- New issuance revokes every prior unused active customer-portal Magic Link for that Customer.
+- Consumption is atomic and requires enabled + unused + unrevoked + unexpired + active Customer + direct-link enabled.
+- Issue, consume, revoke, profile update and logout are audited without storing raw tokens.
+- Public consume/admin issue routes are rate-limited. Customer session responses expose only id/company_name/WhatsApp/country code/name; internal notes and `user_id` are neither returned nor customer-writable.
+
+### Production routing repair
+- Initial core merged in PR #7: `e311d7327e249a9d57d7ed44d4a6f0c72de35b40`; Backend CI #47 PASS; Backend Code Deploy #8 PASS.
+- The first implementation emitted `/backend/auth/customer/<token>`. A later live smoke in Backend Code Deploy #9 proved this token-in-path form returns HTTP 404 on the deployed `/backend` LiteSpeed layout. The guarded updater automatically rolled back; rollback health and temp cleanup PASS.
+- The repaired design keeps the bearer token only in the Test27 URL fragment: `/t/27/#/magic/<token>`. Fragments are browser-side and are not sent in the initial HTTP request URL.
+- Test27 consumes the token once through fixed same-origin `POST /backend/api/customer/magic-link/consume` JSON body using the existing CSRF bootstrap/retry adapter, then replaces browser history with `/tracking`.
+- Repair PR #8 squash merge: `10d040c7d1706d68a5018e1240c797011440000c`.
+- Backend CI #49 pre-merge + #50 post-merge PASS.
+- Backend Code Deploy #10: **PASS** — snapshot created, no Composer/migration drift; health/admin CRUD/catalog smokes 200; unauthenticated `/api/customer/session` 401; GET against the POST-only magic consume endpoint 405; cleanup PASS.
+- Independent production probe confirmed the same 401/405 behavior outside CI.
+- FTP Deploy #314: **PASS** — frozen Test26 + Test11–27 contracts including customer auth/session contract PASS; TypeScript/Vue unit tests/Test27 production build PASS; FTP smoke and `deploy-t` PASS; `deploy-root` skipped.
+
+### Test27 behavior
+- On startup Test27 checks Backend customer session first; a real session is Backend-authoritative.
+- Legacy demo/local customer auth remains only as a Test27 review fallback when no server session exists; it is not Backend authentication.
+- The customer dashboard no longer falls back silently to seed Customer #1 when no customer id exists.
+- Customer dashboard saves the bounded server-supported fields when using a real Backend session.
+- LoginSheet no longer creates browser-only Magic Links; it explains that secure links are issued by Armaghan administration.
+
+### Next P0
+- Persisted FavoriteShare + WhatsApp handoff is next.
+- Then off-host SQLite backup/restore drill.
+- Then final end-to-end QA/handoff.
+- Browser Style Profile acceptance, one real product media upload, and one real Magic Link issue/click remain opportunistic acceptance tasks when an authenticated real admin browser session is available.

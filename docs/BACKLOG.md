@@ -3,15 +3,21 @@
 ## P0 — Customer session + Magic Link — 2026-10-02
 
 - [x] Select architecture: same-origin Laravel session + database-backed high-entropy hashed one-time Magic Link; no customer password dependency and no new auth package.
-- [ ] Add bounded issue/revoke/consume service with expiry, scope, one-time atomic consume and audit logging.
-- [ ] Add customer-session middleware + `GET/PATCH /api/customer/session` + scoped logout.
-- [ ] Add active-admin issue/revoke API and a native Filament Customer action to generate a 24h/72h/7d link.
-- [ ] Rate-limit public consume and admin issue endpoints; never log/store plaintext link tokens.
-- [ ] Wire Test 27 to hydrate real Backend customer sessions while retaining demo/local fallback only when no server session exists.
-- [ ] Persist the Backend-supported customer profile subset from the customer dashboard.
-- [ ] Add feature/unit coverage for issue, expiry, revoke, replay prevention, session rotation, authorization and Test 27 hydration.
-- [ ] Deploy through the guarded code-only lane; verify unauthenticated customer-session smoke = 401 and live Magic Link infrastructure health.
-- [ ] Reconcile `CURRENT-STATUS`, `HANDOFF`, `BACKLOG` and release the shared lock.
+- [x] Add bounded issue/revoke/consume service with expiry, scope, one-time atomic consume and audit logging.
+- [x] Add customer-session middleware + `GET/PATCH /api/customer/session` + scoped logout.
+- [x] Add active-admin issue/revoke API and native Filament Customer actions for 24h/72h/7d links.
+- [x] Rate-limit public consume/admin issue endpoints; store only SHA-256 token hashes and never persist plaintext tokens.
+- [x] Wire Test 27 to hydrate real Backend customer sessions while retaining demo/local fallback only when no server session exists.
+- [x] Persist the Backend-supported customer profile subset from the customer dashboard; internal notes/user ownership stay server-internal.
+- [x] Remove browser-issued Magic Link UI and explain that secure links are issued from the Backend.
+- [x] Add feature/unit/source-contract coverage for issue, expiry, revoke, replay prevention, scoped session behavior, authorization and Test 27 hydration.
+- [x] Backend Code Deploy #8 PASS for the initial live core.
+- [x] Backend Code Deploy #9 detected production token-in-path 404 and automatically rolled back; rollback/health/cleanup PASS.
+- [x] Repair the production route with browser-fragment token + fixed CSRF-protected POST consume endpoint; PR #8 merge `10d040c7...`.
+- [x] Backend CI #49/#50 PASS; Backend Code Deploy #10 PASS with guest session 401 and fixed consume endpoint GET 405.
+- [x] FTP Deploy #314 PASS; Test 27 auth/session regression contract + TypeScript/Vue/build/smoke/deploy PASS; root skipped.
+- [ ] Opportunistic browser acceptance when a valid real admin session is available: issue one real customer Magic Link in Filament, open it in a fresh browser, verify session/profile update/replay rejection/logout.
+- [x] Reconcile `CURRENT-STATUS`, `HANDOFF`, `BACKLOG` and release the shared lock.
 
 Priority: **P0 current**, P1 next, P2 later.  
 Current implementation targets: **Backend MVP productionization** + **Test 27 visual-editor/UI lane**. Test 26 is frozen.
@@ -190,7 +196,7 @@ Current estimate excludes open-ended new customer redesign requests. Filament CR
 3. [x] **Production SQLite/Laravel + first admin** — PDO SQLite/SQLite 3.53.4 PASS, private DB/backup active, migrations/snapshot PASS, `/backend` healthy, one real active production admin provisioned securely.
 4. [ ] **Browser-authenticated editor acceptance** — real Filament session + CSRF, Test 27 server autosave, reload/cross-device draft, staging Publish and Restore through the actual UI. This is the only remaining Style Profile persistence acceptance.
 5. [~] **Filament CRUD + catalog/customer API/media** — Product/Category/Subcategory/Customer Resources and public catalog reads are complete/live; production product-media ownership/upload and customer API/session wiring remain.
-6. [ ] **Favorites/WhatsApp + Customer Magic Link** — persisted short share links, revoke/expiry, safe one-tap customer session and audit trail.
+6. [~] **Favorites/WhatsApp + Customer Magic Link** — Customer Magic Link/session is live; persisted short FavoriteShare links, ownership/revoke/expiry and WhatsApp handoff remain.
 7. [ ] **Production hardening + final QA/handoff** — rotated off-host SQLite backup + restore drill, repeatable backend update workflow with pre-migration snapshot/rollback guard, responsive/RTL/LTR/light/dark/permissions QA, final customer handoff.
 
 ### Production backend activation delivery record
