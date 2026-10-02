@@ -6,13 +6,13 @@ Backend Laravel and Filament are live. Official Laravel Socialite is included in
 1. In Google Cloud Console select/create your production project and configure Branding/Audience for Armaghan, real support email and authorized domain armaghantrading.com. Add actual privacy/terms URLs before publishing; do not invent policy compliance.
 2. Create OAuth Client → Web application. Exact authorized callback:
    https://armaghantrading.com/backend/auth/google/callback
-3. Set these values in the PRIVATE host-managed shared .env outside public_html:
+3. Edit the existing PRIVATE `armaghan-data/.env` and active `armaghan-backend/.env`, both siblings of public_html. Preserve all existing settings. Set these values in both:
    GOOGLE_AUTH_ENABLED=true
    GOOGLE_CLIENT_ID=<your client id>
    GOOGLE_CLIENT_SECRET=<your client secret>
    GOOGLE_REDIRECT_URI=https://armaghantrading.com/backend/auth/google/callback
    Never paste the secret into chat, Git, browser build variables, logs or public files.
-4. While the Cloud app is in Testing, add intended Google test users. Publish the Cloud app when branding/domain/required policies are ready.
+4. Basic identity scopes only (`openid`, `email`, `profile`) are exempt from the Testing allowlist requirement. Other scopes can require test users and verification. Publish the Cloud app when branding/domain/required policies are ready. See https://support.google.com/cloud/answer/15549945 .
 5. Verify GET /backend/api/auth/google/status reports only enabled:true, then perform real signup and repeat login. A false value means server setup is incomplete. Agent cannot configure an unseen Cloud account or create owner credentials without access.
 
 ## Identity and session policy
@@ -32,3 +32,23 @@ Sources: https://laravel.com/framework/docs/socialite and https://developers.goo
 Dependency preparation uses `composer require laravel/socialite:^5.27 --no-install --no-scripts`; deployment installs the validated lock. The client secret exists only in the private server environment.
 
 Production endpoints: `/backend/auth/google/redirect` and `/backend/auth/google/callback`; readiness: `/backend/api/auth/google/status`.
+
+## Google activation and frontend return repair — 2026-10-02
+
+- Owner created the Google web client and installed private credentials in both `armaghan-data/.env` and `armaghan-backend/.env`; neither file nor secret is in Git. Live status now returns enabled:true.
+- Read-only redirect check: HTTP 302 to accounts.google.com; expected client ID/callback, openid/profile/email and state present.
+- Owner reported the Laravel welcome page after Google login. A fresh cancellation probe reproduced HTTP 302 to https://armaghantrading.com/backend/#/tracking?auth_error=google. Laravel prefixes frontend-relative redirects with the production /backend root.
+- Repair uses the fixed production origin plus the existing strict root/numbered-test path allowlist for success, cancellation and invalid-state returns. No authentication bypass or email-only linking.
+- Two regression cases force a /backend URL root and cover successful root login and cancellation to root/numbered paths, including hostile path fallback. Existing assertions now require the fixed production origin.
+- Deployment/tests and fresh live cancellation probe pending. Real Google signup/repeat login still OPEN; the screenshot is not proof of an authenticated customer session.
+- Tests 01–28, Test29 assets, root selector, host credentials and database schema remain unchanged.
+
+| Rank | Method | Score | Reason |
+|---:|---|---:|---|
+| 1 | Fixed frontend origin + existing strict path allowlist | 9.5 | Repairs actual subdirectory behavior without extra configuration |
+| 2 | Configurable frontend origin | 8 | Flexible but adds a host setting |
+| 3 | Change all backend base URL settings | 5 | Affects unrelated backend links |
+| 4 | Redirect backend welcome route | 4 | Masks the wrong callback destination |
+| 5 | Browser-side forwarding | 2 | Depends on loading another page |
+
+Selected: option 1.

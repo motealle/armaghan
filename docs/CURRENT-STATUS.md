@@ -1,5 +1,26 @@
 # Armaghan — Current Status
 
+## Google activation and frontend return repair — 2026-10-02
+
+- Owner created the Google web client and installed private credentials in both `armaghan-data/.env` and `armaghan-backend/.env`; neither file nor secret is in Git. Live status now returns enabled:true.
+- Read-only redirect check: HTTP 302 to accounts.google.com; expected client ID/callback, openid/profile/email and state present.
+- Owner reported the Laravel welcome page after Google login. A fresh cancellation probe reproduced HTTP 302 to https://armaghantrading.com/backend/#/tracking?auth_error=google. Laravel prefixes frontend-relative redirects with the production /backend root.
+- Repair uses the fixed production origin plus the existing strict root/numbered-test path allowlist for success, cancellation and invalid-state returns. No authentication bypass or email-only linking.
+- Two regression cases force a /backend URL root and cover successful root login and cancellation to root/numbered paths, including hostile path fallback. Existing assertions now require the fixed production origin.
+- Deployment/tests and fresh live cancellation probe pending. Real Google signup/repeat login still OPEN; the screenshot is not proof of an authenticated customer session.
+- Tests 01–28, Test29 assets, root selector, host credentials and database schema remain unchanged.
+
+| Rank | Method | Score | Reason |
+|---:|---|---:|---|
+| 1 | Fixed frontend origin + existing strict path allowlist | 9.5 | Repairs actual subdirectory behavior without extra configuration |
+| 2 | Configurable frontend origin | 8 | Flexible but adds a host setting |
+| 3 | Change all backend base URL settings | 5 | Affects unrelated backend links |
+| 4 | Redirect backend welcome route | 4 | Masks the wrong callback destination |
+| 5 | Browser-side forwarding | 2 | Depends on loading another page |
+
+Selected: option 1.
+
+
 Last reconciled: 2026-10-02
 Canonical source checkpoint for Test29 promotion: `1fafd9638777e26796acedc60b27dfd545736794`
 

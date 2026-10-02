@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as GoogleUser;
 use Laravel\Socialite\Two\InvalidStateException;
+use Illuminate\Support\Facades\URL;
 use Mockery;
 use Tests\TestCase;
 
@@ -110,7 +111,7 @@ class GoogleCustomerAuthTest extends TestCase
         $provider->shouldReceive('user')->once()->andReturn($this->identity());
         Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
         $this->actingAs($admin)->withSession(['armaghan.google.return_path'=>'/t/29/'])
-            ->get('/auth/google/callback?code=test')->assertRedirect('/t/29/#/tracking');
+            ->get('/auth/google/callback?code=test')->assertRedirect('https://armaghantrading.com/t/29/#/tracking');
         $this->assertAuthenticatedAs($admin);
         $this->assertSame(Customer::query()->sole()->id,session(CustomerSession::KEY));
     }
@@ -120,7 +121,7 @@ class GoogleCustomerAuthTest extends TestCase
         $provider=Mockery::mock();
         $provider->shouldReceive('user')->once()->andThrow(new InvalidStateException);
         Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
-        $this->get('/auth/google/callback?code=test')->assertRedirect('/#/tracking?auth_error=google');
+        $this->get('/auth/google/callback?code=test')->assertRedirect('https://armaghantrading.com/#/tracking?auth_error=google');
         $this->assertNull(session(CustomerSession::KEY));
         $this->assertDatabaseCount('customers',0);
     }
@@ -128,8 +129,40 @@ class GoogleCustomerAuthTest extends TestCase
     {
         $this->configureGoogle();
         $this->withSession(['state'=>'old','armaghan.google.return_path'=>'https://evil.example/'])
-            ->get('/auth/google/callback?error=access_denied')->assertRedirect('/#/tracking?auth_error=google');
+            ->get('/auth/google/callback?error=access_denied')->assertRedirect('https://armaghantrading.com/#/tracking?auth_error=google');
         $this->assertNull(session('state'));
         $this->assertNull(session(CustomerSession::KEY));
+    }
+
+    public function test_success_returns_to_frontend_root_when_backend_url_has_subdirectory(): void
+    {
+        $this->configureGoogle();
+        URL::forceRootUrl('https://armaghantrading.com/backend');
+        try {
+            $provider=Mockery::mock();
+            $provider->shouldReceive('user')->once()->andReturn($this->identity());
+            Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
+            $this->get('/auth/google/callback?code=test')
+                ->assertRedirect('https://armaghantrading.com/#/tracking');
+            $this->assertSame(Customer::query()->sole()->id,session(CustomerSession::KEY));
+        } finally {
+            URL::forceRootUrl(null);
+        }
+    }
+
+    public function test_cancel_returns_to_allowed_frontend_paths_when_backend_url_has_subdirectory(): void
+    {
+        $this->configureGoogle();
+        URL::forceRootUrl('https://armaghantrading.com/backend');
+        try {
+            foreach (['/' => '/', '/t/29/' => '/t/29/', '//evil.example/' => '/'] as $input => $expected) {
+                $this->withSession(['armaghan.google.return_path'=>$input])
+                    ->get('/auth/google/callback?error=access_denied')
+                    ->assertRedirect('https://armaghantrading.com'.$expected.'#/tracking?auth_error=google');
+                $this->assertNull(session(CustomerSession::KEY));
+            }
+        } finally {
+            URL::forceRootUrl(null);
+        }
     }
 }

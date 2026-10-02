@@ -37,7 +37,7 @@ class GoogleCustomerAuthController extends Controller
         }
         if (! $this->configured() || $request->has('error')) {
             $request->session()->forget('state');
-            return redirect($path.'#/tracking?auth_error=google');
+            return $this->frontendReturn($path, true);
         }
         try {
             // Stateful Socialite validates the one-use session state. Never use stateless().
@@ -53,9 +53,17 @@ class GoogleCustomerAuthController extends Controller
         } catch (Throwable) {
             // Do not log provider tokens, authorization codes or identity payloads.
             $request->session()->forget('state');
-            return redirect($path.'#/tracking?auth_error=google');
+            return $this->frontendReturn($path, true);
         }
-        return redirect($path.'#/tracking');
+        return $this->frontendReturn($path);
+    }
+
+    private function frontendReturn(string $path, bool $failed = false): RedirectResponse
+    {
+        // Laravel's URL root includes /backend in production. Frontend paths
+        // must resolve at the fixed site origin, after the return-path allowlist.
+        return redirect()->away('https://armaghantrading.com'.$path.'#/tracking'
+            .($failed ? '?auth_error=google' : ''));
     }
 
     private function configured(): bool
