@@ -1,19 +1,21 @@
 # Armaghan — Current Status
 
 Last reconciled: 2026-10-02
-Canonical main head at reconciliation start: `76f80179292f743cb54443e540602bba47c4d8bb`
+Canonical main head at reconciliation start: `3158ffbbcd1ad7fe95cf3c096d0cf576b1b8cfde`
 
 This file is the **current operational source of truth** for the next run. Historical decision records remain useful, but when an older document conflicts with this file, use this file plus the latest `docs/HANDOFF.md` and `docs/BACKLOG.md`.
 
 ## Executive status
 
-Core MVP delivery is approximately **95–97% complete**. Core admin CRUD, public catalog, product media, guarded deployment, real customer Backend session/Magic Link and persisted FavoriteShare/WhatsApp sharing are live. The remaining core delivery is off-host backup/restore hardening and final end-to-end acceptance/handoff.
+Core MVP delivery is approximately **98–99% complete**. Core admin/catalog/media/customer-auth/share flows, guarded deployment, encrypted off-host SQLite backup and artifact round-trip restore verification are live. Test 28 is the active mutable review lane. The only remaining core run is final end-to-end QA + delivery handoff.
 
 Current UI lane:
-- Test 26: frozen/immutable.
-- Test 27: active mutable review lane and visible in the test launcher.
-- Test 27 is live under `/t/27`.
-- Customer visual-correction batch is live in Test 27: logo-only footer branding, six-way product labels/unified unavailable state, hidden-by-default subcategory codes, white Products background, Mint cards, strong green heading role, Brand Blue/Gold Why styling. FTP Deploy #277 delivered the customer correction set; final heading-green polish FTP Deploy #282 PASS. No remote deletion occurred and root deployment remained skipped.
+- Tests 01–27: frozen/immutable. Test 27 is the final pre-hardening review snapshot and remains live under `/t/27`.
+- Test 28: active mutable review lane, live under `/t/28`, and first in the mutable test launcher.
+- Test 28 uses isolated `armaghan:test28:*` browser-state namespaces; active Vite/FTP lanes reject builds/deployments targeting frozen Test 27.
+- Test 28 carries forward the validated Test 27 customer UI and all current Backend integrations, while adding the production-hardening release boundary.
+- FTP Deploy #320: PASS — 112 Test 28 files uploaded, no remote files deleted, launcher updated, `deploy-t` PASS and `deploy-root` skipped.
+- Independent live verification: `/t/28` loads, `/t/27` still loads unchanged, and the launcher lists Test 28 before Test 27.
 
 Current backend lane:
 - Laravel 13.34.0 is live under `/backend`.
@@ -87,9 +89,9 @@ A real production active-admin account exists.
 
 Do not create another bootstrap admin unless the existing account is intentionally rotated/removed through an explicit administration decision.
 
-## Test 27 visual editor — live state
+## Test 28 visual editor — live state
 
-Current Test 27 editor capabilities:
+Current Test 28 editor capabilities:
 - Admin-only visual editor launcher.
 - Mobile non-modal resizable bottom sheet.
 - Direct touch selection.
@@ -111,7 +113,7 @@ Current Test 27 editor capabilities:
 - Recent immutable version history.
 - Restore-as-new-version behavior.
 
-### Current Test 27 customer color state
+### Current Test 28 customer color state
 
 Canonical approved palette:
 - Brand Green: `#21946A`
@@ -120,7 +122,7 @@ Canonical approved palette:
 - Brand White: `#FFFFFF`
 - Brand Gold: `#FFB514`
 
-The old canonical blue `#151EDA` is retired for Test 27.
+The old canonical blue `#151EDA` is retired for Test 28.
 
 Current semantic defaults:
 - Header/Footer/Hero brand chrome → Brand Blue `#0714C2`.
@@ -129,7 +131,7 @@ Current semantic defaults:
 - `home.page` background is editable but the root itself cannot be hidden.
 - `home.content` is separately hideable/selectable.
 
-Test 27 color/saveability implementation is live; FTP Deploy Run #268 passed with no remote deletes and no root deployment.
+The current Test 28 source inherits the validated color/saveability implementation; Test 27 remains its frozen predecessor.
 
 ## Style Profile production persistence — verified server-side
 
@@ -157,7 +159,7 @@ The server-side semantics are no longer uncertain.
 
 The remaining acceptance is **browser-only**:
 1. authenticate through the real Filament login at `/backend/admin/login`;
-2. open Test 27 as the authenticated administrator;
+2. open Test 28 as the authenticated administrator;
 3. edit a registered target;
 4. confirm the editor reaches server-synced state;
 5. reload and confirm the draft persists;
@@ -198,7 +200,7 @@ Production catalog state:
 
 Customer session/Magic Link and FavoriteShare/WhatsApp HTTP flows are implemented and live. The customer-facing session API exposes only the bounded self-service profile subset; internal notes/user ownership are not returned or customer-writable. FavoriteShare resolution returns only ordered active product codes and share expiry metadata; it does not expose share-owner identity.
 
-Product media ownership/upload is implemented and live. The public catalog returns a `media` array per Product and Test 27 prefers that server gallery when non-empty. Because the current production Products do not yet have uploaded server media, local media/specs remain the visible fallback. Test 27 still retains demo/local auth and local favorites storage only as review/resilience fallbacks; real customer sessions, Magic Links and newly generated FavoriteShare links are Backend-backed.
+Product media ownership/upload is implemented and live. The public catalog returns a `media` array per Product and Test 28 prefers that server gallery when non-empty. Because the current production Products do not yet have uploaded server media, local media/specs remain the visible fallback. Test 28 still retains demo/local auth and local favorites storage only as review/resilience fallbacks; real customer sessions, Magic Links and newly generated FavoriteShare links are Backend-backed.
 
 ## Persistence policy
 
@@ -207,21 +209,25 @@ Current policy:
 - JSON is ordinary import/export/fixture interchange only.
 - MySQL/MariaDB is optional later as a logical mirror/export/disaster-recovery target.
 - Never dual-write normal live requests to SQLite + MySQL.
-- Primary backups remain SQLite-to-SQLite consistent snapshots.
-- At least one rotated off-host backup + restore drill is still required before final production handoff.
+- Primary production backups use a consistent SQLite `VACUUM INTO` snapshot.
+- Daily off-host backup is operational through GitHub Actions at `23 1 * * *` UTC with 14-day artifact retention.
+- The plaintext SQLite snapshot is encrypted on the production host with AES-256-GCM before leaving the host; the public GitHub repository artifact contains only ciphertext plus a non-secret manifest.
+- SQLite Off-host Backup #1 (`36974268704`) PASS. Artifact `armaghan-sqlite-backup-36974268704` is 337,663 bytes and expires 2026-10-16T06:35:35Z.
+- The restore-drill job downloaded that uploaded artifact, decrypted it only on an isolated runner, verified ciphertext/plaintext checksums, `PRAGMA integrity_check`, `foreign_key_check`, full table inventory and critical row counts, opened/rolled back a write transaction, then discarded the restored plaintext.
+- First-run encryption used the explicit documented fallback `ftp_password_kdf_fallback` because `ARMAGHAN_BACKUP_PASSPHRASE` is not yet configured. Add a dedicated backup secret as an operational P1; do not rotate away the fallback secret while retained fallback-encrypted artifacts still need recovery unless the old secret is retained securely.
 
-## Remaining core delivery — estimated 2 bounded runs + opportunistic browser acceptance
+## Remaining core delivery — estimated 1 bounded run + opportunistic browser acceptance
 
 This estimate excludes open-ended new customer UI revisions. Browser-authenticated Style Profile acceptance and one real Filament product-image upload remain opportunistic parallel checks rather than blockers because their server-side foundations are already production-verified.
 
-1. **Production hardening**
-   - rotated off-host SQLite backup;
-   - restore drill;
-   - retention/verification and recovery notes;
-   - logs/health verification;
-   - additive and code-only deploy lanes are already production-proven.
-
-2. **Final end-to-end QA + handoff**
+1. **Final end-to-end QA + handoff**
+   - mobile/tablet/desktop;
+   - RTL/LTR;
+   - light/dark;
+   - admin/customer permissions;
+   - live catalog/media/auth/share paths;
+   - backup/restore evidence;
+   - deployment smoke and final delivery documentation.
    - mobile/tablet/desktop;
    - RTL/LTR;
    - light/dark;
@@ -234,13 +240,13 @@ This estimate excludes open-ended new customer UI revisions. Browser-authenticat
 ## Highest-priority open items
 
 P0:
-1. Configure rotated off-host SQLite backup and perform a restore drill.
-2. Complete final end-to-end QA/handoff across responsive/RTL-LTR/light-dark/auth/share/deploy paths.
-3. Complete browser-authenticated Test 27 Style Profile + one real Filament product-image upload + one real customer Magic Link acceptance opportunistically when a valid real admin session is available.
-4. Keep both Backend deployment lanes green: code-only for ordinary changes, guarded additive for approved create-only migration/dependency changes.
+1. Complete final end-to-end QA/handoff across responsive/RTL-LTR/light-dark/auth/share/backup/deploy paths.
+2. Complete browser-authenticated Test 28 Style Profile + one real Filament product-image upload + one real customer Magic Link acceptance opportunistically when a valid real admin session is available.
+3. Keep code-only, additive and off-host-backup lanes green through final handoff.
 
 P1:
-- No separate core P1 blocker remains; optional acceptance/polish only.
+- Add a dedicated GitHub Actions secret `ARMAGHAN_BACKUP_PASSPHRASE` and let future backups use it instead of the current FTP-secret KDF fallback. Retained fallback-encrypted artifacts still require the original fallback secret until they expire.
+- No other core P1 blocker remains; optional acceptance/polish only.
 
 P2 / optional:
 - MySQL logical mirror/export with verification.
@@ -287,6 +293,16 @@ P2 / optional:
 - Independent production probe: GET `/backend/api/favorite-shares` = 405 and GET `/backend/api/favorite-shares/resolve` = 405, confirming both fixed POST endpoints exist.
 - FTP Deploy #316 PASS — Test27 FavoriteShare source contract, TypeScript, Vue unit tests/build, FTP smoke and `/t/27` deploy PASS; `deploy-root` skipped.
 - Live read-only invalid-token acceptance PASS on `/t/27/#/favorites/share/<invalid-token>`: shared route loaded, server resolution attempted, invalid/unavailable shared-list state rendered, no crash or legacy local-code share.
+- Backend CI #53/#54 pre-merge and #55 post-merge: PASS for Test28/off-host-backup hardening.
+- Test28 hardening squash merge: `6593f6124bfccfd25ae5899d2690608940214905`.
+- SQLite Off-host Backup #1 (`36974268704`): PASS — production `VACUUM INTO`, AES-256-GCM encryption before transfer, encrypted artifact upload, temp cleanup PASS.
+- Restore drill in the same workflow: PASS — downloaded artifact digest matched; decryption, plaintext checksum, integrity check, foreign-key check, table inventory/counts and write-transaction rollback all PASS; restored plaintext not persisted.
+- FTP Deploy #318: stopped before build/deploy on a stale Test26 current-active-test assertion; Test26/27/root remained untouched.
+- Follow-up `39bd08346420a74bd217ee908c6782c7403da7f1`: future-proofed only the historical Test26 contract and added the Test28 release marker.
+- FTP Deploy #319: stopped before deployment because two session unit-test fixtures still wrote Test27 browser keys; runtime source was already correctly namespaced Test28.
+- Follow-up `3158ffbbcd1ad7fe95cf3c096d0cf576b1b8cfde`: aligned those fixtures with Test28.
+- FTP Deploy #320: PASS — frozen Test26/27 contracts, Test28 visual/auth/share contracts, backup safety contract, Python syntax, TypeScript, 41 Vue unit tests, Test28 production build and FTP smoke PASS; 112 files uploaded; `deploy-t` PASS; `deploy-root` skipped.
+- Independent live verification: Test28 and frozen Test27 both load successfully; launcher lists Test28 first.
 
 ## Rules for the next run
 

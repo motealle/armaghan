@@ -828,3 +828,45 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 - Production hardening: rotated off-host SQLite backup + restore drill + retention/verification.
 - Then final end-to-end QA + handoff.
 - Real authenticated admin acceptance for Style Profile, product media upload and a real customer Magic Link remains opportunistic/non-blocking.
+
+
+## 43. Test 28 + encrypted off-host SQLite backup hardening — live
+
+### Test 28 promotion
+- Test 27 is now frozen and included in `docs/IMMUTABLE-TESTS.txt`.
+- Test 28 is the active mutable UI lane and uses isolated `armaghan:test28:*` local/session-storage namespaces.
+- Vite refuses numbered UI targets <=27; FTP active target is 28 and likewise refuses frozen targets <=27.
+- The launcher lists Test28 before Test27. Test27 remains live and independently verified after Test28 deployment.
+- Test28 carries forward the validated Test27 UI/Backend integration; `document.documentElement.dataset.uiTest='28'` is the release marker.
+
+### Off-host SQLite backup architecture
+- Workflow: `.github/workflows/sqlite-offhost-backup.yml`; helper: `platform/scripts/sqlite_offhost_backup.py`.
+- Production creates a consistent live SQLite snapshot using `VACUUM INTO`, then verifies integrity/foreign keys/table inventory before encryption.
+- Plaintext snapshot is encrypted on the production host using AES-256-GCM. The public GitHub Actions artifact contains only `backup.sqlite.enc` plus a non-secret manifest.
+- Key derivation uses PBKDF2-HMAC-SHA256 with 600,000 iterations and per-backup random salt.
+- Preferred secret is `ARMAGHAN_BACKUP_PASSPHRASE`. It is not currently configured, so Backup #1 used the explicit `ftp_password_kdf_fallback`; the raw FTP secret was never logged or persisted.
+- Scheduled cadence is daily at 01:23 UTC. Artifact retention is 14 days.
+
+### First real backup + restore evidence
+- SQLite Off-host Backup #1 run: `36974268704` — PASS.
+- Encrypted artifact: `armaghan-sqlite-backup-36974268704`, ID `11212796186`, 337,663 bytes; expires 2026-10-16T06:35:35Z.
+- Production snapshot plaintext size: 335,872 bytes; encryption occurred before transfer; temporary production export cleanup PASS.
+- Production checks: SQLite integrity PASS; foreign-key check PASS; 23 tables observed.
+- Critical recorded counts at backup time: 6 migrations, 1 user, 3 categories, 6 subcategories, 18 products, and 0 customers/favorite_shares/magic_links/style_profiles/media.
+- Restore-drill job downloaded the uploaded artifact and verified the artifact digest, AES-GCM decryption, plaintext checksum, `PRAGMA integrity_check`, `PRAGMA foreign_key_check`, complete table inventory and critical table counts.
+- Restore drill opened and rolled back a write transaction successfully. Restored plaintext was held only in an isolated temporary runner directory and was not persisted.
+
+### Test28 delivery record
+- PR #10 pre-merge Backend CI #53 and #54 PASS; squash merge `6593f6124bfccfd25ae5899d2690608940214905`; post-merge Backend CI #55 PASS.
+- FTP #318 stopped before build/deploy because the historical Test26 contract still expected active Test27. Test26/27/root were untouched.
+- Fix `39bd08346420a74bd217ee908c6782c7403da7f1` future-proofed only that historical contract and added a Test28 release marker.
+- FTP #319 reached unit tests but stopped before deployment because two session test fixtures still used Test27 browser keys. Runtime source was already correct.
+- Fix `3158ffbbcd1ad7fe95cf3c096d0cf576b1b8cfde` aligned those fixtures to Test28.
+- FTP #320: PASS. Frozen Test26/Test27, Test28 visual/auth/share, backup safety, Python syntax, TypeScript, 41 Vue unit tests, production build and FTP smoke all PASS.
+- `deploy-t` uploaded 112 files into `/public_html/t/28` plus the mutable launcher; no remote file deletion; `deploy-root` skipped.
+- Independent live check confirmed `/t/28` loads, `/t/27` still loads, and the launcher is Test28-first.
+
+### Operational follow-up
+- Add a dedicated `ARMAGHAN_BACKUP_PASSPHRASE` as P1. Until then, retained fallback-encrypted artifacts require the original FTP secret-derived key; do not discard/rotate that recovery material before their expiry without an explicit recovery plan.
+- Core hardening is complete. The next and final core run is end-to-end QA + delivery handoff.
+- Real authenticated-admin Style Profile, product-image upload and real customer Magic Link browser acceptance remain opportunistic/non-blocking if a valid Filament session becomes available.

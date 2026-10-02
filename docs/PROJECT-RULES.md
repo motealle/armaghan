@@ -5,7 +5,7 @@
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.
 3. Prototype deployment may write only to `/public_html/t`.
 4. Released tests are immutable snapshots.
-5. Tests 01–26 are frozen. Test 26 is the final customer-review snapshot and must never be modified; any later UI change starts in Test 27 or higher.
+5. Tests 01–27 are frozen. Test 27 is the final pre-hardening review snapshot and must never be modified; the active mutable UI lane is Test 28.
 6. Do not modify an older numbered test to improve a newer one.
 7. `/t/index.htm` is mutable and newest test must be first.
 8. Current Vue test is generated from `/platform/frontend`; do not hand-edit compiled test files on the host.
@@ -173,9 +173,9 @@
 128. Primary Home panel surfaces default to Brand Mint through `--role-panel-background`. Individual registered panels may override that role through structured editor token assignments.
 129. `home.page` is a protected non-hideable editor root. Do not allow the administrator to hide the whole page root; use `home.content` for visibility control so the editor always remains recoverable.
 130. The canonical Brand Blue is the actual logo-background blue `#0714C2`. Header, Footer, Hero brand chrome and other semantic Brand Blue usages must resolve through tokens/roles rather than duplicating a hard-coded legacy blue.
-131. Test 27 may export/import the structured Style Profile as plain JSON for portable manual backup/transfer. Import must always pass through the existing sanitizer; JSON is not a runtime database and must not accept arbitrary CSS/HTML/JavaScript.
-132. Test 27 Style Profile API defaults to same-origin `/backend`. Mutating requests must use Laravel session authentication plus CSRF protection. Never treat the local prototype admin credential as backend authentication.
-133. A real production Laravel administrator exists. Test 27 browser-local Style Profile persistence remains the resilience fallback; final shared browser acceptance is complete only after a real authenticated backend session successfully saves, reloads, publishes and restores without weakening session/CSRF protection.
+131. Test 28 may export/import the structured Style Profile as plain JSON for portable manual backup/transfer. Import must always pass through the existing sanitizer; JSON is not a runtime database and must not accept arbitrary CSS/HTML/JavaScript.
+132. Test 28 Style Profile API defaults to same-origin `/backend`. Mutating requests must use Laravel session authentication plus CSRF protection. Never treat the local prototype admin credential as backend authentication.
+133. A real production Laravel administrator exists. Test 28 browser-local Style Profile persistence remains the resilience fallback; final shared browser acceptance is complete only after a real authenticated backend session successfully saves, reloads, publishes and restores without weakening session/CSRF protection.
 
 ## First-production-admin provisioning rules
 134. First-production-admin provisioning must fail closed when any active administrator already exists. Never seed or commit a default production password.
@@ -189,10 +189,10 @@
 140. `docs/CURRENT-STATUS.md` is the canonical summary of the repository's **current** operational state. Every repository mutation run must read it after `docs/PROJECT-RULES.md` and before planning work.
 141. Historical records in HANDOFF/audits/preflight documents remain valid as history, but an older statement must not override a newer verified status in `docs/CURRENT-STATUS.md`, latest HANDOFF, latest BACKLOG or newer successful production acceptance.
 142. After any run that materially changes production capability, active UI test state, deployment readiness, authentication/admin readiness or the next P0 task, update `docs/CURRENT-STATUS.md`, `docs/HANDOFF.md` and `docs/BACKLOG.md` in the same bounded documentation closeout.
-143. Current verified state as of 2026-10-02: production SQLite/Laravel activation, first production admin, Filament Category/Subcategory/Product/Customer CRUD, guarded code-only + additive backend deployment, public catalog API, Test 27 Hybrid Sync, product-media ownership/upload, Customer session/Magic Link and persisted FavoriteShare/WhatsApp are complete. Production Style Profile service semantics are acceptance-tested PASS; only its real browser session/CSRF/reload/cross-device/Publish/Restore acceptance remains open.
-144. Remaining core Backend MVP work is off-host SQLite backup rotation/restore drill plus final QA/handoff. Browser acceptance for Style Profile, one real product image and one real Magic Link remains opportunistic and must never weaken authentication.
-145. Public catalog reads are Backend-authoritative for every code present in Backend. If a Backend-managed product/category/subcategory is inactive, Test 27 must suppress any stale local copy. Local fallback may remain only for unmanaged staged-migration data or temporary API unavailability.
-146. Until production product media/spec ownership is implemented, Test 27 may merge Backend domain fields (identity, names, availability, taxonomy/active state) with the existing local media/spec fallback. Do not claim local fallback media is newly persisted Backend media.
+143. Current verified state as of 2026-10-02: production SQLite/Laravel activation, first production admin, Filament CRUD, guarded code-only + additive deployment, public catalog, product media, Customer session/Magic Link, persisted FavoriteShare/WhatsApp, encrypted daily off-host SQLite backup and artifact round-trip restore drill are complete. Test 27 is frozen; Test 28 is the active mutable UI lane. Production Style Profile server semantics are acceptance-tested PASS; authenticated browser acceptance remains opportunistic.
+144. Remaining core MVP work is final end-to-end QA + delivery handoff. Browser acceptance for Style Profile, one real product image and one real Magic Link remains opportunistic and must never weaken authentication.
+145. Public catalog reads are Backend-authoritative for every code present in Backend. If a Backend-managed product/category/subcategory is inactive, Test 28 must suppress any stale local copy. Local fallback may remain only for unmanaged staged-migration data or temporary API unavailability.
+146. Product media ownership is implemented. Test 28 may use the existing local media/spec fallback only for Products whose server gallery is still empty or while the catalog API is unavailable; do not claim fallback media is persisted Backend media.
 147. `armaghan:bootstrap-catalog` is a guarded first-initialization tool only. It must default to dry-run, require an explicit apply flag, and refuse execution unless Category, Subcategory and Product tables are all empty. Never convert it into an update-or-create reseeder that can overwrite administrator changes.
 148. Safe ordinary Backend code changes under `platform/backend/**` automatically enter the guarded code-only deploy lane. That lane must continue to refuse migration or Composer dependency drift; use a separately designed snapshot/migration/rollback flow for schema/dependency-changing releases.
 
@@ -208,17 +208,28 @@
 ## Customer session and Magic Link rules
 154. Customer authentication uses Laravel same-origin session state under a separate customer-session key. Do not replace or invalidate Filament admin authentication when a customer session starts or ends; rotate the session identifier to prevent fixation.
 155. Magic Link bearer tokens must be high entropy and stored only as one-way SHA-256 hashes. Never write raw Magic Link tokens to database columns, activity logs, repository files, CI logs or documentation.
-156. Production Magic Link URLs keep the raw token only in the browser fragment under Test27 (`#/magic/<token>`). Do not put the token in a backend path or query string. Test27 consumes it through the fixed same-origin POST endpoint and immediately replaces the route with `/tracking`.
+156. Production Magic Link URLs keep the raw token only in the browser fragment under Test28 (`#/magic/<token>`). Do not put the token in a backend path or query string. Test28 consumes it through the fixed same-origin POST endpoint and immediately replaces the route with `/tracking`.
 157. Magic Links are one-time, expiring, revocable and scoped. Issuing a new customer-portal Magic Link revokes prior unused active links for that customer. Replay, expired, revoked, inactive-customer and disabled-direct-link attempts must fail generically without identity disclosure.
 158. Customer Magic Link consume and self-service mutations must remain rate-limited and CSRF-protected. Guest `GET /api/customer/session` must remain unauthenticated (HTTP 401); GET on the POST-only consume endpoint should remain HTTP 405 as a production route smoke.
 159. Customer session API responses and customer-writable profile fields must remain explicitly allowlisted. Do not expose or accept internal notes, priority, user ownership, admin state, activity logs or other operational fields through customer self-service.
-160. Test27 may retain demo/local auth only as a review fallback when no real Backend customer session exists. A real Backend customer session is authoritative. Do not treat demo credentials or browser-local Magic Link data as production authentication.
+160. Test28 may retain demo/local auth only as a review fallback when no real Backend customer session exists. A real Backend customer session is authoritative. Do not treat demo credentials or browser-local Magic Link data as production authentication.
 
 
 ## FavoriteShare and WhatsApp rules
 161. New FavoriteShare links are Backend records. Store only a SHA-256 hash of the high-entropy raw share token; never persist or log the raw token.
-162. Raw FavoriteShare tokens belong only in the Test27 browser fragment (`#/favorites/share/<token>`), never in backend paths/query strings. Resolve shares through the fixed same-origin CSRF-protected POST endpoint.
+162. Raw FavoriteShare tokens belong only in the Test28 browser fragment (`#/favorites/share/<token>`), never in backend paths/query strings. Resolve shares through the fixed same-origin CSRF-protected POST endpoint.
 163. FavoriteShare issue must preserve requested product order and fail if any requested Product, Subcategory or Category is inactive/unavailable. Public resolve must expose only ordered active product codes + expiry metadata, never share-owner identity or customer data.
 164. Guest shares expire after 7 days and intentionally have no authenticated revoke surface. Customer-owned shares expire after 30 days and may be revoked only by the same real Backend customer session. These TTL defaults are configuration-backed and may be shortened, not silently made permanent.
-165. Test27 must not generate product-code-in-URL FavoriteShare links. Historical `?shared=v1:` links may remain read-only compatible only. All new native/copy/WhatsApp sharing uses the persisted server-backed URL.
+165. Test28 must not generate product-code-in-URL FavoriteShare links. Historical `?shared=v1:` links may remain read-only compatible only. All new native/copy/WhatsApp sharing uses the persisted server-backed URL.
 166. Wishlist/customer attribution must use the real `currentCustomerId` (or explicit admin impersonation id). Never hard-code Customer #1 for an authenticated customer. WhatsApp handoff must use the persisted share URL and the normalized existing seller WhatsApp path.
+
+
+## Test 28 and off-host backup rules
+167. Test 27 is frozen and immutable. Test 28 is the only active mutable numbered UI lane until explicitly superseded by a later numbered test. Current source browser-local/session state must use `armaghan:test28:*`; do not write Test27 keys.
+168. The active Vite and FTP lanes must reject generated UI targets 27 or lower. `/t/index.htm` remains mutable and must list Test28 before Test27 while Test28 is active.
+169. Production SQLite live backups must use SQLite's consistent online mechanisms (`VACUUM INTO` or an explicitly reviewed SQLite Backup API implementation). Never treat a raw filesystem copy of a live SQLite/WAL database as the canonical backup.
+170. Because this GitHub repository is public, plaintext production SQLite/database exports must never be uploaded as Actions artifacts, committed to Git, printed to logs or otherwise transferred off-host unencrypted.
+171. The canonical off-host workflow encrypts the verified production snapshot with authenticated encryption before it leaves the production host. The artifact may contain only ciphertext plus a non-secret verification manifest. Current cipher is AES-256-GCM; key derivation is PBKDF2-HMAC-SHA256 with per-backup salt.
+172. Every scheduled off-host backup must be followed by an isolated artifact round-trip restore drill: download the uploaded artifact, verify artifact/ciphertext and plaintext checksums, SQLite integrity, foreign keys, table inventory/counts and ability to open/rollback a write transaction. Restored plaintext must remain temporary and be destroyed at job end.
+173. Off-host backup cadence is daily; current artifact retention is 14 days. A dedicated `ARMAGHAN_BACKUP_PASSPHRASE` GitHub secret is preferred. When absent, the explicitly documented FTP-secret-derived KDF fallback may be used temporarily, but no raw secret may appear in artifacts/logs/manifests.
+174. Before rotating/discarding a secret that is needed to derive keys for retained backup artifacts, ensure either those artifacts have expired or the old recovery secret is retained securely. Adding a dedicated backup secret is an operational P1, not a reason to weaken encryption or publish plaintext backups.

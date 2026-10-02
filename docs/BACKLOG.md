@@ -1,19 +1,34 @@
 # Armaghan — Product Backlog
 
+## P0 — Final end-to-end QA + delivery handoff — next
+
+- [ ] Validate Test28 mobile/tablet/desktop layout and interaction.
+- [ ] Validate Persian/Arabic/Sorani RTL and English LTR.
+- [ ] Validate light/dark contrast and customer navigation.
+- [ ] Validate catalog/product media fallback, customer session/Magic Link, FavoriteShare/WhatsApp and admin permission boundaries.
+- [ ] Validate deployment lanes and backup/restore evidence in final delivery notes.
+- [ ] Perform opportunistic authenticated-admin browser acceptance only if a valid real Filament session is available; never weaken auth.
+- [ ] Produce final delivery/handoff status and close nonessential prototype/demo paths or clearly label them.
+
 ## P0 — Test 28 + off-host SQLite backup hardening — 2026-10-02
 
 - [x] Select backup architecture: production `VACUUM INTO` snapshot → AES-256-GCM encryption before transfer → encrypted GitHub Actions artifact → isolated artifact-download restore drill.
 - [x] Refuse plaintext SQLite artifacts because the repository is public.
 - [x] Prefer dedicated `ARMAGHAN_BACKUP_PASSPHRASE`; until it exists, derive a domain-separated key from the existing GitHub-held FTP secret without logging/persisting the raw secret.
-- [x] Add daily scheduled backup with 14-day artifact retention and no remote plaintext export.
+- [x] Add daily scheduled backup at 01:23 UTC with 14-day artifact retention and no remote plaintext export.
 - [x] Add restore drill from the uploaded/downloaded artifact: ciphertext hash, plaintext hash, `PRAGMA integrity_check`, `foreign_key_check`, table inventory/counts and write-lock rollback.
 - [x] Freeze Test 27 and promote source/runtime namespace to Test 28.
 - [x] Set active build/deploy lane to `/t/28`; make both Vite and FTP deployment reject frozen Test 27.
 - [x] Add Test28 visual-editor/customer-auth/FavoriteShare source contracts and a Test27 freeze/promotion contract.
-- [ ] Pre-merge CI and branch validation.
-- [ ] Merge and run first real encrypted off-host backup + artifact round-trip restore drill.
-- [ ] Deploy Test 28; verify Test 27 remains untouched and root remains skipped.
-- [ ] Reconcile `CURRENT-STATUS`, `HANDOFF`, `BACKLOG`, rules and release shared lock.
+- [x] Backend CI #53/#54 pre-merge and #55 post-merge PASS.
+- [x] First real SQLite Off-host Backup #1 PASS; encrypted artifact `armaghan-sqlite-backup-36974268704`, artifact ID `11212796186`, size 337,663 bytes, retention through 2026-10-16.
+- [x] Artifact round-trip restore drill PASS: ciphertext/plaintext checksums, SQLite integrity, foreign keys, table inventory/counts and write-transaction rollback verified; plaintext restore not retained.
+- [x] FTP #318 stopped before deployment on stale historical Test26 assertion; corrected contract only.
+- [x] FTP #319 stopped before deployment on two stale Test27 session-test fixtures; corrected fixtures only.
+- [x] FTP #320 PASS: all frozen/Test28/backup contracts + TypeScript + 41 unit tests + build + FTP smoke; 112 Test28 files uploaded; root skipped.
+- [x] Independently verify Test28 live, Test27 preserved, launcher Test28-first.
+- [x] Reconcile `CURRENT-STATUS`, `HANDOFF`, `BACKLOG`, rules and release shared lock.
+- [ ] P1 operational improvement: add dedicated `ARMAGHAN_BACKUP_PASSPHRASE`; retain recovery ability for fallback-encrypted artifacts until their 14-day expiry.
 
 ## P0 — Persisted FavoriteShare + WhatsApp — 2026-10-02
 
