@@ -19,6 +19,8 @@ const password=ref('')
 const name=ref('')
 const email=ref('')
 const error=ref('')
+const productionEntry=window.location.pathname==='/'||window.location.pathname==='/index.html'
+const googleBusy=ref(false)
 
 const title=computed(()=>mode.value==='register'?locale.t('register'):mode.value==='magic'?locale.t('magicLink'):locale.t('loginTitle'))
 
@@ -48,8 +50,18 @@ function register(){
   customers.add({name:name.value.trim(),email:email.value.trim().toLowerCase(),whatsapp:''})
   complete()
 }
-function googleInfo(){
-  error.value=locale.t('googleBackendRequired')
+async function googleInfo(){
+  error.value=''
+  googleBusy.value=true
+  try{
+    const response=await fetch('/backend/api/auth/google/status',{credentials:'same-origin',cache:'no-store'})
+    const data=await response.json() as {enabled?:boolean}
+    if(!response.ok||data.enabled!==true){error.value=locale.t('googleBackendRequired');return}
+    const path=productionEntry?'/':window.location.pathname.replace(/index\.html?$/,'')
+    const returnPath=/^\/t\/(?:0[1-9]|[1-9][0-9]*)\/$/.test(path)?path:'/'
+    window.location.assign('/backend/auth/google/redirect?return_path='+encodeURIComponent(returnPath))
+  }catch{error.value=locale.t('googleBackendRequired')}
+  finally{googleBusy.value=false}
 }
 </script>
 
@@ -61,12 +73,21 @@ function googleInfo(){
       <button :class="{active:mode==='magic'}" @click="mode='magic';error=''">{{locale.t('magicLink')}}</button>
     </div>
 
-    <form v-if="mode==='signin'" class="mt-4 space-y-4" @submit.prevent="submit">
+    <div v-if="productionEntry" class="mt-4 space-y-4">
+      <button type="button" class="modal-secondary-action w-full" :disabled="googleBusy" @click="googleInfo">
+        <Globe2 :size="17"/>{{locale.t('google')}}
+      </button>
+      <p class="text-sm leading-7">{{locale.t('magicLinkRequestHelp')}}</p>
+      <p v-if="error" class="auth-error">{{error}}</p>
+      <a class="mini-action" href="/backend/admin">{{locale.t('adminOverview')}}</a>
+    </div>
+
+    <form v-else-if="mode==='signin'" class="mt-4 space-y-4" @submit.prevent="submit">
       <label class="form-field">{{locale.t('loginIdentifier')}}<input v-model="username" autocomplete="username" inputmode="email" autofocus/></label>
       <label class="form-field">{{locale.t('password')}}<input v-model="password" type="password" autocomplete="current-password"/></label>
       <p v-if="error" class="auth-error">{{error}}</p>
       <button class="auth-primary"><LogIn :size="19"/>{{locale.t('signIn')}}</button>
-      <button type="button" class="modal-secondary-action w-full" data-backend-endpoint="/auth/google/redirect" @click="googleInfo">
+      <button type="button" class="modal-secondary-action w-full" data-backend-endpoint="/backend/auth/google/redirect" :disabled="googleBusy" @click="googleInfo">
         <Globe2 :size="17"/>{{locale.t('google')}}
       </button>
     </form>
@@ -78,6 +99,7 @@ function googleInfo(){
       <label class="form-field">{{locale.t('password')}}<input v-model="password" type="password" autocomplete="new-password"/></label>
       <p v-if="error" class="auth-error">{{error}}</p>
       <button class="auth-primary"><UserPlus :size="19"/>{{locale.t('createAccount')}}</button>
+      <button type="button" class="modal-secondary-action w-full" :disabled="googleBusy" @click="googleInfo"><Globe2 :size="17"/>{{locale.t('google')}}</button>
     </form>
 
     <div v-else class="mt-4 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface-2)] p-4">

@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { LogIn, ShieldCheck, UserRound, UserRoundX } from '@lucide/vue'
+import { useRoute } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
 import AdminDashboard from '@/features/admin/components/AdminDashboard.vue'
 import CustomerDashboard from '@/features/customers/components/CustomerDashboard.vue'
 
+const route=useRoute()
 const session=useSessionStore()
 const locale=useLocaleStore()
 const emit=defineEmits<{login:[]}>()
 </script>
 <template>
   <section>
+    <p v-if="route.query.auth_error==='google'" role="alert" class="auth-error mb-4">{{locale.t('googleSignInFailed')}}</p>
     <div class="mb-4"><h1 class="text-[1.75rem] font-black leading-tight text-[var(--c-text)]">{{locale.t('account')}}</h1><p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('accountHelp')}}</p></div>
 
     <div v-if="!session.isAuthenticated" class="rounded-3xl border border-[var(--c-border)] bg-[var(--c-surface)] p-7 text-center shadow-sm">

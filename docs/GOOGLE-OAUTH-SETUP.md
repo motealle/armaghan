@@ -1,85 +1,30 @@
-# Google Sign-In — Laravel Socialite Setup
+# Customer Google sign-in / signup
 
-The Vue prototype already exposes the intended route contract:
+Backend Laravel and Filament are live. Official Laravel Socialite is included in the guarded additive release. One Google callback handles both new customer signup and returning customer sign-in.
 
-- `GET /auth/google/redirect`
-- `GET /auth/google/callback`
+## One-time owner-controlled setup
+1. In Google Cloud Console select/create your production project and configure Branding/Audience for Armaghan, real support email and authorized domain armaghantrading.com. Add actual privacy/terms URLs before publishing; do not invent policy compliance.
+2. Create OAuth Client → Web application. Exact authorized callback:
+   https://armaghantrading.com/backend/auth/google/callback
+3. Set these values in the PRIVATE host-managed shared .env outside public_html:
+   GOOGLE_AUTH_ENABLED=true
+   GOOGLE_CLIENT_ID=<your client id>
+   GOOGLE_CLIENT_SECRET=<your client secret>
+   GOOGLE_REDIRECT_URI=https://armaghantrading.com/backend/auth/google/callback
+   Never paste the secret into chat, Git, browser build variables, logs or public files.
+4. While the Cloud app is in Testing, add intended Google test users. Publish the Cloud app when branding/domain/required policies are ready.
+5. Verify GET /backend/api/auth/google/status reports only enabled:true, then perform real signup and repeat login. A false value means server setup is incomplete. Agent cannot configure an unseen Cloud account or create owner credentials without access.
 
-Do not place a Google client secret in Vue, Vite environment variables exposed to the browser, Git, or the static `/t` build.
+## Identity and session policy
+- Normal stateful Socialite validates callback state; no stateless OAuth.
+- Verified Google email is required; immutable Google subject owns the identity record. No access/refresh tokens are retained.
+- Existing email alone never grants or links an account. A matching customer must first authenticate using their existing secure Magic Link; retry Google to explicitly link that customer. Administrator emails and inactive users/customers cannot be used for customer Google sign-in.
+- The separate CustomerSession rotates its identifier and preserves any real Filament admin authentication. No Google user becomes an admin.
+- New customers appear in real Filament customer management. Callback failures are generic and do not log identity/token payloads. Return destinations are only root or a positive numbered /t folder.
+- Root sign-in UI hides browser-only demo password/register forms. Numbered review lanes may retain their historical demo fallback; root uses real backend sessions only.
+- Production credentials are not deployed or overwritten by ordinary releases. The switch defaults OFF. Code/deployment tests do not prove a real Google account login.
 
-## 1. Google Cloud
+## Evidence
+Dependency resolution run 37007410283 passed. Eleven automated backend cases cover disabled state, redirect allowlist, signup/repeat identity, existing-email/admin denial, authenticated linking, unverified/inactive denial, independent sessions, invalid state and cancellation. Backend deploy and actual credential readiness are pending closeout.
 
-1. Open Google Cloud Console and select/create the production project.
-2. Configure the OAuth consent/brand screen with the real application name, support email, privacy policy and production domains.
-3. Create **OAuth client ID → Web application**.
-4. Add the production callback URI exactly:
-   `https://YOUR-DOMAIN/auth/google/callback`
-5. Add the local development callback if needed:
-   `http://localhost:8000/auth/google/callback`
-6. Copy the client ID and client secret to the server secret manager / server environment only.
-
-Google requires the redirect URI to match exactly, including scheme, host, path and trailing-slash behavior.
-
-## 2. Laravel 13
-
-Install Socialite:
-
-```bash
-composer require laravel/socialite
-```
-
-Server environment:
-
-```dotenv
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-GOOGLE_REDIRECT_URI=https://YOUR-DOMAIN/auth/google/callback
-```
-
-`config/services.php`:
-
-```php
-'google' => [
-    'client_id' => env('GOOGLE_CLIENT_ID'),
-    'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-    'redirect' => env('GOOGLE_REDIRECT_URI'),
-],
-```
-
-Routes:
-
-```php
-use Laravel\Socialite\Facades\Socialite;
-
-Route::get('/auth/google/redirect', function () {
-    return Socialite::driver('google')->redirect();
-})->name('auth.google.redirect');
-
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
-    ->name('auth.google.callback');
-```
-
-Controller policy:
-
-1. Let Socialite validate the OAuth state using the normal session-based flow.
-2. Fetch the Google user with `Socialite::driver('google')->user()`.
-3. Require a usable email and apply an explicit account-linking rule.
-4. Prefer linking to an existing customer only when the identity policy says it is safe; otherwise create a new customer/user.
-5. Store Google provider ID separately from the customer's mutable email.
-6. Create the Laravel authenticated session, regenerate the session ID, then redirect to the account/tracking screen.
-7. Log account-linking/admin-sensitive events.
-
-## 3. Production readiness checklist
-
-- HTTPS enabled.
-- Exact authorized redirect URI registered at Google.
-- Client secret exists only on the server.
-- Session/cookie domain and secure cookie settings configured.
-- Login throttling and logout tested.
-- Existing-account linking policy decided before launch.
-- Callback failure/cancel path returns a safe localized message.
-- Static Test builds continue to show backend-required behavior until the Laravel route is actually deployed.
-
-## Current blocker
-
-The repository currently contains the Vue prototype and backend contract, but not the Laravel production application. Therefore Google Sign-In must not report success yet. Once the Laravel backend is deployed and the two Google credentials are configured, the frontend button can navigate directly to `/auth/google/redirect`.
+Sources: https://laravel.com/framework/docs/socialite and https://developers.google.com/identity/openid-connect/openid-connect .

@@ -53,9 +53,10 @@ export const useSessionStore=defineStore('session',()=>{
   const backendAuthenticated=ref(false)
   const backendCustomer=ref<BackendCustomerSession|null>(null)
 
-  const isAuthenticated=computed(()=>role.value!=='guest')
-  const isAdmin=computed(()=>role.value==='admin')
-  const isCustomer=computed(()=>role.value==='customer')
+  const productionEntry=typeof window!=='undefined'&&(window.location.pathname==='/'||window.location.pathname==='/index.html')
+  const isAuthenticated=computed(()=>productionEntry?backendAuthenticated.value:role.value!=='guest')
+  const isAdmin=computed(()=>!productionEntry&&role.value==='admin')
+  const isCustomer=computed(()=>productionEntry?backendAuthenticated.value:role.value==='customer')
 
   function persistRole(next:UserRole,email='',customerId:number|null=null){
     role.value=next

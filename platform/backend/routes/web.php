@@ -69,3 +69,8 @@ Route::prefix('api/admin/customers')
         Route::post('/{customer}/magic-link', [AdminCustomerMagicLinkController::class, 'store']);
         Route::delete('/{customer}/magic-link', [AdminCustomerMagicLinkController::class, 'destroy']);
     });
+
+
+Route::get('/api/auth/google/status', [\App\Http\Controllers\GoogleCustomerAuthController::class, 'status'])->middleware('throttle:60,1');
+Route::get('/auth/google/redirect', [\App\Http\Controllers\GoogleCustomerAuthController::class, 'redirect'])->middleware('throttle:15,1')->name('auth.google.redirect');
+Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleCustomerAuthController::class, 'callback'])->middleware('throttle:30,1')->name('auth.google.callback');

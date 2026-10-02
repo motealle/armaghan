@@ -1032,3 +1032,5 @@ Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 
 ## Owner-authorized root Test29 release — 2026-10-02
 Owner explicitly authorizes root index replacement with selected Test29 while preserving /t. Independent selector: config/root-release.json. Tests 01–28 remain frozen; Test29 is mutable. Requested eyebrow/producible defaults and real Filament navigation are included. Root deployment verification pending. Google requires owner Cloud credentials; no real login acceptance is claimed.
+
+Google customer signup/sign-in implemented using official Socialite with a create-only identity table and eleven backend security cases. Root hides local demo password/signup and ignores browser-only admin roles; real customer sessions remain authoritative. Backend additive deploy and real Google credential readiness pending; never claim live Google login before actual provider verification.

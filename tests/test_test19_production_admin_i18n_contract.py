@@ -90,7 +90,7 @@ assert "queueGuestMessage" in admin
 assert "session.register" in login
 assert "magicLink" in login
 assert "createMagicLink" in login or "magicLinkRequestHelp" in login
-assert 'data-backend-endpoint="/auth/google/redirect"' in login
+assert 'data-backend-endpoint="/backend/auth/google/redirect"' in login
 assert "googleBackendRequired" in login
 assert "register(" in session
 assert "createMagicLink" in session and "revokeMagicLink" in session and "consumeMagicLink" in session
