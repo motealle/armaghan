@@ -359,6 +359,9 @@ def main() -> int:
             "magic_consume_post_only": get_status(
                 site_url.rstrip("/") + "/backend/api/customer/magic-link/consume"
             ),
+            "favorite_share_resolve_post_only": get_status(
+                site_url.rstrip("/") + "/backend/api/favorite-shares/resolve"
+            ),
         }
         print("ARMAGHAN_BACKEND_CODE_UPDATE_SMOKE")
         print(json.dumps(checks, indent=2))
@@ -373,6 +376,7 @@ def main() -> int:
             and checks["catalog_products"] == 200
             and checks["customer_session_guest"] == 401
             and checks["magic_consume_post_only"] == 405
+            and checks["favorite_share_resolve_post_only"] == 405
         )
         if not smoke_ok:
             rollback = get_json(helper_base + "?" + urlencode({"token": secret, "action": "rollback"}), timeout=120)
