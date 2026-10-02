@@ -9,6 +9,9 @@ on:
       - "platform/scripts/hosting_preflight.py"
       - "platform/scripts/deploy_laravel_code_update.py"
       - "platform/scripts/deploy_laravel_additive_update.py"
+      - "platform/scripts/sqlite_offhost_backup.py"
+      - ".github/workflows/sqlite-offhost-backup.yml"
+      - "tests/test_sqlite_offhost_backup_contract.py"
       - "platform/scripts/bootstrap_catalog_ftp.py"
       - ".github/workflows/backend-ci.yml"
   pull_request:
@@ -51,7 +54,7 @@ jobs:
 
       - name: Validate deployment helper syntax
         run: |
-          python -m py_compile ../scripts/deploy_laravel_shared_hosting.py ../scripts/deploy_laravel_code_update.py ../scripts/deploy_laravel_additive_update.py ../scripts/bootstrap_catalog_ftp.py ../scripts/hosting_preflight.py ../scripts/provision_first_admin_ftp.py
+          python -m py_compile ../scripts/deploy_laravel_shared_hosting.py ../scripts/deploy_laravel_code_update.py ../scripts/deploy_laravel_additive_update.py ../scripts/sqlite_offhost_backup.py ../scripts/bootstrap_catalog_ftp.py ../scripts/hosting_preflight.py ../scripts/provision_first_admin_ftp.py
           python - <<'PY'
           import importlib.util
           from pathlib import Path
@@ -114,6 +117,25 @@ jobs:
           )
           PY
           php -l /tmp/armaghan-additive-update.php
+          python - <<'PY'
+          import base64
+          import importlib.util
+          from pathlib import Path
+          path=Path("../scripts/sqlite_offhost_backup.py")
+          spec=importlib.util.spec_from_file_location("armaghan_offhost_backup",path)
+          module=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          Path("/tmp/armaghan-offhost-backup.php").write_text(
+              module.helper_php(
+                  "safe-ci-helper-secret",
+                  "0123456789abcdef",
+                  base64.b64encode(b"x"*32).decode("ascii"),
+              ),
+              encoding="utf-8",
+          )
+          PY
+          php -l /tmp/armaghan-offhost-backup.php
+          python ../../tests/test_sqlite_offhost_backup_contract.py
           python - <<'PY'
           import importlib.util
           from pathlib import Path

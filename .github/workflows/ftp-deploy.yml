@@ -22,7 +22,7 @@ concurrency:
 env:
   FTP_TARGET_ROOT: /public_html
   FTP_TARGET_T: /public_html/t
-  ACTIVE_UI_TEST: '27'
+  ACTIVE_UI_TEST: '28'
 
 jobs:
   plan:
@@ -126,12 +126,16 @@ jobs:
         run: python tests/test_test25_bugfix2_contract.py
       - name: Test frozen Test 26 handoff contract
         run: python tests/test_test26_appearance_contract.py
-      - name: Test Test 27 visual editor foundation contract
-        run: python tests/test_test27_visual_editor_contract.py
-      - name: Test Test 27 customer auth/session contract
-        run: python tests/test_test27_customer_auth_contract.py
-      - name: Test Test 27 persisted FavoriteShare contract
-        run: python tests/test_test27_favorite_share_contract.py
+      - name: Test frozen Test 27 / active Test 28 promotion contract
+        run: python tests/test_test27_frozen_lane_contract.py
+      - name: Test Test 28 visual editor foundation contract
+        run: python tests/test_test28_visual_editor_contract.py
+      - name: Test Test 28 customer auth/session contract
+        run: python tests/test_test28_customer_auth_contract.py
+      - name: Test Test 28 persisted FavoriteShare contract
+        run: python tests/test_test28_favorite_share_contract.py
+      - name: Test encrypted off-host SQLite backup contract
+        run: python tests/test_sqlite_offhost_backup_contract.py
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
       - name: Check Python syntax
@@ -253,8 +257,8 @@ jobs:
 
           if os.environ.get("FRONTEND_CHANGED")=="true":
               target=os.environ.get("ACTIVE_UI_TEST","").strip()
-              if not (len(target)==2 and target.isdigit() and int(target)>26):
-                  raise SystemExit("ACTIVE_UI_TEST must be an unfrozen two-digit test number greater than 26")
+              if not (len(target)==2 and target.isdigit() and int(target)>27):
+                  raise SystemExit("ACTIVE_UI_TEST must be an unfrozen two-digit test number greater than 27")
               target_dir=f"t/{target}"
               if not os.path.isdir(target_dir): raise SystemExit(f"Generated Test {target} build is missing")
               for root,_,files in os.walk(target_dir):

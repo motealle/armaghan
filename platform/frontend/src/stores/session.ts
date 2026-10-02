@@ -10,11 +10,11 @@ import {
   type BackendCustomerSession,
 } from '@/features/auth/services/customerSessionApi'
 
-const STORAGE_KEY='armaghan:test27:role'
-const IMPERSONATION_KEY='armaghan:test27:impersonation'
-const CUSTOMER_ID_KEY='armaghan:test27:customer-id'
-const ACCOUNTS_KEY='armaghan:test27:accounts'
-const MAGIC_KEY='armaghan:test27:magic-links'
+const STORAGE_KEY='armaghan:test28:role'
+const IMPERSONATION_KEY='armaghan:test28:impersonation'
+const CUSTOMER_ID_KEY='armaghan:test28:customer-id'
+const ACCOUNTS_KEY='armaghan:test28:accounts'
+const MAGIC_KEY='armaghan:test28:magic-links'
 
 type LocalAccount={id:number;name:string;email:string;password:string}
 type MagicMode='permanent'|'expiring'
@@ -48,7 +48,7 @@ export const useSessionStore=defineStore('session',()=>{
   const impersonatedCustomerId=ref<number|null>(readImpersonation())
   const accounts=ref<LocalAccount[]>(readAccounts())
   const magicLinks=ref<MagicRecord[]>(readMagic())
-  const currentEmail=ref(sessionStorage.getItem('armaghan:test27:email')??'')
+  const currentEmail=ref(sessionStorage.getItem('armaghan:test28:email')??'')
   const currentCustomerId=ref<number|null>(Number(sessionStorage.getItem(CUSTOMER_ID_KEY))||null)
   const backendAuthenticated=ref(false)
   const backendCustomer=ref<BackendCustomerSession|null>(null)
@@ -64,8 +64,8 @@ export const useSessionStore=defineStore('session',()=>{
     currentCustomerId.value=customerId
     if(next==='guest')sessionStorage.removeItem(STORAGE_KEY)
     else sessionStorage.setItem(STORAGE_KEY,next)
-    if(email)sessionStorage.setItem('armaghan:test27:email',email)
-    else sessionStorage.removeItem('armaghan:test27:email')
+    if(email)sessionStorage.setItem('armaghan:test28:email',email)
+    else sessionStorage.removeItem('armaghan:test28:email')
     if(customerId)sessionStorage.setItem(CUSTOMER_ID_KEY,String(customerId))
     else sessionStorage.removeItem(CUSTOMER_ID_KEY)
     sessionStorage.removeItem(IMPERSONATION_KEY)
