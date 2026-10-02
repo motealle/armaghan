@@ -1,14 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261002-google-profile",
-  "scope": "Prevent demo customer collision after real Google auth; own-account identity fields and fresh retry",
-  "base_ref": "cf4198a7edf88ad593d0ab9b4459237e80b6f451",
-  "acquired_at": "2026-10-02T15:59:11.487Z",
-  "expires_at": "2026-10-02T17:29:11.487Z",
-  "released_at": "2026-10-02T16:20:32.129Z",
-  "result_ref": "c77313b12fbc6bd832fb00e8ea1efdc1201b6f80",
-  "summary": "Profile fixture collision fixed; own readonly identity and logout UI deployed; Why cards live. Backend 52/376 and frontend 51 tests PASS; actual owner logout/relogin acceptance remains OPEN."
+  "run_id": "codex-20261002-password-admin",
+  "scope": "Real email/password signup/login; verified Google owner admins; badge and footer repair",
+  "base_ref": "c77313b12fbc6bd832fb00e8ea1efdc1201b6f80",
+  "acquired_at": "2026-10-02T18:09:29.892Z",
+  "expires_at": "2026-10-02T19:39:29.892Z"
 }
