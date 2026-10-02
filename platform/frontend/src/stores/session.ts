@@ -2,6 +2,12 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { UserRole } from '@/types/domain'
 import { useCustomersStore } from '@/stores/customers'
+import {
+  fetchCustomerSession,
+  logoutCustomerSession,
+  updateCustomerSession,
+  type BackendCustomerSession,
+} from '@/features/auth/services/customerSessionApi'
 
 const STORAGE_KEY='armaghan:test27:role'
 const IMPERSONATION_KEY='armaghan:test27:impersonation'
@@ -43,6 +49,8 @@ export const useSessionStore=defineStore('session',()=>{
   const magicLinks=ref<MagicRecord[]>(readMagic())
   const currentEmail=ref(sessionStorage.getItem('armaghan:test27:email')??'')
   const currentCustomerId=ref<number|null>(Number(sessionStorage.getItem(CUSTOMER_ID_KEY))||null)
+  const backendAuthenticated=ref(false)
+  const backendCustomer=ref<BackendCustomerSession|null>(null)
 
   const isAuthenticated=computed(()=>role.value!=='guest')
   const isAdmin=computed(()=>role.value==='admin')
@@ -115,8 +123,48 @@ export const useSessionStore=defineStore('session',()=>{
     return true
   }
 
+  async function hydrateFromBackend():Promise<boolean>{
+    try{
+      const customer=await fetchCustomerSession()
+      if(!customer){
+        backendAuthenticated.value=false
+        backendCustomer.value=null
+        return false
+      }
+      backendAuthenticated.value=true
+      backendCustomer.value=customer
+      customers.upsertBackendCustomer(customer)
+      persistRole('customer','',customer.id)
+      return true
+    }catch{
+      return false
+    }
+  }
+
+  async function saveBackendCustomer(
+    patch:Partial<Pick<BackendCustomerSession,'company_name'|'whatsapp'|'country_code'|'country_name'>>,
+  ):Promise<boolean>{
+    if(!backendAuthenticated.value)return false
+    try{
+      const customer=await updateCustomerSession(patch)
+      backendCustomer.value=customer
+      customers.upsertBackendCustomer(customer)
+      return true
+    }catch{
+      return false
+    }
+  }
+
   function loginCustomerRecord(customerId:number,email=''){persistRole('customer',email,customerId)}
-  function logout(){persistRole('guest')}
+  async function logout():Promise<boolean>{
+    if(backendAuthenticated.value){
+      try{await logoutCustomerSession()}catch{return false}
+    }
+    backendAuthenticated.value=false
+    backendCustomer.value=null
+    persistRole('guest')
+    return true
+  }
   function impersonate(customerId:number){
     if(!isAdmin.value)return
     impersonatedCustomerId.value=customerId
@@ -129,6 +177,7 @@ export const useSessionStore=defineStore('session',()=>{
 
   return{
     role,isAuthenticated,isAdmin,isCustomer,impersonatedCustomerId,currentCustomerId,currentEmail,accounts,magicLinks,
-    login,register,loginCustomerRecord,logout,impersonate,stopImpersonating,createMagicLink,revokeMagicLink,consumeMagicLink,
+    backendAuthenticated,backendCustomer,
+    login,register,loginCustomerRecord,hydrateFromBackend,saveBackendCustomer,logout,impersonate,stopImpersonating,createMagicLink,revokeMagicLink,consumeMagicLink,
   }
 })

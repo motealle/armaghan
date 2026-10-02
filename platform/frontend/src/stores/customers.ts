@@ -2,6 +2,13 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 
 export type AccessLinkMode='permanent'|'expiring'
+export interface BackendCustomerSnapshot{
+  id:number
+  company_name:string|null
+  whatsapp:string|null
+  country_code:string|null
+  country_name:string|null
+}
 export interface CustomerRecord{
   id:number
   flag:string
@@ -63,6 +70,11 @@ function loadLeads():WishlistLead[]{
   ]
 }
 function makeToken(){return crypto.getRandomValues(new Uint32Array(4)).join('').slice(0,22)}
+function flagFromCountryCode(value:string|null):string{
+  const code=(value??'').trim().toUpperCase()
+  if(!/^[A-Z]{2}$/.test(code))return '🌐'
+  return String.fromCodePoint(...[...code].map(char=>127397+char.charCodeAt(0)))
+}
 function visitorToken(){
   let value=localStorage.getItem(VISITOR_KEY)
   if(!value){value='visitor-'+makeToken();localStorage.setItem(VISITOR_KEY,value)}
@@ -92,6 +104,46 @@ export const useCustomersStore=defineStore('customers',()=>{
   function update(id:number,patch:Partial<CustomerRecord>){
     const row=items.value.find(item=>item.id===id)
     if(row)Object.assign(row,patch)
+  }
+  function upsertBackendCustomer(input:BackendCustomerSnapshot):CustomerRecord{
+    const existing=items.value.find(item=>item.id===input.id)
+    const name=input.company_name?.trim()||existing?.name||`Customer #${input.id}`
+    const country=input.country_name?.trim()||input.country_code?.trim().toUpperCase()||existing?.country||''
+    const patch={
+      name,
+      whatsapp:input.whatsapp?.trim()??'',
+      country,
+      flag:flagFromCountryCode(input.country_code),
+    }
+
+    if(existing){
+      Object.assign(existing,patch)
+      return existing
+    }
+
+    const record:CustomerRecord={
+      id:input.id,
+      flag:patch.flag,
+      country:patch.country,
+      name:patch.name,
+      whatsapp:patch.whatsapp,
+      email:'',
+      address:'',
+      location:patch.country,
+      notes:'',
+      priorityStars:0,
+      activeOrder:'بدون سفارش فعال',
+      orderCount:0,
+      timelineStage:'بدون مرحله فعال',
+      passwordSet:false,
+      loginPassword:'',
+      accessMode:'expiring',
+      accessToken:'',
+      accessExpiresAt:'',
+      accessRevoked:false,
+    }
+    items.value=[...items.value,record]
+    return record
   }
   function remove(id:number){items.value=items.value.filter(item=>item.id!==id)}
   function removeMany(ids:number[]){const set=new Set(ids);items.value=items.value.filter(item=>!set.has(item.id))}
@@ -140,5 +192,5 @@ export const useCustomersStore=defineStore('customers',()=>{
 
   watch(items,value=>localStorage.setItem(CUSTOMER_KEY,JSON.stringify(value)),{deep:true})
   watch(wishlistLeads,value=>localStorage.setItem(LEAD_KEY,JSON.stringify(value)),{deep:true})
-  return{items,wishlistLeads,changedWishlistCount,currentVisitorMessage,add,update,remove,removeMany,setProfileImage,generateAccess,revokeAccess,resolveAccessToken,recordWishlistChange,removeLead,queueGuestMessage,clearCurrentVisitorMessage}
+  return{items,wishlistLeads,changedWishlistCount,currentVisitorMessage,add,update,upsertBackendCustomer,remove,removeMany,setProfileImage,generateAccess,revokeAccess,resolveAccessToken,recordWishlistChange,removeLead,queueGuestMessage,clearCurrentVisitorMessage}
 })
