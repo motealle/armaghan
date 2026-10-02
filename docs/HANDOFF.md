@@ -909,3 +909,35 @@ Selected automatically: option 1. Reference for small changes checked by existin
 | Release/recovery | Frozen 01–27, Test28-first launcher, root skipped, encrypted backup round-trip | Prior documented PASS; record evidence in final handoff |
 
 Keep the final QA backlog unchecked until each result has direct evidence. This run does not replace multi-device acceptance with documentation or route/unit tests.
+
+## 45. Bounded live QA — 2026-10-02
+
+## 2026-10-02 live Test28 guest acceptance and dark-title repair
+
+Inspected source baseline: `cfb28307e3be1c56e54a210fcc211ab8f1323a31`. Shared write lease: `codex-20261002-live-qa`. Public browser viewport: 1363 × 936 CSS pixels.
+
+| Check | Direct evidence | Result |
+|---|---|---|
+| Desktop Home / Products | Home rendered; 18 products rendered with local image fallback; no horizontal overflow in observed viewport | PASS for observed viewport |
+| Product search / category filtering | Code 11001 returned 1 product; Baby returned 6; clearing returned 18 | PASS |
+| Product details | Specs opened and closed; focus returned to invoking control | PASS |
+| Locale direction on Products | en/ltr; fa/rtl; ar/rtl; ckb/rtl; no observed horizontal overflow | PASS for Products only |
+| Guest favorites | Initially empty; added 11001; survived reload; removed test selection and returned to empty | PASS for browser-local guest persistence only |
+| Invalid persisted-share route | Synthetic all-zero token reached generic invalid/expired state without crash | PASS; valid issue/resolve/WhatsApp not newly tested |
+| Real admin session | Filament login form displayed; no authenticated session available | OPEN; no login bypass or credential change |
+| Dark normal-size headings | Green #21946A on card #1E2024 measured 4.279:1 | FAIL before repair |
+| Mobile/tablet, valid customer link, admin editor/upload | Not performed; supported browser API has no viewport-resize control; RC has no connected devices | OPEN |
+
+Repair: change only the dark `--role-heading-strong` default to approved Brand Mint #C8E3DB. Light defaults, explicit editor overrides, brand tokens and frozen Tests 01–27 stay unchanged. Mint/card contrast is 12.015:1. Numeric regression coverage resolves actual CSS defaults and requires >=4.5 on dark page/card/input surfaces; the new check fails on original source and passes after repair.
+
+| Rank | Dark title method | Score | Reason |
+|---:|---|---:|---|
+| 1 | Approved mint through existing semantic heading role | 9.5 | Strong measured contrast; one declaration; preserves palette and override priority |
+| 2 | Approved white through heading role | 9.0 | Readable but less color differentiation |
+| 3 | Mix green with white | 8.0 | Adds another combination to verify |
+| 4 | Lighten dark surfaces | 6.0 | Larger visual scope |
+| 5 | Increase title sizes | 4.0 | Alters layout to address color failure |
+
+Selected automatically: option 1. Standard: https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html (normal text >=4.5:1). Responsive simulation is not equivalent to real hardware: https://developer.chrome.com/docs/devtools/device-mode.
+
+Next: confirm guarded Test28 build/deploy and fresh live mint computed color; complete mobile/tablet and authenticated acceptance when available. Do not close broad final-delivery checklist from this partial desktop evidence.

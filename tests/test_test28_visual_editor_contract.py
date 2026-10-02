@@ -173,3 +173,29 @@ immutable = {
 assert "27" in immutable
 
 print("Test 28 visual editor foundation contract: PASS")
+
+# Live Test28 acceptance found normal-size titles below WCAG AA in dark mode.
+# Resolve the actual semantic default and measure it against both dark surfaces.
+import re
+
+def relative_luminance(hex_color):
+    channels = [int(hex_color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    linear = [v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in channels]
+    return sum(v * weight for v, weight in zip(linear, (0.2126, 0.7152, 0.0722)))
+
+def contrast_ratio(foreground, background):
+    light, dark = sorted((relative_luminance(foreground), relative_luminance(background)), reverse=True)
+    return (light + 0.05) / (dark + 0.05)
+
+dark_defaults = {}
+for block in re.findall(r"(?:^|\n)\.dark\s*\{([^}]*)\}", css):
+    dark_defaults.update(re.findall(r"(--[\w-]+)\s*:\s*([^;]+);", block))
+palette = dict(re.findall(r"(--brand-[\w-]+)\s*:\s*(#[0-9a-fA-F]{6});", css))
+heading_role = dark_defaults["--role-heading-strong"].strip()
+heading_token = re.fullmatch(r"var\((--brand-[\w-]+)\)", heading_role)
+assert heading_token, "Dark heading default must resolve to an approved brand token"
+heading_color = palette[heading_token.group(1)]
+for surface in ("--c-bg", "--c-surface", "--c-surface-2"):
+    ratio = contrast_ratio(heading_color, dark_defaults[surface].strip())
+    assert ratio >= 4.5, f"Dark normal-size heading contrast on {surface}: {ratio:.3f} < 4.5"
+print("Test 28 dark heading contrast: PASS")

@@ -843,7 +843,7 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .dark{
   --role-products-page-background:var(--c-bg);
   --role-product-card-background:var(--c-surface);
-  --role-heading-strong:var(--brand-green);
+  --role-heading-strong:var(--brand-mint);
 }
 [data-style-id="products.page"]{background:var(--role-products-page-background)}
 .products-page{background:var(--role-products-page-background)}

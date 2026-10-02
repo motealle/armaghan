@@ -1,5 +1,15 @@
 # Armaghan — Product Backlog
 
+## Test28 live QA follow-up — 2026-10-02
+
+- [x] Confirm completed core capabilities from canonical repository state; no reimplementation.
+- [x] Live desktop guest checks: 18 products, search 1 result, category filter 6 results, detail open/close, four locale directions, guest favorites reload, invalid-share state.
+- [x] Measure dark-title defect: 4.279:1 on card surface; select approved mint semantic default; numeric check fails before and passes after repair.
+- [ ] Confirm this run's guarded build/deploy and fresh live dark-title color; see CURRENT-STATUS/HANDOFF section 45 evidence.
+- [ ] Complete mobile/tablet acceptance and broader language/theme matrix; existing broad final QA tasks remain open.
+- [ ] Authenticated editor save/reload/publish/restore, real product upload and customer Magic Link remain untested in this browser (login form, no session).
+
+
 ## Completed — bounded operational-memory reconciliation — 2026-10-02
 
 - [x] Reconcile current main, latest handoff, backlog, Test28 hardening audit and shared lock.
