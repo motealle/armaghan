@@ -1,30 +1,96 @@
-import { describe, expect, it } from 'vitest'
-import {
-  FAVORITES_SHARE_MAX_ITEMS,
-  buildFavoritesShareUrl,
-  decodeFavoriteCodes,
-  encodeFavoriteCodes,
-} from './shareFavorites'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-describe('Favorites sharing',()=>{
-  it('encodes only unique five-digit product codes',()=>{
-    expect(encodeFavoriteCodes(['11001','11001','bad','22003'])).toBe('v1:11001,22003')
+function jsonResponse(status:number,payload:unknown){
+  return {
+    ok:status>=200&&status<300,
+    status,
+    json:async()=>payload,
+  } as Response
+}
+
+describe('persisted FavoriteShare API',()=>{
+  beforeEach(()=>{
+    vi.resetModules()
+    vi.restoreAllMocks()
   })
 
-  it('rejects unknown versions and malformed codes',()=>{
-    expect(decodeFavoriteCodes('v2:11001')).toEqual([])
-    expect(decodeFavoriteCodes('v1:11001,nope,32003')).toEqual(['11001','32003'])
+  it('issues an ordered server-backed share through same-origin POST',async()=>{
+    const fetchMock=vi.fn()
+      .mockResolvedValueOnce(jsonResponse(200,{token:'csrf-token'}))
+      .mockResolvedValueOnce(jsonResponse(200,{
+        share:{
+          id:7,
+          url:'https://example.test/t/27/#/favorites/share/'+'A'.repeat(64),
+          expires_at:'2026-10-09T00:00:00Z',
+          owned:false,
+        },
+      }))
+    vi.stubGlobal('fetch',fetchMock)
+
+    const {issueFavoriteShare}=await import('./shareFavorites')
+    const share=await issueFavoriteShare(['22003','11001'])
+
+    expect(share.id).toBe(7)
+    expect(share.url).toContain('#/favorites/share/')
+    expect(share.url).not.toContain('shared=v1:')
+    expect(fetchMock).toHaveBeenNthCalledWith(2,
+      '/backend/api/favorite-shares',
+      expect.objectContaining({
+        method:'POST',
+        credentials:'same-origin',
+      }),
+    )
+    expect(JSON.parse(String((fetchMock.mock.calls[1][1] as RequestInit).body))).toEqual({
+      product_codes:['22003','11001'],
+    })
   })
 
-  it('caps payload item count',()=>{
-    const values=Array.from({length:FAVORITES_SHARE_MAX_ITEMS+20},(_,index)=>String(10000+index))
-    expect(decodeFavoriteCodes(encodeFavoriteCodes(values))).toHaveLength(FAVORITES_SHARE_MAX_ITEMS)
+  it('resolves a share token through a fixed POST body, not a tokenized backend path',async()=>{
+    const token='B'.repeat(64)
+    const fetchMock=vi.fn()
+      .mockResolvedValueOnce(jsonResponse(200,{token:'csrf-token'}))
+      .mockResolvedValueOnce(jsonResponse(200,{
+        share:{
+          id:9,
+          expires_at:'2026-10-09T00:00:00Z',
+          product_codes:['11002','11001'],
+        },
+      }))
+    vi.stubGlobal('fetch',fetchMock)
+
+    const {resolveFavoriteShare}=await import('./shareFavorites')
+    const share=await resolveFavoriteShare(token)
+
+    expect(share.product_codes).toEqual(['11002','11001'])
+    expect(fetchMock).toHaveBeenNthCalledWith(2,
+      '/backend/api/favorite-shares/resolve',
+      expect.objectContaining({method:'POST'}),
+    )
+    expect(JSON.parse(String((fetchMock.mock.calls[1][1] as RequestInit).body))).toEqual({token})
   })
 
-  it('builds a hash-router URL without personal metadata',()=>{
-    const url=buildFavoritesShareUrl(['11001','22003'],'https://example.test/t/26/index.html')
-    expect(url).toBe('https://example.test/t/26/index.html#/favorites?shared=v1%3A11001%2C22003')
-    expect(url).not.toContain('name=')
-    expect(url).not.toContain('email=')
+  it('rejects malformed share tokens before any network request',async()=>{
+    const fetchMock=vi.fn()
+    vi.stubGlobal('fetch',fetchMock)
+
+    const {resolveFavoriteShare}=await import('./shareFavorites')
+
+    await expect(resolveFavoriteShare('short')).rejects.toMatchObject({status:410})
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('revokes an owned share through the customer endpoint',async()=>{
+    const fetchMock=vi.fn()
+      .mockResolvedValueOnce(jsonResponse(200,{token:'csrf-token'}))
+      .mockResolvedValueOnce(jsonResponse(200,{ok:true}))
+    vi.stubGlobal('fetch',fetchMock)
+
+    const {revokeFavoriteShare}=await import('./shareFavorites')
+    await revokeFavoriteShare(11)
+
+    expect(fetchMock).toHaveBeenNthCalledWith(2,
+      '/backend/api/customer/favorite-shares/11',
+      expect.objectContaining({method:'DELETE'}),
+    )
   })
 })
