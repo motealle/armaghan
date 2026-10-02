@@ -16,7 +16,10 @@ Owner instruction: defer visual testing; preserve all previous versions; create 
 - Localized Why Armaghan eyebrow defaults for Persian, Arabic and Sorani; English retained. Existing locale/text overrides retain priority.
 - Three new automated locale tests cover old-key preservation, new-version reload and four-language defaults. The dark-heading numeric guard is carried forward.
 - Visual/device/admin-session acceptance remains OPEN and deferred by owner instruction. Automated PASS must not be presented as visual acceptance.
-- First Test29 build/deployment verification: pending in this implementation commit; record actual result during closeout.
+- Test29 release commit: `29dac32927dffd128a388a69fec5f9888ce352a9`. FTP Deploy #328, run `37003816665`: plan, QA, type-check, 44 Vue tests (12 files), build, FTP smoke, deploy-t and nonvisual HTTP verification PASS; deploy-root SKIPPED.
+- Published index.html and initial JS/CSS SHA-256 match the built artifact; published launcher lists `./29/index.html` first. Tests 01–28 build/deploy boundaries PASS. All 19 prior numbered source blobs present in Git retain their starting SHA.
+- First attempt #327 (`37003682710`) deployed successfully but its verification incorrectly included external font stylesheets. The verifier now checks build-owned local assets; corrected #328 passes. Theme bootstrap also uses the Test29 namespace.
+- URLs: https://armaghantrading.com/t/29/ and https://armaghantrading.com/t/index.htm . Visual/device/authenticated-browser acceptance is still OPEN; no visual tests performed in this run.
 
 | Rank | Method | Score | Reason |
 |---:|---|---:|---|
@@ -30,14 +33,14 @@ Selected: option 1. Storage rationale: https://developer.mozilla.org/en-US/docs/
 
 ## Executive status
 
-Core MVP delivery is approximately **98–99% complete**. Core admin/catalog/media/customer-auth/share flows, guarded deployment, encrypted off-host SQLite backup and artifact round-trip restore verification are live. Test 29 is the active mutable review lane; first deployment verification is pending. Final end-to-end QA and handoff remain open; visual checks are deferred by owner instruction.
+Core MVP delivery is approximately **98–99% complete**. Core admin/catalog/media/customer-auth/share flows, guarded deployment, encrypted off-host SQLite backup and artifact round-trip restore verification are live. Test 29 is the active mutable review lane; FTP #328 deployment and nonvisual HTTP verification passed. Final end-to-end QA and handoff remain open; visual checks are deferred by owner instruction.
 
 Current UI lane:
 - Tests 01–28: frozen/immutable; preserve their live folders.
 - Test29: active; build/deploy only /t/29 and the mutable launcher.
 - Source checkpoint: snapshot/test28-final. Browser keys: armaghan:test29:*.
 - Test29 inherits the delivered Test28 behavior with storage isolation and localized Why Armaghan defaults.
-- Prior FTP #320 and #325 evidence belongs to Test28, not Test29. Test29 deployment verification is pending.
+- Prior FTP #320 and #325 evidence belongs to Test28, not Test29. Test29 FTP #328 and nonvisual HTTP verification passed.
 
 Current backend lane:
 - Laravel 13.34.0 is live under `/backend`.
@@ -111,7 +114,7 @@ A real production active-admin account exists.
 
 Do not create another bootstrap admin unless the existing account is intentionally rotated/removed through an explicit administration decision.
 
-## Test29 visual editor — inherited implementation (release verification pending)
+## Test29 visual editor — deployed implementation (visual acceptance open)
 
 Current Test29 editor capabilities inherited from delivered Test28:
 - Admin-only visual editor launcher.

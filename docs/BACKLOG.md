@@ -8,7 +8,7 @@
 - [x] Isolate browser writes under armaghan:test29:*, including manual locale.
 - [x] Localize Why Armaghan defaults for fa/ar/ku; retain en and override priority.
 - [x] Add automated locale isolation/reload/default tests; carry dark contrast check.
-- [ ] Verify automated checks, Test29 build/deploy and nonvisual delivery evidence.
+- [x] FTP #328 / run 37003816665: 44 Vue tests, build, scoped deploy and published index/JS/CSS + first launcher link verified PASS; no visual acceptance inferred.
 - [ ] Visual/device and authenticated-admin acceptance deferred by owner instruction; never infer PASS from automation.
 
 
