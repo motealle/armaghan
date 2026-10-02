@@ -1,6 +1,11 @@
 name: SQLite Off-host Backup
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "platform/scripts/sqlite_offhost_backup.py"
+      - ".github/workflows/sqlite-offhost-backup.yml"
   workflow_dispatch:
   schedule:
     - cron: "23 1 * * *"
