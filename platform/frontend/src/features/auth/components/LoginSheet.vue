@@ -68,5 +68,6 @@ async function googleInfo(){
       <button type="button" class="modal-secondary-action w-full" data-backend-endpoint="/backend/auth/google/redirect" :disabled="busy" @click="googleInfo"><Globe2 :size="17"/>{{locale.t('google')}}</button>
     </form>
     <a class="mini-action mt-4" href="/backend/admin/login"><ShieldCheck :size="17"/>{{locale.t('adminSignIn')}}</a>
+    <p class="mt-2 text-xs leading-6 text-[var(--c-muted)]">{{locale.t('adminSignInHelp')}}</p>
   </BaseModal>
 </template>

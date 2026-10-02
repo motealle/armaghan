@@ -4,6 +4,7 @@ export type TranslationMap = Record<string,string>
 
 export const baseMessages: Record<Locale, TranslationMap> = {
   fa: {
+    adminSignInHelp:"برای اولین ورود مدیر، با گوگل وارد شوید و رمز شخصی حساب را تعیین کنید.",
     confirmPassword:"تکرار رمز",
     passwordRequirements:"حداقل ۱۲ نویسه، شامل حرف و عدد.",
     registrationFailed:"ثبت‌نام انجام نشد. تکرار رمز و شرایط رمز را بررسی کنید؛ برای حساب موجود یا ایمیل مدیر، از گزینه ورود استفاده کنید.",
@@ -46,6 +47,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'ارمغان · تولید و صادرات پوشاک',footerContact:'ارتباط فروش و پیگیری سفارش از مسیرهای داخل سایت انجام می‌شود.',skipContent:'پرش به محتوای اصلی'
   },
   ar: {
+    adminSignInHelp:"للدخول الإداري لأول مرة، سجل الدخول باستخدام Google وحدد كلمة مرورك الشخصية.",
     confirmPassword:"تأكيد كلمة المرور",
     passwordRequirements:"١٢ حرفاً على الأقل، تتضمن حروفاً وأرقاماً.",
     registrationFailed:"لم يكتمل التسجيل. تحقق من كلمة المرور وتأكيدها؛ للحساب الحالي أو الإداري استخدم تسجيل الدخول.",
@@ -88,6 +90,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'أرمغان · إنتاج وتصدير الملابس',footerContact:'يمكن التواصل مع المبيعات ومتابعة الطلب من داخل الموقع.',skipContent:'تخطي إلى المحتوى'
   },
   en: {
+    adminSignInHelp:"For first-time administrator access, sign in with Google and set your personal account password.",
     confirmPassword:"Confirm password",
     passwordRequirements:"At least 12 characters, including letters and numbers.",
     registrationFailed:"Registration failed. Check your password and confirmation; for an existing or administrator account, use sign in.",
@@ -130,6 +133,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'Armaghan · Garment manufacturing & export',footerContact:'Sales contact and order tracking are available through the site.',skipContent:'Skip to main content'
   },
   ku: {
+    adminSignInHelp:"بۆ یەکەم چوونەژوورەوەی بەڕێوەبەر، بە Google بچۆ ژوورەوە و وشەی نهێنی هەژمارەکەت دابنێ.",
     confirmPassword:"دووبارەکردنەوەی وشەی نهێنی",
     passwordRequirements:"لانیکەم ١٢ پیت، لەگەڵ پیت و ژمارە.",
     registrationFailed:"تۆمارکردن تەواو نەبوو. وشەی نهێنی و دووبارەکردنەوەکە بپشکنە؛ بۆ هەژماری پێشوو یان بەڕێوەبەر بچۆ ژوورەوە.",

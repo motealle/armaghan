@@ -102,7 +102,10 @@ assert "return id" in customers
 assert "function normalizePhone" in session
 assert "emailMatches" in session and "phoneMatches" in session
 assert "normalizePhone(item.whatsapp)" in session
-assert "loginIdentifier" in login and "loginIdentifier" in detail
+# Legacy managed customer phone identifier remains in review tooling;
+# active production authentication uses the real server email/password route.
+assert "loginIdentifier" in detail
+assert 'type="email"' in login and "signInWithPassword" in login
 assert "contactIdentifierRequired" in messages
 
 # Google remains server-side Socialite, never fake browser auth.

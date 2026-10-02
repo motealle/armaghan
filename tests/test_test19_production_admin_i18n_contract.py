@@ -87,9 +87,12 @@ assert "queueGuestMessage" in admin
 
 # Auth adapters — preserve the historical Test 19 account affordances without
 # freezing later tests to the old browser-issued Magic Link implementation.
-assert "session.register" in login
-assert "magicLink" in login
-assert "createMagicLink" in login or "magicLinkRequestHelp" in login
+# Owner requested real password accounts and removal of the public direct-link tab.
+# These contracts inspect active source; frozen numbered snapshots remain intact.
+assert "registerWithPassword" in login and "signInWithPassword" in login
+assert "session.register(" not in login and "session.login(" not in login
+assert "mode=ref<'signin'|'register'>" in login
+assert 'href="/backend/admin/login"' in login
 assert 'data-backend-endpoint="/backend/auth/google/redirect"' in login
 assert "googleBackendRequired" in login
 assert "register(" in session

@@ -479,3 +479,14 @@ Google customer signup/sign-in implemented using official Socialite with a creat
 - Real Google signup/repeat login still requires owner confirmation; no actual-account login success is inferred from cancellation/automated tests.
 
 - Independent numbered-path probe: start at /backend/auth/google/redirect?return_path=/t/29/, cancel with the same cookie jar, return HTTP 302 to https://armaghantrading.com/t/29/#/tracking?auth_error=google. Provider enabled:true and guest session 401 remain verified after deploy.
+
+### Explicit owner direction for the NEXT run — 2026-10-02 21:48 Tehran
+
+Preserve the polished administration interface developed in the numbered tests and connect that same structure/styling to real Laravel services. Do not replace it wholesale with default Filament screens or recreate its appearance. This work begins after the current login/admin/badge/footer run is completed.
+
+- Inventory existing admin sections and retain their approved layouts/components.
+- Add real server-authoritative admin-session/read permissions; never trust browser-local admin role.
+- Migrate one vertical feature at a time (product CRUD/media, customer management, device settings/editor), keep API writes allowlisted, CSRF-protected and authorized, and expose real loading/errors.
+- Remove demo data/write paths from production admin; preserve frozen snapshots and reversible review alternatives.
+- Existing Filament remains the operational access/fallback while the custom interface is integrated. Reuse canonical Eloquent/media/customer/style services; avoid parallel data stores.
+- Prepare a bounded five-option decision and checkpoint at the delivered commit before implementation. Acceptance must include actual authenticated writes/reload; local visual resemblance alone is insufficient.
