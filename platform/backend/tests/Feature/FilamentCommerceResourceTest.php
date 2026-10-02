@@ -95,5 +95,8 @@ class FilamentCommerceResourceTest extends TestCase
         }
 
         $this->assertStringNotContainsString("make('user_id')", $customerForm);
+        $this->assertStringContainsString("Action::make('magic_link')", $customerTable);
+        $this->assertStringContainsString("Action::make('revoke_magic_link')", $customerTable);
+        $this->assertStringContainsString('CustomerMagicLinkService::class', $customerTable);
     }
 }

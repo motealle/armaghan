@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue'
-import { Camera, Check, Clock3, Heart, RotateCcw, Save } from '@lucide/vue'
+import { Camera, Check, Clock3, Heart, RotateCcw, Save, UserRound } from '@lucide/vue'
 import { compressImage } from '@/features/admin/services/imageCompression'
 import { useCustomersStore } from '@/stores/customers'
 import { useLocaleStore } from '@/stores/locale'
@@ -10,7 +10,10 @@ const locale=useLocaleStore()
 const session=useSessionStore()
 const customers=useCustomersStore()
 const timelineKeys=['inquiryRegistered','specsApproved','prepaymentApproved','inProduction']
-const customer=computed(()=>customers.items.find(item=>item.id===(session.impersonatedCustomerId??session.currentCustomerId??1))??customers.items[0]??null)
+const customer=computed(()=>{
+  const id=session.impersonatedCustomerId??session.currentCustomerId
+  return id?customers.items.find(item=>item.id===id)??null:null
+})
 const profile=reactive({name:'',email:'',whatsapp:'',address:'',location:''})
 
 watch(customer,(row)=>{
@@ -23,9 +26,15 @@ async function upload(event:Event){
   if(!file||!customer.value)return
   try{customers.setProfileImage(customer.value.id,await compressImage(file))}catch{}
 }
-function saveProfile(){
+async function saveProfile(){
   if(!customer.value)return
   customers.update(customer.value.id,{...profile})
+  if(session.backendAuthenticated&&!session.impersonatedCustomerId){
+    await session.saveBackendCustomer({
+      company_name:profile.name.trim()||null,
+      whatsapp:profile.whatsapp.trim()||null,
+    })
+  }
 }
 </script>
 <template>
@@ -46,7 +55,12 @@ function saveProfile(){
       <div class="mt-3 flex justify-end"><button class="mini-action bg-[var(--c-primary)] text-white" @click="saveProfile"><Save :size="15"/>{{locale.t('save')}}</button></div>
     </section>
 
-    <div class="grid gap-4 md:grid-cols-2">
+    <div v-else class="empty-panel-state">
+      <UserRound :size="28"/>
+      <b>{{locale.t('customerNotFound')}}</b>
+    </div>
+
+    <div v-if="customer" class="grid gap-4 md:grid-cols-2">
       <article class="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 shadow-sm">
         <div class="flex items-center justify-between"><h2 class="font-black text-[var(--c-text)]">{{locale.t('timeline')}}</h2><span class="rounded-full bg-[color-mix(in_srgb,var(--c-secondary)_10%,var(--c-surface))] px-2 py-1 text-[10px] font-bold text-[var(--c-secondary)]">{{locale.t('active')}}</span></div>
         <div class="mt-4 space-y-4">
