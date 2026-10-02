@@ -309,7 +309,16 @@ $app = require $nextRoot . '/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $migrateExit = $kernel->call('migrate', ['--force' => true]);
 if ($migrateExit !== 0) {
-    fail_update('migrate');
+    try {
+        Illuminate\Support\Facades\DB::purge('sqlite');
+    } catch (Throwable $ignored) {
+        // Continue with file-level restore.
+    }
+    if (!copy($backupPath, $dbPath)) {
+        fail_update('migrate-restore-failed');
+    }
+    @chmod($dbPath, 0660);
+    fail_update('migrate-restored');
 }
 
 if (!rename($appRoot, $prevRoot)) fail_update('stage-private-previous');
