@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Products\Tables;
 use App\Enums\ProductAvailability;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -17,6 +18,12 @@ class ProductsTable
         return $table
             ->defaultSort('sort_order')
             ->columns([
+                SpatieMediaLibraryImageColumn::make('product_gallery')
+                    ->label('تصویر')
+                    ->collection(\App\Models\Product::MEDIA_COLLECTION)
+                    ->conversion('thumb')
+                    ->imageSize(52),
+
                 TextColumn::make('code')->label('کد')->searchable()->sortable(),
                 TextColumn::make('name_fa')->label('نام داخلی')->searchable()->sortable(),
                 TextColumn::make('subcategory.name_fa')->label('زیردسته')->searchable()->sortable(),

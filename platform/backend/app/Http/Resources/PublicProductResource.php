@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PublicProductResource extends JsonResource
@@ -23,6 +25,20 @@ class PublicProductResource extends JsonResource
             ],
             'availability' => $this->availability->value,
             'sort_order' => $this->sort_order,
+            'media' => $this->media
+                ->where('collection_name', Product::MEDIA_COLLECTION)
+                ->sortBy(fn (Media $media): int => $media->order_column ?? PHP_INT_MAX)
+                ->values()
+                ->map(fn (Media $media): array => [
+                    'id' => (string) ($media->uuid ?: $media->id),
+                    'url' => $media->hasGeneratedConversion('card')
+                        ? $media->getFullUrl('card')
+                        : $media->getFullUrl(),
+                    'thumb_url' => $media->hasGeneratedConversion('thumb')
+                        ? $media->getFullUrl('thumb')
+                        : $media->getFullUrl(),
+                ])
+                ->all(),
             'category' => $category === null ? null : [
                 'code' => $category->code,
                 'names' => [

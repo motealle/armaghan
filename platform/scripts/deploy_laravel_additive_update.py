@@ -269,6 +269,14 @@ if (!$dependencyChanged && count($addedMigrations) === 0) {
     fail_update('no-additive-drift', 409);
 }
 
+$mediaLibraryPresent = is_dir($nextRoot . '/vendor/spatie/laravel-medialibrary');
+if ($mediaLibraryPresent && (!extension_loaded('gd') || !extension_loaded('exif'))) {
+    fail_update('media-runtime-extension', 409, [
+        'gd' => extension_loaded('gd'),
+        'exif' => extension_loaded('exif'),
+    ]);
+}
+
 if (!copy($sharedEnv, $nextRoot . '/.env')) fail_update('env-copy');
 @chmod($nextRoot . '/.env', 0600);
 foreach ([
@@ -301,7 +309,16 @@ $app = require $nextRoot . '/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $migrateExit = $kernel->call('migrate', ['--force' => true]);
 if ($migrateExit !== 0) {
-    fail_update('migrate');
+    try {
+        Illuminate\Support\Facades\DB::purge('sqlite');
+    } catch (Throwable $ignored) {
+        // Continue with file-level restore.
+    }
+    if (!copy($backupPath, $dbPath)) {
+        fail_update('migrate-restore-failed');
+    }
+    @chmod($dbPath, 0660);
+    fail_update('migrate-restored');
 }
 
 if (!rename($appRoot, $prevRoot)) fail_update('stage-private-previous');

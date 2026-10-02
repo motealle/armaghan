@@ -17,12 +17,19 @@ export interface PublicCatalogCategory{
   }>
 }
 
+export interface PublicCatalogMedia{
+  id:string
+  url:string
+  thumb_url:string
+}
+
 export interface PublicCatalogProduct{
   id:number
   code:string
   names:LocalizedNames
   availability:Product['availability']
   sort_order:number
+  media?:PublicCatalogMedia[]
   category:null|{code:string;names:LocalizedNames}
   subcategory:null|{code:string;names:LocalizedNames}
 }
@@ -145,6 +152,9 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
   const meta=subMeta[remoteSubcategory]
   const names=productNames(remote.names,fallback)
   const name=names.fa||fallback?.name||meta.subcategoryName
+  const backendMedia=(remote.media??[])
+    .map(item=>item.url?.trim())
+    .filter((url):url is string=>Boolean(url))
 
   return{
     ...(fallback?structuredClone(fallback):{}),
@@ -158,8 +168,8 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
     categoryName:remote.category?.names.fa?.trim()||fallback?.categoryName||meta.categoryName,
     subcategoryName:remote.subcategory?.names.fa?.trim()||fallback?.subcategoryName||meta.subcategoryName,
     availability:remote.availability,
-    gallery:fallback?.gallery??[meta.image,'./images/final/details/fabric-detail.webp',meta.fallbackImage],
-    image:fallback?.image,
+    gallery:backendMedia.length?backendMedia:(fallback?.gallery??[meta.image,'./images/final/details/fabric-detail.webp',meta.fallbackImage]),
+    image:backendMedia[0]??fallback?.image,
     specs:fallback?.specs?structuredClone(fallback.specs):structuredClone(meta.specs),
   }
 }

@@ -70,7 +70,7 @@ class PublicCatalogController extends Controller
             ->whereHas('subcategory', fn ($subcategory) => $subcategory
                 ->where('active', true)
                 ->whereHas('category', fn ($category) => $category->where('active', true)))
-            ->with('subcategory.category');
+            ->with(['subcategory.category', 'media']);
 
         if (isset($validated['category'])) {
             $query->whereHas(
