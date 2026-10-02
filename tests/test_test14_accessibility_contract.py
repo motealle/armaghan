@@ -7,7 +7,7 @@ css = (ROOT / "platform/frontend/src/styles/main.css").read_text(encoding="utf-8
 # Regression contract for capabilities introduced in Test 14.
 # Build target belongs to the current iteration and must not be frozen here.
 assert 'class="skip-link"' in app
-assert 'href="#main-content"' in app
+assert 'href="#main-content"' in app or ':href="pagePath+\'#main-content\'"' in app
 assert 'id="main-content"' in app
 assert 'tabindex="-1"' in app
 assert "route.fullPath" in app and "focus({preventScroll:true})" in app
