@@ -121,7 +121,7 @@ class GoogleCustomerAuthTest extends TestCase
         $provider=Mockery::mock();
         $provider->shouldReceive('user')->once()->andThrow(new InvalidStateException);
         Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
-        $this->get('/auth/google/callback?code=test')->assertRedirect('https://armaghantrading.com/#/tracking?auth_error=google');
+        $this->get('/auth/google/callback?code=test')->assertRedirect('https://armaghantrading.com/#/tracking?auth_error=google&auth_reason=expired');
         $this->assertNull(session(CustomerSession::KEY));
         $this->assertDatabaseCount('customers',0);
     }
@@ -165,4 +165,23 @@ class GoogleCustomerAuthTest extends TestCase
             URL::forceRootUrl(null);
         }
     }
+    public function test_customer_session_exposes_only_own_readonly_identity(): void
+    {
+        $this->configureGoogle();
+        $provider=Mockery::mock();
+        $provider->shouldReceive('user')->once()->andReturn($this->identity());
+        Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
+        $this->get('/auth/google/callback?code=test')->assertRedirect('https://armaghantrading.com/#/tracking');
+        $this->getJson('/api/customer/session')->assertOk()
+            ->assertJsonPath('customer.name','Buyer')
+            ->assertJsonPath('customer.email','buyer@example.test')
+            ->assertJsonMissingPath('customer.user_id')
+            ->assertJsonMissingPath('customer.notes')
+            ->assertJsonMissingPath('customer.role');
+        $this->patchJson('/api/customer/session',['name'=>'Forged','email'=>'other@example.test','company_name'=>'Shop'])
+            ->assertOk()->assertJsonPath('customer.name','Buyer')
+            ->assertJsonPath('customer.email','buyer@example.test');
+        $this->assertSame('buyer@example.test',Customer::query()->sole()->user->email);
+    }
+
 }

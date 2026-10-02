@@ -1,5 +1,7 @@
 export interface BackendCustomerSession{
   id:number
+  name?:string|null
+  email?:string|null
   company_name:string|null
   whatsapp:string|null
   country_code:string|null

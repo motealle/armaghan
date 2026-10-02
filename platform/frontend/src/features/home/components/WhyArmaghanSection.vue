@@ -19,7 +19,7 @@ const values=[
       <h2 data-style-id="home.why.title" data-style-label="عنوان چرا ارمغان" data-editable-text="true">{{visual.resolveText('home.why.title',locale.locale,locale.t('whyArmaghanTitle'))}}</h2>
       <p data-style-id="home.why.intro" data-style-label="مقدمه چرا ارمغان" data-editable-text="true">{{visual.resolveText('home.why.intro',locale.locale,locale.t('whyArmaghanIntro'))}}</p>
     </div>
-    <ol data-style-id="home.why.list" data-style-label="فهرست دلایل" class="test26-why-list">
+    <ol data-style-id="home.why.list" data-style-label="فهرست دلایل" class="test26-why-list test29-why-list">
       <li v-for="(item,index) in values" :key="item[0]" :data-style-id="`home.why.item.${index+1}`" :data-style-label="`کارت دلیل ${index+1}`">
         <span class="test26-why-number">{{index+1}}</span>
         <div>

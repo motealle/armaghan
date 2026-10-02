@@ -43,14 +43,14 @@ async function saveProfile(){
       <div class="customer-profile-head">
         <div class="profile-photo"><img v-if="customer.profileImage" :src="customer.profileImage" alt=""><span v-else>{{customer.flag}}</span></div>
         <div class="min-w-0 flex-1"><b class="block truncate text-base text-[var(--c-text)]">{{customer.name}}</b><span class="text-xs text-[var(--c-muted)]">{{customer.country}}</span></div>
-        <label class="mini-action cursor-pointer"><Camera :size="16"/>{{locale.t('profilePhoto')}}<input class="hidden" type="file" accept="image/*" @change="upload"></label>
+        <label v-if="!session.backendAuthenticated" class="mini-action cursor-pointer"><Camera :size="16"/>{{locale.t('profilePhoto')}}<input class="hidden" type="file" accept="image/*" @change="upload"></label>
       </div>
       <div class="mt-3 grid gap-2 md:grid-cols-2">
         <label class="form-field">{{locale.t('fullName')}}<input v-model="profile.name"></label>
-        <label class="form-field">{{locale.t('email')}}<input v-model="profile.email" type="email"></label>
+        <label class="form-field">{{locale.t('email')}}<input v-model="profile.email" type="email" :readonly="session.backendAuthenticated" dir="ltr"></label>
         <label class="form-field">WhatsApp<input v-model="profile.whatsapp" dir="ltr"></label>
-        <label class="form-field">{{locale.t('address')}}<input v-model="profile.address"></label>
-        <label class="form-field md:col-span-2">{{locale.t('location')}}<input v-model="profile.location"></label>
+        <label v-if="!session.backendAuthenticated" class="form-field">{{locale.t('address')}}<input v-model="profile.address"></label>
+        <label v-if="!session.backendAuthenticated" class="form-field md:col-span-2">{{locale.t('location')}}<input v-model="profile.location"></label>
       </div>
       <div class="mt-3 flex justify-end"><button class="mini-action bg-[var(--c-primary)] text-white" @click="saveProfile"><Save :size="15"/>{{locale.t('save')}}</button></div>
     </section>
@@ -60,7 +60,7 @@ async function saveProfile(){
       <b>{{locale.t('customerNotFound')}}</b>
     </div>
 
-    <div v-if="customer" class="grid gap-4 md:grid-cols-2">
+    <div v-if="customer&&!session.backendAuthenticated" class="grid gap-4 md:grid-cols-2">
       <article class="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 shadow-sm">
         <div class="flex items-center justify-between"><h2 class="font-black text-[var(--c-text)]">{{locale.t('timeline')}}</h2><span class="rounded-full bg-[color-mix(in_srgb,var(--c-secondary)_10%,var(--c-surface))] px-2 py-1 text-[10px] font-bold text-[var(--c-secondary)]">{{locale.t('active')}}</span></div>
         <div class="mt-4 space-y-4">

@@ -142,3 +142,38 @@ describe('session store',()=>{
   })
 
 })
+
+
+describe('authoritative customer snapshot isolation',()=>{
+  beforeEach(()=>{
+    vi.stubGlobal('localStorage',new MemoryStorage())
+    vi.stubGlobal('sessionStorage',new MemoryStorage())
+    setActivePinia(createPinia())
+  })
+  it('replaces a colliding demo customer with real identity and no fabricated order data',()=>{
+    const customers=useCustomersStore()
+    const demo=customers.items.find(row=>row.id===1)!
+    demo.profileImage='demo-photo'
+    demo.notes='demo-note'
+    const row=customers.upsertBackendCustomer({id:1,name:'Actual Buyer',email:'actual@example.test',company_name:null,whatsapp:null,country_code:null,country_name:null})
+    expect(row.name).toBe('Actual Buyer')
+    expect(row.email).toBe('actual@example.test')
+    expect(row.country).toBe('')
+    expect(row.flag).toBe('🌐')
+    expect(row.address).toBe('')
+    expect(row.location).toBe('')
+    expect(row.notes).toBe('')
+    expect(row.orderCount).toBe(0)
+    expect(row.profileImage).toBeUndefined()
+    expect(row.loginPassword).toBe('')
+    expect(row.accessToken).toBe('')
+  })
+  it('does not restore demo identity when backend fields are empty',()=>{
+    const customers=useCustomersStore()
+    const row=customers.upsertBackendCustomer({id:1,company_name:null,whatsapp:null,country_code:null,country_name:null})
+    expect(row.name).toBe('Customer #1')
+    expect(row.email).toBe('')
+    expect(row.country).toBe('')
+    expect(row.address).toBe('')
+  })
+})

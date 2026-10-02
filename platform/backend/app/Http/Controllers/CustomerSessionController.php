@@ -80,9 +80,12 @@ class CustomerSessionController extends Controller
 
     private function customerResponse(Customer $customer): JsonResponse
     {
+        $customer->loadMissing('user');
         return response()->json([
             'customer' => [
                 'id' => $customer->getKey(),
+                'name' => $customer->user?->name,
+                'email' => $customer->user?->email,
                 'company_name' => $customer->company_name,
                 'whatsapp' => $customer->whatsapp,
                 'country_code' => $customer->country_code,

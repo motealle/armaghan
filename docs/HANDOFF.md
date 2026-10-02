@@ -1033,3 +1033,26 @@ Selected: option 1.
 - Real Google signup/repeat login still requires owner confirmation; no actual-account login success is inferred from cancellation/automated tests.
 
 - Independent numbered-path probe: start at /backend/auth/google/redirect?return_path=/t/29/, cancel with the same cookie jar, return HTTP 302 to https://armaghantrading.com/t/29/#/tracking?auth_error=google. Provider enabled:true and guest session 401 remain verified after deploy.
+
+## 49. Real Google account profile and visual repair
+
+## Real customer profile isolation, logout and Why cards — 2026-10-02
+
+- Owner reported a retry after browser Back, generic Google failure, a Baghdad Buyer profile and no visible logout. Root customer UI requires real backend authentication, but the customer snapshot adapter incorrectly merged a real numeric ID into a same-ID demo fixture. Null company/country fields inherited the demo name, address, flag and fake order metadata. This is a client fixture collision, not evidence of another real customer's records being disclosed.
+- Replace all fields of a colliding record with server-authoritative identity or empty/default state; never borrow fixture details. Authenticated self-session/Magic Link responses now expose only own user name/email as read-only additions; profile PATCH still cannot alter user name/email or internal fields.
+- Real customer dashboard omits browser-only photo/address editing and fabricated order timeline/payment actions; those are not implemented production order workflows. Name/company and WhatsApp retain existing guarded backend editing; email is read-only.
+- Explicit logout is visible in Tracking header, uses the real server logout, disables while pending and reports failure without claiming logout.
+- Invalid Socialite state now returns only a safe `auth_reason=expired` marker. Localized guidance starts a fresh login from the site rather than replaying browser Back. Authentication state validation is preserved; no stateless bypass.
+- User explicitly requested visual repair of Why Armaghan. Test29 uses spaced mint cards, green 3px side accents, rounded corners and smaller numbered markers. Historical selectors/older numbered snapshots remain untouched; approved semantic colors and editor targets remain available.
+- Root selector remains 29; revision bumped solely to repromote the updated active Test29. Test29 and root deploy pending. Tests 01–28 remain frozen.
+- Local type-check/build and 51 frontend tests across 13 files PASS. Backend CI/deploy and fresh live checks pending; real customer logout/repeat login acceptance remains OPEN.
+
+| Rank | Profile method | Score | Reason |
+|---:|---|---:|---|
+| 1 | Authoritative full snapshot + own readonly identity | 9.5 | Removes actual ID-collision cause without account bypass |
+| 2 | Clear browser data manually | 5 | Temporary, owner-dependent |
+| 3 | Renumber demo customers | 4 | Future collisions remain possible |
+| 4 | Hide every profile name | 3 | Conceals legitimate identity |
+| 5 | Bypass OAuth state | 0 | Rejected security weakening |
+
+Selected: option 1. Visual choice: semantic mint cards with green side dividers over one continuous blue-bordered block; preserve current four texts and editor registry.

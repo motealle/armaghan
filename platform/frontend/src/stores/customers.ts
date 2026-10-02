@@ -4,6 +4,8 @@ import { computed, ref, watch } from 'vue'
 export type AccessLinkMode='permanent'|'expiring'
 export interface BackendCustomerSnapshot{
   id:number
+  name?:string|null
+  email?:string|null
   company_name:string|null
   whatsapp:string|null
   country_code:string|null
@@ -107,18 +109,13 @@ export const useCustomersStore=defineStore('customers',()=>{
   }
   function upsertBackendCustomer(input:BackendCustomerSnapshot):CustomerRecord{
     const existing=items.value.find(item=>item.id===input.id)
-    const name=input.company_name?.trim()||existing?.name||`Customer #${input.id}`
-    const country=input.country_name?.trim()||input.country_code?.trim().toUpperCase()||existing?.country||''
+    const name=input.company_name?.trim()||input.name?.trim()||`Customer #${input.id}`
+    const country=input.country_name?.trim()||input.country_code?.trim().toUpperCase()||''
     const patch={
       name,
       whatsapp:input.whatsapp?.trim()??'',
       country,
-      flag:input.country_code?flagFromCountryCode(input.country_code):(existing?.flag??'🌐'),
-    }
-
-    if(existing){
-      Object.assign(existing,patch)
-      return existing
+      flag:flagFromCountryCode(input.country_code),
     }
 
     const record:CustomerRecord={
@@ -127,7 +124,7 @@ export const useCustomersStore=defineStore('customers',()=>{
       country:patch.country,
       name:patch.name,
       whatsapp:patch.whatsapp,
-      email:'',
+      email:input.email?.trim()??'',
       address:'',
       location:patch.country,
       notes:'',
@@ -141,6 +138,14 @@ export const useCustomersStore=defineStore('customers',()=>{
       accessToken:'',
       accessExpiresAt:'',
       accessRevoked:false,
+    }
+    // Numeric IDs from the backend can collide with review/demo customers.
+    // Replace every field with authoritative or empty data, never merge fixtures.
+    if(existing){
+      delete existing.profileImage
+      delete existing.favoritesUpdatedAt
+      Object.assign(existing,record)
+      return existing
     }
     items.value=[...items.value,record]
     return record

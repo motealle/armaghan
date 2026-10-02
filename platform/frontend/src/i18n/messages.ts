@@ -4,7 +4,9 @@ export type TranslationMap = Record<string,string>
 
 export const baseMessages: Record<Locale, TranslationMap> = {
   fa: {
-    googleSignInFailed:'ورود گوگل کامل نشد. دوباره تلاش کنید؛ برای اتصال حساب قبلی، ابتدا با لینک ورود امن وارد شوید.',
+    googleSignInFailed:'انجام ورود گوگل کامل نشد. از دکمه ورود دوباره شروع کنید.',
+    googleSignInExpired:'این درخواست ورود منقضی یا قبلاً مصرف شده است. از دکمه ورود دوباره شروع کنید؛ به صفحه قبلی گوگل برنگردید.',
+    logoutFailed:'خروج انجام نشد. دوباره تلاش کنید.',
     brandName:'ارمغان',home:'خانه',products:'محصولات',production:'سفارش تولید',favorites:'مطلوب‌ها',tracking:'پیگیری',
     login:'ورود',logout:'خروج',manufacturer:'تولیدی ارمغان',language:'زبان',openMenu:'باز کردن منو',mainNavigation:'ناوبری اصلی',themeToLight:'تغییر به حالت روشن',themeToDark:'تغییر به حالت تیره',adminRole:'مدیر',customerRole:'مشتری',impersonationRole:'مدیر ← مشتری',close:'بستن',back:'بازگشت',reset:'بازنشانی',add:'افزودن',delete:'حذف',save:'ذخیره',cancel:'انصراف',searchLabel:'جستجو',actions:'عملیات',copy:'کپی',
     productsTitle:'محصولات',productsHelp:'دسته و زیردسته را انتخاب کنید؛ سپس محصول را مقایسه کنید.',search:'جستجو با نام یا کد محصول',allStatuses:'همه وضعیت‌ها',allSubs:'همه زیردسته‌ها',allCategories:'همه دسته‌ها',categoryLabel:'دسته محصول',subcategoryLabel:'زیردسته',statusLabel:'وضعیت',clearFilters:'پاک‌کردن فیلترها',productCount:'محصول',desktopFilterHelp:'فیلترها در ستون کناری ثابت می‌مانند تا مرور محصول قطع نشود.',
@@ -37,7 +39,9 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'ارمغان · تولید و صادرات پوشاک',footerContact:'ارتباط فروش و پیگیری سفارش از مسیرهای داخل سایت انجام می‌شود.',skipContent:'پرش به محتوای اصلی'
   },
   ar: {
-    googleSignInFailed:'لم يكتمل دخول Google. حاول مرة أخرى؛ لربط حساب سابق، ادخل أولاً بالرابط الآمن.',
+    googleSignInFailed:'لم يكتمل دخول Google. ابدأ مجدداً من زر الدخول.',
+    googleSignInExpired:'انتهى طلب الدخول أو استُخدم سابقاً. ابدأ مجدداً من زر الدخول ولا ترجع إلى صفحة Google السابقة.',
+    logoutFailed:'تعذر الخروج. حاول مرة أخرى.',
     brandName:'أرمغان',home:'الرئيسية',products:'المنتجات',production:'طلب إنتاج',favorites:'المفضلة',tracking:'المتابعة',
     login:'دخول',logout:'خروج',manufacturer:'مصنع أرمغان للملابس',language:'اللغة',openMenu:'فتح القائمة',mainNavigation:'التنقل الرئيسي',themeToLight:'التبديل إلى الوضع الفاتح',themeToDark:'التبديل إلى الوضع الداكن',adminRole:'مدير',customerRole:'عميل',impersonationRole:'مدير ← عميل',close:'إغلاق',back:'رجوع',reset:'إعادة ضبط',add:'إضافة',delete:'حذف',save:'حفظ',cancel:'إلغاء',searchLabel:'بحث',actions:'الإجراءات',copy:'نسخ',
     productsTitle:'المنتجات',productsHelp:'اختر الفئة والفئة الفرعية ثم قارن المنتجات.',search:'ابحث بالاسم أو الكود',allStatuses:'كل الحالات',allSubs:'كل الفئات الفرعية',allCategories:'كل الفئات',categoryLabel:'فئة المنتج',subcategoryLabel:'الفئة الفرعية',statusLabel:'الحالة',clearFilters:'مسح الفلاتر',productCount:'منتج',desktopFilterHelp:'تبقى الفلاتر في العمود الجانبي لتسهيل التصفح.',
@@ -70,7 +74,9 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'أرمغان · إنتاج وتصدير الملابس',footerContact:'يمكن التواصل مع المبيعات ومتابعة الطلب من داخل الموقع.',skipContent:'تخطي إلى المحتوى'
   },
   en: {
-    googleSignInFailed:'Google sign-in did not complete. Try again; to link an existing account, sign in with its secure link first.',
+    googleSignInFailed:'Google sign-in did not complete. Start again using the sign-in button.',
+    googleSignInExpired:'This sign-in request expired or was already used. Start again with the sign-in button instead of going back to the previous Google page.',
+    logoutFailed:'Sign-out failed. Please try again.',
     brandName:'Armaghan',home:'Home',products:'Products',production:'Production',favorites:'Favorites',tracking:'Tracking',
     login:'Sign in',logout:'Sign out',manufacturer:'Armaghan Garment Manufacturing',language:'Language',openMenu:'Open menu',mainNavigation:'Main navigation',themeToLight:'Switch to light mode',themeToDark:'Switch to dark mode',adminRole:'Admin',customerRole:'Customer',impersonationRole:'Admin → customer',close:'Close',back:'Back',reset:'Reset',add:'Add',delete:'Delete',save:'Save',cancel:'Cancel',searchLabel:'Search',actions:'Actions',copy:'Copy',
     productsTitle:'Products',productsHelp:'Choose a category and subcategory, then compare products.',search:'Search by product name or code',allStatuses:'All statuses',allSubs:'All subcategories',allCategories:'All categories',categoryLabel:'Product category',subcategoryLabel:'Subcategory',statusLabel:'Status',clearFilters:'Clear filters',productCount:'products',desktopFilterHelp:'Filters stay in the side rail so product browsing remains uninterrupted.',
@@ -103,7 +109,9 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'Armaghan · Garment manufacturing & export',footerContact:'Sales contact and order tracking are available through the site.',skipContent:'Skip to main content'
   },
   ku: {
-    googleSignInFailed:'چوونەژوورەوە بە Google تەواو نەبوو. دووبارە هەوڵ بدە؛ بۆ بەستنەوەی هەژماری پێشوو، سەرەتا بە لینکی پارێزراو بچۆ ژوورەوە.',
+    googleSignInFailed:'چوونەژوورەوە بە Google تەواو نەبوو. لە دوگمەی چوونەژوورەوە دووبارە دەست پێ بکە.',
+    googleSignInExpired:'داواکاری چوونەژوورەوە بەسەرچووە یان پێشتر بەکارهاتووە. لە دوگمەی چوونەژوورەوە دووبارە دەست پێ بکە.',
+    logoutFailed:'چوونەدەرەوە سەرکەوتوو نەبوو. دووبارە هەوڵ بدە.',
     brandName:'ئارماغان',home:'ماڵەوە',products:'بەرهەمەکان',production:'داواکاری بەرهەم',favorites:'دڵخوازەکان',tracking:'بەدواداچوون',
     login:'چوونەژوورەوە',logout:'چوونەدەرەوە',manufacturer:'بەرهەمهێنانی جل و بەرگی ئارماغان',language:'زمان',openMenu:'کردنەوەی لیست',mainNavigation:'ڕێنیشاندانی سەرەکی',themeToLight:'گۆڕین بۆ دۆخی ڕووناک',themeToDark:'گۆڕین بۆ دۆخی تاریک',adminRole:'بەڕێوەبەر',customerRole:'کڕیار',impersonationRole:'بەڕێوەبەر ← کڕیار',close:'داخستن',back:'گەڕانەوە',reset:'ڕێکخستنەوە',add:'زیادکردن',delete:'سڕینەوە',save:'پاشەکەوت',cancel:'هەڵوەشاندنەوە',searchLabel:'گەڕان',actions:'کردارەکان',copy:'کۆپی',
     productsTitle:'بەرهەمەکان',productsHelp:'پۆل و ژێرپۆل هەڵبژێرە و بەرهەمەکان بەراورد بکە.',search:'گەڕان بە ناو یان کۆد',allStatuses:'هەموو دۆخەکان',allSubs:'هەموو ژێرپۆلەکان',allCategories:'هەموو پۆلەکان',categoryLabel:'پۆلی بەرهەم',subcategoryLabel:'ژێرپۆل',statusLabel:'دۆخ',clearFilters:'پاککردنەوەی فلتەرەکان',productCount:'بەرهەم',desktopFilterHelp:'فلتەرەکان لە ستوونی لاوەکی دەمێننەوە بۆ گەڕانێکی ئاسان.',

@@ -870,3 +870,10 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .product-card .product-card-title.unavailable{display:flex;margin-inline:auto;justify-content:center;text-align:center;font-size:.7rem;font-weight:400}
 
 /* Root-safe navigation and default-hidden headings are promoted together. */
+
+/* Test29: distinct value cards retain editable text and semantic palette roles. */
+.test26-why-list.test29-why-list{display:grid;gap:.85rem;border:0;border-radius:0;background:transparent;overflow:visible}
+.test26-why-list.test29-why-list li{gap:.75rem;padding:1.15rem;border:1px solid color-mix(in srgb,var(--brand-green) 22%,var(--c-border));border-inline-start:3px solid var(--brand-green);border-radius:1rem;background:var(--role-panel-background)}
+.test26-why-list.test29-why-list h3{font-size:1rem;line-height:1.7;font-weight:800}
+.test26-why-list.test29-why-list p{margin-top:.45rem;font-size:.86rem;line-height:1.95;color:color-mix(in srgb,var(--c-text) 82%,var(--c-muted))}
+.test26-why-list.test29-why-list .test26-why-number{width:1.85rem;height:1.85rem;margin-top:.25rem;font-size:.7rem}

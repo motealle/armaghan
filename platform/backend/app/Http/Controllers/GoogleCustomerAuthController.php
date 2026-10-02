@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 use Throwable;
 
 class GoogleCustomerAuthController extends Controller
@@ -50,6 +51,9 @@ class GoogleCustomerAuthController extends Controller
                 'subject_id' => $customer->id,
             ]);
             CustomerSession::login($request, $customer);
+        } catch (InvalidStateException) {
+            $request->session()->forget('state');
+            return $this->frontendReturn($path, true, true);
         } catch (Throwable) {
             // Do not log provider tokens, authorization codes or identity payloads.
             $request->session()->forget('state');
@@ -58,12 +62,12 @@ class GoogleCustomerAuthController extends Controller
         return $this->frontendReturn($path);
     }
 
-    private function frontendReturn(string $path, bool $failed = false): RedirectResponse
+    private function frontendReturn(string $path, bool $failed = false, bool $expired = false): RedirectResponse
     {
         // Laravel's URL root includes /backend in production. Frontend paths
         // must resolve at the fixed site origin, after the return-path allowlist.
         return redirect()->away('https://armaghantrading.com'.$path.'#/tracking'
-            .($failed ? '?auth_error=google' : ''));
+            .($failed ? '?auth_error=google'.($expired ? '&auth_reason=expired' : '') : ''));
     }
 
     private function configured(): bool
