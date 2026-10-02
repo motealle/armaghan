@@ -870,3 +870,10 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 - Add a dedicated `ARMAGHAN_BACKUP_PASSPHRASE` as P1. Until then, retained fallback-encrypted artifacts require the original FTP secret-derived key; do not discard/rotate that recovery material before their expiry without an explicit recovery plan.
 - Core hardening is complete. The next and final core run is end-to-end QA + delivery handoff.
 - Real authenticated-admin Style Profile, product-image upload and real customer Magic Link browser acceptance remain opportunistic/non-blocking if a valid Filament session becomes available.
+
+### Documentation/contract closeout after Test28
+- Documentation handoff commit: `dd38e120b69df4cb46bdede67e83b8dcc025ddbb`.
+- FTP #321 correctly stopped on one remaining historical Test26 assertion that expected the literal rules phrase `Tests 01–26 are frozen`; no UI/root deployment occurred.
+- Contract-only fix: `72a45224e0bd6fd6547f30f2fa9983e6f1424a0b` changed the historical assertion to require a frozen range that still includes Test26.
+- FTP #322: PASS; QA complete, frontend build skipped, `/t` deploy skipped, root deploy skipped.
+- Repository memory now points to final QA/handoff as the sole remaining core run.

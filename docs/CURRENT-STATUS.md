@@ -1,7 +1,7 @@
 # Armaghan — Current Status
 
 Last reconciled: 2026-10-02
-Canonical main head at reconciliation start: `3158ffbbcd1ad7fe95cf3c096d0cf576b1b8cfde`
+Canonical main head at reconciliation start: `72a45224e0bd6fd6547f30f2fa9983e6f1424a0b`
 
 This file is the **current operational source of truth** for the next run. Historical decision records remain useful, but when an older document conflicts with this file, use this file plus the latest `docs/HANDOFF.md` and `docs/BACKLOG.md`.
 
@@ -303,6 +303,9 @@ P2 / optional:
 - Follow-up `3158ffbbcd1ad7fe95cf3c096d0cf576b1b8cfde`: aligned those fixtures with Test28.
 - FTP Deploy #320: PASS — frozen Test26/27 contracts, Test28 visual/auth/share contracts, backup safety contract, Python syntax, TypeScript, 41 Vue unit tests, Test28 production build and FTP smoke PASS; 112 files uploaded; `deploy-t` PASS; `deploy-root` skipped.
 - Independent live verification: Test28 and frozen Test27 both load successfully; launcher lists Test28 first.
+- FTP Deploy #321: failed before any deployment because the historical Test26 rule-text assertion still expected the exact freeze range 01–26 after Test27 was frozen.
+- Contract-only fix `72a45224e0bd6fd6547f30f2fa9983e6f1424a0b` made the Test26 freeze assertion range-aware without changing Test26/27 runtime content.
+- FTP Deploy #322: PASS; full static QA/Python checks passed, frontend build intentionally skipped, `deploy-t` and `deploy-root` skipped.
 
 ## Rules for the next run
 
