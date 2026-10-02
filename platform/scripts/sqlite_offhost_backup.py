@@ -411,20 +411,38 @@ def backup(out_dir: Path) -> int:
         print("OFFHOST_BACKUP_ERROR:", type(exc).__name__)
         return 5
     finally:
+        # Ask the still-present HTTPS helper to remove any private export first.
+        # FTP cleanup below is only a fallback and also removes the helper itself.
+        if helper_uploaded:
+            try:
+                cleanup_url = (
+                    site_url.rstrip("/")
+                    + "/"
+                    + helper_name
+                    + "?"
+                    + urlencode({"token": helper_secret, "action": "cleanup"})
+                )
+                cleanup_result = request_json(cleanup_url, timeout=30)
+                if not cleanup_result.get("ok"):
+                    cleanup_ok = False
+            except Exception:
+                cleanup_ok = False
+
         try:
             if ftp.sock:
                 ftp.cwd("/")
-                if encrypted_downloaded:
+                try:
+                    ftp.cwd(export_dir)
+                    safe_delete(ftp, "backup.sqlite.enc")
+                    safe_delete(ftp, "snapshot.sqlite")
+                    ftp.cwd("/")
                     try:
-                        ftp.cwd(export_dir)
-                        safe_delete(ftp, "backup.sqlite.enc")
-                        ftp.cwd("/")
-                        try:
-                            ftp.rmd(export_dir)
-                        except Exception:
-                            pass
+                        ftp.rmd(export_dir)
                     except Exception:
                         pass
+                except Exception:
+                    pass
+
                 if helper_uploaded:
                     ftp.cwd("/public_html")
                     safe_delete(ftp, helper_name)
@@ -436,19 +454,6 @@ def backup(out_dir: Path) -> int:
             cleanup_ok = False
             try:
                 ftp.close()
-            except Exception:
-                pass
-
-        if helper_uploaded:
-            try:
-                cleanup_url = (
-                    site_url.rstrip("/")
-                    + "/"
-                    + helper_name
-                    + "?"
-                    + urlencode({"token": helper_secret, "action": "cleanup"})
-                )
-                request_json(cleanup_url, timeout=30)
             except Exception:
                 pass
 
