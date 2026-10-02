@@ -1,45 +1,50 @@
-name: Backend Code Deploy
+name: Backend Additive Deploy
 
 on:
   push:
     branches: [main]
     paths:
-      - "platform/backend/**"
-      - "platform/scripts/deploy_laravel_code_update.py"
-      - ".github/workflows/backend-code-deploy.yml"
+      - "platform/backend/composer.json"
+      - "platform/backend/composer.lock"
+      - "platform/backend/database/migrations/**"
+      - "platform/scripts/deploy_laravel_additive_update.py"
+      - ".github/workflows/backend-additive-deploy.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: backend-code-deploy-production
+  group: backend-additive-deploy-production
   cancel-in-progress: false
 
 jobs:
   plan:
     runs-on: ubuntu-latest
     outputs:
-      code_only: ${{ steps.plan.outputs.code_only }}
+      required: ${{ steps.plan.outputs.required }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
       - id: plan
-        name: Guard code-only lane from dependency or migration drift
+        name: Determine whether additive release is required
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "code_only=true" >> "$GITHUB_OUTPUT"
-          elif git diff --quiet HEAD^ HEAD --             platform/backend/composer.json             platform/backend/composer.lock             platform/backend/database/migrations; then
-            echo "code_only=true" >> "$GITHUB_OUTPUT"
+            echo "required=true" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet HEAD^ HEAD -- \
+            platform/backend/composer.json \
+            platform/backend/composer.lock \
+            platform/backend/database/migrations; then
+            echo "required=false" >> "$GITHUB_OUTPUT"
           else
-            echo "code_only=false" >> "$GITHUB_OUTPUT"
+            echo "required=true" >> "$GITHUB_OUTPUT"
           fi
 
   deploy:
     needs: plan
-    if: needs.plan.outputs.code_only == 'true'
+    if: needs.plan.outputs.required == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -54,7 +59,7 @@ jobs:
           php-version: "8.3"
           coverage: none
           tools: composer:v2
-          extensions: ctype,curl,dom,fileinfo,filter,hash,mbstring,openssl,pcre,pdo,session,tokenizer,xml,sqlite3,pdo_sqlite,zip
+          extensions: ctype,curl,dom,fileinfo,filter,hash,mbstring,openssl,pcre,pdo,session,tokenizer,xml,sqlite3,pdo_sqlite,zip,gd
 
       - name: Install locked dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
@@ -66,7 +71,7 @@ jobs:
           touch database/database.sqlite
           php artisan migrate:fresh --force --no-interaction
 
-      - name: Validate and test release
+      - name: Validate and test additive release
         run: |
           composer validate --strict
           php artisan test
@@ -75,14 +80,14 @@ jobs:
       - name: Build production vendor tree
         run: composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist --no-progress
 
-      - name: Build code-only release ZIP
+      - name: Build additive release ZIP
         run: |
           python - <<'PY'
           from pathlib import Path
           import zipfile
 
           root=Path(".")
-          out=Path("/tmp/armaghan-backend-code.zip")
+          out=Path("/tmp/armaghan-backend-additive.zip")
           excluded_prefixes=("tests/","node_modules/","storage/logs/","storage/framework/")
           excluded_exact={".env","database/database.sqlite",".phpunit.cache"}
           with zipfile.ZipFile(out,"w",zipfile.ZIP_DEFLATED) as z:
@@ -100,28 +105,28 @@ jobs:
           print(f"release_bytes={out.stat().st_size}")
           PY
 
-      - name: Validate updater syntax
+      - name: Validate additive updater syntax
         run: |
-          python -m py_compile ../scripts/deploy_laravel_code_update.py
+          python -m py_compile ../scripts/deploy_laravel_additive_update.py
           python - <<'PY'
           import importlib.util
           from pathlib import Path
-          path=Path("../scripts/deploy_laravel_code_update.py")
-          spec=importlib.util.spec_from_file_location("armaghan_code_update",path)
+          path=Path("../scripts/deploy_laravel_additive_update.py")
+          spec=importlib.util.spec_from_file_location("armaghan_additive_update",path)
           module=importlib.util.module_from_spec(spec)
           spec.loader.exec_module(module)
-          Path("/tmp/armaghan-code-update.php").write_text(
+          Path("/tmp/armaghan-additive-update.php").write_text(
               module.helper_php("0123456789abcdef","safe-ci-secret","release.zip"),
               encoding="utf-8",
           )
           PY
-          php -l /tmp/armaghan-code-update.php
+          php -l /tmp/armaghan-additive-update.php
 
-      - name: Deploy code-only backend release
+      - name: Deploy additive backend release
         working-directory: .
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           ARMAGHAN_SITE_URL: https://armaghantrading.com
-        run: python platform/scripts/deploy_laravel_code_update.py --release /tmp/armaghan-backend-code.zip
+        run: python platform/scripts/deploy_laravel_additive_update.py --release /tmp/armaghan-backend-additive.zip
