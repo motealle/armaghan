@@ -1,11 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261002-status-reconcile",
   "scope": "Documentation-only reconciliation of stale next-run instructions; no UI/backend/deploy mutation",
   "base_ref": "main@9ee3a20697d109194ca8ff25e172f072f3688a38",
   "acquired_at": "2026-10-02T11:14:58.459Z",
-  "expires_at": "2026-10-02T12:44:58.459Z"
+  "expires_at": "2026-10-02T12:44:58.459Z",
+  "released_at": "2026-10-02T11:17:16.177Z",
+  "note": "Documentation reconciliation commit cfb28307; workflow 37000097966 QA and smoke PASS; deploy-t/root skipped; live browser QA remains open."
 }
