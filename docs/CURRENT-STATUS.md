@@ -1,13 +1,13 @@
 # Armaghan — Current Status
 
 Last reconciled: 2026-10-02
-Canonical main head at reconciliation start: `10d040c7d1706d68a5018e1240c797011440000c`
+Canonical main head at reconciliation start: `76f80179292f743cb54443e540602bba47c4d8bb`
 
 This file is the **current operational source of truth** for the next run. Historical decision records remain useful, but when an older document conflicts with this file, use this file plus the latest `docs/HANDOFF.md` and `docs/BACKLOG.md`.
 
 ## Executive status
 
-Core MVP delivery is approximately **91–94% complete**. Core admin CRUD, public catalog reads, product media, guarded deployment, real customer Backend session and one-time Magic Link authentication are live. The remaining core delivery is persisted FavoriteShare/WhatsApp sharing, off-host backup/restore hardening, and final end-to-end acceptance.
+Core MVP delivery is approximately **95–97% complete**. Core admin CRUD, public catalog, product media, guarded deployment, real customer Backend session/Magic Link and persisted FavoriteShare/WhatsApp sharing are live. The remaining core delivery is off-host backup/restore hardening and final end-to-end acceptance/handoff.
 
 Current UI lane:
 - Test 26: frozen/immutable.
@@ -32,6 +32,12 @@ Current backend lane:
 - Test 27 hydrates a real Backend customer session when present and no longer generates browser-only Magic Links. Production links keep the bearer token only in the browser hash fragment (`#/magic/<token>`), then consume it through a fixed same-origin POST endpoint; the token is not sent in the initial HTTP URL.
 - Backend Code Deploy #9 deliberately rolled back when the first token-in-path production smoke exposed a real 404 routing incompatibility. Repair commit `10d040c7...` moved consumption to the fixed POST endpoint; Backend Code Deploy #10 PASS with guest customer session = 401 and GET on POST-only consume endpoint = 405.
 - FTP Deploy #314 PASS delivered the repaired Test 27 auth flow; root deployment remained skipped.
+- Persisted FavoriteShare/WhatsApp is live. New share links are server-backed, carry only a high-entropy bearer token in the browser fragment, store only SHA-256 token hashes in SQLite, preserve product order, validate active taxonomy/products and resolve through a fixed POST endpoint.
+- Guest shares expire after 7 days; authenticated customer shares expire after 30 days and may be revoked by that customer. Public share creation/resolution is CSRF-protected + rate-limited; customer revocation requires the real Backend customer session.
+- Test 27 no longer generates product-code-in-URL links. Old `?shared=v1:` links remain read-only compatible, while all new sharing uses persisted Backend links. The WhatsApp action sends the persisted share URL through the existing seller WhatsApp path.
+- Favorite changes now attribute real customers using `currentCustomerId`; the old hard-coded Customer #1 bug is removed.
+- Backend Code Deploy #11 PASS with FavoriteShare resolve route GET = 405; independent Production probe confirmed both FavoriteShare issue and resolve endpoints exist as POST-only. FTP Deploy #316 PASS delivered Test 27; root skipped.
+- Read-only live browser acceptance with an intentionally invalid 64-character share token reached the persisted shared-favorites route and ended in the correct invalid/unavailable state without crash or legacy product-code sharing.
 - Final browser-authenticated Test 27 Style Profile acceptance is still open but is non-blocking. A read-only check of the saved browser profile redirected to `/backend/admin/login`, so delivery does not rely on that session.
 
 ## Production backend — verified complete
@@ -63,6 +69,9 @@ Verified:
   - `/backend/admin/login` → 200
   - `/backend/api/catalog/categories` → 200
   - `/backend/api/catalog/products?per_page=1` → 200
+  - `/backend/api/customer/session` → 401 for guest
+  - GET `/backend/api/customer/magic-link/consume` → 405 (POST-only route exists)
+  - GET `/backend/api/favorite-shares/resolve` → 405 (POST-only route exists)
 - Public Laravel permissions normalized to LiteSpeed-safe directories `0755` / files `0644`; private data permissions were not widened.
 
 ## First production administrator — verified complete
@@ -187,12 +196,9 @@ Production catalog state:
 - 18 active products initialized from the canonical MVP fixture.
 - Public catalog filtering/search/pagination and managed-code metadata are live.
 
-Not yet implemented:
-- Full FavoriteShare HTTP flow + persisted WhatsApp handoff.
+Customer session/Magic Link and FavoriteShare/WhatsApp HTTP flows are implemented and live. The customer-facing session API exposes only the bounded self-service profile subset; internal notes/user ownership are not returned or customer-writable. FavoriteShare resolution returns only ordered active product codes and share expiry metadata; it does not expose share-owner identity.
 
-Customer session and Magic Link HTTP flows are implemented and live. The customer-facing session API exposes only the bounded self-service profile subset; internal notes/user ownership are not returned or customer-writable.
-
-Product media ownership/upload is implemented and live. The public catalog now returns a `media` array per Product and Test 27 prefers that server gallery when non-empty. Because the current production Products do not yet have uploaded server media, local media/specs remain the visible fallback. Customer/account flows still contain prototype/local browser paths until their APIs and Magic Link session flow are implemented.
+Product media ownership/upload is implemented and live. The public catalog returns a `media` array per Product and Test 27 prefers that server gallery when non-empty. Because the current production Products do not yet have uploaded server media, local media/specs remain the visible fallback. Test 27 still retains demo/local auth and local favorites storage only as review/resilience fallbacks; real customer sessions, Magic Links and newly generated FavoriteShare links are Backend-backed.
 
 ## Persistence policy
 
@@ -204,23 +210,18 @@ Current policy:
 - Primary backups remain SQLite-to-SQLite consistent snapshots.
 - At least one rotated off-host backup + restore drill is still required before final production handoff.
 
-## Remaining core delivery — estimated 3 bounded runs + opportunistic browser acceptance
+## Remaining core delivery — estimated 2 bounded runs + opportunistic browser acceptance
 
 This estimate excludes open-ended new customer UI revisions. Browser-authenticated Style Profile acceptance and one real Filament product-image upload remain opportunistic parallel checks rather than blockers because their server-side foundations are already production-verified.
 
-1. **Favorites/WhatsApp persisted share flow**
-   - persisted favorite-share links;
-   - guest/customer ownership and expiry/revoke;
-   - WhatsApp handoff against server-backed shares;
-   - remove the current product-code-in-URL share path from the real Backend flow.
-
-2. **Production hardening**
+1. **Production hardening**
    - rotated off-host SQLite backup;
    - restore drill;
+   - retention/verification and recovery notes;
    - logs/health verification;
    - additive and code-only deploy lanes are already production-proven.
 
-3. **Final end-to-end QA + handoff**
+2. **Final end-to-end QA + handoff**
    - mobile/tablet/desktop;
    - RTL/LTR;
    - light/dark;
@@ -233,13 +234,13 @@ This estimate excludes open-ended new customer UI revisions. Browser-authenticat
 ## Highest-priority open items
 
 P0:
-1. Implement persisted FavoriteShare/WhatsApp handoff without modifying frozen Test 26.
-2. Configure rotated off-host SQLite backup and perform a restore drill.
-3. Complete browser-authenticated Test 27 Style Profile + one real Filament product-image upload acceptance opportunistically when a valid real admin session is available.
+1. Configure rotated off-host SQLite backup and perform a restore drill.
+2. Complete final end-to-end QA/handoff across responsive/RTL-LTR/light-dark/auth/share/deploy paths.
+3. Complete browser-authenticated Test 27 Style Profile + one real Filament product-image upload + one real customer Magic Link acceptance opportunistically when a valid real admin session is available.
 4. Keep both Backend deployment lanes green: code-only for ordinary changes, guarded additive for approved create-only migration/dependency changes.
 
 P1:
-- Favorites/WhatsApp persisted share flow.
+- No separate core P1 blocker remains; optional acceptance/polish only.
 
 P2 / optional:
 - MySQL logical mirror/export with verification.
@@ -280,6 +281,12 @@ P2 / optional:
 - Backend Code Deploy #10 PASS — snapshot created, no drift, all CRUD/catalog smokes 200, guest customer session 401, fixed Magic Link consume route GET 405, cleanup PASS.
 - Independent production probe reconfirmed customer session 401 and fixed Magic Link consume GET 405.
 - FTP Deploy #314 PASS — Test27 customer-auth contract, TypeScript, Vue tests/build, FTP smoke and `/t/27` deploy PASS; root skipped.
+- FavoriteShare PR #9 pre-merge Backend CI #51 PASS; squash merge `76f80179292f743cb54443e540602bba47c4d8bb`.
+- Backend CI #52 PASS after merge.
+- Backend Code Deploy #11 PASS — snapshot created, no dependency/migration drift; existing backend smokes remain green and FavoriteShare fixed resolve route GET returns 405; cleanup PASS.
+- Independent production probe: GET `/backend/api/favorite-shares` = 405 and GET `/backend/api/favorite-shares/resolve` = 405, confirming both fixed POST endpoints exist.
+- FTP Deploy #316 PASS — Test27 FavoriteShare source contract, TypeScript, Vue unit tests/build, FTP smoke and `/t/27` deploy PASS; `deploy-root` skipped.
+- Live read-only invalid-token acceptance PASS on `/t/27/#/favorites/share/<invalid-token>`: shared route loaded, server resolution attempted, invalid/unavailable shared-list state rendered, no crash or legacy local-code share.
 
 ## Rules for the next run
 
@@ -291,7 +298,7 @@ P2 / optional:
 6. Keep Test 26 immutable.
 7. Keep Test 27 as the active mutable UI lane.
 8. Never store production plaintext credentials in Git, docs, logs or artifacts.
-9. Do not rebuild product-media ownership or Customer/Magic Link core; both are live. The next P0 is persisted FavoriteShare/WhatsApp.
+9. Do not rebuild product-media ownership, Customer/Magic Link or FavoriteShare/WhatsApp; all are live. The next P0 is off-host backup/restore hardening.
 10. Do not claim the 18 current Products have server media yet: their API `media` arrays are currently empty and Test 27 intentionally falls back to local media until an admin uploads images.
 11. Use the guarded additive lane for future approved create-only migration/dependency changes; ordinary Backend changes stay on the code-only lane.
 

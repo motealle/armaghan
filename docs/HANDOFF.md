@@ -795,3 +795,36 @@ Customer-requested Test 27 corrections are implemented on the active mutable UI 
 - Then off-host SQLite backup/restore drill.
 - Then final end-to-end QA/handoff.
 - Browser Style Profile acceptance, one real product media upload, and one real Magic Link issue/click remain opportunistic acceptance tasks when an authenticated real admin browser session is available.
+
+
+## 42. Persisted FavoriteShare + WhatsApp handoff — production live
+
+### Architecture/security
+- FavoriteShare uses the existing `favorite_shares` + `favorite_share_product` schema; no migration or dependency change was required.
+- New shares generate a 64-character high-entropy token; SQLite stores only its SHA-256 hash. The raw bearer token appears only in the browser fragment `/t/27/#/favorites/share/<token>` and is resolved through fixed same-origin POST `/backend/api/favorite-shares/resolve`.
+- Issue/resolve are CSRF-protected and rate-limited. Share resolution returns only share id/expiry + ordered active product codes; owner/customer identity is never exposed publicly.
+- Only active Products under active Subcategory/Category may be shared; issue fails rather than silently changing the requested product set.
+- Guest shares expire after 7 days and have no authenticated revoke surface. A real Backend customer session creates a customer-owned 30-day share; only that customer can revoke it through `/api/customer/favorite-shares/{id}`.
+- Issue/revoke are audited without raw tokens.
+
+### Test27 + WhatsApp
+- Test27 now creates persisted server-backed shares. Current product-code-in-URL generation was removed.
+- Existing historical `?shared=v1:` links are still decoded read-only so already-sent Test27 links do not break, but no current UI generates them.
+- Recipient route `/favorites/share/:token` resolves the token via Backend then maps the returned ordered codes to the live catalog.
+- Share creation reuses one issued link while the favorites set is unchanged; changing favorites invalidates the cached issued link and causes a new server share on the next action.
+- Native share/copy remains available. The WhatsApp CTA sends the persisted share URL through the existing seller WhatsApp path with URL-encoded text.
+- Customer wishlist lead attribution now uses the real `session.currentCustomerId`; the previous hard-coded Customer #1 fallback is removed.
+
+### Delivery record
+- PR #9 head `bc5c1ef2170eaa85910ce13976a8ebb1d731ffa5`; Backend CI #51 PASS.
+- Squash merge: `76f80179292f743cb54443e540602bba47c4d8bb`.
+- Backend CI #52 PASS.
+- Backend Code Deploy #11: **PASS** — pre-swap SQLite snapshot created, no Composer/migration drift; health/admin/catalog/customer auth smokes green and FavoriteShare resolve POST-only route verified by GET 405; temp cleanup PASS.
+- Independent production probe returned HTTP 405 for GET `/backend/api/favorite-shares` and `/backend/api/favorite-shares/resolve`, confirming both fixed POST routes are live without creating share data.
+- FTP Deploy #316: **PASS** — frozen Test26 and Test11–27 contracts including persisted FavoriteShare contract PASS; TypeScript/Vue unit tests/Test27 build PASS; FTP smoke + `deploy-t` PASS; root skipped.
+- Read-only live browser acceptance with an intentionally invalid 64-character token loaded the persisted shared-list route and rendered the invalid/unavailable state without crash or any legacy local-code share.
+
+### Next P0
+- Production hardening: rotated off-host SQLite backup + restore drill + retention/verification.
+- Then final end-to-end QA + handoff.
+- Real authenticated admin acceptance for Style Profile, product media upload and a real customer Magic Link remains opportunistic/non-blocking.

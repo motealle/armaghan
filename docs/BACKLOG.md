@@ -3,16 +3,19 @@
 ## P0 — Persisted FavoriteShare + WhatsApp — 2026-10-02
 
 - [x] Select architecture: Backend FavoriteShare record + SHA-256 token hash + ordered product pivot + fragment-held share token + fixed POST resolve + WhatsApp handoff.
-- [ ] Add bounded issue/resolve/revoke service with active-product validation, guest/customer ownership, expiry and audit logging.
-- [ ] Use shorter guest TTL than authenticated-customer TTL because guest shares have no authenticated revoke surface.
-- [ ] Add CSRF-protected/rate-limited fixed POST issue + resolve endpoints and authenticated customer revoke endpoint.
-- [ ] Keep raw share token out of SQLite/logs/query strings/server paths; only the browser fragment may carry it.
-- [ ] Replace Test27 product-code-in-URL sharing with Backend persisted shares and a `/favorites/share/:token` route.
-- [ ] Add one-tap WhatsApp handoff using the server-backed share URL and the existing seller WhatsApp path.
-- [ ] Fix Favorites customer attribution to use the real `currentCustomerId`, never hard-coded Customer #1.
-- [ ] Add Backend lifecycle tests + frontend unit/source contracts for ordering, expiry, revoke, ownership and shared-page resolution.
-- [ ] Deploy through guarded code-only Backend lane + Test27 FTP lane; root/Test26 untouched.
-- [ ] Reconcile CURRENT-STATUS/HANDOFF/BACKLOG/rules and release shared lock.
+- [x] Add bounded issue/resolve/revoke service with active-product/taxonomy validation, ordered products, guest/customer origin, expiry and audit logging.
+- [x] Use shorter guest TTL (7 days) than authenticated-customer TTL (30 days); guest shares intentionally rely on expiry while customer-owned shares have authenticated revoke.
+- [x] Add CSRF-protected/rate-limited fixed POST issue + resolve endpoints and authenticated customer revoke endpoint.
+- [x] Keep raw share token out of SQLite/logs/query strings/server paths; only the browser fragment carries it.
+- [x] Replace Test27 product-code-in-URL generation with Backend persisted shares and `/favorites/share/:token`; retain old `?shared=v1:` links read-only for compatibility only.
+- [x] Add one-tap WhatsApp handoff using the server-backed share URL and existing seller WhatsApp path.
+- [x] Fix Favorites customer attribution to use the real `currentCustomerId`, never hard-coded Customer #1.
+- [x] Add Backend lifecycle tests + frontend unit/source contracts for ordering, expiry, revoke, ownership, malformed tokens and shared-page resolution.
+- [x] PR #9 Backend CI #51 PASS; squash merge `76f80179292f743cb54443e540602bba47c4d8bb`; Backend CI #52 PASS.
+- [x] Backend Code Deploy #11 PASS with pre-swap snapshot/no drift/all existing smokes + FavoriteShare resolve GET 405; independent Production probe reconfirmed issue/resolve GET 405.
+- [x] FTP Deploy #316 PASS: Test27 FavoriteShare contract + TypeScript/Vue/build/smoke/deploy PASS; root/Test26 untouched.
+- [x] Live read-only invalid-token browser acceptance PASS: persisted share route rendered invalid/unavailable state without crash or legacy code-sharing.
+- [x] Reconcile CURRENT-STATUS/HANDOFF/BACKLOG/rules and release shared lock.
 
 ## P0 — Customer session + Magic Link — 2026-10-02
 
@@ -210,7 +213,7 @@ Current estimate excludes open-ended new customer redesign requests. Filament CR
 3. [x] **Production SQLite/Laravel + first admin** — PDO SQLite/SQLite 3.53.4 PASS, private DB/backup active, migrations/snapshot PASS, `/backend` healthy, one real active production admin provisioned securely.
 4. [ ] **Browser-authenticated editor acceptance** — real Filament session + CSRF, Test 27 server autosave, reload/cross-device draft, staging Publish and Restore through the actual UI. This is the only remaining Style Profile persistence acceptance.
 5. [~] **Filament CRUD + catalog/customer API/media** — Product/Category/Subcategory/Customer Resources and public catalog reads are complete/live; production product-media ownership/upload and customer API/session wiring remain.
-6. [~] **Favorites/WhatsApp + Customer Magic Link** — Customer Magic Link/session is live; persisted short FavoriteShare links, ownership/revoke/expiry and WhatsApp handoff remain.
+6. [x] **Favorites/WhatsApp + Customer Magic Link** — Customer session/Magic Link and persisted FavoriteShare/WhatsApp handoff are live with hash-only tokens, expiry/revoke, ordered products and audited/rate-limited endpoints.
 7. [ ] **Production hardening + final QA/handoff** — rotated off-host SQLite backup + restore drill, repeatable backend update workflow with pre-migration snapshot/rollback guard, responsive/RTL/LTR/light/dark/permissions QA, final customer handoff.
 
 ### Production backend activation delivery record
@@ -915,8 +918,8 @@ Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 - [ ] Product CRUD: add/edit/archive, category/subcategory, availability, sort order and image management.
 - [ ] Customer CRUD: identity/contact/notes/status plus generate/revoke one-tap access links.
 - [ ] Public read endpoints for categories/products/site settings; replace browser-local catalog persistence in Test 27+ only.
-- [ ] Backend favorites-share records with compact high-entropy public token and WhatsApp share action.
-- [ ] Customer magic-link login: hashed token, expiry/revoke, secure session, optional trusted-device persistence.
+- [x] Backend favorites-share records with compact high-entropy public token and WhatsApp share action.
+- [x] Customer magic-link login: hashed token, expiry/revoke and secure session. Trusted-device persistence remains optional and was not required for MVP.
 - [ ] Persist high-value site settings including semantic color-role mappings and safe contrast preview.
 - [ ] Add production backup, health check, audit log and minimal recovery procedure.
 - [ ] Deploy production backend without modifying `/t/26`; any required frontend wiring lands in Test 27+.
