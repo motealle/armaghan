@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261002-product-media",
   "scope": "Implement production product media ownership/upload with official Spatie Media Library + Filament integration, public catalog media reads, Test 27 backend media preference/fallback, and reconcile repo memory; keep Test 26 frozen.",
   "base_ref": "main@f305aa3871b293d77d2327bb50afea5900b504e6",
   "acquired_at": "2026-10-02T00:00:00Z",
-  "expires_at": "2026-10-02T01:30:00Z",
-  "released_at": null,
-  "note": "P0 product-media vertical slice. Dependency/migration changes must use a guarded migration-aware release path; no root UI deploy."
+  "expires_at": "2026-10-02T00:25:00Z",
+  "released_at": "2026-10-02T00:25:00Z",
+  "note": "Product Media vertical slice complete. Official Spatie/Filament product media live in production; Backend CI #41/#42 PASS; Backend Code Deploy #7 correctly skipped on dependency/migration drift; Backend Additive Deploy #3 PASS with SQLite snapshot, 1 additive migration, public storage link and all HTTP smokes 200; FTP #308 PASS after same-origin test fixture repair; docs/rules reconciled, FTP #309/#310 PASS; current 18 products have no server media yet, so Test27 intentionally uses local fallback. Next P0: customer API/session + Magic Link core."
 }
