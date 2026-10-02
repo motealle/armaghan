@@ -1,5 +1,18 @@
 # Armaghan — Product Backlog
 
+## P0 — Customer session + Magic Link — 2026-10-02
+
+- [x] Select architecture: same-origin Laravel session + database-backed high-entropy hashed one-time Magic Link; no customer password dependency and no new auth package.
+- [ ] Add bounded issue/revoke/consume service with expiry, scope, one-time atomic consume and audit logging.
+- [ ] Add customer-session middleware + `GET/PATCH /api/customer/session` + scoped logout.
+- [ ] Add active-admin issue/revoke API and a native Filament Customer action to generate a 24h/72h/7d link.
+- [ ] Rate-limit public consume and admin issue endpoints; never log/store plaintext link tokens.
+- [ ] Wire Test 27 to hydrate real Backend customer sessions while retaining demo/local fallback only when no server session exists.
+- [ ] Persist the Backend-supported customer profile subset from the customer dashboard.
+- [ ] Add feature/unit coverage for issue, expiry, revoke, replay prevention, session rotation, authorization and Test 27 hydration.
+- [ ] Deploy through the guarded code-only lane; verify unauthenticated customer-session smoke = 401 and live Magic Link infrastructure health.
+- [ ] Reconcile `CURRENT-STATUS`, `HANDOFF`, `BACKLOG` and release the shared lock.
+
 Priority: **P0 current**, P1 next, P2 later.  
 Current implementation targets: **Backend MVP productionization** + **Test 27 visual-editor/UI lane**. Test 26 is frozen.
 Detailed ranked UX decisions: `docs/TEST26-UX-AUDIT.md`.
