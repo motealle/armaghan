@@ -306,7 +306,9 @@ jobs:
                   attrs = dict(attrs)
                   if tag == "a" and "href" in attrs: self.links.append(attrs["href"])
                   if tag == "script" and "src" in attrs: self.paths.append(attrs["src"])
-                  if tag == "link" and attrs.get("rel") == "stylesheet": self.paths.append(attrs["href"])
+                  if tag == "link" and attrs.get("rel") == "stylesheet":
+                      href = attrs.get("href", "")
+                      if href and not urlparse(href).scheme and not href.startswith("//"): self.paths.append(href)
           parser = Assets()
           parser.feed((root / "index.html").read_text(encoding="utf-8"))
           if not parser.paths: raise SystemExit("Built page has no application assets")

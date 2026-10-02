@@ -17,6 +17,9 @@ assert all(f"{n:02d}" in frozen for n in range(1, 29))
 assert f"Number(uiTarget) <= {active - 1}" in vite
 assert f"int(target)>{active - 1}" in workflow
 assert launcher.index(f"./{active}/index.html") < launcher.index("./28/index.html")
+html = (ROOT / "platform/frontend/index.html").read_text()
+assert f"armaghan:test{active}:theme" in html
+assert "armaghan:test26:theme" not in html
 main = (ROOT / "platform/frontend/src/main.ts").read_text()
 assert f"dataset.uiTest='{active}'" in main
 for name in ("appearance", "design", "locale", "session", "catalog", "customers", "favorites", "theme"):
