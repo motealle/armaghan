@@ -40,7 +40,7 @@ Production endpoints: `/backend/auth/google/redirect` and `/backend/auth/google/
 - Owner reported the Laravel welcome page after Google login. A fresh cancellation probe reproduced HTTP 302 to https://armaghantrading.com/backend/#/tracking?auth_error=google. Laravel prefixes frontend-relative redirects with the production /backend root.
 - Repair uses the fixed production origin plus the existing strict root/numbered-test path allowlist for success, cancellation and invalid-state returns. No authentication bypass or email-only linking.
 - Two regression cases force a /backend URL root and cover successful root login and cancellation to root/numbered paths, including hostile path fallback. Existing assertions now require the fixed production origin.
-- Deployment/tests and fresh live cancellation probe pending. Real Google signup/repeat login still OPEN; the screenshot is not proof of an authenticated customer session.
+- Deployment/tests and live root cancellation probe PASS; see closeout evidence. Real Google signup/repeat login still OPEN; the screenshot is not proof of an authenticated customer session.
 - Tests 01–28, Test29 assets, root selector, host credentials and database schema remain unchanged.
 
 | Rank | Method | Score | Reason |
@@ -52,3 +52,14 @@ Production endpoints: `/backend/auth/google/redirect` and `/backend/auth/google/
 | 5 | Browser-side forwarding | 2 | Depends on loading another page |
 
 Selected: option 1.
+
+### Verified deployment closeout
+- Repair source commit: 8676b469d0159848f775689c55b7286e35cc932f; corrected test request commit: ad02b2e50ad5e6dd70196533a700c10a947a26b9.
+- Backend CI 37029811115 PASS: 51 tests / 362 assertions, dependency audit and secret hygiene PASS.
+- Backend Code Deploy 37029811169 PASS: pre-swap SQLite backup created, no dependency/migration drift, health/admin/catalog smokes 200, guest session 401, POST-only endpoints 405, temporary cleanup PASS.
+- FTP QA 37029811251 PASS; root and numbered UI deploys skipped. No frontend/frozen version files changed.
+- Independent live cancellation probe now returns HTTP 302 to https://armaghantrading.com/#/tracking?auth_error=google (before repair: /backend/#/tracking).
+- First attempt was safely stopped before host deployment by two test-harness 404s: forced production URL root also prefixed the test request. Using explicit localhost test request URLs keeps the /backend URL generator simulation intact; all tests now PASS.
+- Real Google signup/repeat login still requires owner confirmation; no actual-account login success is inferred from cancellation/automated tests.
+
+- Independent numbered-path probe: start at /backend/auth/google/redirect?return_path=/t/29/, cancel with the same cookie jar, return HTTP 302 to https://armaghantrading.com/t/29/#/tracking?auth_error=google. Provider enabled:true and guest session 401 remain verified after deploy.
