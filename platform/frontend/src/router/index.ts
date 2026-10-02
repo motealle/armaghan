@@ -4,6 +4,7 @@ import ProductsView from '@/views/ProductsView.vue'
 import ProductionView from '@/views/ProductionView.vue'
 import FavoritesView from '@/views/FavoritesView.vue'
 import TrackingView from '@/views/TrackingView.vue'
+import MagicLinkView from '@/views/MagicLinkView.vue'
 
 export const router=createRouter({
   history:createWebHashHistory(),
@@ -13,6 +14,7 @@ export const router=createRouter({
     {path:'/production',name:'production',component:ProductionView},
     {path:'/favorites',name:'favorites',component:FavoritesView},
     {path:'/tracking',name:'tracking',component:TrackingView},
+    {path:'/magic/:token',name:'magic-link',component:MagicLinkView},
   ],
   scrollBehavior(){return{top:0}},
 })
