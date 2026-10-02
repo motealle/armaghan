@@ -1,4 +1,4 @@
-"""Promote an existing numbered UI at root without rebuilding or changing /t."""
+"""Promote a selected existing numbered UI; preserve every numbered /t folder."""
 from __future__ import annotations
 import hashlib
 import io

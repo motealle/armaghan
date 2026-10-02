@@ -43,7 +43,7 @@ export function usePublicVisualProfileBaseline(visual:VisualStoreLike){
 
   onMounted(async()=>{
     try{
-      const data=await fetchPublicStyleProfile(window.location.pathname==='/'?'production':'staging',controller.signal)
+      const data=await fetchPublicStyleProfile((window.location.pathname==='/'||window.location.pathname==='/index.html')?'production':'staging',controller.signal)
       if(!data.checksum||!data.profile)return
 
       const server=sanitizeVisualStyleProfile({

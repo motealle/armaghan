@@ -86,7 +86,8 @@ assert "بارگذاری نسخه سرور" in sync_panel
 assert "انتشار نسخه فعلی در staging" in sync_panel
 assert "ذخیره فایل JSON" in sync_panel
 assert "بارگذاری JSON" in sync_panel
-assert "fetchPublicStyleProfile('staging'" in public_baseline
+assert "?'production':'staging'" in public_baseline
+assert "armaghan:test29:visual-style-public-baseline:v1" in public_baseline
 assert "toggleVisibility" in target_browser
 assert "orphanHiddenTargets" in target_browser
 assert "target.hideable!==false" in target_browser
