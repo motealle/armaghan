@@ -1,5 +1,20 @@
 # Armaghan — Product Backlog
 
+## P0 — Test 28 + off-host SQLite backup hardening — 2026-10-02
+
+- [x] Select backup architecture: production `VACUUM INTO` snapshot → AES-256-GCM encryption before transfer → encrypted GitHub Actions artifact → isolated artifact-download restore drill.
+- [x] Refuse plaintext SQLite artifacts because the repository is public.
+- [x] Prefer dedicated `ARMAGHAN_BACKUP_PASSPHRASE`; until it exists, derive a domain-separated key from the existing GitHub-held FTP secret without logging/persisting the raw secret.
+- [x] Add daily scheduled backup with 14-day artifact retention and no remote plaintext export.
+- [x] Add restore drill from the uploaded/downloaded artifact: ciphertext hash, plaintext hash, `PRAGMA integrity_check`, `foreign_key_check`, table inventory/counts and write-lock rollback.
+- [x] Freeze Test 27 and promote source/runtime namespace to Test 28.
+- [x] Set active build/deploy lane to `/t/28`; make both Vite and FTP deployment reject frozen Test 27.
+- [x] Add Test28 visual-editor/customer-auth/FavoriteShare source contracts and a Test27 freeze/promotion contract.
+- [ ] Pre-merge CI and branch validation.
+- [ ] Merge and run first real encrypted off-host backup + artifact round-trip restore drill.
+- [ ] Deploy Test 28; verify Test 27 remains untouched and root remains skipped.
+- [ ] Reconcile `CURRENT-STATUS`, `HANDOFF`, `BACKLOG`, rules and release shared lock.
+
 ## P0 — Persisted FavoriteShare + WhatsApp — 2026-10-02
 
 - [x] Select architecture: Backend FavoriteShare record + SHA-256 token hash + ordered product pivot + fragment-held share token + fixed POST resolve + WhatsApp handoff.
