@@ -53,6 +53,7 @@ export const useSessionStore=defineStore('session',()=>{
   const backendAuthenticated=ref(false)
   const backendCustomer=ref<BackendCustomerSession|null>(null)
 
+  // Root accepts only the real customer session; numbered lanes retain review fallback.
   const productionEntry=typeof window!=='undefined'&&(window.location.pathname==='/'||window.location.pathname==='/index.html')
   const isAuthenticated=computed(()=>productionEntry?backendAuthenticated.value:role.value!=='guest')
   const isAdmin=computed(()=>!productionEntry&&role.value==='admin')

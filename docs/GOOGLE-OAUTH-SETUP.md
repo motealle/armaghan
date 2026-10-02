@@ -28,3 +28,5 @@ Backend Laravel and Filament are live. Official Laravel Socialite is included in
 Dependency resolution run 37007410283 passed. Eleven automated backend cases cover disabled state, redirect allowlist, signup/repeat identity, existing-email/admin denial, authenticated linking, unverified/inactive denial, independent sessions, invalid state and cancellation. Backend deploy and actual credential readiness are pending closeout.
 
 Sources: https://laravel.com/framework/docs/socialite and https://developers.google.com/identity/openid-connect/openid-connect .
+
+Dependency preparation uses `composer require laravel/socialite:^5.27 --no-install --no-scripts`; deployment installs the validated lock. The client secret exists only in the private server environment.

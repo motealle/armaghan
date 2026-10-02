@@ -110,7 +110,7 @@ assert "composer require laravel/socialite" in google
 assert "GOOGLE_CLIENT_SECRET" in google
 assert "/auth/google/redirect" in google and "/auth/google/callback" in google
 assert "client secret" in google.lower()
-assert 'data-backend-endpoint="/auth/google/redirect"' in login
+assert 'data-backend-endpoint="/backend/auth/google/redirect"' in login
 
 # Test 24 storage isolation and catalog migration.
 

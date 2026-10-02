@@ -45,7 +45,7 @@ class GoogleCustomerAuthTest extends TestCase
         $provider->shouldReceive('scopes')->once()->with(['openid','email','profile'])->andReturnSelf();
         $provider->shouldReceive('redirect')->once()->andReturn(redirect('https://accounts.google.com/test'));
         Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
-        $this->get('/auth/google/redirect?return_path=/t/29/')->assertRedirect('https://accounts.google.com/test');
+        $this->get('/auth/google/redirect?return_path=%2Ft%2F29%2F')->assertRedirect('https://accounts.google.com/test');
         $this->assertSame('/t/29/',session('armaghan.google.return_path'));
     }
     public function test_signup_and_repeat_login_use_stable_google_subject(): void
