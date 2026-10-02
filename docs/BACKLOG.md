@@ -1,8 +1,20 @@
 # Armaghan — Product Backlog
 
+## Test29 nonvisual release — current
+
+- [x] Read actual state; preserve completed backend work.
+- [x] Acquire shared lease and create snapshot/test28-final.
+- [x] Freeze 01–28; promote build/deploy/launcher/runtime markers to Test29.
+- [x] Isolate browser writes under armaghan:test29:*, including manual locale.
+- [x] Localize Why Armaghan defaults for fa/ar/ku; retain en and override priority.
+- [x] Add automated locale isolation/reload/default tests; carry dark contrast check.
+- [ ] Verify automated checks, Test29 build/deploy and nonvisual delivery evidence.
+- [ ] Visual/device and authenticated-admin acceptance deferred by owner instruction; never infer PASS from automation.
+
+
 ## Test28 live QA follow-up — 2026-10-02
 
-- [ ] Localize the Persian Home English eyebrow "Why Armaghan?"; retain broad Home language acceptance as open.
+- [x] Localize the Persian Home eyebrow in Test29 source; frozen Test28 retains its historical text. Broad visual Home language acceptance remains open.
 
 - [x] Confirm completed core capabilities from canonical repository state; no reimplementation.
 - [x] Live desktop guest checks: 18 products, search 1 result, category filter 6 results, detail open/close, four locale directions, guest favorites reload, invalid-share state.
@@ -22,7 +34,7 @@
 
 ## P0 — Final end-to-end QA + delivery handoff — next
 
-- [ ] Validate Test28 mobile/tablet/desktop layout and interaction.
+- [ ] Validate Test29 mobile/tablet/desktop layout and interaction when visual testing is resumed.
 - [ ] Validate Persian/Arabic/Sorani RTL and English LTR.
 - [ ] Validate light/dark contrast and customer navigation.
 - [ ] Validate catalog/product media fallback, customer session/Magic Link, FavoriteShare/WhatsApp and admin permission boundaries.

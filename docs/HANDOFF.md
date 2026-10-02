@@ -8,7 +8,7 @@
 - Current prototype/development scope: `/t`
 - Root website (`/public_html`) is a protected landing page and must remain untouched by prototype work.
 - Test 26 customer-facing UX is frozen pending customer feedback; do not mutate `/t/26`.
-- Core Backend MVP productionization is complete. The active phase is final Test28 QA and delivery handoff. Tests 01–27 are frozen; any current UI correction belongs only in Test28.
+- Core Backend MVP productionization is complete. The active lane is the Test29 nonvisual release; visual QA is deferred by owner instruction. Tests 01–28 are frozen; current corrections belong only in Test29.
 
 ## 2. Deployment and hosting contract
 
@@ -949,3 +949,27 @@ Next: confirm guarded Test28 build/deploy and fresh live mint computed color; co
 - Fresh guest request to `/backend/admin/products` redirected to `/backend/admin/login`; no authenticated-admin acceptance is inferred.
 - Additional observed copy follow-up: Persian Home still displays the English eyebrow "Why Armaghan?". Keep the broad multilingual Home acceptance open and localize that label in the next bounded fix.
 - Mobile/tablet and valid customer/admin/share/WhatsApp end-to-end acceptance remain open. This run advances partial final QA; it does not declare final project delivery.
+
+## 46. Test29 nonvisual release
+
+## Test29 — nonvisual release, 2026-10-02
+
+Owner instruction: defer visual testing; preserve all previous versions; create a new numbered folder and prepend its link.
+- Tests 01–28 are frozen. Test28 source checkpoint: `snapshot/test28-final` at `1fafd9638777e26796acedc60b27dfd545736794`.
+- Test29 is the active release lane. Build/deploy target: `/t/29`; link `./29/index.html` is first in the launcher.
+- Build and FTP boundaries refuse targets <=28. Root deployment and remote deletion remain prohibited for this run.
+- Test29 browser state uses `armaghan:test29:*`, including the formerly shared manual-language setting. No migration writes previous-version keys; production Backend sessions/catalog remain intentionally shared.
+- Localized Why Armaghan eyebrow defaults for Persian, Arabic and Sorani; English retained. Existing locale/text overrides retain priority.
+- Three new automated locale tests cover old-key preservation, new-version reload and four-language defaults. The dark-heading numeric guard is carried forward.
+- Visual/device/admin-session acceptance remains OPEN and deferred by owner instruction. Automated PASS must not be presented as visual acceptance.
+- First Test29 build/deployment verification: pending in this implementation commit; record actual result during closeout.
+
+| Rank | Method | Score | Reason |
+|---:|---|---:|---|
+| 1 | Isolated Test29 + localized defaults + automated freeze/storage contracts | 9.5 | Concrete release without visual-layout changes; protects old snapshots |
+| 2 | Copy current release into a new lane only | 8.0 | Safe but fewer functional corrections |
+| 3 | Documentation-only closeout | 6.0 | Does not deliver a new version |
+| 4 | Add more admin capabilities | 4.0 | Core capabilities already exist |
+| 5 | Layout redesign | 2.0 | Requires deferred visual testing |
+
+Selected: option 1. Storage rationale: https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API .

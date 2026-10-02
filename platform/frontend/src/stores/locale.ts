@@ -14,8 +14,8 @@ import {
   type TranslationMap,
 } from '@/i18n/messages'
 
-const MANUAL_KEY='armaghan:locale:manual'
-const OVERRIDE_KEY='armaghan:test28:translations'
+const MANUAL_KEY='armaghan:test29:locale:manual'
+const OVERRIDE_KEY='armaghan:test29:translations'
 
 function readOverrides(): Record<Locale,TranslationMap> {
   try {

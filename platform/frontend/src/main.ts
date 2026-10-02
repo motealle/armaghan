@@ -4,6 +4,6 @@ import App from './App.vue'
 import { router } from './router'
 import './styles/main.css'
 
-document.documentElement.dataset.uiTest='28'
+document.documentElement.dataset.uiTest='29'
 
 createApp(App).use(createPinia()).use(router).mount('#app')

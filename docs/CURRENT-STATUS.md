@@ -1,21 +1,43 @@
 # Armaghan — Current Status
 
 Last reconciled: 2026-10-02
-Canonical main head at reconciliation start: `9ee3a20697d109194ca8ff25e172f072f3688a38`
+Canonical source checkpoint for Test29 promotion: `1fafd9638777e26796acedc60b27dfd545736794`
 
 This file is the **current operational source of truth** for the next run. Historical decision records remain useful, but when an older document conflicts with this file, use this file plus the latest `docs/HANDOFF.md` and `docs/BACKLOG.md`.
 
+
+## Test29 — nonvisual release, 2026-10-02
+
+Owner instruction: defer visual testing; preserve all previous versions; create a new numbered folder and prepend its link.
+- Tests 01–28 are frozen. Test28 source checkpoint: `snapshot/test28-final` at `1fafd9638777e26796acedc60b27dfd545736794`.
+- Test29 is the active release lane. Build/deploy target: `/t/29`; link `./29/index.html` is first in the launcher.
+- Build and FTP boundaries refuse targets <=28. Root deployment and remote deletion remain prohibited for this run.
+- Test29 browser state uses `armaghan:test29:*`, including the formerly shared manual-language setting. No migration writes previous-version keys; production Backend sessions/catalog remain intentionally shared.
+- Localized Why Armaghan eyebrow defaults for Persian, Arabic and Sorani; English retained. Existing locale/text overrides retain priority.
+- Three new automated locale tests cover old-key preservation, new-version reload and four-language defaults. The dark-heading numeric guard is carried forward.
+- Visual/device/admin-session acceptance remains OPEN and deferred by owner instruction. Automated PASS must not be presented as visual acceptance.
+- First Test29 build/deployment verification: pending in this implementation commit; record actual result during closeout.
+
+| Rank | Method | Score | Reason |
+|---:|---|---:|---|
+| 1 | Isolated Test29 + localized defaults + automated freeze/storage contracts | 9.5 | Concrete release without visual-layout changes; protects old snapshots |
+| 2 | Copy current release into a new lane only | 8.0 | Safe but fewer functional corrections |
+| 3 | Documentation-only closeout | 6.0 | Does not deliver a new version |
+| 4 | Add more admin capabilities | 4.0 | Core capabilities already exist |
+| 5 | Layout redesign | 2.0 | Requires deferred visual testing |
+
+Selected: option 1. Storage rationale: https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API .
+
 ## Executive status
 
-Core MVP delivery is approximately **98–99% complete**. Core admin/catalog/media/customer-auth/share flows, guarded deployment, encrypted off-host SQLite backup and artifact round-trip restore verification are live. Test 28 is the active mutable review lane. The only remaining core run is final end-to-end QA + delivery handoff.
+Core MVP delivery is approximately **98–99% complete**. Core admin/catalog/media/customer-auth/share flows, guarded deployment, encrypted off-host SQLite backup and artifact round-trip restore verification are live. Test 29 is the active mutable review lane; first deployment verification is pending. Final end-to-end QA and handoff remain open; visual checks are deferred by owner instruction.
 
 Current UI lane:
-- Tests 01–27: frozen/immutable. Test 27 is the final pre-hardening review snapshot and remains live under `/t/27`.
-- Test 28: active mutable review lane, live under `/t/28`, and first in the mutable test launcher.
-- Test 28 uses isolated `armaghan:test28:*` browser-state namespaces; active Vite/FTP lanes reject builds/deployments targeting frozen Test 27.
-- Test 28 carries forward the validated Test 27 customer UI and all current Backend integrations, while adding the production-hardening release boundary.
-- FTP Deploy #320: PASS — 112 Test 28 files uploaded, no remote files deleted, launcher updated, `deploy-t` PASS and `deploy-root` skipped.
-- Independent live verification: `/t/28` loads, `/t/27` still loads unchanged, and the launcher lists Test 28 before Test 27.
+- Tests 01–28: frozen/immutable; preserve their live folders.
+- Test29: active; build/deploy only /t/29 and the mutable launcher.
+- Source checkpoint: snapshot/test28-final. Browser keys: armaghan:test29:*.
+- Test29 inherits the delivered Test28 behavior with storage isolation and localized Why Armaghan defaults.
+- Prior FTP #320 and #325 evidence belongs to Test28, not Test29. Test29 deployment verification is pending.
 
 Current backend lane:
 - Laravel 13.34.0 is live under `/backend`.
@@ -89,9 +111,9 @@ A real production active-admin account exists.
 
 Do not create another bootstrap admin unless the existing account is intentionally rotated/removed through an explicit administration decision.
 
-## Test 28 visual editor — live state
+## Test29 visual editor — inherited implementation (release verification pending)
 
-Current Test 28 editor capabilities:
+Current Test29 editor capabilities inherited from delivered Test28:
 - Admin-only visual editor launcher.
 - Mobile non-modal resizable bottom sheet.
 - Direct touch selection.
@@ -159,7 +181,7 @@ The server-side semantics are no longer uncertain.
 
 The remaining acceptance is **browser-only**:
 1. authenticate through the real Filament login at `/backend/admin/login`;
-2. open Test 28 as the authenticated administrator;
+2. open Test29 as the authenticated administrator;
 3. edit a registered target;
 4. confirm the editor reaches server-synced state;
 5. reload and confirm the draft persists;
@@ -241,7 +263,7 @@ This estimate excludes open-ended new customer UI revisions. Browser-authenticat
 
 P0:
 1. Complete final end-to-end QA/handoff across responsive/RTL-LTR/light-dark/auth/share/backup/deploy paths.
-2. Complete browser-authenticated Test 28 Style Profile + one real Filament product-image upload + one real customer Magic Link acceptance opportunistically when a valid real admin session is available.
+2. Complete browser-authenticated Test29 Style Profile + one real Filament product-image upload + one real customer Magic Link acceptance opportunistically when a valid real admin session is available.
 3. Keep code-only, additive and off-host-backup lanes green through final handoff.
 
 P1:
@@ -315,10 +337,10 @@ P2 / optional:
 4. Do not claim Style Profile server persistence is pending; its production service semantics are verified.
 5. The remaining Style Profile task is browser/session/CSRF acceptance.
 6. Keep Test 26 immutable.
-7. Keep Tests 01–27 immutable. Test 28 is the only active mutable UI lane; use only `armaghan:test28:*` browser-state keys.
+7. Keep Tests 01–28 immutable. Test 29 is the only active mutable UI lane; use only `armaghan:test29:*` browser-state keys.
 8. Never store production plaintext credentials in Git, docs, logs or artifacts.
 9. Do not rebuild product-media ownership, Customer/Magic Link, FavoriteShare/WhatsApp or off-host backup/restore; all are live. The next P0 is final end-to-end QA + delivery handoff.
-10. Do not claim the 18 current Products have server media yet: their last verified API `media` arrays were empty and Test 28 retains local media fallback until an admin uploads images. Recheck current catalog data before any new media-state claim.
+10. Do not claim the 18 current Products have server media yet: their last verified API `media` arrays were empty and Test 29 retains local media fallback until an admin uploads images. Recheck current catalog data before any new media-state claim.
 11. Use the guarded additive lane for future approved create-only migration/dependency changes; ordinary Backend changes stay on the code-only lane.
 
 

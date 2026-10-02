@@ -30,8 +30,8 @@ describe('session store',()=>{
     store.logout()
     expect(store.role).toBe('guest')
     expect(store.impersonatedCustomerId).toBeNull()
-    expect(sessionStorage.getItem('armaghan:test28:role')).toBeNull()
-    expect(sessionStorage.getItem('armaghan:test28:impersonation')).toBeNull()
+    expect(sessionStorage.getItem('armaghan:test29:role')).toBeNull()
+    expect(sessionStorage.getItem('armaghan:test29:impersonation')).toBeNull()
   })
 
   it('supports customer demo login',()=>{
@@ -41,8 +41,8 @@ describe('session store',()=>{
   })
 
   it('restores explicit admin impersonation inside the same browser session',()=>{
-    sessionStorage.setItem('armaghan:test28:role','admin')
-    sessionStorage.setItem('armaghan:test28:impersonation','7')
+    sessionStorage.setItem('armaghan:test29:role','admin')
+    sessionStorage.setItem('armaghan:test29:impersonation','7')
     const store=useSessionStore()
     expect(store.role).toBe('admin')
     expect(store.impersonatedCustomerId).toBe(7)
@@ -84,7 +84,7 @@ describe('session store',()=>{
     } as Response)
     vi.stubGlobal('fetch',fetchMock)
 
-    sessionStorage.setItem('armaghan:test28:role','admin')
+    sessionStorage.setItem('armaghan:test29:role','admin')
     const store=useSessionStore()
 
     expect(await store.hydrateFromBackend()).toBe(false)

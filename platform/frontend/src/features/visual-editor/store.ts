@@ -4,8 +4,8 @@ import type { Locale } from '@/services/localeDetection'
 import { isBrandTokenId, tokenVar, type BrandTokenId } from './tokenRegistry'
 import { visualTargetDefinition } from './targetRegistry'
 
-const PROFILE_KEY='armaghan:test28:visual-style-profile:v1'
-const EDITOR_KEY='armaghan:test28:visual-editor-enabled'
+const PROFILE_KEY='armaghan:test29:visual-style-profile:v1'
+const EDITOR_KEY='armaghan:test29:visual-editor-enabled'
 
 export interface ElementStyleOverride{
   textColor?:BrandTokenId

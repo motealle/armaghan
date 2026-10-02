@@ -5,7 +5,7 @@
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.
 3. Prototype deployment may write only to `/public_html/t`.
 4. Released tests are immutable snapshots.
-5. Tests 01–27 are frozen. Test 27 is the final pre-hardening review snapshot and must never be modified; the active mutable UI lane is Test 28.
+5. Tests 01–28 are frozen. Test 28 is preserved at snapshot/test28-final and must never be modified; the active mutable UI lane is Test 29.
 6. Do not modify an older numbered test to improve a newer one.
 7. `/t/index.htm` is mutable and newest test must be first.
 8. Current Vue test is generated from `/platform/frontend`; do not hand-edit compiled test files on the host.
@@ -189,7 +189,7 @@
 140. `docs/CURRENT-STATUS.md` is the canonical summary of the repository's **current** operational state. Every repository mutation run must read it after `docs/PROJECT-RULES.md` and before planning work.
 141. Historical records in HANDOFF/audits/preflight documents remain valid as history, but an older statement must not override a newer verified status in `docs/CURRENT-STATUS.md`, latest HANDOFF, latest BACKLOG or newer successful production acceptance.
 142. After any run that materially changes production capability, active UI test state, deployment readiness, authentication/admin readiness or the next P0 task, update `docs/CURRENT-STATUS.md`, `docs/HANDOFF.md` and `docs/BACKLOG.md` in the same bounded documentation closeout.
-143. Current verified state as of 2026-10-02: production SQLite/Laravel activation, first production admin, Filament CRUD, guarded code-only + additive deployment, public catalog, product media, Customer session/Magic Link, persisted FavoriteShare/WhatsApp, encrypted daily off-host SQLite backup and artifact round-trip restore drill are complete. Test 27 is frozen; Test 28 is the active mutable UI lane. Production Style Profile server semantics are acceptance-tested PASS; authenticated browser acceptance remains opportunistic.
+143. Current verified state as of 2026-10-02: production SQLite/Laravel activation, first production admin, Filament CRUD, guarded code-only + additive deployment, public catalog, product media, Customer session/Magic Link, persisted FavoriteShare/WhatsApp, encrypted daily off-host SQLite backup and artifact round-trip restore drill are complete. Tests 01–28 are frozen; Test29 is the active mutable UI lane. Production Style Profile server semantics are acceptance-tested PASS; authenticated browser acceptance remains opportunistic.
 144. Remaining core MVP work is final end-to-end QA + delivery handoff. Browser acceptance for Style Profile, one real product image and one real Magic Link remains opportunistic and must never weaken authentication.
 145. Public catalog reads are Backend-authoritative for every code present in Backend. If a Backend-managed product/category/subcategory is inactive, Test 28 must suppress any stale local copy. Local fallback may remain only for unmanaged staged-migration data or temporary API unavailability.
 146. Product media ownership is implemented. Test 28 may use the existing local media/spec fallback only for Products whose server gallery is still empty or while the catalog API is unavailable; do not claim fallback media is persisted Backend media.
@@ -225,11 +225,16 @@
 
 
 ## Test 28 and off-host backup rules
-167. Test 27 is frozen and immutable. Test 28 is the only active mutable numbered UI lane until explicitly superseded by a later numbered test. Current source browser-local/session state must use `armaghan:test28:*`; do not write Test27 keys.
-168. The active Vite and FTP lanes must reject generated UI targets 27 or lower. `/t/index.htm` remains mutable and must list Test28 before Test27 while Test28 is active.
+167. Test 27 is frozen and immutable. Tests 01–28 are frozen. Test 29 is the only active mutable numbered UI lane until explicitly superseded. Current browser-local/session writes use `armaghan:test29:*`; never write earlier-version or shared legacy locale keys.
+168. The active Vite and FTP lanes must reject generated UI targets 28 or lower. `/t/index.htm` remains mutable and must list Test29 above Test28; retain all prior links.
 169. Production SQLite live backups must use SQLite's consistent online mechanisms (`VACUUM INTO` or an explicitly reviewed SQLite Backup API implementation). Never treat a raw filesystem copy of a live SQLite/WAL database as the canonical backup.
 170. Because this GitHub repository is public, plaintext production SQLite/database exports must never be uploaded as Actions artifacts, committed to Git, printed to logs or otherwise transferred off-host unencrypted.
 171. The canonical off-host workflow encrypts the verified production snapshot with authenticated encryption before it leaves the production host. The artifact may contain only ciphertext plus a non-secret verification manifest. Current cipher is AES-256-GCM; key derivation is PBKDF2-HMAC-SHA256 with per-backup salt.
 172. Every scheduled off-host backup must be followed by an isolated artifact round-trip restore drill: download the uploaded artifact, verify artifact/ciphertext and plaintext checksums, SQLite integrity, foreign keys, table inventory/counts and ability to open/rollback a write transaction. Restored plaintext must remain temporary and be destroyed at job end.
 173. Off-host backup cadence is daily; current artifact retention is 14 days. A dedicated `ARMAGHAN_BACKUP_PASSPHRASE` GitHub secret is preferred. When absent, the explicitly documented FTP-secret-derived KDF fallback may be used temporarily, but no raw secret may appear in artifacts/logs/manifests.
 174. Before rotating/discarding a secret that is needed to derive keys for retained backup artifacts, ensure either those artifacts have expired or the old recovery secret is retained securely. Adding a dedicated backup secret is an operational P1, not a reason to weaken encryption or publish plaintext backups.
+
+
+## Test29 nonvisual release rules
+175. Owner deferred visual testing on 2026-10-02. Nonvisual release work may use automated language/storage/auth/share/contrast contracts, type-check and build/deploy gates. Never mark deferred visual/device/authenticated-browser acceptance complete.
+176. Test28 is frozen at snapshot/test28-final. Test29 uses its own browser write namespace, including manual language selection; no write-back to frozen version keys.

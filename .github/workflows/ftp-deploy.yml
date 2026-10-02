@@ -22,7 +22,7 @@ concurrency:
 env:
   FTP_TARGET_ROOT: /public_html
   FTP_TARGET_T: /public_html/t
-  ACTIVE_UI_TEST: '28'
+  ACTIVE_UI_TEST: '29'
 
 jobs:
   plan:
@@ -126,14 +126,16 @@ jobs:
         run: python tests/test_test25_bugfix2_contract.py
       - name: Test frozen Test 26 handoff contract
         run: python tests/test_test26_appearance_contract.py
-      - name: Test frozen Test 27 / active Test 28 promotion contract
+      - name: Test frozen Test 27 boundary contract
         run: python tests/test_test27_frozen_lane_contract.py
-      - name: Test Test 28 visual editor foundation contract
-        run: python tests/test_test28_visual_editor_contract.py
-      - name: Test Test 28 customer auth/session contract
-        run: python tests/test_test28_customer_auth_contract.py
-      - name: Test Test 28 persisted FavoriteShare contract
-        run: python tests/test_test28_favorite_share_contract.py
+      - name: Test frozen Test 28 / active Test 29 promotion contract
+        run: python tests/test_test28_frozen_lane_contract.py
+      - name: Test Test 29 visual editor foundation contract
+        run: python tests/test_test29_visual_editor_contract.py
+      - name: Test Test 29 customer auth/session contract
+        run: python tests/test_test29_customer_auth_contract.py
+      - name: Test Test 29 persisted FavoriteShare contract
+        run: python tests/test_test29_favorite_share_contract.py
       - name: Test encrypted off-host SQLite backup contract
         run: python tests/test_sqlite_offhost_backup_contract.py
       - name: Check Test 11 JavaScript syntax
@@ -257,8 +259,8 @@ jobs:
 
           if os.environ.get("FRONTEND_CHANGED")=="true":
               target=os.environ.get("ACTIVE_UI_TEST","").strip()
-              if not (len(target)==2 and target.isdigit() and int(target)>27):
-                  raise SystemExit("ACTIVE_UI_TEST must be an unfrozen two-digit test number greater than 27")
+              if not (len(target)==2 and target.isdigit() and int(target)>28):
+                  raise SystemExit("ACTIVE_UI_TEST must be an unfrozen two-digit test number greater than 28")
               target_dir=f"t/{target}"
               if not os.path.isdir(target_dir): raise SystemExit(f"Generated Test {target} build is missing")
               for root,_,files in os.walk(target_dir):
@@ -278,4 +280,52 @@ jobs:
               with open(local_path,"rb") as fh: ftp.storbinary(f"STOR {filename}",fh)
               print("Uploaded "+remote_dir+"/"+filename)
           ftp.quit(); print(f"/t incremental deployment complete: {len(changed)} file(s). No remote files were deleted.")
+          PY
+
+      - name: Verify published active UI files without visual testing
+        if: needs.plan.outputs.frontend == 'true'
+        env:
+          ACTIVE_UI_TEST: ${{ env.ACTIVE_UI_TEST }}
+        run: |
+          python - <<'PY'
+          import hashlib, os
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urljoin, urlparse
+          from urllib.request import Request, urlopen
+
+          target = os.environ["ACTIVE_UI_TEST"]
+          if not (target.isdigit() and len(target) == 2 and int(target) > 28):
+              raise SystemExit("Refusing HTTP verification of a frozen or invalid target")
+          root = Path("t") / target
+          base = f"https://armaghantrading.com/t/{target}/"
+          class Assets(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.paths = []; self.links = []
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if tag == "a" and "href" in attrs: self.links.append(attrs["href"])
+                  if tag == "script" and "src" in attrs: self.paths.append(attrs["src"])
+                  if tag == "link" and attrs.get("rel") == "stylesheet": self.paths.append(attrs["href"])
+          parser = Assets()
+          parser.feed((root / "index.html").read_text(encoding="utf-8"))
+          if not parser.paths: raise SystemExit("Built page has no application assets")
+          paths = ["index.html", *parser.paths]
+          for path in paths:
+              url = urljoin(base, path)
+              parsed = urlparse(url)
+              if parsed.scheme != "https" or parsed.netloc != "armaghantrading.com" or not parsed.path.startswith(f"/t/{target}/"):
+                  raise SystemExit("Asset escaped the active release directory")
+              relative = parsed.path.removeprefix(f"/t/{target}/")
+              local = root / relative
+              expected = hashlib.sha256(local.read_bytes()).hexdigest()
+              request = Request(url + "?release=" + expected[:16], headers={"Cache-Control": "no-cache"})
+              with urlopen(request, timeout=30) as response: actual = hashlib.sha256(response.read()).hexdigest()
+              if actual != expected: raise SystemExit(f"Published file checksum mismatch: {relative}")
+              print(f"Published active UI file: {relative} PASS")
+          with urlopen("https://armaghantrading.com/t/index.htm", timeout=30) as response:
+              launch = Assets(); launch.feed(response.read().decode("utf-8"))
+          if not launch.links or launch.links[0] != f"./{target}/index.html":
+              raise SystemExit("Active test is not first in published launcher")
+          print("Nonvisual HTTP release and launcher verification: PASS")
           PY

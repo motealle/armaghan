@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Freeze contract: Test 27 is immutable and Test 28 is the only active mutable UI lane."""
+"""Historical Test27 boundary contract, resolved against the current active lane."""
 from pathlib import Path
+import re
 
 ROOT=Path(__file__).resolve().parents[1]
 immutable={
@@ -13,9 +14,13 @@ vite=(ROOT/"platform/frontend/vite.config.ts").read_text(encoding="utf-8")
 launcher=(ROOT/"t/index.htm").read_text(encoding="utf-8")
 
 assert "27" in immutable
-assert "ACTIVE_UI_TEST: '28'" in workflow
-assert "int(target)>27" in workflow
-assert "Number(uiTarget) <= 27" in vite
+active_match = re.search(r"ACTIVE_UI_TEST:\s*'(\d{2})'", workflow)
+assert active_match is not None
+active = int(active_match.group(1))
+assert active > 27
+assert str(active) not in immutable
+assert f"int(target)>{active - 1}" in workflow
+assert f"Number(uiTarget) <= {active - 1}" in vite
 assert "./28/index.html" in launcher
 assert "./27/index.html" in launcher
 assert launcher.index("./28/index.html") < launcher.index("./27/index.html")
@@ -33,6 +38,6 @@ for relative in (
 ):
     text=(ROOT/"platform/frontend/src"/relative).read_text(encoding="utf-8")
     assert "armaghan:test27:" not in text, relative
-    assert "armaghan:test28:" in text, relative
+    assert f"armaghan:test{active}:" in text, relative
 
 print("Test 27 freeze / Test 28 promotion contract: PASS")

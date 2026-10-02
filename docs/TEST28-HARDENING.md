@@ -1,6 +1,6 @@
 # Test 28 — Production Hardening
 
-Status: **LIVE**. Test 27 is frozen; Test 28 is the active mutable UI lane.
+Status: **LIVE, FROZEN**. Preserved source: snapshot/test28-final at 1fafd9638777e26796acedc60b27dfd545736794. Test29 is the new active lane; this document preserves historical Test28 evidence.
 
 ## Selected method
 
