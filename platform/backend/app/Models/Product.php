@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProductAvailability;
+use App\Media\ProductPathGenerator;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\Support\PathGenerator\PathGeneratorFactory;
 
 #[Fillable([
     'subcategory_id',
@@ -30,6 +32,16 @@ class Product extends Model implements HasMedia
     use InteractsWithMedia;
 
     public const MEDIA_COLLECTION = 'product-gallery';
+
+    protected static function booting(): void
+    {
+        parent::booting();
+
+        PathGeneratorFactory::setCustomPathGenerators(
+            static::class,
+            ProductPathGenerator::class,
+        );
+    }
 
     public function subcategory(): BelongsTo
     {
