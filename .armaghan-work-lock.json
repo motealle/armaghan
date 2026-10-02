@@ -1,11 +1,14 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261002-custom-products-media",
   "scope": "Preserve custom product editor/table and connect canonical Laravel Product and gallery upload/order",
   "base_ref": "b2d0b7cdf12d0359789b98d95cce995a1901f475",
   "acquired_at": "2026-10-02T20:17:55.782Z",
-  "expires_at": "2026-10-02T21:47:55.783Z"
+  "expires_at": "2026-10-02T21:47:55.783Z",
+  "released_at": "2026-10-02T20:43:33.672Z",
+  "result_ref": "4443bd35246aaa0b283b30730cd306d0fe2c75f0",
+  "summary": "Preserved custom Product editor/table connected to real canonical Product and Spatie gallery create/update/upload/order/archive. Backend79/662, frontend56/15, code24 and FTP353 root/Test29 PASS; guest reads401 and no-CSRF writes419. Next structured specifications, then preserved style/settings. Real owner browser writes/visual acceptance open."
 }
