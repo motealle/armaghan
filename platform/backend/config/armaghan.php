@@ -4,8 +4,7 @@ return [
     'customer' => [
         // Test 27 is the active mutable customer UI lane. Production may override
         // these paths without changing application code when the final root UI ships.
-        'portal_path' => env('ARMAGHAN_CUSTOMER_PORTAL_PATH', '/t/27/?auth=magic-login#/tracking'),
-        'portal_invalid_path' => env('ARMAGHAN_CUSTOMER_PORTAL_INVALID_PATH', '/t/27/?auth=link-invalid#/tracking'),
+        'magic_fragment_path' => env('ARMAGHAN_CUSTOMER_MAGIC_FRAGMENT_PATH', '/t/27/#/magic/'),
     ],
 
     /*

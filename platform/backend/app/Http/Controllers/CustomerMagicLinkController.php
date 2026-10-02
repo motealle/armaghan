@@ -6,35 +6,42 @@ use App\Exceptions\MagicLinkUnavailable;
 use App\Models\Customer;
 use App\Services\CustomerMagicLinkService;
 use App\Support\CustomerSession;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CustomerMagicLinkController extends Controller
 {
-    public function __invoke(
+    public function consume(
         Request $request,
-        string $token,
         CustomerMagicLinkService $magicLinks,
-    ): RedirectResponse {
+    ): JsonResponse {
+        $validated = $request->validate([
+            'token' => ['required', 'string', 'size:64', 'alpha_num'],
+        ]);
+
         try {
-            $customer = $magicLinks->consume($token);
+            $customer = $magicLinks->consume((string) $validated['token']);
         } catch (MagicLinkUnavailable) {
-            return $this->portalRedirect(
-                (string) config('armaghan.customer.portal_invalid_path', '/t/27/?auth=link-invalid#/tracking'),
-            );
+            return response()->json([
+                'message' => 'Magic link is unavailable.',
+            ], 410)->header('Cache-Control', 'no-store, private');
         }
 
         CustomerSession::login($request, $customer);
 
-        return $this->portalRedirect(
-            (string) config('armaghan.customer.portal_path', '/t/27/?auth=magic-login#/tracking'),
-        );
+        return $this->customerResponse($customer);
     }
 
-    private function portalRedirect(string $path): RedirectResponse
+    private function customerResponse(Customer $customer): JsonResponse
     {
-        return redirect()->to($path)
-            ->header('Cache-Control', 'no-store, private')
-            ->header('Referrer-Policy', 'no-referrer');
+        return response()->json([
+            'customer' => [
+                'id' => $customer->getKey(),
+                'company_name' => $customer->company_name,
+                'whatsapp' => $customer->whatsapp,
+                'country_code' => $customer->country_code,
+                'country_name' => $customer->country_name,
+            ],
+        ])->header('Cache-Control', 'no-store, private');
     }
 }

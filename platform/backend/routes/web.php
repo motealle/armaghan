@@ -17,8 +17,7 @@ Route::get('/api/csrf-token', function () {
         ->header('Cache-Control', 'no-store');
 });
 
-Route::get('/auth/customer/{token}', CustomerMagicLinkController::class)
-    ->where('token', '[A-Za-z0-9]{64}')
+Route::post('/api/customer/magic-link/consume', [CustomerMagicLinkController::class, 'consume'])
     ->middleware('throttle:20,1')
     ->name('customer.magic.consume');
 
