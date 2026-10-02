@@ -60,7 +60,7 @@ async function saveProfile(){
       <b>{{locale.t('customerNotFound')}}</b>
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2">
+    <div v-if="customer" class="grid gap-4 md:grid-cols-2">
       <article class="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 shadow-sm">
         <div class="flex items-center justify-between"><h2 class="font-black text-[var(--c-text)]">{{locale.t('timeline')}}</h2><span class="rounded-full bg-[color-mix(in_srgb,var(--c-secondary)_10%,var(--c-surface))] px-2 py-1 text-[10px] font-bold text-[var(--c-secondary)]">{{locale.t('active')}}</span></div>
         <div class="mt-4 space-y-4">
