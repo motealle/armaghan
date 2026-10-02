@@ -19,7 +19,9 @@ images = (ROOT / "docs/TEST26-IMAGE-REQUIREMENTS.md").read_text(encoding="utf-8"
 selected = (ROOT / "docs/TEST26-SELECTED-IMAGES.md").read_text(encoding="utf-8")
 
 assert "26" in immutable
-assert "Tests 01–26 are frozen" in rules
+freeze_match = re.search(r"Tests 01–(\d+) are frozen", rules)
+assert freeze_match is not None
+assert int(freeze_match.group(1)) >= 26
 assert "snapshot/test26-final" in rules
 assert "Test 26 is frozen" in backlog
 assert launcher.index("./26/index.html?build=test26-footer-language-r8a") < launcher.index("./25/index.html")
