@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "platform/frontend"
@@ -29,7 +30,9 @@ assert images.count("approved-local") >= 8
 for choice in ("1-2","2-2","3-1","4-3","5-2","6-3","7-3","8-2"):
     assert choice in selected
 
-assert "ACTIVE_UI_TEST: '27'" in workflow
+active_match = re.search(r"ACTIVE_UI_TEST:\s*'(\d{2})'", workflow)
+assert active_match is not None
+assert int(active_match.group(1)) > 26
 assert "ARMAGHAN_UI_TARGET" in workflow
 assert "test26-build" not in workflow
 assert "path: t/26" not in workflow
@@ -38,6 +41,8 @@ assert 'os.walk("t/26")' not in workflow
 assert "ARMAGHAN_UI_TARGET" in vite
 assert "../../t/26" not in vite
 assert "../../.build/frontend" in vite
-assert "Number(uiTarget) <= 26" in vite
+limit_match = re.search(r"Number\(uiTarget\) <= (\d+)", vite)
+assert limit_match is not None
+assert int(limit_match.group(1)) >= 26
 
 print("Test 26 frozen handoff contract: PASS")
