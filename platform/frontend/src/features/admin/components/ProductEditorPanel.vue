@@ -6,9 +6,11 @@ import { productDefaultsFromCode } from '@/data/catalog'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import type { Product, ProductNames } from '@/types/domain'
+import BackendProductEditor from './BackendProductEditor.vue'
+import type { AdminProduct, AdminSubcategory } from '../services/adminApi'
 
-const props=defineProps<{open:boolean;productId:number|null}>()
-const emit=defineEmits<{close:[]}>()
+const props=defineProps<{open:boolean;productId:number|null;live?:boolean;serverProduct?:AdminProduct|null;taxonomy?:AdminSubcategory[]}>()
+const emit=defineEmits<{close:[];saved:[product:AdminProduct]}>()
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
 const draft=ref<Product|null>(null)
@@ -51,6 +53,7 @@ function applyCodeDefaults(force=false){
 }
 watch(()=>[props.open,props.productId] as const,([open,id])=>{
   if(!open){draft.value=null;error.value='';note.value='';lastPrefix.value='';return}
+  if(props.live)return
   const existing=id===null?null:catalog.items.find(item=>item.id===id)??null
   draft.value=existing?cloneProduct(existing):newProduct()
   if(existing)draft.value.names=namesFrom(existing)
@@ -93,7 +96,8 @@ function save(){
 </script>
 
 <template>
-  <AdaptivePanel :open="open" :title="productId===null?locale.t('addProduct'):locale.t('editProduct')" wide @close="emit('close')">
+  <BackendProductEditor v-if="live" :open="open" :product="serverProduct??null" :taxonomy="taxonomy??[]" @close="emit('close')" @saved="emit('saved',$event)"/>
+  <AdaptivePanel v-else :open="open" :title="productId===null?locale.t('addProduct'):locale.t('editProduct')" wide @close="emit('close')">
     <div v-if="draft" class="space-y-5">
       <section class="admin-surface rounded-2xl p-4">
         <div class="grid gap-3 md:grid-cols-[12rem_1fr_12rem]">

@@ -1,0 +1,162 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\ActivityLog;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Subcategory;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+
+class CustomAdminProductsTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private function fields(string $code = '11099'): array
+    {
+        $category = Category::firstOrCreate(['code' => '1'], ['name_fa' => 'نوزادی']);
+        $sub = Subcategory::firstOrCreate(['code' => '11'], ['category_id' => $category->id, 'name_fa' => 'لباس']);
+        return ['code' => $code, 'subcategory_id' => $sub->id, 'name_fa' => 'محصول واقعی', 'name_en' => 'Real product',
+            'name_ar' => null, 'name_ku' => null, 'availability' => 'available', 'active' => true, 'sort_order' => 0];
+    }
+
+    private function row(Product $product): array
+    {
+        return $this->getJson('/api/admin/products?search='.$product->code)->assertOk()->json('products.0');
+    }
+
+    public function test_only_active_administrators_can_access_every_product_operation(): void
+    {
+        $product = Product::create($this->fields());
+        foreach ([null, User::factory()->create(), User::factory()->admin()->inactive()->create()] as $actor) {
+            if ($actor) $this->actingAs($actor);
+            $status = $actor ? 403 : 401;
+            $this->getJson('/api/admin/products')->assertStatus($status)->assertJsonMissing(['name_en' => 'Real product']);
+            $this->getJson('/api/admin/product-taxonomy')->assertStatus($status);
+            $this->postJson('/api/admin/products', $this->fields('11098'))->assertStatus($status);
+            $this->patchJson('/api/admin/products/'.$product->id, [])->assertStatus($status);
+            $this->postJson('/api/admin/products/'.$product->id.'/images', [])->assertStatus($status);
+            $this->putJson('/api/admin/products/'.$product->id.'/images/order', [])->assertStatus($status);
+        }
+        $this->assertDatabaseCount('products', 1);
+    }
+
+    public function test_create_edit_reload_public_visibility_and_archive_preserve_records(): void
+    {
+        $this->actingAs(User::factory()->admin()->create());
+        $fields = $this->fields();
+        $created = $this->postJson('/api/admin/products', $fields)->assertCreated()->assertHeader('Cache-Control', 'no-store, private')->json('product');
+        $this->assertSame('11', $created['subcategory_code']);
+        $fields['name_en'] = 'Changed'; $fields['availability'] = 'made_to_order';
+        $updated = $this->patchJson('/api/admin/products/'.$created['id'], $fields + ['revision' => $created['revision']])->assertOk()->json('product');
+        $this->getJson('/api/admin/products?search=Changed')->assertOk()->assertJsonPath('products.0.name_en', 'Changed')->assertJsonPath('total', 1);
+        $this->getJson('/api/catalog/products')->assertOk()->assertJsonPath('data.0.names.en', 'Changed');
+        $fields['active'] = false;
+        $this->patchJson('/api/admin/products/'.$created['id'], $fields + ['revision' => $updated['revision']])->assertOk();
+        $this->getJson('/api/catalog/products')->assertOk()->assertJsonCount(0, 'data');
+        $this->assertDatabaseCount('products', 1);
+        $this->assertSame(3, ActivityLog::count());
+        $this->assertStringNotContainsString('Changed', ActivityLog::all()->toJson());
+    }
+
+    public function test_stale_product_and_gallery_revisions_cannot_overwrite_same_second_changes(): void
+    {
+        $this->freezeTime(); Storage::fake('public');
+        $this->actingAs(User::factory()->admin()->create());
+        $fields = $this->fields(); $product = Product::create($fields); $row = $this->row($product);
+        $fields['name_fa'] = 'جدید';
+        $this->patchJson('/api/admin/products/'.$product->id, $fields + ['revision' => $row['revision']])->assertOk();
+        $this->patchJson('/api/admin/products/'.$product->id, $fields + ['revision' => $row['revision']])->assertConflict();
+        $this->postJson('/api/admin/products/'.$product->id.'/images', ['revision' => $row['revision'], 'image' => UploadedFile::fake()->image('x.jpg')])->assertConflict();
+        $this->assertCount(0, $product->fresh()->getMedia(Product::MEDIA_COLLECTION));
+    }
+
+    public function test_validation_unique_code_taxonomy_and_bounded_queries(): void
+    {
+        $this->actingAs(User::factory()->admin()->create()); $fields = $this->fields(); Product::create($fields);
+        $this->postJson('/api/admin/products', $fields)->assertUnprocessable()->assertJsonValidationErrors('code');
+        $fields['code'] = '11098'; $fields['subcategory_id'] = 9999;
+        $this->postJson('/api/admin/products', $fields)->assertUnprocessable()->assertJsonValidationErrors('subcategory_id');
+        $fields = $this->fields('11097'); $fields['availability'] = 'unknown';
+        $this->postJson('/api/admin/products', $fields)->assertUnprocessable()->assertJsonValidationErrors('availability');
+        $this->getJson('/api/admin/products?per_page=999')->assertUnprocessable();
+        $this->getJson('/api/admin/product-taxonomy')->assertOk()->assertJsonPath('subcategories.0.code', '11');
+        for ($i = 0; $i < 25; $i++) Product::create($this->fields('110'.($i + 100)));
+        $this->getJson('/api/admin/products')->assertOk()->assertJsonCount(25, 'products')->assertJsonPath('last_page', 2);
+        $this->getJson('/api/admin/products?page=2')->assertJsonCount(1, 'products');
+    }
+
+    public function test_real_upload_safe_filename_metadata_removal_derivatives_and_public_gallery(): void
+    {
+        Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());
+        $product = Product::create($this->fields()); $row = $this->row($product);
+        $file = UploadedFile::fake()->image('unsafe.php', 24, 36);
+        $original = file_get_contents($file->getRealPath());
+        // Embed a JPEG comment which must not survive re-encoding.
+        $comment = 'private-metadata-marker';
+        file_put_contents($file->getRealPath(), substr($original, 0, 2)."\xff\xfe".pack('n', strlen($comment) + 2).$comment.substr($original, 2));
+        $response = $this->postJson('/api/admin/products/'.$product->id.'/images', ['revision' => $row['revision'], 'image' => $file])
+            ->assertCreated()->assertJsonCount(1, 'product.media');
+        $media = $product->fresh()->getFirstMedia(Product::MEDIA_COLLECTION);
+        $this->assertNotNull($media); $this->assertStringEndsWith('.jpg', $media->file_name);
+        $this->assertStringNotContainsString('unsafe', $media->file_name);
+        $this->assertStringNotContainsString($comment, file_get_contents($media->getPath()));
+        $this->assertTrue($media->hasGeneratedConversion('card')); $this->assertTrue($media->hasGeneratedConversion('thumb'));
+        $this->assertSame(24, getimagesize($media->getPath('card'))[0]);
+        $this->assertNotSame($row['revision'], $response->json('product.revision'));
+        $this->getJson('/api/catalog/products')->assertJsonCount(1, 'data.0.media');
+    }
+
+    public function test_upload_rejects_disguised_corrupt_oversized_and_excess_gallery(): void
+    {
+        Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());
+        $product = Product::create($this->fields()); $row = $this->row($product);
+        foreach ([UploadedFile::fake()->createWithContent('bad.jpg', '<?php echo 1;'),
+            UploadedFile::fake()->create('large.jpg', 8193, 'image/jpeg'), UploadedFile::fake()->image('wide.jpg', 5001, 1)] as $file) {
+            $this->postJson('/api/admin/products/'.$product->id.'/images', ['revision' => $row['revision'], 'image' => $file])->assertUnprocessable();
+        }
+        $this->assertCount(0, $product->fresh()->getMedia(Product::MEDIA_COLLECTION));
+        for ($i = 0; $i < 6; $i++) $product->addMedia(UploadedFile::fake()->image('x.jpg', 10, 10))->toMediaCollection(Product::MEDIA_COLLECTION);
+        $row = $this->row($product);
+        $this->postJson('/api/admin/products/'.$product->id.'/images', ['revision' => $row['revision'], 'image' => UploadedFile::fake()->image('extra.jpg')])->assertUnprocessable();
+        $this->assertCount(6, $product->fresh()->getMedia(Product::MEDIA_COLLECTION));
+    }
+
+    public function test_reorder_is_exact_owner_scoped_and_visible_in_public_api(): void
+    {
+        Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());
+        $product = Product::create($this->fields()); $other = Product::create($this->fields('11098'));
+        $a = $product->addMedia(UploadedFile::fake()->image('a.jpg', 10, 10))->toMediaCollection(Product::MEDIA_COLLECTION);
+        $b = $product->addMedia(UploadedFile::fake()->image('b.jpg', 10, 10))->toMediaCollection(Product::MEDIA_COLLECTION);
+        $foreign = $other->addMedia(UploadedFile::fake()->image('c.jpg', 10, 10))->toMediaCollection(Product::MEDIA_COLLECTION);
+        $foreignOrder = $foreign->sort_order;
+        $row = $this->row($product); $url = '/api/admin/products/'.$product->id.'/images/order';
+        foreach ([[$a->id], [$a->id, $a->id], [$foreign->id, $b->id]] as $ids) {
+            $this->putJson($url, ['revision' => $row['revision'], 'media_ids' => $ids])->assertUnprocessable();
+        }
+        $this->putJson($url, ['revision' => $row['revision'], 'media_ids' => [$b->id, $a->id]])->assertOk()->assertJsonPath('product.media.0.id', $b->id);
+        $this->putJson($url, ['revision' => $row['revision'], 'media_ids' => [$a->id, $b->id]])->assertConflict();
+        $this->getJson('/api/catalog/products?q=11099')->assertOk()->assertJsonPath('data.0.media.0.id', (string) $b->uuid);
+        $this->assertSame($foreignOrder, $foreign->fresh()->sort_order);
+    }
+
+    public function test_failed_processing_removes_only_new_files_and_rolls_back_audit(): void
+    {
+        Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());
+        $product = Product::create($this->fields());
+        $existing = $product->addMedia(UploadedFile::fake()->image('keep.jpg', 10, 10))->toMediaCollection(Product::MEDIA_COLLECTION);
+        $before = Storage::disk('public')->allFiles(); $row = $this->row($product);
+        \Illuminate\Support\Facades\Event::listen(\Spatie\MediaLibrary\MediaCollections\Events\MediaHasBeenAddedEvent::class, function (): void {
+            throw new \RuntimeException('Simulated processing failure');
+        });
+        $this->postJson('/api/admin/products/'.$product->id.'/images', ['revision' => $row['revision'], 'image' => UploadedFile::fake()->image('fail.jpg', 10, 10)])->assertStatus(500);
+        $this->assertSame($before, Storage::disk('public')->allFiles());
+        $this->assertCount(1, $product->fresh()->getMedia(Product::MEDIA_COLLECTION));
+        $this->assertDatabaseHas('media', ['id' => $existing->id]);
+        $this->assertDatabaseCount('activity_log', 0);
+    }
+}

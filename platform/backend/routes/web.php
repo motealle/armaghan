@@ -82,6 +82,12 @@ Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleCustomerAuthCon
 
 
 Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group(function (): void {
+    Route::get('/product-taxonomy', [\App\Http\Controllers\Admin\ProductController::class, 'taxonomy']);
+    Route::get('/products', [\App\Http\Controllers\Admin\ProductController::class, 'index']);
+    Route::post('/products', [\App\Http\Controllers\Admin\ProductController::class, 'store']);
+    Route::patch('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'update']);
+    Route::post('/products/{product}/images', [\App\Http\Controllers\Admin\ProductController::class, 'upload'])->middleware('throttle:10,1');
+    Route::put('/products/{product}/images/order', [\App\Http\Controllers\Admin\ProductController::class, 'order']);
     Route::get('/session', [\App\Http\Controllers\Admin\AdminSessionController::class, 'show']);
     Route::post('/logout', [\App\Http\Controllers\Admin\AdminSessionController::class, 'logout']);
     Route::get('/customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index']);

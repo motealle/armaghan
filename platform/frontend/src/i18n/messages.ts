@@ -4,10 +4,20 @@ export type TranslationMap = Record<string,string>
 
 export const baseMessages: Record<Locale, TranslationMap> = {
   fa: {
+    adminIntegrationHelp:"مدیریت مشتریان، محصولات و عکس‌ها به اطلاعات واقعی سایت متصل است؛ اتصال بقیه بخش‌های همین طراحی ادامه دارد.",
+    adminNoProducts:"محصولی پیدا نشد.",
+    adminSortOrder:"ترتیب نمایش",
+    adminProductArchiveHelp:"غیرفعال‌کردن، محصول را از کاتالوگ پنهان می‌کند و سابقه و عکس‌ها را نگه می‌دارد.",
+    adminProductGallery:"عکس‌های محصول",
+    adminAddImage:"افزودن عکس",
+    adminImageLimits:"JPEG، PNG یا WebP؛ حداکثر ۸ مگابایت و ۵۰۰۰×۵۰۰۰ پیکسل؛ تا ۶ عکس.",
+    adminSaveBeforeImage:"ابتدا محصول یا تغییرات فرم را ذخیره کنید؛ سپس عکس اضافه کنید یا ترتیب را تغییر دهید.",
+    adminSpecsPreserved:"مشخصات موجود محفوظ‌اند. ویرایش مشخصات در مرحله اتصال بعدی اضافه می‌شود.",
+    adminProductConflict:"محصول یا عکس‌ها در جای دیگری تغییر کرده‌اند. فرم را ببندید، دریافت مجدد را بزنید و دوباره ویرایش کنید.",
+
     adminLoading:"در حال دریافت یا ذخیره…",
     adminReload:"دریافت مجدد",
     adminSessionRequired:"برای مدیریت، با حساب مدیر وارد شوید؛ سپس این صفحه را دوباره باز کنید.",
-    adminIntegrationHelp:"مدیریت مشتریان به اطلاعات واقعی سایت متصل است. محصولات و عکس‌ها از لینک بالا قابل مدیریت‌اند؛ اتصال بقیه بخش‌های همین طراحی ادامه دارد.",
     adminRealCustomers:"اطلاعات ذخیره‌شده در سایت؛ مشترک بین دستگاه‌ها.",
     adminConflict:"این مشتری در جای دیگری تغییر کرده است. فرم را ببندید، دریافت مجدد را بزنید و دوباره ویرایش کنید.",
     adminRequestFailed:"عملیات انجام نشد؛ اتصال و مقادیر فرم را بررسی کنید و دوباره تلاش کنید.",
@@ -63,10 +73,20 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'ارمغان · تولید و صادرات پوشاک',footerContact:'ارتباط فروش و پیگیری سفارش از مسیرهای داخل سایت انجام می‌شود.',skipContent:'پرش به محتوای اصلی'
   },
   ar: {
+    adminIntegrationHelp:"العملاء والمنتجات والصور متصلون ببيانات الموقع؛ جارٍ توصيل بقية أقسام التصميم نفسه.",
+    adminNoProducts:"لم يتم العثور على منتجات.",
+    adminSortOrder:"ترتيب العرض",
+    adminProductArchiveHelp:"التعطيل يخفي المنتج من الكتالوج ويحفظ سجله وصوره.",
+    adminProductGallery:"صور المنتج",
+    adminAddImage:"إضافة صورة",
+    adminImageLimits:"JPEG أو PNG أو WebP؛ حتى ٨ ميغابايت و٥٠٠٠×٥٠٠٠ بكسل؛ ٦ صور كحد أقصى.",
+    adminSaveBeforeImage:"احفظ المنتج وتغييرات النموذج قبل إضافة الصور أو ترتيبها.",
+    adminSpecsPreserved:"المواصفات الحالية محفوظة. سيضاف تحريرها في مرحلة التوصيل التالية.",
+    adminProductConflict:"تغيّر المنتج أو صوره في مكان آخر. أغلق النموذج وأعد التحميل ثم عدّل مجدداً.",
+
     adminLoading:"جارٍ التحميل أو الحفظ…",
     adminReload:"إعادة التحميل",
     adminSessionRequired:"سجّل الدخول بحساب مدير ثم افتح هذه الصفحة مجدداً.",
-    adminIntegrationHelp:"العملاء متصلون ببيانات الموقع. يمكن إدارة المنتجات والصور من الرابط أعلاه؛ جارٍ توصيل بقية أقسام التصميم نفسه.",
     adminRealCustomers:"محفوظة في الموقع ومشتركة بين الأجهزة.",
     adminConflict:"تم تعديل العميل في مكان آخر. أغلق النموذج وأعد التحميل ثم عدّل مجدداً.",
     adminRequestFailed:"لم تتم العملية؛ راجع الاتصال وحقول النموذج وحاول مجدداً.",
@@ -122,10 +142,20 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'أرمغان · إنتاج وتصدير الملابس',footerContact:'يمكن التواصل مع المبيعات ومتابعة الطلب من داخل الموقع.',skipContent:'تخطي إلى المحتوى'
   },
   en: {
+    adminIntegrationHelp:"Customers, products and images use real site data; the remaining sections are being connected to the same design.",
+    adminNoProducts:"No products found.",
+    adminSortOrder:"Display order",
+    adminProductArchiveHelp:"Deactivation hides the product from the catalog and preserves its history and images.",
+    adminProductGallery:"Product gallery",
+    adminAddImage:"Add image",
+    adminImageLimits:"JPEG, PNG or WebP; up to 8 MiB and 5000×5000 pixels; maximum 6 images.",
+    adminSaveBeforeImage:"Save the product and form changes before adding or ordering images.",
+    adminSpecsPreserved:"Existing specifications are preserved. Specification editing will be connected in the next stage.",
+    adminProductConflict:"This product or its gallery changed elsewhere. Close the form, reload, and edit again.",
+
     adminLoading:"Loading or saving…",
     adminReload:"Reload",
     adminSessionRequired:"Sign in with an administrator account, then reopen this page.",
-    adminIntegrationHelp:"Customers use real site data. Manage products and images using the link above; the remaining sections are being connected to this same design.",
     adminRealCustomers:"Saved on the site and shared across devices.",
     adminConflict:"This customer changed elsewhere. Close the form, reload, and edit again.",
     adminRequestFailed:"The request failed. Check the connection and form values, then retry.",
@@ -181,10 +211,20 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'Armaghan · Garment manufacturing & export',footerContact:'Sales contact and order tracking are available through the site.',skipContent:'Skip to main content'
   },
   ku: {
+    adminIntegrationHelp:"کڕیار و بەرهەم و وێنە بە داتای ڕاستەقینەوە بەستراون؛ بەشەکانی تر هەمان دیزاین دەپارێزن.",
+    adminNoProducts:"هیچ بەرهەمێک نەدۆزرایەوە.",
+    adminSortOrder:"ڕیزبەندی پیشاندان",
+    adminProductArchiveHelp:"ناچالاککردن بەرهەمەکە دەشارێتەوە و مێژوو و وێنەکان دەپارێزێت.",
+    adminProductGallery:"وێنەکانی بەرهەم",
+    adminAddImage:"زیادکردنی وێنە",
+    adminImageLimits:"JPEG، PNG یان WebP؛ تا ٨ میگابایت و ٥٠٠٠×٥٠٠٠ پیکسڵ؛ زۆرترین ٦ وێنە.",
+    adminSaveBeforeImage:"پێش زیادکردن یان ڕیزکردنی وێنە، گۆڕانکارییەکان پاشەکەوت بکە.",
+    adminSpecsPreserved:"تایبەتمەندییەکان پارێزراون. دەستکاریکردنیان لە قۆناغی داهاتوودا دەبەسترێت.",
+    adminProductConflict:"بەرهەم یان وێنەکان لە شوێنێکی تر گۆڕاون. فۆڕمەکە دابخە و بارکردنەوە بکە.",
+
     adminLoading:"بارکردن یان پاشەکەوتکردن…",
     adminReload:"بارکردنەوە",
     adminSessionRequired:"بە هەژماری بەڕێوەبەر بچۆ ژوورەوە، پاشان ئەم پەڕەیە بکەرەوە.",
-    adminIntegrationHelp:"کڕیاران بە داتای ڕاستەقینەی ماڵپەڕەوە بەستراون. بەرهەم و وێنە لە بەستەری سەرەوە بەڕێوە ببە؛ بەشەکانی تر هەمان دیزاینیان دەپارێزن.",
     adminRealCustomers:"لە ماڵپەڕ پاشەکەوت کراوە و لە نێوان ئامێرەکان هاوبەشە.",
     adminConflict:"ئەم کڕیارە لە شوێنێکی تر گۆڕاوە. فۆڕمەکە دابخە و بارکردنەوە بکە.",
     adminRequestFailed:"کارەکە سەرکەوتوو نەبوو؛ پەیوەندی و خانەکان بپشکنە.",

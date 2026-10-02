@@ -98,14 +98,17 @@ function inviteLead(id:string){
     </nav>
     <nav class="admin-surface rounded-2xl p-2" :aria-label="locale.t('adminOverview')">
       <div class="admin-tabs">
-        <button v-for="tab in tabs" :key="tab.id" :disabled="live&&tab.id!=='customers'" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
+        <button v-for="tab in tabs" :key="tab.id" :disabled="live&&!['customers','products'].includes(tab.id)" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
           <component :is="tab.icon" :size="16" class="me-1 inline"/>{{tab.label}}
         </button>
       </div>
     </nav>
 
     <p v-if="live" class="text-sm text-[var(--c-muted)]">{{locale.t('adminIntegrationHelp')}}</p>
-    <BackendCustomersPanel v-if="live"/>
+    <template v-if="live">
+      <BackendCustomersPanel v-if="activeTab==='customers'"/>
+      <AdminProductsPanel v-else-if="activeTab==='products'" live/>
+    </template>
     <template v-else>
     <template v-if="activeTab==='overview'">
       <section class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

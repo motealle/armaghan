@@ -7,6 +7,9 @@ import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import type { Locale } from '@/services/localeDetection'
 import type { Product } from '@/types/domain'
+import BackendProductsPanel from './BackendProductsPanel.vue'
+
+defineProps<{live?:boolean}>()
 
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
@@ -86,7 +89,8 @@ function subcategoryLabel(product:Product){return locale.subcategoryName(product
 </script>
 
 <template>
-  <section class="space-y-3">
+  <BackendProductsPanel v-if="live"/>
+  <section v-else class="space-y-3">
     <div class="flex flex-wrap items-center gap-2">
       <div>
         <h2 class="text-xl font-black text-[var(--c-text)]">{{locale.t('adminProducts')}}</h2>

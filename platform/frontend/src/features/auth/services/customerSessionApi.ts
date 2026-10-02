@@ -45,7 +45,8 @@ export async function requestJson<T>(path:string,init:RequestInit={},allowCsrfRe
   const method=(init.method??'GET').toUpperCase()
   const headers=new Headers(init.headers)
   headers.set('Accept','application/json')
-  if(init.body&&!headers.has('Content-Type'))headers.set('Content-Type','application/json')
+  const multipart=typeof FormData!=='undefined'&&init.body instanceof FormData
+  if(init.body&&!multipart&&!headers.has('Content-Type'))headers.set('Content-Type','application/json')
 
   if(!['GET','HEAD','OPTIONS'].includes(method)){
     const xsrf=cookie('XSRF-TOKEN')

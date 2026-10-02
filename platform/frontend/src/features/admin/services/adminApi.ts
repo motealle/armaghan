@@ -12,3 +12,21 @@ export const logoutAdmin=()=>requestJson('/api/admin/logout',{method:'POST',body
 export const fetchAdminCustomers=(page=1,search='')=>requestJson<CustomerPage>('/api/admin/customers?page='+page+'&search='+encodeURIComponent(search))
 export const createAdminCustomer=(fields:CustomerFields)=>requestJson<{customer:AdminCustomer}>('/api/admin/customers',{method:'POST',body:JSON.stringify(fields)})
 export const updateAdminCustomer=(id:number,fields:CustomerFields,revision:string)=>requestJson<{customer:AdminCustomer}>('/api/admin/customers/'+id,{method:'PATCH',body:JSON.stringify({...fields,revision})})
+
+export interface AdminMedia { id:number; url:string; thumb_url:string }
+export interface ProductFields {
+  subcategory_id:number; code:string; name_fa:string; name_ar:string|null; name_en:string|null; name_ku:string|null;
+  availability:'available'|'unavailable'|'made_to_order'; active:boolean; sort_order:number;
+}
+export interface AdminProduct extends ProductFields { id:number; revision:string; category_code:string; subcategory_code:string; media:AdminMedia[] }
+export interface AdminSubcategory { id:number; code:string; name:string; category_code:string; category_name:string; active:boolean }
+export interface ProductPage { products:AdminProduct[]; page:number; last_page:number; total:number }
+export const fetchProductTaxonomy=()=>requestJson<{subcategories:AdminSubcategory[]}>('/api/admin/product-taxonomy')
+export const fetchAdminProducts=(page=1,search='',subcategory='',perPage=25)=>requestJson<ProductPage>('/api/admin/products?page='+page+'&search='+encodeURIComponent(search)+'&subcategory_id='+encodeURIComponent(subcategory)+'&per_page='+perPage)
+export const createAdminProduct=(fields:ProductFields)=>requestJson<{product:AdminProduct}>('/api/admin/products',{method:'POST',body:JSON.stringify(fields)})
+export const updateAdminProduct=(id:number,fields:ProductFields,revision:string)=>requestJson<{product:AdminProduct}>('/api/admin/products/'+id,{method:'PATCH',body:JSON.stringify({...fields,revision})})
+export function uploadAdminProductImage(product:AdminProduct,file:File){
+  const body=new FormData();body.append('image',file);body.append('revision',product.revision)
+  return requestJson<{product:AdminProduct}>('/api/admin/products/'+product.id+'/images',{method:'POST',body})
+}
+export const orderAdminProductImages=(product:AdminProduct,media_ids:number[])=>requestJson<{product:AdminProduct}>('/api/admin/products/'+product.id+'/images/order',{method:'PUT',body:JSON.stringify({revision:product.revision,media_ids})})
