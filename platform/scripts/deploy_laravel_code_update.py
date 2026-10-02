@@ -113,6 +113,24 @@ function migration_fingerprint(string $root): string {
     }
     return hash_final($ctx);
 }
+function ensure_public_storage_link(string $publicRoot, string $appRoot): void {
+    $link = $publicRoot . '/storage';
+    $target = $appRoot . '/storage/app/public';
+    ensure_dir($target);
+
+    if (is_link($link)) {
+        $resolved = realpath($link);
+        $targetResolved = realpath($target);
+        if ($resolved !== false && $targetResolved !== false && $resolved === $targetResolved) return;
+        if (!@unlink($link)) fail_update('storage-link-remove');
+    } elseif (file_exists($link)) {
+        fail_update('storage-link-conflict');
+    }
+
+    if (!function_exists('symlink') || !@symlink($target, $link)) {
+        fail_update('storage-link-create');
+    }
+}
 function write_public_index(string $path): void {
     $index = <<<'PHP'
 <?php
@@ -155,6 +173,7 @@ if ($action === 'rollback') {
     if (!rename($prevRoot, $appRoot)) fail_update('rollback-private');
     remove_tree($publicRoot);
     if (!rename($publicPrev, $publicRoot)) fail_update('rollback-public');
+    ensure_public_storage_link($publicRoot, $appRoot);
     remove_tree($nextRoot);
     remove_tree($publicNext);
     echo json_encode(['ok' => true, 'stage' => 'rolled-back'], JSON_UNESCAPED_SLASHES);
@@ -229,6 +248,7 @@ if (!rename($publicNext, $publicRoot)) {
     @rename($prevRoot, $appRoot);
     fail_update('activate-public');
 }
+ensure_public_storage_link($publicRoot, $appRoot);
 
 echo json_encode([
     'ok' => true,
