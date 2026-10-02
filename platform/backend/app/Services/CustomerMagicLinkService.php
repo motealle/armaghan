@@ -31,7 +31,16 @@ final class CustomerMagicLinkService
         $tokenHash = hash('sha256', $token);
 
         return DB::transaction(function () use ($customer, $expiresInHours, $actorUserId, $token, $tokenHash): array {
-            Customer::query()->whereKey($customer->getKey())->lockForUpdate()->firstOrFail();
+            $lockedCustomer = Customer::query()
+                ->whereKey($customer->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (! $lockedCustomer->active || ! $lockedCustomer->direct_link_enabled) {
+                throw ValidationException::withMessages([
+                    'customer' => 'Customer direct access is disabled.',
+                ]);
+            }
 
             MagicLink::query()
                 ->where('customer_id', $customer->getKey())
