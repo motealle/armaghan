@@ -356,6 +356,9 @@ def main() -> int:
             "catalog_categories": get_status(site_url.rstrip("/") + "/backend/api/catalog/categories"),
             "catalog_products": get_status(site_url.rstrip("/") + "/backend/api/catalog/products?per_page=1"),
             "customer_session_guest": get_status(site_url.rstrip("/") + "/backend/api/customer/session"),
+            "invalid_magic_link": get_status(
+                site_url.rstrip("/") + "/backend/auth/customer/" + ("A" * 64)
+            ),
         }
         print("ARMAGHAN_BACKEND_CODE_UPDATE_SMOKE")
         print(json.dumps(checks, indent=2))
@@ -369,6 +372,7 @@ def main() -> int:
             and checks["catalog_categories"] == 200
             and checks["catalog_products"] == 200
             and checks["customer_session_guest"] == 401
+            and checks["invalid_magic_link"] == 200
         )
         if not smoke_ok:
             rollback = get_json(helper_base + "?" + urlencode({"token": secret, "action": "rollback"}), timeout=120)

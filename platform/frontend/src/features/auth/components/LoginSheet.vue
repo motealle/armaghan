@@ -19,12 +19,11 @@ const password=ref('')
 const name=ref('')
 const email=ref('')
 const error=ref('')
-const message=ref('')
 
 const title=computed(()=>mode.value==='register'?locale.t('register'):mode.value==='magic'?locale.t('magicLink'):locale.t('loginTitle'))
 
 watch(()=>props.open,(open)=>{
-  if(open){mode.value='signin';error.value='';message.value=''}
+  if(open){mode.value='signin';error.value=''}
 })
 
 function complete(){
@@ -32,14 +31,14 @@ function complete(){
   router.push('/tracking')
 }
 function submit(){
-  error.value='';message.value=''
+  error.value=''
   if(!session.login(username.value.trim(),password.value)){
     error.value=locale.t('invalidLogin');return
   }
   complete()
 }
 function register(){
-  error.value='';message.value=''
+  error.value=''
   const nextCustomerId=Math.max(0,...customers.items.map(item=>item.id))+1
   const result=session.register(name.value,email.value,password.value,nextCustomerId)
   if(!result.ok){
@@ -57,9 +56,9 @@ function googleInfo(){
 <template>
   <BaseModal :open="open" :title="title" @close="emit('close')">
     <div class="auth-tabs" role="tablist">
-      <button :class="{active:mode==='signin'}" @click="mode='signin';error='';message=''">{{locale.t('signIn')}}</button>
-      <button :class="{active:mode==='register'}" @click="mode='register';error='';message=''">{{locale.t('register')}}</button>
-      <button :class="{active:mode==='magic'}" @click="mode='magic';error='';message=''">{{locale.t('magicLink')}}</button>
+      <button :class="{active:mode==='signin'}" @click="mode='signin';error=''">{{locale.t('signIn')}}</button>
+      <button :class="{active:mode==='register'}" @click="mode='register';error=''">{{locale.t('register')}}</button>
+      <button :class="{active:mode==='magic'}" @click="mode='magic';error=''">{{locale.t('magicLink')}}</button>
     </div>
 
     <form v-if="mode==='signin'" class="mt-4 space-y-4" @submit.prevent="submit">
