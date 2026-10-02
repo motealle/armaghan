@@ -154,7 +154,8 @@ class ProductController extends Controller
     private function revision(Product $product): string
     {
         return hash('sha256', json_encode([$product->only(array_merge(['id', 'updated_at'], self::FIELDS)),
-            $product->media()->where('collection_name', Product::MEDIA_COLLECTION)->orderBy('sort_order')->orderBy('id')->get(['id', 'sort_order', 'updated_at'])->toArray(),
+            // Media has appended URL attributes; serializing a partial model would require its missing disk fields.
+            $product->media()->where('collection_name', Product::MEDIA_COLLECTION)->orderBy('sort_order')->orderBy('id')->get(['id', 'sort_order', 'updated_at'])->map(fn ($m) => $m->only(['id', 'sort_order', 'updated_at']))->all(),
             $product->specValues()->orderBy('id')->get(['id', 'spec_definition_id', 'value_text', 'updated_at'])->toArray()], JSON_THROW_ON_ERROR));
     }
 

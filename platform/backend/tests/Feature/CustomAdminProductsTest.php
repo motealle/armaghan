@@ -94,7 +94,8 @@ class CustomAdminProductsTest extends TestCase
     {
         Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());
         $product = Product::create($this->fields()); $row = $this->row($product);
-        $file = UploadedFile::fake()->image('unsafe.php', 24, 36);
+        $source = UploadedFile::fake()->image('source.jpg', 24, 36);
+        $file = new UploadedFile($source->getRealPath(), 'unsafe.php', 'image/jpeg', null, true);
         $original = file_get_contents($file->getRealPath());
         // Embed a JPEG comment which must not survive re-encoding.
         $comment = 'private-metadata-marker';
