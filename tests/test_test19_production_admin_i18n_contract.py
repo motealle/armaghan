@@ -85,9 +85,11 @@ assert "wishlistLeads" in admin
 assert "window.open" in admin
 assert "queueGuestMessage" in admin
 
-# Auth adapters
+# Auth adapters — preserve the historical Test 19 account affordances without
+# freezing later tests to the old browser-issued Magic Link implementation.
 assert "session.register" in login
-assert "createMagicLink" in login
+assert "magicLink" in login
+assert "createMagicLink" in login or "magicLinkRequestHelp" in login
 assert 'data-backend-endpoint="/auth/google/redirect"' in login
 assert "googleBackendRequired" in login
 assert "register(" in session
