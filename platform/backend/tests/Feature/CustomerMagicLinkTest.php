@@ -192,6 +192,6 @@ class CustomerMagicLinkTest extends TestCase
     {
         $this->getJson('/api/customer/session')
             ->assertUnauthorized()
-            ->assertHeader('Cache-Control', 'no-store');
+            ->assertHeader('Cache-Control', 'no-store, private');
     }
 }
