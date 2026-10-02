@@ -1028,3 +1028,7 @@ Detailed ranked UX decisions: docs/TEST20-UX-AUDIT.md.
 - Fresh guest request to `/backend/admin/products` redirected to `/backend/admin/login`; no authenticated-admin acceptance is inferred.
 - Additional observed copy follow-up: Persian Home still displays the English eyebrow "Why Armaghan?". Keep the broad multilingual Home acceptance open and localize that label in the next bounded fix.
 - Mobile/tablet and valid customer/admin/share/WhatsApp end-to-end acceptance remain open. This run advances partial final QA; it does not declare final project delivery.
+
+
+## Owner-authorized root Test29 release — 2026-10-02
+Owner explicitly authorizes root index replacement with selected Test29 while preserving /t. Independent selector: config/root-release.json. Tests 01–28 remain frozen; Test29 is mutable. Requested eyebrow/producible defaults and real Filament navigation are included. Root deployment verification pending. Google requires owner Cloud credentials; no real login acceptance is claimed.

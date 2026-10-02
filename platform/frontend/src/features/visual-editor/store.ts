@@ -86,7 +86,8 @@ function compileCss(profile:VisualStyleProfile):string{
     if(style.textColor)declarations.push(`color:${tokenVar(style.textColor)}!important`)
     if(style.backgroundColor)declarations.push(`background:${tokenVar(style.backgroundColor)}!important`)
     if(style.borderColor)declarations.push(`border-color:${tokenVar(style.borderColor)}!important`)
-    if(style.hidden)declarations.push('display:none!important')
+    if(style.hidden===true)declarations.push('display:none!important')
+    if(style.hidden===false)declarations.push('display:revert!important')
     if(declarations.length)blocks.push(`[data-style-id="${id}"]{${declarations.join(';')}}`)
   }
   return blocks.join('\n')

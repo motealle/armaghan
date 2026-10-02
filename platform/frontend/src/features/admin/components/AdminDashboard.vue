@@ -88,6 +88,11 @@ function inviteLead(id:string){
 
 <template>
   <div class="space-y-5">
+    <nav class="admin-surface flex flex-wrap gap-3 rounded-2xl p-3" :aria-label="locale.t('adminOverview')">
+      <a class="mini-action" href="/backend/admin/products">{{locale.t('adminProducts')}} · {{locale.t('image')}}</a>
+      <a class="mini-action" href="/backend/admin/customers">{{locale.t('adminCustomers')}}</a>
+      <a class="mini-action" href="/backend/admin">{{locale.t('adminOverview')}}</a>
+    </nav>
     <nav class="admin-surface rounded-2xl p-2" :aria-label="locale.t('adminOverview')">
       <div class="admin-tabs">
         <button v-for="tab in tabs" :key="tab.id" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">

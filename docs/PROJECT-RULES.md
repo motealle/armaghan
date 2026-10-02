@@ -238,3 +238,10 @@
 ## Test29 nonvisual release rules
 175. Owner deferred visual testing on 2026-10-02. Nonvisual release work may use automated language/storage/auth/share/contrast contracts, type-check and build/deploy gates. Never mark deferred visual/device/authenticated-browser acceptance complete.
 176. Test28 is frozen at snapshot/test28-final. Test29 uses its own browser write namespace, including manual language selection; no write-back to frozen version keys.
+
+
+## Owner-authorized independent root releases
+177. On 2026-10-02 the owner explicitly authorized publishing selected Test29 at domain root. This supersedes rules 1/3 only for the guarded root index promoter; never root-wide sync or overwrite backend, routing, logo, private data, or frozen numbered folders.
+178. config/root-release.json is the durable root-version selector. Numbered UI development must not implicitly change this selector. Any existing positive numbered version may be promoted without rebuilding its frozen files; verify its assets, preserve prior root HTML and restore prior entry on verification failure.
+179. Root publication uses production Style Profile; /t remains staging. Root and /t keep functional hash routes and same-origin backend authentication.
+180. Test29 Home eyebrow defaults are hidden and explicitly recoverable in the visual editor. Producible customer labels are concise, centered, smaller and weight 400. Do not replace canonical production product/customer management with browser-only stores.

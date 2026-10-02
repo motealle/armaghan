@@ -37,3 +37,5 @@ Every user-facing Armaghan surface must follow `docs/PROJECT-RULES.md` rules 75�
 ## Frozen UI release lane
 
 Tests 01–28 are frozen. Test29 is the current mutable lane. Read rules 167–176 before build/deploy; visual checks are deferred by the owner. Never rebuild or redeploy Test 26 from current main.
+
+Owner now authorizes guarded root index promotion of selected Test29; read PROJECT-RULES 177–180 and docs/ROOT-RELEASE.md. Never root-wide sync. Root selection is independent of the active test lane.

@@ -861,3 +861,10 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .test26-why-list li{border-bottom:3px solid var(--brand-blue)}
 .test26-why-number{border:1px solid color-mix(in srgb,var(--brand-gold) 70%,transparent);background:var(--brand-blue);color:var(--brand-gold)}
 .subcategory-code{font-family:Inter,Roboto,ui-sans-serif,sans-serif;font-weight:800;direction:ltr}
+
+/* Owner Test29 defaults; explicit editor visibility remains reversible. */
+[data-style-id="home.about.eyebrow"],
+[data-style-id="home.why.eyebrow"],
+[data-style-id="home.capabilities.eyebrow"],
+[data-style-id="home.product-banners.eyebrow"]{display:none}
+.product-card .product-card-title.unavailable{display:flex;margin-inline:auto;justify-content:center;text-align:center;font-size:.7rem;font-weight:400}

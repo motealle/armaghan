@@ -7,7 +7,7 @@ import TrackingView from '@/views/TrackingView.vue'
 import MagicLinkView from '@/views/MagicLinkView.vue'
 
 export const router=createRouter({
-  history:createWebHashHistory(),
+  history:createWebHashHistory(window.location.pathname+window.location.search),
   routes:[
     {path:'/',name:'home',component:HomeView},
     {path:'/products',name:'products',component:ProductsView},

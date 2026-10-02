@@ -976,3 +976,7 @@ Owner instruction: defer visual testing; preserve all previous versions; create 
 | 5 | Layout redesign | 2.0 | Requires deferred visual testing |
 
 Selected: option 1. Storage rationale: https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API .
+
+
+## Owner-authorized root Test29 release — 2026-10-02
+Owner explicitly authorizes root index replacement with selected Test29 while preserving /t. Independent selector: config/root-release.json. Tests 01–28 remain frozen; Test29 is mutable. Requested eyebrow/producible defaults and real Filament navigation are included. Root deployment verification pending. Google requires owner Cloud credentials; no real login acceptance is claimed.

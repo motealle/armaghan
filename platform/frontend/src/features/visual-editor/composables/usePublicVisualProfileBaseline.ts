@@ -6,7 +6,7 @@ import {
   type VisualStyleProfile,
 } from '../store'
 
-const BASELINE_KEY='armaghan:test27:visual-style-public-baseline:v1'
+const BASELINE_KEY='armaghan:test29:visual-style-public-baseline:v1'
 
 interface BaselineRecord{
   checksum:string
@@ -43,7 +43,7 @@ export function usePublicVisualProfileBaseline(visual:VisualStoreLike){
 
   onMounted(async()=>{
     try{
-      const data=await fetchPublicStyleProfile('staging',controller.signal)
+      const data=await fetchPublicStyleProfile(window.location.pathname==='/'?'production':'staging',controller.signal)
       if(!data.checksum||!data.profile)return
 
       const server=sanitizeVisualStyleProfile({

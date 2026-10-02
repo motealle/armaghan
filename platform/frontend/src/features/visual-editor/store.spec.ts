@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
 import {
   sanitizeVisualStyleProfile,
+  useVisualStyleStore,
   visualProfilesEqual,
 } from './store'
 
@@ -91,5 +93,17 @@ describe('visual style profile sanitization',()=>{
 
     expect(visualProfilesEqual(a,b)).toBe(true)
     expect(visualProfilesEqual(a,c)).toBe(false)
+  })
+})
+
+ describe('default-hidden heading recovery',()=>{
+  it('allows an explicit editor show setting to override the hidden default',()=>{
+    setActivePinia(createPinia())
+    const visual=useVisualStyleStore()
+    visual.patchStyle('home.about.eyebrow',{hidden:false})
+    expect(visual.compiledCss).toContain('display:revert!important')
+    visual.patchStyle('home.about.eyebrow',{hidden:true})
+    expect(visual.compiledCss).toContain('display:none!important')
+    expect(visual.compiledCss).not.toContain('display:revert!important')
   })
 })
