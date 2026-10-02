@@ -269,6 +269,14 @@ if (!$dependencyChanged && count($addedMigrations) === 0) {
     fail_update('no-additive-drift', 409);
 }
 
+$mediaLibraryPresent = is_dir($nextRoot . '/vendor/spatie/laravel-medialibrary');
+if ($mediaLibraryPresent && (!extension_loaded('gd') || !extension_loaded('exif'))) {
+    fail_update('media-runtime-extension', 409, [
+        'gd' => extension_loaded('gd'),
+        'exif' => extension_loaded('exif'),
+    ]);
+}
+
 if (!copy($sharedEnv, $nextRoot . '/.env')) fail_update('env-copy');
 @chmod($nextRoot . '/.env', 0600);
 foreach ([
