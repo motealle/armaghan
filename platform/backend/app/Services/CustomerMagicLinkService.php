@@ -76,7 +76,7 @@ final class CustomerMagicLinkService
 
             return [
                 'magic_link' => $magicLink,
-                'url' => route('customer.magic.consume', ['token' => $token]),
+                'url' => $this->publicUrl($token),
             ];
         });
     }
@@ -171,6 +171,15 @@ final class CustomerMagicLinkService
 
             return $count;
         });
+    }
+
+    private function publicUrl(string $token): string
+    {
+        $request = request();
+        $origin = $request->getSchemeAndHttpHost();
+        $fragmentPath = (string) config('armaghan.customer.magic_fragment_path', '/t/27/#/magic/');
+
+        return rtrim($origin, '/').'/'.ltrim($fragmentPath, '/').$token;
     }
 
     private function isConsumable(MagicLink $magicLink): bool

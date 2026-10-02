@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import type { UserRole } from '@/types/domain'
 import { useCustomersStore } from '@/stores/customers'
 import {
+  consumeCustomerMagicLink,
   fetchCustomerSession,
   logoutCustomerSession,
   updateCustomerSession,
@@ -123,6 +124,20 @@ export const useSessionStore=defineStore('session',()=>{
     return true
   }
 
+  async function consumeBackendMagicLink(value:string):Promise<boolean>{
+    if(!/^[A-Za-z0-9]{64}$/.test(value))return false
+    try{
+      const customer=await consumeCustomerMagicLink(value)
+      backendAuthenticated.value=true
+      backendCustomer.value=customer
+      customers.upsertBackendCustomer(customer)
+      persistRole('customer','',customer.id)
+      return true
+    }catch{
+      return false
+    }
+  }
+
   async function hydrateFromBackend():Promise<boolean>{
     try{
       const customer=await fetchCustomerSession()
@@ -178,6 +193,6 @@ export const useSessionStore=defineStore('session',()=>{
   return{
     role,isAuthenticated,isAdmin,isCustomer,impersonatedCustomerId,currentCustomerId,currentEmail,accounts,magicLinks,
     backendAuthenticated,backendCustomer,
-    login,register,loginCustomerRecord,hydrateFromBackend,saveBackendCustomer,logout,impersonate,stopImpersonating,createMagicLink,revokeMagicLink,consumeMagicLink,
+    login,register,loginCustomerRecord,consumeBackendMagicLink,hydrateFromBackend,saveBackendCustomer,logout,impersonate,stopImpersonating,createMagicLink,revokeMagicLink,consumeMagicLink,
   }
 })

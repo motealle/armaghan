@@ -16,7 +16,7 @@ class CustomerMagicLinkTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_can_issue_one_time_magic_link_and_customer_session_survives_alongside_admin_auth(): void
+    public function test_admin_can_issue_fragment_link_and_customer_session_survives_alongside_admin_auth(): void
     {
         $admin = User::factory()->create([
             'role' => UserRole::Admin,
@@ -40,10 +40,14 @@ class CustomerMagicLinkTest extends TestCase
             ->assertJsonStructure(['url', 'expires_at']);
 
         $url = (string) $response->json('url');
-        $path = (string) parse_url($url, PHP_URL_PATH);
-        $token = basename($path);
-        $magicLink = MagicLink::query()->sole();
+        $this->assertSame('/t/27/', parse_url($url, PHP_URL_PATH));
+        $this->assertNull(parse_url($url, PHP_URL_QUERY));
 
+        $fragment = (string) parse_url($url, PHP_URL_FRAGMENT);
+        $this->assertStringStartsWith('/magic/', $fragment);
+        $token = basename($fragment);
+
+        $magicLink = MagicLink::query()->sole();
         $this->assertSame(64, strlen($token));
         $this->assertNotSame($token, $magicLink->token_hash);
         $this->assertSame(hash('sha256', $token), $magicLink->token_hash);
@@ -55,20 +59,16 @@ class CustomerMagicLinkTest extends TestCase
             'action' => 'customer.magic_link.issued',
         ]);
 
-        $this->get($url)
-            ->assertRedirect('/t/27/?auth=magic-login#/tracking')
-            ->assertHeader('Cache-Control', 'no-store, private')
-            ->assertHeader('Referrer-Policy', 'no-referrer');
-
-        $this->assertAuthenticatedAs($admin);
-        $this->assertSame($customer->id, session(CustomerSession::KEY));
-
-        $this->getJson('/api/customer/session')
+        $this->postJson('/api/customer/magic-link/consume', ['token' => $token])
             ->assertOk()
+            ->assertHeader('Cache-Control', 'no-store, private')
             ->assertJsonPath('customer.id', $customer->id)
             ->assertJsonPath('customer.company_name', 'Baghdad Buyer')
             ->assertJsonMissingPath('customer.notes')
             ->assertJsonMissingPath('customer.user_id');
+
+        $this->assertAuthenticatedAs($admin);
+        $this->assertSame($customer->id, session(CustomerSession::KEY));
 
         $this->patchJson('/api/customer/session', [
             'company_name' => 'Baghdad Buyer Updated',
@@ -83,8 +83,9 @@ class CustomerMagicLinkTest extends TestCase
         $this->assertSame('+9647111111111', $customer->whatsapp);
         $this->assertNull($customer->notes);
 
-        $this->get($url)
-            ->assertRedirect('/t/27/?auth=link-invalid#/tracking');
+        $this->postJson('/api/customer/magic-link/consume', ['token' => $token])
+            ->assertGone()
+            ->assertJsonPath('message', 'Magic link is unavailable.');
 
         $magicLink->refresh();
         $this->assertFalse($magicLink->enabled);
@@ -103,7 +104,7 @@ class CustomerMagicLinkTest extends TestCase
         $this->getJson('/api/customer/session')->assertUnauthorized();
     }
 
-    public function test_issuing_a_new_link_revokes_previous_link_and_expired_or_disabled_links_cannot_login(): void
+    public function test_new_link_revokes_previous_and_expired_or_disabled_links_cannot_login(): void
     {
         $admin = User::factory()->create([
             'role' => UserRole::Admin,
@@ -115,12 +116,12 @@ class CustomerMagicLinkTest extends TestCase
             'direct_link_enabled' => true,
         ]);
 
-        $first = $this->actingAs($admin)
+        $firstUrl = $this->actingAs($admin)
             ->postJson("/api/admin/customers/{$customer->id}/magic-link")
             ->assertOk()
             ->json('url');
 
-        $second = $this->postJson("/api/admin/customers/{$customer->id}/magic-link", [
+        $secondUrl = $this->postJson("/api/admin/customers/{$customer->id}/magic-link", [
             'expires_in_hours' => 72,
         ])
             ->assertOk()
@@ -132,13 +133,16 @@ class CustomerMagicLinkTest extends TestCase
         $this->assertNotNull($links[0]->revoked_at);
         $this->assertTrue($links[1]->enabled);
 
-        $this->get((string) $first)
-            ->assertRedirect('/t/27/?auth=link-invalid#/tracking');
+        $firstToken = basename((string) parse_url((string) $firstUrl, PHP_URL_FRAGMENT));
+        $secondToken = basename((string) parse_url((string) $secondUrl, PHP_URL_FRAGMENT));
+
+        $this->postJson('/api/customer/magic-link/consume', ['token' => $firstToken])
+            ->assertGone();
 
         $links[1]->forceFill(['expires_at' => now()->subMinute()])->save();
 
-        $this->get((string) $second)
-            ->assertRedirect('/t/27/?auth=link-invalid#/tracking');
+        $this->postJson('/api/customer/magic-link/consume', ['token' => $secondToken])
+            ->assertGone();
 
         $this->assertNull(session(CustomerSession::KEY));
 
@@ -149,7 +153,7 @@ class CustomerMagicLinkTest extends TestCase
             ->assertJsonValidationErrors(['customer']);
     }
 
-    public function test_admin_can_explicitly_revoke_active_customer_links_and_non_admin_cannot_issue_them(): void
+    public function test_admin_can_revoke_active_links_and_non_admin_cannot_issue_them(): void
     {
         $admin = User::factory()->create([
             'role' => UserRole::Admin,
@@ -174,12 +178,14 @@ class CustomerMagicLinkTest extends TestCase
             ->assertOk()
             ->json('url');
 
+        $token = basename((string) parse_url((string) $issued, PHP_URL_FRAGMENT));
+
         $this->deleteJson("/api/admin/customers/{$customer->id}/magic-link")
             ->assertOk()
             ->assertJsonPath('revoked_count', 1);
 
-        $this->get((string) $issued)
-            ->assertRedirect('/t/27/?auth=link-invalid#/tracking');
+        $this->postJson('/api/customer/magic-link/consume', ['token' => $token])
+            ->assertGone();
 
         $this->assertDatabaseHas('activity_log', [
             'actor_user_id' => $admin->id,
@@ -188,8 +194,10 @@ class CustomerMagicLinkTest extends TestCase
         ]);
     }
 
-    public function test_guest_customer_session_endpoint_is_private(): void
+    public function test_magic_consume_route_is_post_only_and_guest_session_is_private(): void
     {
+        $this->get('/api/customer/magic-link/consume')->assertMethodNotAllowed();
+
         $this->getJson('/api/customer/session')
             ->assertUnauthorized()
             ->assertHeader('Cache-Control', 'no-store, private');

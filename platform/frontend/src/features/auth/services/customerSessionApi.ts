@@ -77,6 +77,14 @@ async function requestJson<T>(path:string,init:RequestInit={},allowCsrfRetry=tru
   return payload as T
 }
 
+export async function consumeCustomerMagicLink(token:string):Promise<BackendCustomerSession>{
+  const response=await requestJson<SessionResponse>('/api/customer/magic-link/consume',{
+    method:'POST',
+    body:JSON.stringify({token}),
+  })
+  return response.customer
+}
+
 export async function fetchCustomerSession():Promise<BackendCustomerSession|null>{
   try{
     const response=await requestJson<SessionResponse>('/api/customer/session')
