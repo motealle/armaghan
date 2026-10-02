@@ -1,4 +1,4 @@
-"""Promote a selected existing numbered UI; preserve every numbered /t folder."""
+"""Promote an existing numbered UI at root without rebuilding or changing /t."""
 from __future__ import annotations
 import hashlib
 import io
@@ -16,7 +16,7 @@ SITE = "https://armaghantrading.com"
 def version_path(value: str) -> str:
     if not isinstance(value, str) or not re.fullmatch(r"(?:0[1-9]|[1-9][0-9]*)", value):
         raise ValueError("Version must be a positive numbered test folder")
-    return f"/t/{value}/"
+    return f"/t/{value.zfill(2)}/"
 
 def render_root(source: bytes, version: str) -> bytes:
     base = version_path(version)

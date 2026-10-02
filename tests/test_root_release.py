@@ -32,6 +32,7 @@ class RootReleaseTest(unittest.TestCase):
         for version in ("../29","29/..","0","00","-1","29?x","29a",""):
             with self.assertRaises(ValueError): module.version_path(version)
         self.assertEqual(module.version_path("01"),"/t/01/")
+        self.assertEqual(module.version_path("1"),"/t/01/")
     def test_replace_base_and_keep_content(self):
         page=module.render_root(SOURCE.replace(b"<head>",b'<head><base href="/wrong/">'),"29").decode()
         self.assertEqual(page.count("<base "),1)

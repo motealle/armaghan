@@ -209,6 +209,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check production authentication readiness without credentials
+        run: |
+          python - <<'PY'
+          import json
+          from urllib.request import Request, urlopen
+          from urllib.error import HTTPError
+          site="https://armaghantrading.com"
+          with urlopen(Request(site+"/backend/api/auth/google/status",headers={"Cache-Control":"no-cache"}),timeout=30) as response:
+              data=json.load(response)
+          if set(data)!={"enabled"} or type(data["enabled"]) is not bool:
+              raise SystemExit("Unexpected Google readiness response")
+          print("Google provider configured:",data["enabled"])
+          try:
+              urlopen(site+"/backend/api/customer/session",timeout=30)
+              raise SystemExit("Guest customer session incorrectly authorized")
+          except HTTPError as error:
+              if error.code!=401: raise
+          for resource in ("products","customers"):
+              with urlopen(site+"/backend/admin/"+resource,timeout=30) as response:
+                  if not response.url.endswith("/backend/admin/login"):
+                      raise SystemExit("Guest admin resource did not require login")
+          print("Production customer/admin authentication boundary: PASS")
+          PY
       - name: Promote selected existing numbered version to domain root
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
