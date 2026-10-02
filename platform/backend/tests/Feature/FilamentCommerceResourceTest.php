@@ -79,8 +79,15 @@ class FilamentCommerceResourceTest extends TestCase
     public function test_commerce_resources_do_not_expose_destructive_delete_or_user_link_fields(): void
     {
         $productTable = file_get_contents(app_path('Filament/Resources/Products/Tables/ProductsTable.php'));
+        $productForm = file_get_contents(app_path('Filament/Resources/Products/Schemas/ProductForm.php'));
         $customerTable = file_get_contents(app_path('Filament/Resources/Customers/Tables/CustomersTable.php'));
         $customerForm = file_get_contents(app_path('Filament/Resources/Customers/Schemas/CustomerForm.php'));
+
+        $this->assertStringContainsString('SpatieMediaLibraryFileUpload', $productForm);
+        $this->assertStringContainsString("collection(\\App\\Models\\Product::MEDIA_COLLECTION)", $productForm);
+        $this->assertStringContainsString('maxFiles(6)', $productForm);
+        $this->assertStringContainsString('reorderable()', $productForm);
+        $this->assertStringContainsString('SpatieMediaLibraryImageColumn', $productTable);
 
         foreach ([$productTable, $customerTable] as $table) {
             $this->assertStringNotContainsString('DeleteAction', $table);
