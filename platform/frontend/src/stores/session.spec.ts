@@ -1,6 +1,7 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { useSessionStore } from './session'
+import { useCustomersStore } from './customers'
 
 class MemoryStorage {
   private data = new Map<string,string>()
@@ -15,6 +16,8 @@ class MemoryStorage {
 describe('session store',()=>{
   beforeEach(()=>{
     Object.defineProperty(globalThis,'sessionStorage',{value:new MemoryStorage(),configurable:true})
+    Object.defineProperty(globalThis,'localStorage',{value:new MemoryStorage(),configurable:true})
+    vi.restoreAllMocks()
     setActivePinia(createPinia())
   })
 
@@ -44,4 +47,49 @@ describe('session store',()=>{
     expect(store.role).toBe('admin')
     expect(store.impersonatedCustomerId).toBe(7)
   })
+  it('hydrates a real backend customer session and overlays the local customer record',async()=>{
+    const fetchMock=vi.fn().mockResolvedValue({
+      ok:true,
+      status:200,
+      json:async()=>({
+        customer:{
+          id:9,
+          company_name:'Real Backend Buyer',
+          whatsapp:'+9647111111111',
+          country_code:'IQ',
+          country_name:'Iraq',
+        },
+      }),
+    } as Response)
+    vi.stubGlobal('fetch',fetchMock)
+
+    const store=useSessionStore()
+    const customers=useCustomersStore()
+
+    expect(await store.hydrateFromBackend()).toBe(true)
+    expect(store.backendAuthenticated).toBe(true)
+    expect(store.role).toBe('customer')
+    expect(store.currentCustomerId).toBe(9)
+    expect(customers.items.find(item=>item.id===9)?.name).toBe('Real Backend Buyer')
+    expect(fetchMock).toHaveBeenCalledWith('/backend/api/customer/session',expect.objectContaining({
+      credentials:'same-origin',
+    }))
+  })
+
+  it('keeps local demo state when no backend customer session exists',async()=>{
+    const fetchMock=vi.fn().mockResolvedValue({
+      ok:false,
+      status:401,
+      json:async()=>({message:'Unauthenticated.'}),
+    } as Response)
+    vi.stubGlobal('fetch',fetchMock)
+
+    sessionStorage.setItem('armaghan:test27:role','admin')
+    const store=useSessionStore()
+
+    expect(await store.hydrateFromBackend()).toBe(false)
+    expect(store.backendAuthenticated).toBe(false)
+    expect(store.role).toBe('admin')
+  })
+
 })
