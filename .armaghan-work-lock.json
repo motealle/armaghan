@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261002-customer-magic-link",
   "scope": "Implement minimum customer API/session and one-tap Magic Link core end-to-end, wire Test27 away from browser-only customer identity where safe, preserve Test26, deploy through guarded lanes, update repo memory.",
   "base_ref": "main@21cade27f0915434b1f751cd676ee9458c1bf97a",
   "acquired_at": "2026-10-02T02:40:00Z",
-  "expires_at": "2026-10-02T04:10:00Z",
-  "released_at": null,
-  "note": "Resumed after interrupted prior run. PR #7 merged and Customer/Magic Link core deployed successfully in Backend Code Deploy #8. Follow-up live path smoke exposed production 404 for token-in-path; #9 rolled back successfully. Repairing flow to fragment-held token + fixed POST consume endpoint before starting the next P0."
+  "expires_at": "2026-10-02T03:00:00Z",
+  "released_at": "2026-10-02T03:00:00Z",
+  "note": "Customer session + one-time Magic Link core complete. PR #7 merged initial core; Backend Code Deploy #8 PASS. Follow-up #9 exposed real token-in-path 404 and rolled back safely. Repair PR #8 merge 10d040c7 uses browser fragment + fixed CSRF-protected POST consume endpoint. Backend CI #49/#50 PASS; Backend Code Deploy #10 PASS with guest session 401 and POST-only route GET 405; FTP #314 PASS Test27 deploy, root skipped; docs/rules closeout c5b78273 and FTP #315 PASS with UI deploys skipped. Next P0 FavoriteShare/WhatsApp."
 }
