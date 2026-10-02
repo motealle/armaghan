@@ -129,6 +129,7 @@ class PublicCatalogApiTest extends TestCase
             ->assertJsonPath('meta.total', 2)
             ->assertJsonPath('data.0.code', '11001')
             ->assertJsonPath('data.0.category.code', '1')
+            ->assertJsonPath('data.0.subcategory.code', '11')
             ->assertJsonCount(1, 'data.0.media')
             ->assertJsonPath('data.0.media.0.id', (string) ($media->uuid ?: $media->id));
 
