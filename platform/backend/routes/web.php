@@ -79,3 +79,12 @@ Route::post('/account/password', [\App\Http\Controllers\PasswordAuthController::
 Route::get('/api/auth/google/status', [\App\Http\Controllers\GoogleCustomerAuthController::class, 'status'])->middleware('throttle:60,1');
 Route::get('/auth/google/redirect', [\App\Http\Controllers\GoogleCustomerAuthController::class, 'redirect'])->middleware('throttle:15,1')->name('auth.google.redirect');
 Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleCustomerAuthController::class, 'callback'])->middleware('throttle:30,1')->name('auth.google.callback');
+
+
+Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group(function (): void {
+    Route::get('/session', [\App\Http\Controllers\Admin\AdminSessionController::class, 'show']);
+    Route::post('/logout', [\App\Http\Controllers\Admin\AdminSessionController::class, 'logout']);
+    Route::get('/customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index']);
+    Route::post('/customers', [\App\Http\Controllers\Admin\CustomerController::class, 'store']);
+    Route::patch('/customers/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'update']);
+});

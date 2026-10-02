@@ -16,6 +16,9 @@ import { useDesignStore } from '@/stores/design'
 import { useLocaleStore } from '@/stores/locale'
 import { useSessionStore } from '@/stores/session'
 
+import BackendCustomersPanel from './BackendCustomersPanel.vue'
+const props=defineProps<{live?:boolean}>()
+
 type AdminTab='overview'|'customers'|'products'|'content'|'appearance'|'languages'
 const catalog=useCatalogStore()
 const customers=useCustomersStore()
@@ -23,7 +26,7 @@ const session=useSessionStore()
 const design=useDesignStore()
 const locale=useLocaleStore()
 
-const activeTab=ref<AdminTab>('overview')
+const activeTab=ref<AdminTab>(props.live?'customers':'overview')
 const selectedCustomers=ref<number[]>([])
 const customerDetailId=ref<number|null>(null)
 const customerDetailOpen=ref(false)
@@ -95,12 +98,15 @@ function inviteLead(id:string){
     </nav>
     <nav class="admin-surface rounded-2xl p-2" :aria-label="locale.t('adminOverview')">
       <div class="admin-tabs">
-        <button v-for="tab in tabs" :key="tab.id" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
+        <button v-for="tab in tabs" :key="tab.id" :disabled="live&&tab.id!=='customers'" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
           <component :is="tab.icon" :size="16" class="me-1 inline"/>{{tab.label}}
         </button>
       </div>
     </nav>
 
+    <p v-if="live" class="text-sm text-[var(--c-muted)]">{{locale.t('adminIntegrationHelp')}}</p>
+    <BackendCustomersPanel v-if="live"/>
+    <template v-else>
     <template v-if="activeTab==='overview'">
       <section class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <article class="admin-stat"><UsersRound :size="20"/><strong>{{customers.items.length}}</strong><span>{{locale.t('adminCustomers')}}</span></article>
@@ -225,5 +231,6 @@ function inviteLead(id:string){
 
     <p v-if="note" class="text-xs font-bold text-[var(--c-secondary)]">{{note}}</p>
     <CustomerDetailSheet :open="customerDetailOpen" :customer-id="customerDetailId" @close="customerDetailOpen=false"/>
+    </template>
   </div>
 </template>

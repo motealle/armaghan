@@ -29,7 +29,7 @@ async function submit(){
       await registerWithPassword(name.value.trim(),email.value.trim(),password.value,confirmation.value)
     }else{
       const result=await signInWithPassword(email.value.trim(),password.value)
-      if(result.redirect==='/backend/admin'){password.value='';window.location.assign(result.redirect);return}
+      if(result.redirect==='/backend/admin'){password.value='';emit('close');router.push('/admin');return}
     }
     if(!await session.hydrateFromBackend())throw new Error('Session unavailable')
     password.value='';confirmation.value='';emit('close');router.push('/tracking')
@@ -67,7 +67,8 @@ async function googleInfo(){
       <button class="auth-primary" :disabled="busy"><component :is="mode==='register'?UserPlus:LogIn" :size="19"/>{{locale.t(mode==='register'?'createAccount':'signIn')}}</button>
       <button type="button" class="modal-secondary-action w-full" data-backend-endpoint="/backend/auth/google/redirect" :disabled="busy" @click="googleInfo"><Globe2 :size="17"/>{{locale.t('google')}}</button>
     </form>
-    <a class="mini-action mt-4" href="/backend/admin/login"><ShieldCheck :size="17"/>{{locale.t('adminSignIn')}}</a>
+    <RouterLink class="mini-action mt-4" to="/admin" @click="emit('close')">{{locale.t('adminOverview')}}</RouterLink>
+    <a class="mini-action mt-4 ms-3" href="/backend/admin/login"><ShieldCheck :size="17"/>{{locale.t('adminSignIn')}}</a>
     <p class="mt-2 text-xs leading-6 text-[var(--c-muted)]">{{locale.t('adminSignInHelp')}}</p>
   </BaseModal>
 </template>

@@ -41,7 +41,7 @@ async function fetchCsrfToken():Promise<string>{
   return payload.token
 }
 
-async function requestJson<T>(path:string,init:RequestInit={},allowCsrfRetry=true):Promise<T>{
+export async function requestJson<T>(path:string,init:RequestInit={},allowCsrfRetry=true):Promise<T>{
   const method=(init.method??'GET').toUpperCase()
   const headers=new Headers(init.headers)
   headers.set('Accept','application/json')

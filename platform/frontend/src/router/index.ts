@@ -15,6 +15,7 @@ export const router=createRouter({
   history,
   routes:[
     {path:'/',name:'home',component:HomeView},
+    {path:'/admin',name:'admin',component:()=>import('@/views/AdminView.vue')},
     {path:'/products',name:'products',component:ProductsView},
     {path:'/production',name:'production',component:ProductionView},
     {path:'/favorites',name:'favorites',component:FavoritesView},

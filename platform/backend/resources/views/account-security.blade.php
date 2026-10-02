@@ -11,5 +11,5 @@
 <small>حداقل ۱۲ نویسه، شامل حرف و عدد.</small>
 <label for="password_confirmation">تکرار رمز جدید</label><input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required>
 <button type="submit">ذخیره رمز</button></form>
-@if($user->isActiveAdmin())<a href="{{ url('/admin') }}">ورود به مدیریت</a>@else<a href="https://armaghantrading.com/#/tracking">بازگشت به حساب</a>@endif
+@if($user->isActiveAdmin())<a href="https://armaghantrading.com/#/admin">ورود به مدیریت</a>@else<a href="https://armaghantrading.com/#/tracking">بازگشت به حساب</a>@endif
 </main></body></html>
