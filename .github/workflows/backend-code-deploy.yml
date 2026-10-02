@@ -17,7 +17,29 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      code_only: ${{ steps.plan.outputs.code_only }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - id: plan
+        name: Guard code-only lane from dependency or migration drift
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "code_only=true" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet HEAD^ HEAD --             platform/backend/composer.json             platform/backend/composer.lock             platform/backend/database/migrations; then
+            echo "code_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "code_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
   deploy:
+    needs: plan
+    if: needs.plan.outputs.code_only == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
