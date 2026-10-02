@@ -113,7 +113,7 @@ export const useCustomersStore=defineStore('customers',()=>{
       name,
       whatsapp:input.whatsapp?.trim()??'',
       country,
-      flag:flagFromCountryCode(input.country_code),
+      flag:input.country_code?flagFromCountryCode(input.country_code):(existing?.flag??'🌐'),
     }
 
     if(existing){
