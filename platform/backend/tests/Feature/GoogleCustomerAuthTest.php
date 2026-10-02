@@ -142,7 +142,7 @@ class GoogleCustomerAuthTest extends TestCase
             $provider=Mockery::mock();
             $provider->shouldReceive('user')->once()->andReturn($this->identity());
             Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
-            $this->get('/auth/google/callback?code=test')
+            $this->get('http://localhost/auth/google/callback?code=test')
                 ->assertRedirect('https://armaghantrading.com/#/tracking');
             $this->assertSame(Customer::query()->sole()->id,session(CustomerSession::KEY));
         } finally {
@@ -157,7 +157,7 @@ class GoogleCustomerAuthTest extends TestCase
         try {
             foreach (['/' => '/', '/t/29/' => '/t/29/', '//evil.example/' => '/'] as $input => $expected) {
                 $this->withSession(['armaghan.google.return_path'=>$input])
-                    ->get('/auth/google/callback?error=access_denied')
+                    ->get('http://localhost/auth/google/callback?error=access_denied')
                     ->assertRedirect('https://armaghantrading.com'.$expected.'#/tracking?auth_error=google');
                 $this->assertNull(session(CustomerSession::KEY));
             }
