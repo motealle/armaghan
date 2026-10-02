@@ -5,9 +5,9 @@
   "holder": "ChatGPT GPT-5.6 Sol",
   "run_id": "chat-20261002-customer-magic-link",
   "scope": "Implement minimum customer API/session and one-tap Magic Link core end-to-end, wire Test27 away from browser-only customer identity where safe, preserve Test26, deploy through guarded lanes, update repo memory.",
-  "base_ref": "main@6d8374bd9346a0059254441db5be53b19fa4ee1e",
-  "acquired_at": "2026-10-02T00:30:00Z",
-  "expires_at": "2026-10-02T02:00:00Z",
+  "base_ref": "main@21cade27f0915434b1f751cd676ee9458c1bf97a",
+  "acquired_at": "2026-10-02T02:40:00Z",
+  "expires_at": "2026-10-02T04:10:00Z",
   "released_at": null,
-  "note": "P0 customer API/session + Magic Link vertical slice. No auth bypass, no plaintext tokens or credentials in repo/logs; preserve one-time/revocable/expiring/audited semantics."
+  "note": "Resumed after interrupted prior run. PR #7 merged and Customer/Magic Link core deployed successfully in Backend Code Deploy #8. Follow-up live path smoke exposed production 404 for token-in-path; #9 rolled back successfully. Repairing flow to fragment-held token + fixed POST consume endpoint before starting the next P0."
 }
