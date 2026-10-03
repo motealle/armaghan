@@ -1,11 +1,14 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261003-admin-authority",
   "scope": "Admin identity hierarchy and real user account management preserving custom UI",
   "base_ref": "4443bd35246aaa0b283b30730cd306d0fe2c75f0",
   "acquired_at": "2026-10-03T04:25:41.860Z",
-  "expires_at": "2026-10-03T05:55:41.860Z"
+  "expires_at": "2026-10-03T05:55:41.860Z",
+  "released_at": "2026-10-03T04:49:31.413Z",
+  "result_ref": "e4bc63346d9afb4ad8a7a7a795a93303d0212f7d",
+  "summary": "Verified Google admin allowlist adds Amir; primary owner model/session and profile email protection; custom real user account creation/status management and global admin navigation/logout. Backend89/741 frontend58/15, backend deploy and Test29/root publish PASS. Actual account sign-in/write and visual acceptance OPEN. Next secure existing-account recovery/role changes, specs and preserved editor/content integration."
 }
