@@ -69,7 +69,7 @@ class OrderTrackingController extends Controller {
         $events=$order->events()->orderBy('id');if (!$admin) $events->where('visible_to_customer',true);
         $data=$order->only(['id','reference','request_path','description','stage','invoice_confirmed_at','deposit_confirmed_at','created_at']);
         $data['events']=$events->get()->map(fn($e)=>$e->only(['id','action','stage','note','visible_to_customer','created_at']))->all();
-        if ($admin) { $data['customer_id']=$order->customer_id;$data['revision']=$this->revision($order); }
+        if ($admin) { $data['customer_id']=$order->customer_id; $customer=Customer::with('user')->findOrFail($order->customer_id); $data['customer_name']=$customer->company_name ?: $customer->user?->name; $data['revision']=$this->revision($order); }
         return $data;
     }
     private function event(Request $request,TrackedOrder $order,string $action,string $note,bool $visible,bool $admin): void {

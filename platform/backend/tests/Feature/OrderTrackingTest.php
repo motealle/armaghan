@@ -34,7 +34,7 @@ class OrderTrackingTest extends TestCase {
  public function test_customer_sees_only_own_orders_and_public_events_and_cannot_forge_owner(): void {
   $a=Customer::create(['active'=>true]);$b=Customer::create(['active'=>true]);$admin=User::factory()->admin()->create();$this->actingAs($admin);
   $row=$this->createOrder($a);$this->createOrder($b);$row=$this->change($row,'note',['note'=>'Private staff note']);$this->change($row,'note',['note'=>'Public update','visible_to_customer'=>true]);
-  $this->withSession([CustomerSession::KEY=>$a->id])->getJson('/api/customer/orders')->assertOk()->assertJsonCount(1,'orders')->assertJsonCount(2,'orders.0.events')->assertJsonMissing(['note'=>'Private staff note'])->assertJsonMissingPath('orders.0.revision');
+  $this->withSession([CustomerSession::KEY=>$a->id])->getJson('/api/customer/orders')->assertOk()->assertJsonCount(1,'orders')->assertJsonCount(2,'orders.0.events')->assertJsonMissing(['note'=>'Private staff note'])->assertJsonMissingPath('orders.0.revision')->assertJsonMissingPath('orders.0.customer_name');
   $this->postJson('/api/customer/orders',['customer_id'=>$b->id,'request_path'=>'simple','description'=>'Customer request'])->assertUnprocessable();
   $this->postJson('/api/customer/orders',['request_path'=>'simple','description'=>'Customer request'])->assertCreated();$this->assertSame($a->id,TrackedOrder::latest('id')->first()->customer_id);
  }
