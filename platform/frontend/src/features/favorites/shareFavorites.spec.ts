@@ -31,7 +31,7 @@ describe('persisted FavoriteShare API',()=>{
     const share=await issueFavoriteShare(['22003','11001'])
 
     expect(share.id).toBe(7)
-    expect(share.url).toContain('#/favorites/share/')
+    expect(share.url).toBe('https://example.test/#/favorites/share/'+'A'.repeat(64))
     expect(share.url).not.toContain('shared=v1:')
     expect(fetchMock).toHaveBeenNthCalledWith(2,
       '/backend/api/favorite-shares',

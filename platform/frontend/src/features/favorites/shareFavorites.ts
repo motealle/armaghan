@@ -83,7 +83,11 @@ export async function issueFavoriteShare(productCodes:string[]):Promise<IssuedFa
     method:'POST',
     body:JSON.stringify({product_codes:productCodes}),
   })
-  return response.share
+  // Keep links at the active root even during rollout of stale host configuration.
+  const url=new URL(response.share.url)
+  const match=/^#\/favorites\/share\/([A-Za-z0-9]{64})$/.exec(url.hash)
+  if(!match||typeof window!=='undefined'&&url.origin!==window.location.origin)throw new FavoriteShareApiError(502,'Invalid share URL.')
+  return {...response.share,url:new URL('/#/favorites/share/'+match[1],url.origin).href}
 }
 
 export async function resolveFavoriteShare(token:string):Promise<ResolvedFavoriteShare>{

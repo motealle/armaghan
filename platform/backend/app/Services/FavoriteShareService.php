@@ -149,7 +149,10 @@ final class FavoriteShareService
     private function publicUrl(string $token): string
     {
         $origin = request()->getSchemeAndHttpHost();
-        $fragmentPath = (string) config('armaghan.favorite_share.fragment_path', '/t/27/#/favorites/share/');
+        $fragmentPath = (string) config('armaghan.favorite_share.fragment_path', '/#/favorites/share/');
+
+        // Historical host configuration must not send live shares into frozen token-unaware UI.
+        if (preg_match('~^/t/(?:0?[1-9]|1[0-9]|2[0-8])/#/favorites/share/$~', $fragmentPath)) $fragmentPath = '/#/favorites/share/';
 
         return rtrim($origin, '/').'/'.ltrim($fragmentPath, '/').$token;
     }

@@ -29,7 +29,7 @@ class FavoriteShareTest extends TestCase
             ->assertJsonStructure(['share' => ['id', 'url', 'expires_at', 'owned']]);
 
         $url = (string) $response->json('share.url');
-        $this->assertSame('/t/27/', parse_url($url, PHP_URL_PATH));
+        $this->assertSame('/', parse_url($url, PHP_URL_PATH));
         $this->assertNull(parse_url($url, PHP_URL_QUERY));
 
         $fragment = (string) parse_url($url, PHP_URL_FRAGMENT);
@@ -68,6 +68,16 @@ class FavoriteShareTest extends TestCase
         $this->assertSame('guest', $activity->metadata['owner']);
         $this->assertSame(2, $activity->metadata['product_count']);
         $this->assertStringNotContainsString($token, json_encode($activity->metadata, JSON_THROW_ON_ERROR));
+    }
+
+    public function test_stale_host_fragment_configuration_cannot_send_shares_to_frozen_test27(): void
+    {
+        config(['armaghan.favorite_share.fragment_path'=>'/t/27/#/favorites/share/']);
+        [$first] = $this->catalogProducts();
+        $url=$this->postJson('/api/favorite-shares',['product_codes'=>[$first->code]])->assertOk()->json('share.url');
+        $this->assertSame('/',parse_url($url,PHP_URL_PATH));
+        $token=basename(parse_url($url,PHP_URL_FRAGMENT));
+        $this->postJson('/api/favorite-shares/resolve',['token'=>$token])->assertOk()->assertJsonPath('share.product_codes.0',$first->code);
     }
 
     public function test_customer_owned_share_can_only_be_revoked_by_its_owner(): void

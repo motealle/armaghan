@@ -12,7 +12,7 @@ class HomeMediaController extends Controller {
  public const TARGETS=['hero','about','capability.production','capability.export','capability.trade','banner.1','banner.2','banner.3'];
  public function __construct(private StyleProfileService $profiles) {}
  private function json(array $data,int $status=200) {return response()->json($data,$status)->header('Cache-Control','no-store, private');}
- private function revision(StyleProfile $profile): string {return hash('sha256',json_encode($profile->media()->where('collection_name',StyleProfile::MEDIA_COLLECTION)->orderBy('id')->get(['id','custom_properties','updated_at'])->toArray(),JSON_THROW_ON_ERROR));}
+ private function revision(StyleProfile $profile): string {return hash('sha256',json_encode($profile->media()->where('collection_name',StyleProfile::MEDIA_COLLECTION)->orderBy('id')->get(['id','custom_properties','updated_at'])->map(fn($m)=>$m->only(['id','custom_properties','updated_at']))->all(),JSON_THROW_ON_ERROR));}
  private function snapshot(StyleProfile $profile): array {return ['revision'=>$this->revision($profile),'images'=>$profile->getMedia(StyleProfile::MEDIA_COLLECTION)->map(fn($m)=>['id'=>$m->id,'target'=>$m->getCustomProperty('target'),'url'=>$m->getUrl(),'channels'=>$m->getCustomProperty('channels',[])])->values()->all()];}
  public function index(Request $request) {return $this->json($this->snapshot($this->profiles->ensureDefault($request->user())));}
  public function publicIndex(string $channel) {

@@ -2,13 +2,12 @@
 
 return [
     'customer' => [
-        // Test 27 is the active mutable customer UI lane. Production may override
-        // these paths without changing application code when the final root UI ships.
+        // Stable production entry; numbered snapshots remain immutable.
         'magic_fragment_path' => env('ARMAGHAN_CUSTOMER_MAGIC_FRAGMENT_PATH', '/t/27/#/magic/'),
     ],
 
     'favorite_share' => [
-        'fragment_path' => env('ARMAGHAN_FAVORITE_SHARE_FRAGMENT_PATH', '/t/27/#/favorites/share/'),
+        'fragment_path' => env('ARMAGHAN_FAVORITE_SHARE_FRAGMENT_PATH', '/#/favorites/share/'),
         'guest_ttl_days' => (int) env('ARMAGHAN_FAVORITE_SHARE_GUEST_TTL_DAYS', 7),
         'customer_ttl_days' => (int) env('ARMAGHAN_FAVORITE_SHARE_CUSTOMER_TTL_DAYS', 30),
         'max_products' => (int) env('ARMAGHAN_FAVORITE_SHARE_MAX_PRODUCTS', 30),
