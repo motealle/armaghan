@@ -1,4 +1,5 @@
 <?php
+// Initial order tracking release; snapshots fingerprint persisted database defaults.
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

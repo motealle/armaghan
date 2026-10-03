@@ -65,6 +65,7 @@ class OrderTrackingController extends Controller {
         return hash('sha256',json_encode([$order->attributesToArray(),$order->events()->orderBy('id')->get()->toArray()],JSON_THROW_ON_ERROR));
     }
     private function snapshot(TrackedOrder $order,bool $admin): array {
+        $order->refresh(); // Fingerprint persisted defaults/timestamps, never transient create/save attributes.
         $events=$order->events()->orderBy('id');if (!$admin) $events->where('visible_to_customer',true);
         $data=$order->only(['id','reference','request_path','description','stage','invoice_confirmed_at','deposit_confirmed_at','created_at']);
         $data['events']=$events->get()->map(fn($e)=>$e->only(['id','action','stage','note','visible_to_customer','created_at']))->all();
