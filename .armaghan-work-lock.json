@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261003-customer-feedback",
-  "scope": "Customer feedback: compact storefront, labels/gold, canonical manual order timeline and editing guidance",
+  "run_id": "codex-20261003-footer-followthrough",
+  "scope": "Footer/banner geometry, remaining media/content and order followthrough; documentation",
   "base_ref": "34c95b760a8f3156705a647277adb9cce9a70f58",
-  "acquired_at": "2026-10-03T10:32:45.767Z",
-  "expires_at": "2026-10-03T11:08:44.317Z",
-  "released_at": "2026-10-03T11:08:44.317Z"
+  "acquired_at": "2026-10-03T13:29:09.984Z",
+  "expires_at": "2026-10-03T14:59:09.984Z"
 }
