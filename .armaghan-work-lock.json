@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261003-product-specifications",
-  "scope": "Canonical product specification editing in custom Vue administration",
+  "run_id": "codex-20261003-approved-hero-tags",
+  "scope": "Customer approved hero image/slogan and canonical admin bulk tags",
   "base_ref": "a0102b13c5ca27e7de6ef49250123d282de2c0c1",
-  "acquired_at": "2026-10-03T14:49:20.796Z",
-  "expires_at": "2026-10-03T15:16:42.124Z",
-  "released_at": "2026-10-03T15:16:42.124Z"
+  "acquired_at": "2026-10-03T17:51:04.276Z",
+  "expires_at": "2026-10-03T19:21:04.276Z"
 }
