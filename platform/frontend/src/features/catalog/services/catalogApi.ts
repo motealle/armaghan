@@ -28,6 +28,7 @@ export interface PublicCatalogProduct{
   code:string
   names:LocalizedNames
   availability:Product['availability']
+  specifications?:Array<{key:string;locked:boolean;labels:LocalizedNames;value_text:string|null}>
   sort_order:number
   media?:PublicCatalogMedia[]
   category:null|{code:string;names:LocalizedNames}
@@ -170,7 +171,11 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
     availability:remote.availability,
     gallery:backendMedia.length?backendMedia:(fallback?.gallery??[meta.image,'./images/final/details/fabric-detail.webp',meta.fallbackImage]),
     image:backendMedia[0]??fallback?.image,
-    specs:fallback?.specs?structuredClone(fallback.specs):structuredClone(meta.specs),
+    specificationValues:remote.specifications?.map(s=>({...s,labels:{fa:s.labels.fa||undefined,ar:s.labels.ar||undefined,en:s.labels.en||undefined,ku:s.labels.ku||undefined}})),
+    specs:remote.specifications?{
+      locked:remote.specifications.filter(s=>s.locked).map(s=>s.labels.fa||s.key),
+      negotiable:remote.specifications.filter(s=>!s.locked).map(s=>s.labels.fa||s.key),
+    }:fallback?.specs?structuredClone(fallback.specs):structuredClone(meta.specs),
   }
 }
 

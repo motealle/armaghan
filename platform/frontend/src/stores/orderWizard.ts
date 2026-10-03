@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { categories, products } from '@/data/catalog'
+import { useCatalogStore } from '@/stores/catalog'
 import type { RequestPath } from '@/types/domain'
 import { buildProductionMessage, whatsappUrl } from '@/services/whatsapp'
 import { useLocaleStore } from '@/stores/locale'
@@ -8,16 +8,16 @@ import { useLocaleStore } from '@/stores/locale'
 type ProductionPath = Extract<RequestPath, 'custom' | 'brand' | 'packaging'>
 
 export const useOrderWizardStore = defineStore('order-wizard', () => {
-  const locale=useLocaleStore()
+  const locale=useLocaleStore(),catalog=useCatalogStore()
   const step = ref(0)
   const path = ref<ProductionPath | null>(null)
   const categoryCode = ref<string | null>(null)
   const subcategoryCode = ref<string | null>(null)
   const note = ref('')
 
-  const category = computed(() => categories.find((item) => item.code === categoryCode.value) ?? null)
+  const category = computed(() => catalog.categories.find((item) => item.code === categoryCode.value) ?? null)
   const subcategory = computed(() => category.value?.subcategories.find((item) => item.code === subcategoryCode.value) ?? null)
-  const specSource = computed(() => products.find((item) => item.subcategoryCode === subcategoryCode.value) ?? null)
+  const specSource = computed(() => catalog.items.find((item) => item.subcategoryCode === subcategoryCode.value) ?? null)
 
   const preview = computed(() => {
     if (!path.value || !category.value || !subcategory.value || !specSource.value) return ''

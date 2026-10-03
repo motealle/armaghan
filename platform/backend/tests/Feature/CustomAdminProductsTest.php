@@ -31,6 +31,80 @@ class CustomAdminProductsTest extends TestCase
             'name_ar' => null, 'name_ku' => null, 'availability' => 'available', 'active' => true, 'sort_order' => 0];
     }
 
+    public function test_specification_values_are_taxonomy_scoped_atomic_preserved_and_public(): void
+    {
+        $this->actingAs(User::factory()->admin()->create());
+        $fields = $this->fields(); $product = Product::create($fields);
+        $definition = \App\Models\SpecDefinition::create(['subcategory_id' => $product->subcategory_id,
+            'key' => 'fabric', 'label_fa' => 'جنس', 'label_en' => 'Fabric', 'locked' => true]);
+        $otherSub = Subcategory::create(['category_id' => $product->subcategory->category_id, 'code' => '12', 'name_fa' => 'دیگر']);
+        $foreign = \App\Models\SpecDefinition::create(['subcategory_id' => $otherSub->id, 'key' => 'size', 'label_fa' => 'سایز']);
+        $row = $this->row($product);
+        $this->getJson('/api/admin/product-taxonomy')->assertJsonPath('subcategories.0.specifications.0.labels.en', 'Fabric');
+        $url = '/api/admin/products/'.$product->id;
+        foreach ([
+            [['definition_id' => $foreign->id, 'value_text' => 'wrong']],
+            [['definition_id' => $definition->id, 'value_text' => 'one'], ['definition_id' => $definition->id, 'value_text' => 'two']],
+            [['definition_id' => $definition->id, 'value_text' => '<script>bad</script>']],
+            [['definition_id' => $definition->id, 'value_text' => str_repeat('x', 1001)]],
+            [['definition_id' => $definition->id, 'value_text' => 'valid'], ['definition_id' => $foreign->id, 'value_text' => 'invalid']],
+        ] as $values) {
+            $this->patchJson($url, array_merge($fields, ['name_fa' => 'must rollback', 'revision' => $row['revision'], 'specifications' => $values]))->assertUnprocessable();
+            $this->assertSame($fields['name_fa'], $product->fresh()->name_fa);
+            $this->assertDatabaseCount('product_spec_values', 0);
+            $this->assertDatabaseCount('activity_log', 0);
+        }
+        $updated = $this->patchJson($url, $fields + ['revision' => $row['revision'], 'specifications' => [['definition_id' => $definition->id, 'value_text' => ' پنبه ']]])
+            ->assertOk()->assertJsonPath('product.specifications.0.value_text', 'پنبه')->json('product');
+        $this->patchJson($url, $fields + ['revision' => $row['revision']])->assertConflict();
+        $this->getJson('/api/catalog/products')->assertJsonPath('data.0.specifications.0.value_text', 'پنبه')->assertJsonPath('data.0.specifications.0.locked', true);
+        $preserved = $this->patchJson($url, $fields + ['revision' => $updated['revision']])->assertOk()->assertJsonPath('product.specifications.0.value_text', 'پنبه')->json('product');
+        $this->patchJson($url, array_merge($fields, ['subcategory_id' => $otherSub->id, 'revision' => $preserved['revision']]))->assertUnprocessable();
+        $definition->update(['locked' => false]);
+        $this->patchJson($url, $fields + ['revision' => $preserved['revision']])->assertConflict();
+        $fresh = $this->row($product);
+        $this->patchJson($url, $fields + ['revision' => $fresh['revision'], 'specifications' => [['definition_id' => $definition->id, 'value_text' => null]]])->assertOk()->assertJsonPath('product.specifications.0.value_text', null);
+        $this->assertStringNotContainsString('پنبه', ActivityLog::all()->toJson());
+    }
+
+    public function test_create_with_specifications_and_move_empty_product_use_selected_taxonomy(): void
+    {
+        $this->actingAs(User::factory()->admin()->create()); $fields = $this->fields();
+        $definition = \App\Models\SpecDefinition::create(['subcategory_id' => $fields['subcategory_id'], 'key' => 'fabric', 'label_fa' => 'جنس']);
+        $this->postJson('/api/admin/products', $fields + ['specifications' => [['definition_id' => $definition->id, 'value_text' => 'پنبه']]])->assertCreated()->assertJsonPath('product.specifications.0.value_text', 'پنبه');
+        $empty = Product::create($this->fields('11098')); $row = $this->row($empty);
+        $newSub = Subcategory::create(['category_id' => $empty->subcategory->category_id, 'code' => '12', 'name_fa' => 'دیگر']);
+        $newDefinition = \App\Models\SpecDefinition::create(['subcategory_id' => $newSub->id, 'key' => 'size', 'label_fa' => 'سایز']);
+        $this->patchJson('/api/admin/products/'.$empty->id, array_merge($this->fields('11098'), ['subcategory_id' => $newSub->id,
+            'revision' => $row['revision'], 'specifications' => [['definition_id' => $newDefinition->id, 'value_text' => 'XL']]]))->assertOk()->assertJsonPath('product.specifications.0.value_text', 'XL');
+    }
+
+    public function test_schema_management_requires_admin_acknowledgement_revision_and_retains_values(): void
+    {
+        $fields = $this->fields(); $product = Product::create($fields);
+        $url = '/api/admin/product-taxonomy/'.$product->subcategory_id.'/specifications';
+        $this->putJson($url, [])->assertUnauthorized();
+        $this->actingAs(User::factory()->create()); $this->putJson($url, [])->assertForbidden();
+        $this->actingAs(User::factory()->admin()->create());
+        $schema = $this->getJson('/api/admin/product-taxonomy')->json('subcategories.0');
+        $definition = ['id' => null, 'key' => 'fabric', 'labels' => ['fa' => 'جنس', 'en' => 'Fabric', 'ar' => null, 'ku' => null], 'locked' => true];
+        $body = ['revision' => $schema['schema_revision'], 'definitions' => [$definition]];
+        $this->putJson($url, $body)->assertUnprocessable();
+        $result = $this->putJson($url, $body + ['acknowledged' => true])->assertOk()->json('subcategories.0');
+        $this->putJson($url, $body + ['acknowledged' => true])->assertConflict();
+        $id = $result['specifications'][0]['id'];
+        $product->specValues()->create(['spec_definition_id' => $id, 'value_text' => 'پنبه']);
+        $row = $this->row($product);
+        $definition['id'] = $id; $definition['locked'] = false; $definition['labels']['en'] = 'Material';
+        foreach ([[], [$definition, $definition], [array_merge($definition, ['id' => 999])], [array_merge($definition, ['key' => 'renamed'])]] as $invalid) {
+            $this->putJson($url, ['revision' => $result['schema_revision'], 'acknowledged' => true, 'definitions' => $invalid])->assertUnprocessable();
+        }
+        $this->putJson($url, ['revision' => $result['schema_revision'], 'acknowledged' => true, 'definitions' => [$definition]])->assertOk()->assertJsonPath('subcategories.0.specifications.0.locked', false);
+        $this->assertDatabaseHas('product_spec_values', ['product_id' => $product->id, 'value_text' => 'پنبه']);
+        $this->patchJson('/api/admin/products/'.$product->id, $fields + ['revision' => $row['revision']])->assertConflict();
+        $this->getJson('/api/catalog/products')->assertJsonPath('data.0.specifications.0.labels.en', 'Material')->assertJsonPath('data.0.specifications.0.value_text', 'پنبه');
+    }
+
     public function test_upload_budget_is_separate_from_admin_reads_and_remains_rate_limited(): void
     {
         $this->actingAs(User::factory()->admin()->create()); $product = Product::create($this->fields());

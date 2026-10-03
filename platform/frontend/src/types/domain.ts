@@ -30,6 +30,7 @@ export interface Product {
   availability: Availability
   image?: string
   gallery?: string[]
+  specificationValues?: Array<{key:string;locked:boolean;labels:ProductNames;value_text:string|null}>
   specs: ProductSpecGroup
 }
 

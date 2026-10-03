@@ -43,6 +43,20 @@ describe('catalog API staged merge',()=>{
     expect(merged.categories.some(category=>category.code==='2')).toBe(true)
   })
 
+  it('uses canonical specification definitions and values instead of prototype defaults, including explicit empty schema',()=>{
+    const base:CatalogSnapshot={categories:[],products:[{
+      id:1,code:'11001',names:{fa:'محصول',ar:null,en:null,ku:null},availability:'available',sort_order:0,
+      category:null,subcategory:null,specifications:[{key:'fabric',locked:true,labels:{fa:'جنس',ar:null,en:'Fabric',ku:null},value_text:'پنبه'}],
+    }],managedCategoryCodes:[],managedSubcategoryCodes:[],managedProductCodes:['11001']}
+    const merged=mergeCatalogSnapshot(base)
+    const product=merged.products.find(p=>p.code==='11001')!
+    expect(product.specs).toEqual({locked:['جنس'],negotiable:[]})
+    expect(product.specificationValues?.[0]?.value_text).toBe('پنبه')
+    expect(product.specificationValues?.[0]?.labels.en).toBe('Fabric')
+    base.products[0]!.specifications=[]
+    expect(mergeCatalogSnapshot(base).products.find(p=>p.code==='11001')?.specs).toEqual({locked:[],negotiable:[]})
+  })
+
   it('adds a new backend product with a collision-safe frontend id and existing subcategory media defaults',()=>{
     const snapshot:CatalogSnapshot={
       categories:[],

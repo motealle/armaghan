@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ProductSpecificationsPanel from './ProductSpecificationsPanel.vue'
 import BulkStatusBar from './BulkStatusBar.vue'
 import { computed, onMounted, ref } from 'vue'
 import { ChevronLeft, ChevronRight, PackagePlus, Pencil, Search, RefreshCw } from '@lucide/vue'
@@ -12,6 +13,7 @@ const locale=useLocaleStore(),admin=useAdminStore(),catalog=useCatalogStore()
 const result=ref<ProductPage>({products:[],page:1,last_page:1,total:0})
 const taxonomy=ref<AdminSubcategory[]>([])
 const query=ref(''),subcategory=ref(''),pageSize=ref(25),error=ref(''),note=ref('')
+const schemaOpen=ref(false)
 const loading=ref(false),editorOpen=ref(false),selected=ref<AdminProduct|null>(null)
 async function load(page=1){
   if(loading.value||bulkBusy.value)return
@@ -44,7 +46,8 @@ onMounted(()=>load())
   <section class="space-y-3" :aria-busy="loading">
     <div class="flex flex-wrap items-center gap-2">
       <div><h2 class="text-xl font-black text-[var(--c-text)]">{{locale.t('adminProducts')}}</h2><p class="text-xs text-[var(--c-muted)]">{{result.total}} {{locale.t('productCount')}}</p></div>
-      <button class="ms-auto inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--c-primary)] px-4 text-sm font-black text-white" :disabled="bulkBusy||loading||!taxonomy.length" @click="edit(null)"><PackagePlus :size="17"/>{{locale.t('addProduct')}}</button>
+      <button class="mini-action ms-auto" :disabled="bulkBusy||loading||!taxonomy.length" @click="schemaOpen=true">{{locale.t('adminSpecSchema')}}</button>
+      <button class=" inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--c-primary)] px-4 text-sm font-black text-white" :disabled="bulkBusy||loading||!taxonomy.length" @click="edit(null)"><PackagePlus :size="17"/>{{locale.t('addProduct')}}</button>
     </div>
     <form class="admin-surface grid gap-2 rounded-2xl p-3 lg:grid-cols-[1fr_14rem_8rem_auto]" @submit.prevent="load(1)">
       <label class="form-field">{{locale.t('productSearch')}}<span class="relative block"><Search :size="16" class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-[var(--c-muted)]"/><input v-model="query" maxlength="100" class="ps-9" :disabled="bulkBusy||loading"></span></label>
@@ -69,6 +72,7 @@ onMounted(()=>load())
       <span class="min-w-20 text-center text-xs font-bold">{{locale.t('page')}} {{result.page}} / {{result.last_page}}</span>
       <button class="pagination-button" :disabled="bulkBusy||loading||result.page>=result.last_page" :aria-label="locale.t('next')" @click="load(result.page+1)"><ChevronLeft :size="17"/></button>
     </div></div>
+    <ProductSpecificationsPanel :open="schemaOpen" :taxonomy="taxonomy" @close="schemaOpen=false" @saved="schemaOpen=false;saved()"/>
     <ProductEditorPanel live :open="editorOpen" :product-id="selected?.id??null" :server-product="selected" :taxonomy="taxonomy" @close="editorOpen=false" @saved="saved"/>
   </section>
 </template>

@@ -24,7 +24,14 @@ const availability=computed(()=>props.product?.availability==='available'?locale
         <span class="inline-flex items-center gap-1 rounded-full bg-[var(--c-surface-2)] px-2.5 py-1"><LockKeyhole :size="15"/> {{locale.t('locked')}}</span>
         <span class="inline-flex items-center gap-1 rounded-full bg-[color-mix(in_srgb,var(--c-secondary)_8%,var(--c-surface))] px-2.5 py-1 text-[var(--c-secondary)]"><SlidersHorizontal :size="15"/> {{locale.t('negotiable')}}</span>
       </div>
-      <div class="grid grid-cols-2 gap-2">
+      <div v-if="product.specificationValues" class="grid grid-cols-2 gap-2">
+        <article v-for="spec in product.specificationValues" :key="spec.key" class="spec-tile" :class="spec.locked?'locked':'negotiable'">
+          <b class="text-xs">{{spec.labels[locale.locale]||spec.labels.fa}}</b>
+          <p v-if="spec.value_text" class="mt-1 whitespace-pre-wrap break-words text-sm">{{spec.value_text}}</p>
+          <small class="mt-1 block text-[10px]">{{locale.t(spec.locked?'locked':'negotiable')}}</small>
+        </article>
+      </div>
+      <div v-else class="grid grid-cols-2 gap-2">
         <article v-for="item in product.specs.locked" :key="'l-'+item" class="spec-tile locked">
           <div class="flex items-center gap-2"><LockKeyhole :size="17"/><b class="text-xs">{{locale.specLabel(item)}}</b></div>
           <small class="mt-1 block text-[10px]">{{locale.t('locked')}}</small>

@@ -1,4 +1,12 @@
 # Armaghan — Product Backlog
+## Canonical specification management — 2026-10-03
+
+IMPLEMENTED, CI/deployment pending. Lease codex-20261003-product-specifications; baseline440dfd4. Bounded next batch: preserve custom Vue tables/forms; Product edit now uses actual subcategory specification definitions and individual values. Create/update validates at most100 distinct owned definitions, plain text1000chars; omitted values preserved, explicit empty clears only that value. Core fields + specification values save atomically, with revision including schema/values/gallery; existing specified products cannot silently change taxonomy. Activity metadata excludes values.
+
+Custom Products→Subcategory specifications adds labels in four languages, immutable machine key, fixed/negotiable type and display order. Explicit shared-category acknowledgement, checksum conflict and transaction; existing definitions/values cannot be dropped or keys reassigned. No guessed fixtures, browser-local specification writes, schema migrations or new dependencies. No mandatory-value rule inferred from locked: locked means fixed for customer negotiation, not required data entry. Public catalog exposes allowlisted labels/types/values, customer detail displays actual values, production wizard reads hydrated catalog rather than static prototype products. Missing old API field keeps rollout fallback; explicit empty canonical schema stays empty.
+
+Local frontend61 tests/type-check/build and30 source/release contracts PASS; remote backend CI/deploy pending. Backend focused cases cover cross-category/duplicate/HTML/length rejection, rollback, omission/clear, stale schema/value conflicts, create/move and shared schema retention/auth. Authenticated owner/device acceptance remains OPEN. Remaining P1: bulk deletion/reset/tags/mail; CRM account association; titled WhatsApp settings; shared device appearance; private media backup/recovery; customer invoice/receipt self-service. No live account/password/mail/private-data test mutations. Tests01–28 frozen, root29.
+
 ## Verified footer and business workflow closeout — 2026-10-03
 
 Current implementation: backend46efd38d7608544491a173edfc5c3d59c418f49e; final frontendad1bac9310e3c1f30eecb98f66aa0d254ae2e31c. Lease codex-20261003-footer-followthrough; baseline34c95b7. Supplied footer and both follow-up share screenshots inspected. No frozen01–28 mutations; active/root29 preserved.

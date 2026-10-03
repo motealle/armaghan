@@ -25,6 +25,11 @@ class PublicProductResource extends JsonResource
             ],
             'availability' => $this->availability->value,
             'sort_order' => $this->sort_order,
+            'specifications' => $subcategory?->specDefinitions->sortBy('sort_order')->values()->map(fn ($d) => [
+                'key' => $d->key, 'locked' => $d->locked,
+                'labels' => ['fa' => $d->label_fa, 'ar' => $d->label_ar, 'en' => $d->label_en, 'ku' => $d->label_ku],
+                'value_text' => $this->specValues->firstWhere('spec_definition_id', $d->id)?->value_text,
+            ])->all() ?? [],
             'media' => $this->media
                 ->where('collection_name', Product::MEDIA_COLLECTION)
                 ->sortBy(fn (Media $media): int => $media->order_column ?? PHP_INT_MAX)
