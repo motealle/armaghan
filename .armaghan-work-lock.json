@@ -1,11 +1,12 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261003-approved-hero-tags",
   "scope": "Customer approved hero image/slogan and canonical admin bulk tags",
-  "base_ref": "a0102b13c5ca27e7de6ef49250123d282de2c0c1",
+  "base_ref": "f5e1df68feb93eb32b4cee7289d4f13bed10af88",
   "acquired_at": "2026-10-03T17:51:04.276Z",
-  "expires_at": "2026-10-03T19:21:04.276Z"
+  "expires_at": "2026-10-03T18:10:19.028Z",
+  "released_at": "2026-10-03T18:10:19.028Z"
 }
