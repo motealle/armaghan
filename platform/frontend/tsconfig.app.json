@@ -4,6 +4,7 @@
   "exclude": ["src/**/*.spec.ts"],
   "compilerOptions": {
     "strict": true,
+    "ignoreDeprecations": "6.0",
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
     "paths": {"@/*": ["./src/*"]}

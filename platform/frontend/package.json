@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "type-check": "vue-tsc --noEmit",
+    "type-check": "vue-tsc -p tsconfig.app.json --noEmit",
     "test:unit": "vitest run",
     "build": "npm run generate:portraits && npm run type-check && npm run test:unit && vite build",
     "fetch:digikala": "node scripts/fetch-digikala-assets.mjs",

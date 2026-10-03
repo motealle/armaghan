@@ -12,7 +12,7 @@ const props=defineProps<{live?:boolean}>()
 const locale=useLocaleStore()
 const visual=useVisualStyleStore()
 const sync=useVisualProfileSync(visual,ref(!!props.live))
-function currentText(key:string){return props.live?(visual.textOverride(translationTarget(key),target.value)??locale.baseValue(key,target.value)):(currentText(key))}
+function currentText(key:string):string{return props.live?(visual.textOverride(translationTarget(key),target.value)??locale.baseValue(key,target.value)):locale.t(key,target.value)}
 function override(key:string,value:string){if(props.live)visual.setText(translationTarget(key),target.value,value);else locale.setOverride(target.value,key,value)}
 function clearOverride(key:string){if(props.live)visual.setText(translationTarget(key),target.value,'');else locale.resetOverride(target.value,key)}
 const target=ref<Locale>('fa')

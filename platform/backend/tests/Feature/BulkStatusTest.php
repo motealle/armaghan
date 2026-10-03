@@ -26,7 +26,7 @@ class BulkStatusTest extends TestCase
         $this->postJson('/api/admin/bulk-status/users',['items'=>$this->items('users'),'active'=>false])->assertOk()->assertJsonPath('updated',2);
         $this->assertSame(0,Customer::where('active',true)->count());
         $this->assertSame(0,User::where('role','customer')->where('active',true)->count());
-        $this->assertDatabaseCount('users',3);$this->assertDatabaseCount('customers',2);$this->assertDatabaseCount('activity_logs',2);
+        $this->assertDatabaseCount('users',3);$this->assertDatabaseCount('customers',2);$this->assertSame(2,ActivityLog::count());
     }
     public function test_stale_selection_rolls_back_every_change_and_audit(): void
     {
@@ -36,14 +36,14 @@ class BulkStatusTest extends TestCase
         // Process a valid row before the stale row to prove rollback.
         usort($items,fn($a,$b)=>$a['id']<=>$b['id']);
         $this->postJson('/api/admin/bulk-status/customers',['items'=>$items,'active'=>false])->assertConflict();
-        $this->assertSame(2,Customer::where('active',true)->count());$this->assertDatabaseCount('activity_logs',0);
+        $this->assertSame(2,Customer::where('active',true)->count());$this->assertSame(0,ActivityLog::count());
     }
     public function test_owner_self_and_other_administrators_are_protected_in_mixed_batches(): void
     {
         $owner=User::factory()->admin()->create(['email'=>'motealle@gmail.com','email_verified_at'=>now()]);$buyer=User::factory()->create();
         $this->actingAs($owner);$items=$this->items('users');usort($items,fn($a,$b)=>$b['id']<=>$a['id']);
         $this->postJson('/api/admin/bulk-status/users',['items'=>$items,'active'=>false])->assertForbidden();
-        $this->assertTrue($buyer->fresh()->active);$this->assertTrue($owner->fresh()->active);$this->assertDatabaseCount('activity_logs',0);
+        $this->assertTrue($buyer->fresh()->active);$this->assertTrue($owner->fresh()->active);$this->assertSame(0,ActivityLog::count());
         $actor=User::factory()->admin()->create();$this->actingAs($actor);
         $this->postJson('/api/admin/bulk-status/users',['items'=>$items,'active'=>false])->assertForbidden();$this->assertTrue($buyer->fresh()->active);
         $crm=Customer::create(['user_id'=>$owner->id,'active'=>true]);
@@ -68,6 +68,6 @@ class BulkStatusTest extends TestCase
         $this->postJson('/api/admin/bulk-status/users',['items'=>[$items[0],$items[0]],'active'=>false])->assertUnprocessable();
         $this->postJson('/api/admin/bulk-status/users',['items'=>[],'active'=>false])->assertUnprocessable();
         $this->postJson('/api/admin/bulk-status/users',['items'=>array_fill(0,101,$items[0]),'active'=>false])->assertUnprocessable();
-        $this->assertTrue($buyer->fresh()->active);$this->assertDatabaseCount('activity_logs',0);
+        $this->assertTrue($buyer->fresh()->active);$this->assertSame(0,ActivityLog::count());
     }
 }

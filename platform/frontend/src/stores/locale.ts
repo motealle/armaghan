@@ -63,17 +63,17 @@ export const useLocaleStore=defineStore('locale',()=>{
     if(direct!==undefined)return direct
     const category=key.match(/^category\.([^.]*)\.(name|subtitle)$/)
     if(category){
-      const [,code,field]=category
+      const code=category[1]!,field=category[2]!
       return field==='name'?(categoryTranslations[code]?.[target]??''):(categorySubtitleTranslations[code]?.[target]??'')
     }
     const subcategory=key.match(/^subcategory\.(.+)$/)
-    if(subcategory)return subcategoryTranslations[subcategory[1]]?.[target]??''
+    if(subcategory)return subcategoryTranslations[subcategory[1]!]?.[target]??''
     const product=key.match(/^product\.(.+)$/)
-    if(product)return productNameTranslations[product[1]]?.[target]??''
+    if(product)return productNameTranslations[product[1]!]?.[target]??''
     const spec=key.match(/^spec\.(.+)$/)
-    if(spec)return specTranslations[spec[1]]?.[target]??''
+    if(spec)return specTranslations[spec[1]!]?.[target]??''
     const status=key.match(/^status\.(.+)$/)
-    if(status)return orderStatusTranslations[status[1]]?.[target]??''
+    if(status)return orderStatusTranslations[status[1]!]?.[target]??''
     return baseMessages.fa[key]??key
   }
 

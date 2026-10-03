@@ -16,7 +16,7 @@ export interface VisualTargetGroup{
   targets:VisualTargetDefinition[]
 }
 
-const whyItemTargets:VisualTargetDefinition[]=Array.from({length:4},(_,offset)=>{
+const whyItemTargets:VisualTargetDefinition[]=Array.from({length:4},(_,offset):VisualTargetDefinition[]=>{
   const number=offset+1
   return[
     {id:`home.why.item.${number}`,label:`پنل دلیل ${number}`,kind:'panel'},

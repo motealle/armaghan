@@ -13,8 +13,8 @@ import { useVisualProfileSync } from './composables/useVisualProfileSync'
 const visual=useVisualStyleStore()
 const browserOpen=ref(true)
 const enabledRef=toRef(visual,'enabled')
-const {selected,candidates,choose,chooseHidden}=useVisualEditorSelection(visual.enabled)
-const {height,onResizeStart,onResizeMove,onResizeEnd}=useResizableEditorSheet(visual.enabled)
+const {selected,candidates,choose,chooseHidden}=useVisualEditorSelection(enabledRef)
+const {height,onResizeStart,onResizeMove,onResizeEnd}=useResizableEditorSheet(enabledRef)
 const sync=useVisualProfileSync(visual,enabledRef)
 const publishedStagingVersion=computed(()=>sync.publications.value[sync.channel.value]?.version)
 
