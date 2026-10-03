@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "platform/frontend/src"
+EDITOR = SRC / "features/visual-editor"
+
+store_files = [
+    SRC / "stores/appearance.ts",
+    SRC / "stores/design.ts",
+    SRC / "stores/locale.ts",
+    SRC / "stores/session.ts",
+    SRC / "stores/catalog.ts",
+    SRC / "stores/customers.ts",
+    SRC / "stores/favorites.ts",
+    SRC / "stores/theme.ts",
+]
+for path in store_files:
+    text = path.read_text(encoding="utf-8")
+    assert "armaghan:test28:" not in text, path
+    assert "armaghan:test29:" in text, path
+
+tokens = (EDITOR / "tokenRegistry.ts").read_text(encoding="utf-8")
+for color in ("#21946A", "#0714C2", "#C8E3DB", "#FFFFFF", "#FFB514"):
+    assert color in tokens
+
+contrast = (EDITOR / "contrast.ts").read_text(encoding="utf-8")
+assert "NORMAL_TEXT_MIN_CONTRAST=4.5" in contrast
+assert "tokenContrastRatio" in contrast
+assert "passesNormalTextContrast" in contrast
+assert (EDITOR / "contrast.spec.ts").exists()
+
+selection = (EDITOR / "selection.ts").read_text(encoding="utf-8")
+selection_composable = (EDITOR / "composables/useVisualEditorSelection.ts").read_text(encoding="utf-8")
+sheet_composable = (EDITOR / "composables/useResizableEditorSheet.ts").read_text(encoding="utf-8")
+assert "document.elementsFromPoint" in selection
+assert "data-visual-editor-ui" in selection
+assert "result.length>=8" in selection
+assert "addListeners" in selection_composable and "removeListeners" in selection_composable
+assert "watch(enabled" in selection_composable
+assert "setPointerCapture" in sheet_composable
+assert "visual-editor-active" in sheet_composable
+
+editor = (EDITOR / "VisualEditor.vue").read_text(encoding="utf-8")
+chooser = (EDITOR / "VisualEditorTargetChooser.vue").read_text(encoding="utf-8")
+inspector = (EDITOR / "VisualEditorInspector.vue").read_text(encoding="utf-8")
+quick_launcher = (EDITOR / "VisualEditorQuickLauncher.vue").read_text(encoding="utf-8")
+target_browser = (EDITOR / "VisualEditorTargetBrowser.vue").read_text(encoding="utf-8")
+target_registry = (EDITOR / "targetRegistry.ts").read_text(encoding="utf-8")
+style_api = (EDITOR / "services/styleProfileApi.ts").read_text(encoding="utf-8")
+sync_composable = (EDITOR / "composables/useVisualProfileSync.ts").read_text(encoding="utf-8")
+public_baseline = (EDITOR / "composables/usePublicVisualProfileBaseline.ts").read_text(encoding="utf-8")
+sync_panel = (EDITOR / "VisualEditorSyncPanel.vue").read_text(encoding="utf-8")
+assert "visual-editor-sheet" in editor
+assert "useVisualEditorSelection" in editor
+assert "useResizableEditorSheet" in editor
+assert "VisualEditorTargetChooser" in editor
+assert "VisualEditorInspector" in editor
+assert "VisualEditorTargetBrowser" in editor
+assert "VisualEditorSyncPanel" in editor
+assert "useVisualProfileSync" in editor
+assert "browserOpen=ref(true)" in editor
+assert "visual-editor-autosave" in editor
+assert "sync.statusLabel.value" in editor
+assert "visual.setEnabled(false)" in editor
+assert "چند عنصر نزدیک" in chooser
+assert "عناصر مخفی‌شده" in chooser
+assert "wouldFailContrast" in inspector
+assert "4.5:1" in inspector
+assert "visualTargetDefinition" in inspector
+assert "canHide" in inspector
+assert "ویرایش ظاهر" in quick_launcher
+assert "visual.setEnabled(true)" in quick_launcher
+assert "router.push('/')" in quick_launcher
+assert "انتخاب منظم عناصر" in target_browser
+assert "credentials:'same-origin'" in style_api
+assert "X-XSRF-TOKEN" in style_api
+assert "X-CSRF-TOKEN" in style_api
+assert "(rawBase||'/backend')" in style_api
+assert "'/api/csrf-token'" in style_api
+assert "expected_checksum" in style_api
+assert "saveAdminStyleProfileDraft" in sync_composable
+assert "state.value='conflict'" in sync_composable
+assert "window.setTimeout(()=>{void saveNow()},900)" in sync_composable
+assert "بارگذاری نسخه سرور" in sync_panel
+assert "انتشار روی دامنه اصلی" in sync_panel
+assert "انتشار در نسخه آزمایشی" in sync_panel
+assert "ذخیره فایل JSON" in sync_panel
+assert "بارگذاری JSON" in sync_panel
+assert "?'production':'staging'" in public_baseline
+assert "armaghan:test29:visual-style-public-baseline:v1" in public_baseline
+assert "toggleVisibility" in target_browser
+assert "orphanHiddenTargets" in target_browser
+assert "target.hideable!==false" in target_browser
+for target_id in ("home.page","home.content","header.shell","hero.title","home.about.title","home.why.title","home.product-banners.title","products.page","product.card","footer.shell"):
+    assert target_id in target_registry
+assert "home.why.item.${number}.title" in target_registry
+assert "home.capability.${id}.title" in target_registry
+
+profile = (EDITOR / "store.ts").read_text(encoding="utf-8")
+assert "armaghan:test29:visual-style-profile:v1" in profile
+assert "armaghan:test29:visual-editor-enabled" in profile
+assert "css:compileCss(value)" in profile
+assert "texts:Record" in profile
+assert "isBrandTokenId" in profile
+
+app = (SRC / "App.vue").read_text(encoding="utf-8")
+assert '(admin.identity||session.isAdmin)&&!session.impersonatedCustomerId' in app
+assert "<VisualStyleRuntime/>" in app
+assert "<VisualEditorQuickLauncher/>" in app
+assert 'data-style-id="home.page"' in app or "route.path===\'/\'?\'home.page\'" in app
+
+appearance = (SRC / "features/admin/components/AppearanceSettings.vue").read_text(encoding="utf-8")
+assert "openVisualEditor" in appearance
+assert "visual.setEnabled(true)" in appearance
+
+header = (SRC / "components/layout/AppHeader.vue").read_text(encoding="utf-8")
+footer = (SRC / "components/layout/SiteFooter.vue").read_text(encoding="utf-8")
+hero = (SRC / "features/home/components/HeroSection.vue").read_text(encoding="utf-8")
+product = (SRC / "features/catalog/components/ProductCard.vue").read_text(encoding="utf-8")
+about = (SRC / "features/home/components/AboutArmaghanSection.vue").read_text(encoding="utf-8")
+why = (SRC / "features/home/components/WhyArmaghanSection.vue").read_text(encoding="utf-8")
+capabilities = (SRC / "features/home/components/CapabilitiesSection.vue").read_text(encoding="utf-8")
+banners = (SRC / "features/home/components/ProductCategoryBanners.vue").read_text(encoding="utf-8")
+home_view = (SRC / "views/HomeView.vue").read_text(encoding="utf-8")
+products_view = (SRC / "views/ProductsView.vue").read_text(encoding="utf-8")
+appearance_store = (SRC / "stores/appearance.ts").read_text(encoding="utf-8")
+css = (SRC / "styles/main.css").read_text(encoding="utf-8")
+runtime = (EDITOR / "VisualStyleRuntime.vue").read_text(encoding="utf-8")
+launcher = (ROOT / "t/index.htm").read_text(encoding="utf-8")
+
+assert 'data-style-id="header.shell"' in header
+assert "var(--role-brand-chrome)" in header
+assert 'data-style-id="footer.shell"' in footer
+assert 'footer.brand-name' not in footer and 'footer.description' not in footer
+assert 'data-style-id="hero.title"' in hero and 'data-editable-text="true"' in hero
+assert 'data-style-id="product.card"' in product and 'data-style-id="product.title"' in product
+assert "customerProductLabel" in product and "unavailableOrProducible" in product
+assert 'data-style-id="home.about.title"' in about and 'data-editable-text="true"' in about
+assert 'data-style-id="home.why.title"' in why and 'data-style-id="home.why.list"' in why
+assert 'data-style-id="home.capabilities.title"' in capabilities
+assert 'home.capability.${item.id}' in capabilities
+assert 'data-style-id="home.product-banners.title"' in banners
+assert 'home.product-banner.${category.code}' in banners
+assert 'data-style-id="home.content"' in home_view
+assert 'data-style-id="products.page"' in products_view
+assert "policy.showSubcategoryCodes" in products_view
+assert "APPEARANCE_SCHEMA_VERSION=\'6\'" in appearance_store
+assert "showSubcategoryCodes:false" in appearance_store
+assert "--role-brand-chrome:var(--brand-blue)" in css
+assert "--brand-blue:#0714C2" in css
+assert "--role-page-background:var(--brand-white)" in css
+assert "--role-panel-background:var(--brand-mint)" in css
+assert "--role-products-page-background:var(--brand-white)" in css
+assert "--role-product-card-background:var(--brand-mint)" in css
+assert "--role-heading-strong:color-mix(in srgb,var(--brand-green) 65%,var(--c-text))" in css
+assert ".test26-why-list{border-block:3px solid var(--brand-blue)}" in css
+assert ".test26-why-number{border:1.85px solid" in css and "color:var(--c-secondary);font:1000 .72rem/1 Inter,Roboto,sans-serif" in css
+assert ".product-code-row code{border:1px solid" in css and "background:var(--brand-blue)" in css and "color:var(--brand-white)" in css
+assert '[data-style-id="home.page"]' in css
+assert "background:var(--role-panel-background)" in css
+assert "background:var(--role-brand-chrome)" in css
+assert "html.visual-editor-active .bottom-nav{display:none!important}" in css
+assert "usePublicVisualProfileBaseline" in runtime
+assert (SRC / "features/catalog/presentation.spec.ts").exists()
+assert ".visual-editor-sync-panel{" in css
+assert './29/index.html' in launcher
+assert launcher.index("./29/index.html") < launcher.index("./28/index.html")
+
+immutable = {
+    line.strip()
+    for line in (ROOT / "docs/IMMUTABLE-TESTS.txt").read_text(encoding="utf-8").splitlines()
+    if line.strip() and not line.lstrip().startswith("#")
+}
+assert "28" in immutable
+
+print("Test 29 visual editor foundation contract: PASS")
+
+# Live Test28 acceptance found normal-size titles below WCAG AA in dark mode.
+# Resolve the actual semantic default and measure it against both dark surfaces.
+import re
+
+def relative_luminance(hex_color):
+    channels = [int(hex_color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    linear = [v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in channels]
+    return sum(v * weight for v, weight in zip(linear, (0.2126, 0.7152, 0.0722)))
+
+def contrast_ratio(foreground, background):
+    light, dark = sorted((relative_luminance(foreground), relative_luminance(background)), reverse=True)
+    return (light + 0.05) / (dark + 0.05)
+
+dark_defaults = {}
+for block in re.findall(r"(?:^|\n)\.dark\s*\{([^}]*)\}", css):
+    dark_defaults.update(re.findall(r"(--[\w-]+)\s*:\s*([^;]+);", block))
+palette = dict(re.findall(r"(--brand-[\w-]+)\s*:\s*(#[0-9a-fA-F]{6});", css))
+heading_role = dark_defaults["--role-heading-strong"].strip()
+heading_token = re.fullmatch(r"var\((--brand-[\w-]+)\)", heading_role)
+assert heading_token, "Dark heading default must resolve to an approved brand token"
+heading_color = palette[heading_token.group(1)]
+for surface in ("--c-bg", "--c-surface", "--c-surface-2"):
+    ratio = contrast_ratio(heading_color, dark_defaults[surface].strip())
+    assert ratio >= 4.5, f"Dark normal-size heading contrast on {surface}: {ratio:.3f} < 4.5"
+print("Test 29 dark heading contrast: PASS")
