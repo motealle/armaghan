@@ -1,11 +1,12 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261003-hero-fit-customer-account",
   "scope": "Urgent hero and badges/category numbers; create login for existing offline customer",
-  "base_ref": "6d67ffca26a70a55e3834942ef1908c7b8b4d83b",
+  "base_ref": "43c9e46b8cb021e3872176dd91e537172e7a754e",
   "acquired_at": "2026-10-03T19:22:04.262Z",
-  "expires_at": "2026-10-03T20:52:04.262Z"
+  "expires_at": "2026-10-03T19:45:45.328Z",
+  "released_at": "2026-10-03T19:45:45.328Z"
 }
