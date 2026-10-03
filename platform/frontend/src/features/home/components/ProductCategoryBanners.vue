@@ -11,7 +11,7 @@ const visual=useVisualStyleStore()
 </script>
 
 <template>
-  <section data-style-id="home.product-banners" data-style-label="بخش بنرهای محصول" class="home-section test26-product-banners">
+  <section id="product-categories" data-style-id="home.product-banners" data-style-label="بخش بنرهای محصول" class="home-section test26-product-banners">
     <div data-style-id="home.product-banners.heading" data-style-label="سربرگ بنرهای محصول" class="test26-section-heading">
       <span data-style-id="home.product-banners.eyebrow" data-style-label="بالانویس بنرهای محصول" data-editable-text="true">{{visual.resolveText('home.product-banners.eyebrow',locale.locale,locale.t('productBannersEyebrow'))}}</span>
       <h2 data-style-id="home.product-banners.title" data-style-label="عنوان بنرهای محصول" data-editable-text="true">{{visual.resolveText('home.product-banners.title',locale.locale,locale.t('productBannersTitle'))}}</h2>

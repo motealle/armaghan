@@ -5,7 +5,7 @@ import { buildProductMessage, buildProductionMessage, whatsappUrl } from './what
 describe('WhatsApp builder',()=>{
   it('builds a product message with code and path',()=>{
     const message=buildProductMessage(products[0]!, 'available')
-    expect(message).toContain('خرید موجود')
+    expect(message).toContain('درخواست تغییر')
     expect(message).toContain(products[0]!.code)
     expect(message).toContain(products[0]!.subcategoryName)
   })
@@ -21,7 +21,7 @@ describe('WhatsApp builder',()=>{
       path:'brand',category:'نوزادی',subcategory:'11 · لباس نوزادی',
       negotiable:['سایز'],locked:['جنس'],note:'نمونه',
     })
-    expect(message).toContain('سفارش تولید با برند')
+    expect(message).toContain('تولید با برند اختصاصی')
     expect(message).toContain('قابل مذاکره: سایز')
     expect(message).toContain('ثابت: جنس')
   })

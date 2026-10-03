@@ -82,6 +82,9 @@ Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleCustomerAuthCon
 
 
 Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group(function (): void {
+    Route::get('/orders', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'index']);
+    Route::post('/orders', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'store']);
+    Route::patch('/orders/{order}', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'update']);
     Route::post('/bulk-status/{resource}', [\App\Http\Controllers\Admin\BulkStatusController::class, 'update'])->whereIn('resource', ['products', 'customers', 'users']);
     Route::post('/advanced-access', [\App\Http\Controllers\Admin\AdvancedAccessController::class, 'store']);
     Route::delete('/advanced-access', [\App\Http\Controllers\Admin\AdvancedAccessController::class, 'destroy']);
@@ -99,4 +102,9 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
     Route::get('/customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index']);
     Route::post('/customers', [\App\Http\Controllers\Admin\CustomerController::class, 'store']);
     Route::patch('/customers/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'update']);
+});
+
+Route::prefix('api/customer/orders')->middleware(['customer.session', 'throttle:30,1'])->group(function (): void {
+    Route::get('/', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'store']);
 });

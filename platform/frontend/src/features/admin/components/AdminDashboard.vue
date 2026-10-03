@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import OrderTrackingPanel from '@/features/orders/components/OrderTrackingPanel.vue'
 import { computed, ref } from 'vue'
 import {
   BellRing, Boxes, Check, FilePenLine, Languages, LayoutDashboard, MessageCircleMore, MonitorCog, MoreVertical,
@@ -23,7 +24,7 @@ import BackendUsersPanel from './BackendUsersPanel.vue'
 import BackendCustomersPanel from './BackendCustomersPanel.vue'
 const props=defineProps<{live?:boolean}>()
 
-type AdminTab='users'|'overview'|'customers'|'products'|'content'|'appearance'|'languages'
+type AdminTab='orders'|'users'|'overview'|'customers'|'products'|'content'|'appearance'|'languages'
 const catalog=useCatalogStore()
 const customers=useCustomersStore()
 const session=useSessionStore()
@@ -48,6 +49,7 @@ const customerFormError=ref('')
 const tabs=computed(()=>[
   ...(props.live?[{id:'users' as const,label:locale.t('adminAccounts'),icon:UserRoundCog}]:[]),
   {id:'overview' as const,label:locale.t('adminOverview'),icon:LayoutDashboard},
+  ...(props.live?[{id:'orders' as const,label:locale.locale==='fa'?'سفارش‌ها و پیگیری':locale.locale==='ar'?'الطلبات والمتابعة':locale.locale==='ku'?'داواکاری و بەدواداچوون':'Orders & tracking',icon:LayoutDashboard}]:[]),
   {id:'customers' as const,label:locale.t('adminCustomers'),icon:UsersRound},
   {id:'products' as const,label:locale.t('adminProducts'),icon:Boxes},
   {id:'content' as const,label:locale.t('brandIntro'),icon:FilePenLine},
@@ -102,7 +104,7 @@ function inviteLead(id:string){
     <AdvancedAccessPanel v-if="live"/>
     <nav class="admin-surface rounded-2xl p-2" :aria-label="locale.t('adminOverview')">
       <div class="admin-tabs">
-        <button v-for="tab in tabs" :key="tab.id" :disabled="live&&!['customers','products','users','appearance','content','languages'].includes(tab.id)" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
+        <button v-for="tab in tabs" :key="tab.id" :disabled="live&&!['orders','customers','products','users','appearance','content','languages'].includes(tab.id)" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
           <component :is="tab.icon" :size="16" class="me-1 inline"/>{{tab.label}}
         </button>
       </div>
@@ -110,7 +112,8 @@ function inviteLead(id:string){
 
 
     <template v-if="live">
-      <BackendUsersPanel v-if="activeTab==='users'"/>
+      <OrderTrackingPanel v-if="activeTab==='orders'" admin/>
+      <BackendUsersPanel v-else-if="activeTab==='users'"/>
       <BackendCustomersPanel v-else-if="activeTab==='customers'"/>
       <AdminProductsPanel v-else-if="activeTab==='products'" live/>
       <HomeContentEditor v-else-if="activeTab==='content'" live/>

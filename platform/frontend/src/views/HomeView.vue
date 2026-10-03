@@ -12,11 +12,13 @@ import { useLocaleStore } from '@/stores/locale'
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
 const {policy}=useResolvedAppearance()
+function scrollProducts(){document.getElementById('product-categories')?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}
 </script>
 
 <template>
-  <div data-style-id="home.content" data-style-label="محتوای صفحه خانه" class="home-page space-y-10 lg:space-y-16">
+  <div data-style-id="home.content" data-style-label="محتوای صفحه خانه" class="home-page space-y-5 lg:space-y-8">
     <HeroSection/>
+    <button v-if="policy.showProductBanners" type="button" class="catalog-jump w-full" @click="scrollProducts">{{locale.t('productsTitle')}} <span aria-hidden="true">↓</span></button>
 
     <AboutArmaghanSection v-if="policy.showAbout"/>
     <WhyArmaghanSection v-if="policy.showWhy"/>

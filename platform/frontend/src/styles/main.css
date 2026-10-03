@@ -907,3 +907,38 @@ html.dark{--product-status-gold:var(--brand-gold)}
 .product-card .product-card-title.unavailable{height:1.55rem;line-height:1.55rem;padding:0;font-size:.78rem;font-weight:900;color:var(--brand-gold);-webkit-text-stroke:1px var(--c-text);paint-order:stroke fill;text-shadow:none}
 html[data-locale="en"] .product-card .product-card-title.unavailable{font-weight:600}
 html.dark .product-card .product-card-title.unavailable{-webkit-text-stroke:0}
+
+/* Customer compact storefront: preserve all sections and full-width category links. */
+.catalog-jump{display:flex;align-items:center;justify-content:center;gap:.6rem;min-height:2.75rem;border:1px solid var(--c-secondary);border-radius:.85rem;color:var(--c-secondary);font-weight:900}
+#product-categories{scroll-margin-top:6rem}
+.test26-capability-body{display:grid;grid-template-columns:2.2rem minmax(0,1fr);column-gap:.6rem;padding:.7rem .85rem}
+.test26-capability-icon{width:2.2rem;height:2.2rem;grid-column:1;grid-row:1}
+.test26-capability-body h3{grid-column:2;grid-row:1;align-self:center;margin:0;font-size:.88rem;line-height:1.5}
+.test26-capability-body p,.test26-capability-body .test26-text-link{grid-column:1/-1}
+.test26-capability-body .test26-text-link{margin-top:.2rem;min-height:2.75rem}
+.site-footer.test26-site-footer{gap:.5rem;margin-top:1.7rem;padding:1rem;min-height:0;grid-auto-rows:min-content}
+.site-footer.test26-site-footer .test26-footer-grid{gap:.75rem}
+.site-footer.test26-site-footer .test26-footer-brand{height:6.9rem;margin:0}
+.product-card .product-card-title.unavailable{-webkit-text-stroke:0;paint-order:normal;text-shadow:0 .5px .8px rgba(0,0,0,.7),0 0 .5px rgba(0,0,0,.6)}
+html.dark .product-card .product-card-title.unavailable{text-shadow:none}
+@media(max-width:767.98px){
+ .test26-single-hero-media .smart-image{min-height:0;height:clamp(10rem,26svh,14rem);aspect-ratio:auto}
+ .test26-single-hero-copy{padding:.7rem .9rem}
+ .test26-single-hero-copy h1{font-size:clamp(1.05rem,4.4vw,1.4rem);line-height:1.5}
+ .test26-about-layout{gap:.55rem}
+ .test26-about-copy{padding:.7rem .85rem}
+ .test26-about-copy p{font-size:.8rem;line-height:1.8}
+ .test26-about-media .smart-image{height:8.5rem;min-height:0;aspect-ratio:auto}
+ .test26-section-heading{margin-bottom:.65rem}
+ .test26-section-heading h2{font-size:1.15rem}
+ .test26-section-heading p{font-size:.78rem;line-height:1.7}
+ .test26-why-list li{padding:.7rem;gap:.6rem}
+ .test26-why-list h3{font-size:.86rem}
+ .test26-why-list p{font-size:.75rem;line-height:1.7}
+ .test26-capability-media .smart-image{height:7.5rem;min-height:0;aspect-ratio:auto}
+ .test26-capability-body p{font-size:.73rem;line-height:1.7}
+ .test26-product-banner{min-height:12rem;border:2px solid var(--c-secondary);box-shadow:0 6px 18px rgba(0,0,0,.12)}
+ .test26-product-banner-copy b{font-size:1.35rem}
+ .site-footer.test26-site-footer{padding:.85rem 1rem calc(var(--bottom-nav-space) + .35rem)}
+ .test26-footer-grid section{gap:.25rem}
+}

@@ -5,10 +5,10 @@ export const SELLER_WHATSAPP='989933509793'
 export const PREVIOUS_SELLER_WHATSAPP='989381009231'
 
 const titles:Record<Locale,Record<RequestPath,string>>={
- fa:{simple:'خرید ساده',available:'خرید موجود',unavailable:'درخواست تولید',custom:'تولید سفارشی',brand:'سفارش تولید با برند',packaging:'سفارش تولید با بسته‌بندی'},
- ar:{simple:'شراء بسيط',available:'شراء المتوفر',unavailable:'طلب غير المتوفر',custom:'إنتاج مخصص',brand:'إنتاج بعلامتك التجارية',packaging:'إنتاج بتغليف مخصص'},
- en:{simple:'Simple purchase',available:'Buy available product',unavailable:'Request unavailable product',custom:'Custom production',brand:'Production with buyer brand',packaging:'Production with custom packaging'},
- ku:{simple:'کڕینی سادە',available:'کڕینی بەردەست',unavailable:'داواکاری نابەردەست',custom:'بەرهەمهێنانی تایبەت',brand:'بەرهەمهێنان بە براند',packaging:'بەرهەمهێنان بە پاکەت'},
+ fa:{simple:'خرید',available:'درخواست تغییر',unavailable:'درخواست تولید',custom:'تولید سفارشی',brand:'تولید با برند اختصاصی',packaging:'تولید با بسته‌بندی اختصاصی'},
+ ar:{simple:'شراء',available:'طلب تعديل',unavailable:'طلب غير المتوفر',custom:'إنتاج مخصص',brand:'إنتاج بعلامتك التجارية',packaging:'إنتاج بتغليف مخصص'},
+ en:{simple:'Purchase',available:'Request changes',unavailable:'Request unavailable product',custom:'Custom production',brand:'Production with buyer brand',packaging:'Production with custom packaging'},
+ ku:{simple:'کڕین',available:'داواکاری گۆڕانکاری',unavailable:'داواکاری نابەردەست',custom:'بەرهەمهێنانی تایبەت',brand:'بەرهەمهێنان بە براند',packaging:'بەرهەمهێنان بە پاکەت'},
 }
 const labels={
  fa:{product:'محصول',code:'کد محصول',category:'دسته',status:'وضعیت',available:'موجود',unavailable:'ناموجود',made:'تولید سفارشی',main:'دسته اصلی',sub:'زیردسته',neg:'قابل مذاکره',locked:'ثابت',note:'توضیح'},

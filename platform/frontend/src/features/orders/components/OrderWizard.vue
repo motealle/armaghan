@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import {createTrackedOrder} from '@/features/orders/services/trackingApi'
+import {useSessionStore} from '@/stores/session'
+
+import { computed,ref,watch } from 'vue'
 import { ArrowLeft, ArrowRight, Box, RotateCcw, Tag, WandSparkles } from '@lucide/vue'
 import { categories } from '@/data/catalog'
 import { requestPathTitle } from '@/services/whatsapp'
@@ -9,15 +12,23 @@ import { useLocaleStore } from '@/stores/locale'
 
 const wizard=useOrderWizardStore()
 const locale=useLocaleStore()
+const session=useSessionStore(),trackingBusy=ref(false),trackingReference=ref(''),trackingError=ref('')
 const paths=computed(()=>[
   {id:'custom' as const,label:locale.t('customProduction'),desc:locale.t('customProductionDesc'),icon:WandSparkles},
   {id:'brand' as const,label:locale.t('privateLabel'),desc:locale.t('privateLabelDesc'),icon:Tag},
   {id:'packaging' as const,label:locale.t('customPackaging'),desc:locale.t('customPackagingDesc'),icon:Box},
 ])
 const title=computed(()=>wizard.path?requestPathTitle(wizard.path,locale.locale):locale.t('productionTitle'))
+watch(()=>wizard.preview,()=>{trackingReference.value='';trackingError.value=''})
 const lockedSpecs=computed(()=>wizard.specSource?.specs.locked.map(locale.specLabel)??[])
 const negotiableSpecs=computed(()=>wizard.specSource?.specs.negotiable.map(locale.specLabel)??[])
 const BackIcon=computed(()=>locale.direction==='ltr'?ArrowLeft:ArrowRight)
+async function registerTracking(){
+ if(!session.backendAuthenticated||trackingBusy.value||trackingReference.value||!wizard.path)return
+ trackingBusy.value=true;trackingError.value=''
+ try{trackingReference.value=(await createTrackedOrder({request_path:wizard.path,description:wizard.preview.slice(0,4000)})).order.reference}
+ catch{trackingError.value=locale.t('adminRequestFailed')}finally{trackingBusy.value=false}
+}
 </script>
 
 <template>
@@ -89,6 +100,7 @@ const BackIcon=computed(()=>locale.direction==='ltr'?ArrowLeft:ArrowRight)
         <pre class="whitespace-pre-wrap font-sans text-xs leading-6 text-[var(--c-text)]">{{wizard.preview}}</pre>
       </div>
 
+      <div v-if="session.backendAuthenticated" class="space-y-2"><button type="button" class="mini-action w-full justify-center" :disabled="trackingBusy||!!trackingReference||!wizard.preview" @click="registerTracking">{{locale.locale==='fa'?'ثبت درخواست برای پیگیری':locale.locale==='ar'?'تسجيل الطلب للمتابعة':locale.locale==='ku'?'تۆمارکردن بۆ بەدواداچوون':'Register request for tracking'}}</button><RouterLink v-if="trackingReference" to="/tracking" class="block text-center font-bold text-[var(--c-secondary)]">{{trackingReference}} · {{locale.t('tracking')}}</RouterLink><p v-if="trackingError" role="alert" class="auth-error">{{trackingError}}</p></div>
       <a :href="wizard.whatsapp" target="_blank" rel="noopener" class="wa-primary flex min-h-14 items-center justify-center gap-2 rounded-xl px-4 text-sm font-extrabold">
         <WhatsAppIcon :size="28" tone="white"/> {{locale.t('continueWhatsApp')}}
       </a>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import OrderTrackingPanel from '@/features/orders/components/OrderTrackingPanel.vue'
 import { computed, reactive, watch } from 'vue'
 import { Camera, Check, Clock3, Heart, RotateCcw, Save, UserRound } from '@lucide/vue'
 import { compressImage } from '@/features/admin/services/imageCompression'
@@ -39,6 +40,7 @@ async function saveProfile(){
 </script>
 <template>
   <div class="space-y-4">
+    <OrderTrackingPanel v-if="session.backendAuthenticated&&!session.impersonatedCustomerId"/>
     <section v-if="customer" class="admin-surface rounded-2xl p-4">
       <div class="customer-profile-head">
         <div class="profile-photo"><img v-if="customer.profileImage" :src="customer.profileImage" alt=""><span v-else>{{customer.flag}}</span></div>
