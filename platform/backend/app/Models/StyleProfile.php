@@ -18,8 +18,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'created_by',
     'updated_by',
 ])]
-class StyleProfile extends Model
+class StyleProfile extends Model implements \Spatie\MediaLibrary\HasMedia
 {
+    use \Spatie\MediaLibrary\InteractsWithMedia;
+    public const MEDIA_COLLECTION = 'home-media';
+    protected static function booting(): void {
+        \Spatie\MediaLibrary\Support\PathGenerator\PathGeneratorFactory::setCustomPathGenerators(static::class, \App\Media\HomePathGenerator::class);
+    }
+    public function registerMediaCollections(): void {
+        $this->addMediaCollection(self::MEDIA_COLLECTION)->useDisk('public')->acceptsMimeTypes(['image/jpeg','image/png','image/webp']);
+    }
     public function versions(): HasMany
     {
         return $this->hasMany(StyleProfileVersion::class);

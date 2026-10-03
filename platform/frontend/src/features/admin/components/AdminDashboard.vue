@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HomeMediaPanel from '@/features/home-media/HomeMediaPanel.vue'
 import OrderTrackingPanel from '@/features/orders/components/OrderTrackingPanel.vue'
 import { computed, ref } from 'vue'
 import {
@@ -52,7 +53,7 @@ const tabs=computed(()=>[
   ...(props.live?[{id:'orders' as const,label:locale.locale==='fa'?'سفارش‌ها و پیگیری':locale.locale==='ar'?'الطلبات والمتابعة':locale.locale==='ku'?'داواکاری و بەدواداچوون':'Orders & tracking',icon:LayoutDashboard}]:[]),
   {id:'customers' as const,label:locale.t('adminCustomers'),icon:UsersRound},
   {id:'products' as const,label:locale.t('adminProducts'),icon:Boxes},
-  {id:'content' as const,label:locale.t('brandIntro'),icon:FilePenLine},
+  {id:'content' as const,label:locale.locale==='fa'?'محتوا و تصاویر':locale.locale==='ar'?'المحتوى والصور':locale.locale==='ku'?'ناوەڕۆک و وێنەکان':'Content & images',icon:FilePenLine},
   {id:'appearance' as const,label:locale.t('adminAppearance'),icon:MonitorCog},
   {id:'languages' as const,label:locale.t('adminLanguages'),icon:Languages},
 ])
@@ -116,7 +117,7 @@ function inviteLead(id:string){
       <BackendUsersPanel v-else-if="activeTab==='users'"/>
       <BackendCustomersPanel v-else-if="activeTab==='customers'"/>
       <AdminProductsPanel v-else-if="activeTab==='products'" live/>
-      <HomeContentEditor v-else-if="activeTab==='content'" live/>
+      <section v-else-if="activeTab==='content'" class="space-y-4"><div class="admin-surface rounded-2xl p-4"><p>{{locale.t('sharedVisualEditorHelp')}}</p><button class="mini-action mt-2" @click="editSite">{{locale.t('openVisualEditor')}}</button></div><HomeContentEditor live/><HomeMediaPanel/></section>
       <TranslationManager v-else-if="activeTab==='languages'" live/>
       <section v-else-if="activeTab==='appearance'" class="admin-surface rounded-2xl p-5"><p>{{locale.t('sharedVisualEditorHelp')}}</p><button class="mini-action mt-3" @click="editSite">{{locale.t('openVisualEditor')}}</button></section>
     </template>

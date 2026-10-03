@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {useHomeMediaStore} from '@/features/home-media/store'
+const homeMedia=useHomeMediaStore();homeMedia.ensure()
 import { computed, ref } from 'vue'
 import { ArrowUpLeft, Factory, FileBadge2, PackageCheck } from '@lucide/vue'
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
@@ -27,7 +29,7 @@ const selected=computed(()=>capabilities.find(item=>item.id===selectedId.value)?
     <div data-style-id="home.capabilities.grid" data-style-label="شبکه توانمندی‌ها" class="test26-capability-grid">
       <article v-for="item in capabilities" :key="item.id" :data-style-id="`home.capability.${item.id}`" :data-style-label="`کارت ${locale.t(item.titleKey)}`" class="test26-capability-card">
         <div class="test26-capability-media">
-          <SmartImage :src="item.image" :fallback-src="item.fallback" :alt="locale.t(item.titleKey)" :label="locale.t(item.titleKey)" aspect="hero"/>
+          <SmartImage :src="homeMedia.resolve('capability.'+item.id,item.image)" :fallback-src="item.fallback" :alt="locale.t(item.titleKey)" :label="locale.t(item.titleKey)" aspect="hero"/>
         </div>
         <div :data-style-id="`home.capability.${item.id}.body`" :data-style-label="`پنل متن ${locale.t(item.titleKey)}`" class="test26-capability-body">
           <div class="test26-capability-icon"><component :is="icons[item.id]" :size="22"/></div>
@@ -50,7 +52,7 @@ const selected=computed(()=>capabilities.find(item=>item.id===selectedId.value)?
 
     <AdaptivePanel :open="Boolean(selected)" :title="selected?locale.t(selected.titleKey):''" wide @close="selectedId=null">
       <div v-if="selected" class="test26-capability-detail">
-        <SmartImage :src="selected.image" :fallback-src="selected.fallback" :alt="locale.t(selected.titleKey)" :label="locale.t(selected.titleKey)" aspect="hero"/>
+        <SmartImage :src="homeMedia.resolve('capability.'+selected.id,selected.image)" :fallback-src="selected.fallback" :alt="locale.t(selected.titleKey)" :label="locale.t(selected.titleKey)" aspect="hero"/>
         <p>{{locale.t(selected.summaryKey)}}</p>
         <ul>
           <li v-for="key in selected.detailKeys" :key="key">{{locale.t(key)}}</li>

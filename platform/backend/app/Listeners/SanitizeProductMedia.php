@@ -13,7 +13,7 @@ class SanitizeProductMedia
     {
         $media = $event->media;
 
-        if (! $media->model instanceof Product || $media->collection_name !== Product::MEDIA_COLLECTION) {
+        if (! (($media->model instanceof Product && $media->collection_name === Product::MEDIA_COLLECTION) || ($media->model instanceof \App\Models\StyleProfile && $media->collection_name === \App\Models\StyleProfile::MEDIA_COLLECTION))) {
             return;
         }
 

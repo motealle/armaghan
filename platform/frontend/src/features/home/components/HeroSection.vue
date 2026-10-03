@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {useHomeMediaStore} from '@/features/home-media/store'
+const homeMedia=useHomeMediaStore();homeMedia.ensure()
 import SmartImage from '@/components/media/SmartImage.vue'
 import HeroCarousel from '@/features/home/components/HeroCarousel.vue'
 import { test26Media } from '@/data/home26'
@@ -16,7 +18,7 @@ const {policy}=useResolvedAppearance()
   <section v-else data-style-id="hero.shell" data-style-label="قاب هیرو" class="test26-single-hero overflow-hidden rounded-[1.5rem] shadow-xl">
     <div data-style-id="hero.media" data-style-label="تصویر هیرو" class="test26-single-hero-media">
       <SmartImage
-        :src="test26Media.hero.image"
+        :src="homeMedia.resolve('hero',test26Media.hero.image)"
         :fallback-src="test26Media.hero.fallback"
         :alt="locale.t('heroSingleAlt')"
         :label="locale.t('heroSingleAlt')"

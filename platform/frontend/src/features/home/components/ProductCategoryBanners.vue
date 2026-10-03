@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {useHomeMediaStore} from '@/features/home-media/store'
+const homeMedia=useHomeMediaStore();homeMedia.ensure()
 import { ArrowUpLeft } from '@lucide/vue'
 import SmartImage from '@/components/media/SmartImage.vue'
 import { categories } from '@/data/catalog'
@@ -27,7 +29,7 @@ const visual=useVisualStyleStore()
         :data-style-label="`بنر ${locale.categoryName(category.code,category.name)}`"
       >
         <SmartImage
-          :src="productBannerMedia[category.code]?.image"
+          :src="homeMedia.resolve('banner.'+category.code,productBannerMedia[category.code]?.image??'')"
           :fallback-src="productBannerMedia[category.code]?.fallback"
           :alt="locale.categoryName(category.code,category.name)"
           :label="locale.categoryName(category.code,category.name)"

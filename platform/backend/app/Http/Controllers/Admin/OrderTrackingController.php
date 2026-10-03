@@ -24,13 +24,23 @@ class OrderTrackingController extends Controller {
     public function store(Request $request): JsonResponse {
         $admin=$this->admin($request);
         $data=$request->validate(['customer_id'=>[$admin?'required':'prohibited','integer','exists:customers,id'],
-            'request_path'=>['required',Rule::in(self::PATHS)],'description'=>['required','string','min:3','max:4000']]);
+            'request_path'=>['required',Rule::in(self::PATHS)],'description'=>['required','string','min:3','max:4000'],'request_key'=>['sometimes','required','uuid']]);
         $customer=$admin?Customer::findOrFail($data['customer_id']):$request->attributes->get('armaghan.customer');
         if ($admin) $this->guardCustomer($request,$customer);
         abort_unless($customer->active,422);
         $order=DB::transaction(function () use($request,$data,$customer,$admin) {
+            $scope=hash('sha256',($admin?'admin:'.$request->user()->id:'customer:'.$customer->id));
+            $payload=hash('sha256',json_encode([$customer->id,$data['request_path'],$data['description']],JSON_THROW_ON_ERROR));
+            $key=null;
+            if(isset($data['request_key'])){
+                DB::table('order_submission_keys')->insertOrIgnore(['scope_key'=>$scope,'request_key'=>$data['request_key'],'payload_hash'=>$payload,'created_at'=>now(),'updated_at'=>now()]);
+                $key=DB::table('order_submission_keys')->where('scope_key',$scope)->where('request_key',$data['request_key'])->lockForUpdate()->first();
+                abort_unless($key&&hash_equals($key->payload_hash,$payload),409);
+                if($key->tracked_order_id)return TrackedOrder::findOrFail($key->tracked_order_id);
+            }
             $order=TrackedOrder::create(['customer_id'=>$customer->id,'reference'=>'AT-'.Str::upper(Str::random(12)),'request_path'=>$data['request_path'],'description'=>$data['description'],'stage'=>'inquiry']);
             $this->event($request,$order,'created',$data['description'],true,$admin);
+            if($key)DB::table('order_submission_keys')->where('id',$key->id)->update(['tracked_order_id'=>$order->id,'updated_at'=>now()]);
             return $order;
         });
         return $this->json(['order'=>$this->snapshot($order,$admin)],201);

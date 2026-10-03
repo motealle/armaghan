@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {useHomeMediaStore} from '@/features/home-media/store'
+const homeMedia=useHomeMediaStore();homeMedia.ensure()
 import SmartImage from '@/components/media/SmartImage.vue'
 import { test26Media } from '@/data/home26'
 import { useLocaleStore } from '@/stores/locale'
@@ -20,7 +22,7 @@ const visual=useVisualStyleStore()
       </div>
       <div data-style-id="home.about.media" data-style-label="تصویر درباره ارمغان" class="test26-about-media">
         <SmartImage
-          :src="test26Media.about.image"
+          :src="homeMedia.resolve('about',test26Media.about.image)"
           :fallback-src="test26Media.about.fallback"
           :alt="locale.t('aboutArmaghanImageAlt')"
           :label="locale.t('aboutArmaghanImageAlt')"

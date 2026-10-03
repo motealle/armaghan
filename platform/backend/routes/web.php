@@ -41,6 +41,8 @@ Route::prefix('api/favorite-shares')->group(function (): void {
         ->middleware('throttle:60,1');
 });
 
+Route::get('/api/home-media/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publicIndex'])->where('channel','staging|production')->middleware('throttle:120,1');
+
 Route::get('/api/style-profile/{channel?}', [PublicStyleProfileController::class, 'show'])
     ->where('channel', 'staging|production');
 
@@ -82,6 +84,9 @@ Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleCustomerAuthCon
 
 
 Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group(function (): void {
+    Route::get('/home-media', [\App\Http\Controllers\Admin\HomeMediaController::class, 'index']);
+    Route::post('/home-media', [\App\Http\Controllers\Admin\HomeMediaController::class, 'upload'])->middleware('throttle:admin-product-uploads');
+    Route::post('/home-media/publish/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publish'])->where('channel','staging|production');
     Route::get('/orders', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'index']);
     Route::post('/orders', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'store']);
     Route::patch('/orders/{order}', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'update']);

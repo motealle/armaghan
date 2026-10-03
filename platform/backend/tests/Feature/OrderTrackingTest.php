@@ -38,6 +38,12 @@ class OrderTrackingTest extends TestCase {
   $this->postJson('/api/customer/orders',['customer_id'=>$b->id,'request_path'=>'simple','description'=>'Customer request'])->assertUnprocessable();
   $this->postJson('/api/customer/orders',['request_path'=>'simple','description'=>'Customer request'])->assertCreated();$this->assertSame($a->id,TrackedOrder::latest('id')->first()->customer_id);
  }
+ public function test_retried_request_returns_same_order_and_changed_payload_conflicts(): void {
+  $customer=Customer::create(['active'=>true]);$this->actingAs(User::factory()->admin()->create());$payload=['customer_id'=>$customer->id,'request_path'=>'custom','description'=>'Stable clothing request','request_key'=>(string)\Illuminate\Support\Str::uuid()];
+  $a=$this->postJson('/api/admin/orders',$payload)->assertCreated()->json('order');$b=$this->postJson('/api/admin/orders',$payload)->assertCreated()->json('order');$this->assertSame($a['id'],$b['id']);
+  $this->postJson('/api/admin/orders',array_merge($payload,['description'=>'Changed request']))->assertConflict();$this->assertDatabaseCount('tracked_orders',1);$this->assertDatabaseCount('tracked_order_events',1);
+  $this->withSession([CustomerSession::KEY=>$customer->id])->postJson('/api/customer/orders',['request_path'=>'custom','description'=>'Customer request','request_key'=>$payload['request_key']])->assertCreated();$this->assertDatabaseCount('tracked_orders',2);
+ }
  public function test_primary_owner_related_orders_are_protected_from_other_admins(): void {
   $owner=User::factory()->admin()->create(['email'=>'motealle@gmail.com','email_verified_at'=>now()]);$customer=Customer::create(['user_id'=>$owner->id,'active'=>true]);$this->actingAs($owner);$row=$this->createOrder($customer);
   $this->actingAs(User::factory()->admin()->create())->getJson('/api/admin/orders')->assertJsonCount(0,'orders');
