@@ -7,12 +7,12 @@ describe('WhatsApp builder',()=>{
     const message=buildProductMessage(products[0]!, 'available')
     expect(message).toContain('خرید موجود')
     expect(message).toContain(products[0]!.code)
-    expect(message).toContain(products[0]!.name)
+    expect(message).toContain(products[0]!.subcategoryName)
   })
 
   it('generates a canonical wa.me url',()=>{
     const url=whatsappUrl('سلام تست')
-    expect(url.startsWith('https://wa.me/989381009231?text=')).toBe(true)
+    expect(url.startsWith('https://wa.me/989933509793?text=')).toBe(true)
     expect(url).toContain(encodeURIComponent('سلام تست'))
   })
 

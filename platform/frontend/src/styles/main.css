@@ -894,3 +894,11 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .test26-why-list.test29-why-list .test26-why-number{font-size:.72rem}
 
 /* Custom admin is the ordinary production entry; stock entry requires an owner permit. */
+
+/* Footer logo occupies its own compact row, independent of direction and columns. */
+.site-footer.test26-site-footer{grid-template-columns:minmax(0,1fr);align-content:start}
+.site-footer.test26-site-footer .test26-footer-grid{grid-column:1/-1;min-width:0}
+.site-footer.test26-site-footer .test26-footer-brand{grid-column:1/-1;width:100%;min-width:0;justify-self:stretch;justify-content:flex-end;direction:ltr;align-self:start;margin-top:0}
+:root{--product-status-gold:#805300}
+html.dark{--product-status-gold:var(--brand-gold)}
+.product-card .product-card-title.unavailable{color:var(--product-status-gold)}

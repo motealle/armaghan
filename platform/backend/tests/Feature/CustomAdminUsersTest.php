@@ -98,4 +98,23 @@ class CustomAdminUsersTest extends TestCase
         foreach(['email'=>'different@example.test','password'=>'Different2026','email_verified_at'=>'2026-10-03','is_owner'=>true] as $key=>$value){$this->patchJson('/api/admin/users/'.$row['id'],['name'=>'Keep','role'=>'customer','active'=>true,'revision'=>$row['revision'],$key=>$value])->assertUnprocessable();}
         $this->patchJson('/api/admin/users/'.$row['id'],['name'=>'Keep','role'=>'admin','active'=>true,'revision'=>$row['revision']])->assertUnprocessable();$this->assertDatabaseHas('users',['id'=>$row['id'],'role'=>'customer','email'=>$row['email']]);
     }
+    public function test_only_owner_can_edit_own_name_but_nobody_can_delete_disable_or_demote_owner(): void
+    {
+        $owner=$this->owner();$this->actingAs($owner);
+        $row=collect($this->getJson('/api/admin/users')->json('users'))->firstWhere('id',$owner->id);
+        $this->patchJson('/api/admin/users/'.$owner->id,['name'=>'Updated owner','role'=>'admin','active'=>true,'revision'=>$row['revision']])->assertOk();
+        $this->assertSame('Updated owner',$owner->fresh()->name);
+        $actor=User::factory()->admin()->create();$this->actingAs($actor);
+        $this->patchJson('/api/admin/users/'.$owner->id,['name'=>'Forged','role'=>'admin','active'=>true,'revision'=>$row['revision']])->assertForbidden();
+        foreach (['delete','disable','demote'] as $operation) {
+            try {
+                $target=$owner->fresh();
+                match($operation) {'delete'=>$target->delete(),'disable'=>$target->update(['active'=>false]),'demote'=>$target->update(['role'=>\App\Enums\UserRole::Customer])};
+                $this->fail('Primary owner protection bypassed');
+            } catch (\Illuminate\Validation\ValidationException) {
+                $this->assertTrue($owner->fresh()->isPrimaryOwner());
+            }
+        }
+    }
+
 }

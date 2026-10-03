@@ -39,7 +39,7 @@ class CustomOnlyAdminTest extends TestCase
         $owner=$this->owner();$this->actingAs($owner)->postJson('/api/admin/advanced-access',['reason'=>'diagnosis'])->assertOk();
         $this->postJson('/api/admin/logout')->assertOk()->assertSessionMissing('armaghan.advanced_admin.until');
         $this->actingAs($owner)->get('/admin/products')->assertRedirect('https://armaghantrading.com/#/admin');
-        $owner->update(['active'=>false]);$this->actingAs($owner->fresh())->postJson('/api/admin/advanced-access',['reason'=>'diagnosis'])->assertForbidden();
+        $disabled=User::factory()->admin()->inactive()->create();$this->actingAs($disabled)->postJson('/api/admin/advanced-access',['reason'=>'diagnosis'])->assertForbidden();
     }
     public function test_publication_checksum_rejects_stale_draft_without_publishing_another_editors_copy(): void
     {

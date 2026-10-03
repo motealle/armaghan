@@ -55,7 +55,7 @@ onMounted(()=>load())
 <template>
   <section class="space-y-3" :aria-busy="loading||saving">
     <div class="flex flex-wrap items-center gap-2">
-      <div><h2 class="text-xl font-black">{{locale.t('adminCustomers')}}</h2><p class="text-xs text-[var(--c-muted)]">{{locale.t('adminRealCustomers')}}</p></div>
+      <div><h2 class="text-xl font-black">{{locale.t('adminCustomers')}}</h2></div>
       <button class="mini-action ms-auto" :disabled="loading||saving" @click="edit(null)"><Plus :size="16"/>{{locale.t('addCustomer')}}</button>
     </div>
     <form class="admin-surface flex flex-wrap gap-2 rounded-2xl p-3" @submit.prevent="load(1)">

@@ -23,10 +23,20 @@ class User extends Authenticatable implements FilamentUser
     protected static function booted(): void
     {
         static::updating(function (User $user): void {
+            if (strtolower((string) $user->getRawOriginal('email')) === config('owner-access.primary_owner_email')
+                && $user->getRawOriginal('role') === UserRole::Admin->value
+                && (($user->isDirty('active') && ! $user->active) || ($user->isDirty('role') && $user->role !== UserRole::Admin))) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['user' => 'Primary owner cannot be disabled or demoted.']);
+            }
             // Filament's profile form is another write surface. An administrator
             // cannot claim a reserved owner identity by changing its mailbox.
             if ($user->isDirty('email') && ($user->getRawOriginal('role') === UserRole::Admin->value || $user->role === UserRole::Admin)) {
                 throw \Illuminate\Validation\ValidationException::withMessages(['email' => 'Administrator email is immutable. Use the verified identity account.']);
+            }
+        });
+        static::deleting(function (User $user): void {
+            if (strtolower($user->email) === config('owner-access.primary_owner_email')) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['user' => 'Primary owner cannot be deleted.']);
             }
         });
     }

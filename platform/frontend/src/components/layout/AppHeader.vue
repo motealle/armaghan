@@ -34,7 +34,7 @@ const navItems=computed(()=>[
   {to:'/products',label:locale.t('products'),icon:Grid2X2},
   {to:'/production',label:locale.t('production'),icon:WandSparkles},
   {to:'/favorites',label:locale.t('favorites'),icon:Heart},
-  {to:'/tracking',label:locale.t('tracking'),icon:ClipboardList},
+  {to:'/tracking',label:locale.t(authenticated.value?'panel':'tracking'),icon:ClipboardList},
 ])
 function active(path:string){return path==='/'?route.path==='/':route.path.startsWith(path)}
 async function logout(){if(logoutBusy.value)return;logoutBusy.value=true;logoutError.value=false;try{if(admin.identity)await admin.logout();else if(!await session.logout())throw Error('Logout failed')}catch{logoutError.value=true}finally{logoutBusy.value=false}}

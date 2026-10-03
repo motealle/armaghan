@@ -108,7 +108,7 @@ function inviteLead(id:string){
       </div>
     </nav>
 
-    <p v-if="live" class="text-sm text-[var(--c-muted)]">{{locale.t('adminIntegrationHelp')}}</p>
+
     <template v-if="live">
       <BackendUsersPanel v-if="activeTab==='users'"/>
       <BackendCustomersPanel v-else-if="activeTab==='customers'"/>

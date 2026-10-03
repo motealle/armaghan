@@ -73,11 +73,12 @@ class UserController extends Controller
             $actor = User::query()->findOrFail($request->user()->id);
             abort_unless($actor->isActiveAdmin(), 403);
             // Protect the owner even against another administrator or forged UI.
-            abort_if(strtolower($target->email) === config('owner-access.primary_owner_email'), 403);
+            $protected = strtolower($target->email) === config('owner-access.primary_owner_email');
+            abort_if($protected && ($target->id !== $actor->id || ! $actor->isPrimaryOwner() || ! $data['active'] || $data['role'] !== 'admin'), 403);
             $reserved = in_array(strtolower($target->email), config('owner-access.google_admin_emails'), true);
             abort_if(! $actor->isPrimaryOwner() && ($target->role === UserRole::Admin || $data['role'] === 'admin' || $reserved), 403);
             abort_if($data['role'] !== $target->role->value, 422, 'Create a new administrator; existing account roles are immutable.');
-            abort_if($target->id === $actor->id, 403);
+            abort_if($target->id === $actor->id && ! $protected, 403);
             abort_unless(hash_equals($this->revision($target), $data['revision']), 409, 'Account changed; reload before editing.');
             $target->update(array_intersect_key($data, array_flip(['name', 'role', 'active'])));
             if ($target->role === UserRole::Customer) {

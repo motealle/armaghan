@@ -22,7 +22,8 @@ const subs=computed(()=>category.value==='all'?[]:catalog.categories.find(c=>c.c
 const filtered=computed(()=>catalog.items.filter(product=>{
   if(category.value!=='all'&&product.categoryCode!==category.value)return false
   if(subcategory.value!=='all'&&product.subcategoryCode!==subcategory.value)return false
-  if(availability.value!=='all'&&product.availability!==availability.value)return false
+  if(availability.value==='available'&&product.availability!=='available')return false
+  if(availability.value==='made_to_order'&&product.availability==='available')return false
   const needle=query.value.trim().toLowerCase()
   return !needle||(`${locale.productName(product.code,product.name)} ${product.code} ${locale.subcategoryName(product.subcategoryCode,product.subcategoryName)}`).toLowerCase().includes(needle)
 }))
@@ -84,7 +85,6 @@ function selectCategory(code:string){
         <select v-model="availability" class="min-h-11 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3 text-sm">
           <option value="all">{{locale.t('allStatuses')}}</option>
           <option value="available">{{locale.t('available')}}</option>
-          <option value="unavailable">{{locale.t('unavailable')}}</option>
           <option value="made_to_order">{{locale.t('madeToOrder')}}</option>
         </select>
       </div>
@@ -112,7 +112,6 @@ function selectCategory(code:string){
           <select v-model="availability" class="min-h-10 w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-xs">
             <option value="all">{{locale.t('allStatuses')}}</option>
             <option value="available">{{locale.t('available')}}</option>
-            <option value="unavailable">{{locale.t('unavailable')}}</option>
             <option value="made_to_order">{{locale.t('madeToOrder')}}</option>
           </select>
         </div>

@@ -10,7 +10,7 @@ const props=defineProps<{open:boolean;product:Product|null}>()
 defineEmits<{close:[]}>()
 const locale=useLocaleStore()
 const title=computed(()=>props.product?customerProductLabel(props.product,locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName),locale.t('unavailableOrProducible')):locale.t('productSpecs'))
-const availability=computed(()=>props.product?.availability==='available'?locale.t('available'):props.product?.availability==='unavailable'?locale.t('unavailable'):locale.t('madeToOrder'))
+const availability=computed(()=>props.product?.availability==='available'?locale.t('available'):locale.t('madeToOrder'))
 </script>
 
 <template>

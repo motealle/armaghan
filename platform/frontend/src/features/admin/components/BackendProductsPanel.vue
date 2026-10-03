@@ -49,10 +49,10 @@ onMounted(()=>load())
     <div class="data-table-shell"><table class="data-table">
       <thead><tr><th>{{locale.t('productsTitle')}}</th><th>{{locale.t('codeLabel')}}</th><th>{{locale.t('categoryLabel')}}</th><th>{{locale.t('subcategoryLabel')}}</th><th>{{locale.t('statusLabel')}}</th><th>{{locale.t('actions')}}</th></tr></thead>
       <tbody><tr v-for="product in result.products" :key="product.id">
-        <td><button class="text-start font-bold" :disabled="loading" @click="edit(product)">{{locale.productName(product.code,product.name_fa,{fa:product.name_fa,ar:product.name_ar??undefined,en:product.name_en??undefined,ku:product.name_ku??undefined})}}</button></td>
+        <td><button class="text-start font-bold" :disabled="loading" @click="edit(product)">{{locale.subcategoryName(product.subcategory_code,'')}}</button></td>
         <td><code class="text-[var(--c-primary)]">{{product.code}}</code></td>
         <td>{{locale.categoryName(product.category_code,'')}}</td><td>{{locale.subcategoryName(product.subcategory_code,'')}}</td>
-        <td>{{locale.t(!product.active?'adminInactive':product.availability==='available'?'available':product.availability==='unavailable'?'unavailable':'madeToOrder')}}</td>
+        <td>{{locale.t(!product.active?'adminInactive':product.availability==='available'?'available':'madeToOrder')}}</td>
         <td><button class="mini-action" :disabled="loading" @click="edit(product)"><Pencil :size="15"/>{{locale.t('editProduct')}} · {{product.media.length}} {{locale.t('image')}}</button></td>
       </tr><tr v-if="!loading&&!result.products.length&&!error"><td colspan="6" class="py-8 text-center text-[var(--c-muted)]">{{locale.t('adminNoProducts')}}</td></tr></tbody>
     </table></div>

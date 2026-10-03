@@ -1,5 +1,22 @@
 # Armaghan — Current Status
 
+## Light corrections; next urgent integration batch — 2026-10-03
+
+Baseline c988c69fbad27582fa9412d8395ce1bc4abc64d1; lease codex-20261003-light-corrections. Owner explicitly chooses a bounded light batch, then a separate heavier batch to preserve token budget. Ranked: preserve custom UI and canonical permissions (10, selected), all-at-once (7), stock fallback (5), rebuild (3), browser-only settings (1).
+
+Footer columns occupy full width; enlarged logo occupies its own compact bottom row aligned visually right in every locale. Remove internal integration-progress and social-placeholder copy. Top admin entry is «پنل مدیریت»; signed-in navigation reads «پنل». /tracking recognizes actual admin identity and renders live custom AdminView instead of another sign-in gate; customers retain their own dashboard.
+
+Product table and messages emphasize six subcategories; existing individual names remain stored and editable inside collapsed optional controls. New products can initialize the internal Persian name from canonical subcategory/code. Status choices are available/producible. Old unavailable and made_to_order records remain intact, both match the producible filter; untouched old availability stays unchanged when saving. Producible gold text is #805300 in light mode (4.90:1 on mint, 6.66:1 on white) and unchanged brand gold in dark mode (9.22:1 on dark surface). No navy badge backing reintroduced.
+
+Only verified primary owner can edit its own name with revision checking. No other account may edit it. Disable/demotion/deletion are additionally rejected at model level; self-deletion is forbidden too. Existing reserved email/role hierarchy remains protected. No password reset/role conversion added in this batch.
+
+WhatsApp destination defaults to 09933509793 / 989933509793. Prior 09381009231 / 989381009231 remains retained. Shared editable/addable titled Business/Personal contacts, selected default and per-admin contact numbers are NOT implemented yet. NEXT urgent batch: canonical specification editing with typed schema/required/negotiable fields and conflict checks; then shared WhatsApp settings with initial Business/Personal titles, normalized numbers, protected admin/primary-owner authorization, audit and revision checks. Never fake shared settings with browser storage or replace existing specifications with guessed fixtures.
+
+Core integration estimate: 4–6 focused remaining runs: specifications/taxonomy/media gaps; shared contacts/settings; secure existing-account reset/CRM association; real orders/timeline/payments (1–2 runs); shared device preferences and end-to-end acceptance. Advanced accounting/analytics may require additional runs. Report actual capabilities, not a blanket backend-complete claim.
+
+Validation: local type-check/build, 60 frontend tests and 30 source/frozen/media/release checks PASS. Backend CI, guarded code-only activation and paired root/Test29 publication pending. Actual-owner/device browser acceptance OPEN. No schema/dependency or private production data changes. Tests01–28 frozen; root remains29.
+
+
 ## Custom administration default and responsive header — 2026-10-03
 
 Baseline e4bc63346d9afb4ad8a7a7a795a93303d0212f7d; lease codex-20261003-custom-only-header. Owner requires the preserved Vue interface as the ordinary management surface. Historical direct Filament fallback links and incomplete real-domain integrations explain stock-panel entry; this release removes those ordinary links and protects the entire stock panel, including persistent Livewire requests. Only active verified primary owner can explicitly choose integration-gap, diagnosis or recovery, yielding an audited session-scoped 15-minute permit. Logout, expiry and revocation clear access. Ordinary admins keep business API access.

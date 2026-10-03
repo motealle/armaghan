@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { CircleHelp, Globe2, Mail, MessageCircleMore, PackageSearch, Send, UsersRound } from '@lucide/vue'
 import { categories } from '@/data/catalog'
+import { useAdminStore } from '@/features/admin/store'
+import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
 
 const emit=defineEmits<{help:[]}>()
 const locale=useLocaleStore()
+const admin=useAdminStore(),session=useSessionStore()
 </script>
 
 <template>
@@ -26,7 +29,7 @@ const locale=useLocaleStore()
       <section>
         <h2>{{locale.t('helpGuide')}}</h2>
         <button type="button" @click="emit('help')"><CircleHelp :size="16"/>{{locale.t('helpTitle')}}</button>
-        <RouterLink to="/tracking"><PackageSearch :size="16"/>{{locale.t('tracking')}}</RouterLink>
+        <RouterLink to="/tracking"><PackageSearch :size="16"/>{{locale.t(admin.identity||session.isAuthenticated?'panel':'tracking')}}</RouterLink>
       </section>
       <section>
         <h2>{{locale.t('footerSalesTitle')}}</h2>
@@ -38,7 +41,7 @@ const locale=useLocaleStore()
           <span class="test26-footer-social-icon" :title="locale.t('socialTelegram')"><Send :size="16"/></span>
           <span class="test26-footer-social-icon" :title="locale.t('socialYouTube')"><Globe2 :size="16"/></span>
         </div>
-        <small class="test26-footer-social-note">{{locale.t('footerSocialPending')}}</small>
+
       </section>
     </div>
     <div data-style-id="footer.brand" data-style-label="لوگوی فوتر" class="test26-footer-brand">

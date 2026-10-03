@@ -15,7 +15,7 @@ describe('production order wizard',()=>{
     expect(wizard.step).toBe(3)
     expect(wizard.preview).toContain('تولید سفارشی')
     expect(wizard.preview).toContain('11 · لباس نوزادی')
-    expect(wizard.whatsapp).toContain('wa.me/989381009231')
+    expect(wizard.whatsapp).toContain('wa.me/989933509793')
   })
 
   it('backs out without corrupting state',()=>{

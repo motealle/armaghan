@@ -110,7 +110,7 @@ function save(){
           <label class="form-field">{{locale.t('statusLabel')}}
             <select v-model="draft.availability">
               <option value="available">{{locale.t('available')}}</option>
-              <option value="unavailable">{{locale.t('unavailable')}}</option>
+
               <option value="made_to_order">{{locale.t('madeToOrder')}}</option>
             </select>
           </label>

@@ -17,6 +17,7 @@ watch(()=>[props.open,props.product] as const,([open,row])=>{
   draft.value=!open?null:row?fields(row):{subcategory_id:props.taxonomy[0]?.id??0,code:'',name_fa:'',name_ar:null,name_en:null,name_ku:null,availability:'available',active:true,sort_order:0}
 },{immediate:true})
 function fields(row:AdminProduct):ProductFields{return {subcategory_id:row.subcategory_id,code:row.code,name_fa:row.name_fa,name_ar:row.name_ar,name_en:row.name_en,name_ku:row.name_ku,availability:row.availability,active:row.active,sort_order:row.sort_order}}
+const visibleAvailability=computed({get:()=>draft.value?.availability==='available'?'available':'made_to_order',set:(value)=>{if(draft.value)draft.value.availability=value as ProductFields['availability']}})
 const group=computed(()=>props.taxonomy.find(s=>s.id===draft.value?.subcategory_id))
 // Infer only from real server taxonomy, and never reset specifications or localized names.
 watch(()=>draft.value?.code,(code)=>{if(!draft.value||current.value)return;const sub=props.taxonomy.find(s=>code?.startsWith(s.code));if(sub)draft.value.subcategory_id=sub.id})
@@ -27,6 +28,7 @@ function failed(e:unknown){
 }
 async function save(){
   if(!draft.value||saving.value)return
+  if(!draft.value.name_fa.trim()&&!current.value)draft.value.name_fa=group.value?.name||draft.value.code
   saving.value=true;error.value='';note.value=''
   try{
     const response=current.value?await updateAdminProduct(current.value.id,draft.value,current.value.revision):await createAdminProduct(draft.value)
@@ -60,17 +62,17 @@ function close(){if(saving.value)return;if(changed.value&&current.value)emit('sa
         <div class="grid gap-3 md:grid-cols-[12rem_1fr_12rem]">
           <label class="form-field">{{locale.t('codeLabel')}}<input v-model="draft.code" required maxlength="64" :disabled="saving" dir="ltr"></label>
           <label class="form-field">{{locale.t('subcategoryLabel')}}<select v-model.number="draft.subcategory_id" required :disabled="saving"><option v-for="sub in taxonomy" :key="sub.id" :value="sub.id">{{sub.code}} · {{locale.subcategoryName(sub.code,sub.name)}}{{sub.active?'':' · '+locale.t('adminInactive')}}</option></select><small v-if="group">{{locale.categoryName(group.category_code,group.category_name)}}</small></label>
-          <label class="form-field">{{locale.t('statusLabel')}}<select v-model="draft.availability" :disabled="saving"><option value="available">{{locale.t('available')}}</option><option value="unavailable">{{locale.t('unavailable')}}</option><option value="made_to_order">{{locale.t('madeToOrder')}}</option></select></label>
+          <label class="form-field">{{locale.t('statusLabel')}}<select v-model="visibleAvailability" :disabled="saving"><option value="available">{{locale.t('available')}}</option><option value="made_to_order">{{locale.t('madeToOrder')}}</option></select></label>
         </div>
         <div class="mt-3 grid gap-3 md:grid-cols-2"><label class="form-field">{{locale.t('adminSortOrder')}}<input v-model.number="draft.sort_order" type="number" min="0" max="1000000" required :disabled="saving"></label><label class="flex items-center gap-2"><input v-model="draft.active" type="checkbox" :disabled="saving">{{locale.t('active')}}</label></div>
         <p class="mt-3 text-xs text-[var(--c-muted)]">{{locale.t('adminProductArchiveHelp')}}</p>
       </section>
-      <section class="admin-surface rounded-2xl p-4"><h3 class="mb-3 text-sm font-black">{{locale.t('namesByLanguage')}}</h3><div class="grid gap-3 md:grid-cols-2">
-        <label class="form-field" lang="fa">فارسی<input v-model="draft.name_fa" dir="rtl" required maxlength="255" :disabled="saving"></label>
+      <details class="admin-surface rounded-2xl p-4"><summary class="text-sm font-bold">{{locale.t('namesByLanguage')}}</summary><div class="grid gap-3 md:grid-cols-2">
+        <label class="form-field" lang="fa">فارسی<input v-model="draft.name_fa" dir="rtl" maxlength="255" :disabled="saving"></label>
         <label class="form-field" lang="ar">العربية<input v-model="draft.name_ar" dir="rtl" maxlength="255" :disabled="saving"></label>
         <label class="form-field" lang="en">English<input v-model="draft.name_en" dir="ltr" maxlength="255" :disabled="saving"></label>
         <label class="form-field" lang="ckb">کوردی<input v-model="draft.name_ku" dir="rtl" maxlength="255" :disabled="saving"></label>
-      </div></section>
+      </div></details>
       <section class="admin-surface rounded-2xl p-4">
         <h3 class="mb-3 text-sm font-black">{{locale.t('adminProductGallery')}}</h3><p class="mb-3 text-xs text-[var(--c-muted)]">{{locale.t('adminImageLimits')}}</p>
         <p v-if="!current||dirty" class="text-sm">{{locale.t('adminSaveBeforeImage')}}</p>
@@ -85,7 +87,7 @@ function close(){if(saving.value)return;if(changed.value&&current.value)emit('sa
       <section class="admin-surface rounded-2xl p-4"><h3 class="mb-2 text-sm font-black">{{locale.t('productSpecs')}}</h3><p class="text-xs text-[var(--c-muted)]">{{locale.t('adminSpecsPreserved')}}</p></section>
       <p v-if="error" role="alert" class="auth-error">{{error}}</p><p v-if="note" role="status" class="text-xs text-[var(--c-secondary)]">{{note}}</p>
       <div class="sticky bottom-0 z-10 flex justify-end gap-2 border-t border-[var(--c-border)] bg-[color-mix(in_srgb,var(--c-surface)_96%,transparent)] py-3 backdrop-blur">
-        <button type="button" class="mini-action" :disabled="saving" @click="close">{{locale.t('close')}}</button><button class="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--c-primary)] px-4 text-sm font-black text-white" :disabled="saving||!draft.code.trim()||!draft.name_fa.trim()||!draft.subcategory_id"><Save :size="17"/>{{locale.t(saving?'adminLoading':'save')}}</button>
+        <button type="button" class="mini-action" :disabled="saving" @click="close">{{locale.t('close')}}</button><button class="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--c-primary)] px-4 text-sm font-black text-white" :disabled="saving||!draft.code.trim()||!draft.subcategory_id"><Save :size="17"/>{{locale.t(saving?'adminLoading':'save')}}</button>
       </div>
     </form>
   </AdaptivePanel>

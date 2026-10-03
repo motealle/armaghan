@@ -1,10 +1,11 @@
 import type { Product, RequestPath } from '@/types/domain'
 import type { Locale } from '@/services/localeDetection'
 
-export const SELLER_WHATSAPP='989381009231'
+export const SELLER_WHATSAPP='989933509793'
+export const PREVIOUS_SELLER_WHATSAPP='989381009231'
 
 const titles:Record<Locale,Record<RequestPath,string>>={
- fa:{simple:'خرید ساده',available:'خرید موجود',unavailable:'خرید ناموجود',custom:'تولید سفارشی',brand:'سفارش تولید با برند',packaging:'سفارش تولید با بسته‌بندی'},
+ fa:{simple:'خرید ساده',available:'خرید موجود',unavailable:'درخواست تولید',custom:'تولید سفارشی',brand:'سفارش تولید با برند',packaging:'سفارش تولید با بسته‌بندی'},
  ar:{simple:'شراء بسيط',available:'شراء المتوفر',unavailable:'طلب غير المتوفر',custom:'إنتاج مخصص',brand:'إنتاج بعلامتك التجارية',packaging:'إنتاج بتغليف مخصص'},
  en:{simple:'Simple purchase',available:'Buy available product',unavailable:'Request unavailable product',custom:'Custom production',brand:'Production with buyer brand',packaging:'Production with custom packaging'},
  ku:{simple:'کڕینی سادە',available:'کڕینی بەردەست',unavailable:'داواکاری نابەردەست',custom:'بەرهەمهێنانی تایبەت',brand:'بەرهەمهێنان بە براند',packaging:'بەرهەمهێنان بە پاکەت'},
@@ -20,10 +21,10 @@ export function requestPathTitle(path:RequestPath,locale:Locale='fa'):string{ret
 
 export function buildProductMessage(product:Product,path:RequestPath,locale:Locale='fa'):string{
  const l=labels[locale]
- const status=product.availability==='available'?l.available:product.availability==='unavailable'?l.unavailable:l.made
+ const status=product.availability==='available'?l.available:l.made
  return[
   titles[locale][path],
-  `${l.product}: ${product.name}`,
+  `${l.product}: ${product.subcategoryName}`,
   `${l.code}: ${product.code}`,
   `${l.category}: ${product.categoryName} / ${product.subcategoryName}`,
   `${l.status}: ${status}`,
