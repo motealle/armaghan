@@ -35,7 +35,7 @@ const catalog=useCatalogStore()
 const locale=useLocaleStore()
 const theme=useThemeStore()
 const route=useRoute()
-watch(()=>route.path,(path)=>{if(path.startsWith('/admin'))visual.setEnabled(false)},{immediate:true})
+watch(()=>route.path,(path)=>{if(path.startsWith('/admin')||path.startsWith('/tracking'))visual.setEnabled(false)},{immediate:true})
 
 const {profile,policy}=useResolvedAppearance()
 const showFooter=computed(()=>policy.value.showFooter&&(profile.value!=='mobile'||route.path==='/'))

@@ -4,7 +4,6 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
-import AdminView from '@/views/AdminView.vue'
 import {useAdminStore} from '@/features/admin/store'
 import AdminDashboard from '@/features/admin/components/AdminDashboard.vue'
 import CustomerDashboard from '@/features/customers/components/CustomerDashboard.vue'
@@ -24,7 +23,7 @@ async function signOut(){
 </script>
 <template>
   <section>
-    <AdminView v-if="admin.identity" @login="emit('login')"/>
+    <div v-if="admin.identity"><h1 class="mb-4 text-xl font-black">{{locale.t('adminRealSession')}}</h1><AdminDashboard live/></div>
     <template v-else>
     <div v-if="!session.isAuthenticated&&route.query.auth_error==='google'" role="alert" class="auth-error mb-4">
       <p>{{locale.t(route.query.auth_reason==='expired'?'googleSignInExpired':'googleSignInFailed')}}</p>
