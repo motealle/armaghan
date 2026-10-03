@@ -35,7 +35,7 @@ const locale=useLocaleStore()
 const visual=useVisualStyleStore()
 const router=useRouter()
 function editSite(){visual.setEnabled(true);router.push('/')}
-const activeTab=ref<AdminTab>(props.live?'customers':'overview')
+const activeTab=ref<AdminTab>('overview')
 const selectedCustomers=ref<number[]>([])
 const customerDetailId=ref<number|null>(null)
 const customerDetailOpen=ref(false)
@@ -105,7 +105,7 @@ function inviteLead(id:string){
     <AdvancedAccessPanel v-if="live"/>
     <nav class="admin-surface rounded-2xl p-2" :aria-label="locale.t('adminOverview')">
       <div class="admin-tabs">
-        <button v-for="tab in tabs" :key="tab.id" :disabled="live&&!['orders','customers','products','users','appearance','content','languages'].includes(tab.id)" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
+        <button v-for="tab in tabs" :key="tab.id" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
           <component :is="tab.icon" :size="16" class="me-1 inline"/>{{tab.label}}
         </button>
       </div>
@@ -113,7 +113,14 @@ function inviteLead(id:string){
 
 
     <template v-if="live">
-      <OrderTrackingPanel v-if="activeTab==='orders'" admin/>
+      <section v-if="activeTab==='overview'" class="admin-surface rounded-2xl p-4">
+        <h2 class="text-lg font-black">{{locale.t('adminRealSession')}}</h2>
+        <p class="mt-2 text-sm text-[var(--c-muted)]">{{locale.t('adminOverviewHelp')}}</p>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <button v-for="tab in tabs.filter(item=>item.id!=='overview')" :key="tab.id" type="button" class="mini-action min-h-12 justify-start" @click="activeTab=tab.id"><component :is="tab.icon" :size="18"/>{{tab.label}}</button>
+        </div>
+      </section>
+      <OrderTrackingPanel v-else-if="activeTab==='orders'" admin/>
       <BackendUsersPanel v-else-if="activeTab==='users'"/>
       <BackendCustomersPanel v-else-if="activeTab==='customers'"/>
       <AdminProductsPanel v-else-if="activeTab==='products'" live/>

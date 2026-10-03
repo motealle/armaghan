@@ -93,7 +93,7 @@ function close(){if(saving.value)return;if(changed.value&&current.value)emit('sa
             <div class="mt-2 flex items-center justify-between gap-1"><span class="text-xs">{{index+1}}</span><button type="button" class="mini-action" :disabled="saving||dirty||index===0" :aria-label="locale.t('previous')" @click="move(index,-1)"><ArrowUp :size="15"/></button><button type="button" class="mini-action" :disabled="saving||dirty||index===current.media.length-1" :aria-label="locale.t('next')" @click="move(index,1)"><ArrowDown :size="15"/></button></div>
           </article>
         </div>
-        <label v-if="current&&current.media.length<6&&!dirty&&!saving" class="mini-action mt-3 cursor-pointer"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}}<input class="sr-only" type="file" accept="image/jpeg,image/png,image/webp" @change="upload"></label>
+        <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small v-if="current" dir="ltr">{{current.media.length}} / 6</small></span><input type="file" accept="image/jpeg,image/png,image/webp" :disabled="!current||dirty||saving||current.media.length>=6" @change="upload"></label>
       </section>
       <section class="admin-surface rounded-2xl p-4">
         <h3 class="mb-3 text-sm font-black">{{locale.t('productSpecs')}}</h3>
