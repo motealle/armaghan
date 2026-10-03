@@ -104,7 +104,11 @@ class CustomAdminUsersTest extends TestCase
         $row=collect($this->getJson('/api/admin/users')->json('users'))->firstWhere('id',$owner->id);
         $this->patchJson('/api/admin/users/'.$owner->id,['name'=>'Updated owner','role'=>'admin','active'=>true,'revision'=>$row['revision']])->assertOk();
         $this->assertSame('Updated owner',$owner->fresh()->name);
+        $linked=Customer::create(['user_id'=>$owner->id,'company_name'=>'Owner','active'=>false]);
+        $crm=collect($this->getJson('/api/admin/customers')->json('customers'))->firstWhere('id',$linked->id);
         $actor=User::factory()->admin()->create();$this->actingAs($actor);
+        $this->getJson('/api/admin/customers')->assertJsonCount(0,'customers');
+        $this->patchJson('/api/admin/customers/'.$linked->id,['company_name'=>'Forged owner','revision'=>$crm['revision']])->assertForbidden();
         $this->patchJson('/api/admin/users/'.$owner->id,['name'=>'Forged','role'=>'admin','active'=>true,'revision'=>$row['revision']])->assertForbidden();
         foreach (['delete','disable','demote'] as $operation) {
             try {

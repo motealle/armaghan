@@ -17,6 +17,11 @@ class CustomerController extends Controller
     {
         $input = $request->validate(['page' => ['sometimes', 'integer', 'min:1'], 'search' => ['nullable', 'string', 'max:100']]);
         $query = Customer::query()->with('user');
+        if (! $request->user()->isPrimaryOwner()) {
+            $query->where(function ($q): void {
+                $q->whereDoesntHave('user')->orWhereHas('user', fn ($u) => $u->whereRaw('lower(email) != ?', [config('owner-access.primary_owner_email')]));
+            });
+        }
         if ($search = trim($input['search'] ?? '')) {
             $query->where(function ($q) use ($search): void {
                 $q->where('company_name', 'like', '%'.$search.'%')
@@ -47,6 +52,9 @@ class CustomerController extends Controller
         $data = $request->validate($this->rules(true));
         $customer = DB::transaction(function () use ($data, $request, $customer) {
             $row = Customer::query()->lockForUpdate()->findOrFail($customer->id);
+            if (strtolower((string) $row->user?->email) === config('owner-access.primary_owner_email')) {
+                abort_unless($request->user()->isPrimaryOwner() && $request->user()->id === $row->user_id, 403);
+            }
             abort_unless(hash_equals($this->revision($row), $data['revision']), 409, 'Customer changed; reload before saving.');
             $row->fill(array_intersect_key($data, array_flip(self::FIELDS)))->save();
             $this->audit($request, $row, 'admin.customer.updated', array_keys($data));
