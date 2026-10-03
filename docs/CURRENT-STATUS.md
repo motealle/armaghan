@@ -1,6 +1,9 @@
 # Armaghan — Current Status
 ## Bounded bulk status and bright gold typography — 2026-10-03
 
+Closeout within owner20-minute cap: Backend CI37108898574 and Backend Code Deploy37108898659 PASS;99 tests/830 assertions and strict Composer/audit/hygiene PASS. Initial UI740a7dfd2daf64408281d0dddeb843f521f7de4d published by FTP37108813424 at root and Test29: fresh HTTP200, index-CPDSNzmh.js/index-BPuGIeWU.css. Core gold and bulk-status controls are live. Final source5defdacbce28e5beae422c4cde3f1fb814463e57 also restores translation fallback/editor reactive refs/full app type check and theme-token outline; local app type-check/build/60tests PASS. Final FTP37109006579 still IN PROGRESS at closeout; final index-pb7y_mLD.js/index-ZFrz1V-D.css not yet confirmed live. Guest noCSRF bulk POST419 and health200. Actual owner/browser/visual acceptance OPEN. No production rows/passwords/email sends used as test data. Monitor final FTP before another UI publication; do not repeat completed core. Deletion/password/mail/tag and remaining domain connections remain open.
+
+
 Owner requests maximum ~20 minutes; baseline 44ed36ffa4a5da89cf3ec0106b99c11080b79baf; lease codex-20261003-bulk-status. Ranked options: focused canonical bulk status (10 selected), one heavy domain (7), all-at-once (5), stock interface (3), browser-only actions (1).
 
 Custom Users/Customers/Products tables gain visible-page selection, select-all, selected count, clear and confirmation modal for activation/deactivation. Server accepts at most100 distinct ID/revision pairs; outer database transaction reuses existing single-row authorization, revision validation, account/customer synchronization and per-record audit; any missing/stale/forbidden item rolls back all changes and audit. Protected owner and actor are excluded from account bulk operations. Products preserve taxonomy/specs/media/names/availability. No schema/dependency change.
