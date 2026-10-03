@@ -75,6 +75,16 @@ class CustomAdminUsersTest extends TestCase
         $this->withSession([\App\Support\CustomerSession::KEY=>$customer->id])->getJson('/api/customer/session')->assertUnauthorized();
         $this->postJson('/api/auth/login',['email'=>$row['email'],'password'=>'NewPassword2026'])->assertUnprocessable();$this->assertDatabaseHas('users',['id'=>$row['id'],'name'=>'Changed','active'=>false]);
     }
+    public function test_owner_can_reactivate_reserved_inactive_customer_before_verified_google_promotion(): void
+    {
+        $owner=$this->owner();$target=User::factory()->inactive()->create(['email'=>'amirmashti1378@gmail.com']);
+        Customer::create(['user_id'=>$target->id,'active'=>false]);$this->actingAs($owner);
+        $rows=collect($this->getJson('/api/admin/users')->json('users'))->keyBy('id');
+        $this->patchJson('/api/admin/users/'.$target->id,['name'=>$target->name,'role'=>'customer','active'=>true,'revision'=>$rows[$target->id]['revision']])->assertOk();
+        $identity=(new GoogleUser)->setRaw(['email_verified'=>true])->map(['id'=>'google-amir','email'=>$target->email,'name'=>'Amir']);
+        $this->assertTrue(app(GoogleAdminIdentityService::class)->resolve($identity)->isActiveAdmin());
+        $this->assertFalse($target->fresh()->isPrimaryOwner());
+    }
     public function test_admin_profile_cannot_claim_owner_mailbox_even_before_owner_exists(): void
     {
         $user=User::factory()->admin()->create(['email'=>'amirmashti1378@gmail.com']);

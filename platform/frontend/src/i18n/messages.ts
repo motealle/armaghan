@@ -103,7 +103,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     adminPasswordRules:"١٢ حرفاً على الأقل تشمل حروفاً وأرقاماً.",
     adminRealSession:"إدارة الموقع",
 
-    adminIntegrationHelp:"العملاء والمنتجات والصور متصلون ببيانات الموقع؛ جارٍ توصيل بقية أقسام التصميم نفسه.",
+    adminIntegrationHelp:"العملاء وحسابات المستخدمين والمنتجات والصور متصلون ببيانات الموقع؛ جارٍ توصيل بقية أقسام التصميم نفسه.",
     adminNoProducts:"لم يتم العثور على منتجات.",
     adminSortOrder:"ترتيب العرض",
     adminProductArchiveHelp:"التعطيل يخفي المنتج من الكتالوج ويحفظ سجله وصوره.",
@@ -187,7 +187,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     adminPasswordRules:"At least 12 characters, including letters and numbers.",
     adminRealSession:"Site administration",
 
-    adminIntegrationHelp:"Customers, products and images use real site data; the remaining sections are being connected to the same design.",
+    adminIntegrationHelp:"Customers, user accounts, products and images use real site data; the remaining sections are being connected to the same design.",
     adminNoProducts:"No products found.",
     adminSortOrder:"Display order",
     adminProductArchiveHelp:"Deactivation hides the product from the catalog and preserves its history and images.",
@@ -271,7 +271,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     adminPasswordRules:"لانیکەم ١٢ نووسە، پیت و ژمارە لەخۆ بگرێت.",
     adminRealSession:"بەڕێوەبردنی ماڵپەڕ",
 
-    adminIntegrationHelp:"کڕیار و بەرهەم و وێنە بە داتای ڕاستەقینەوە بەستراون؛ بەشەکانی تر هەمان دیزاین دەپارێزن.",
+    adminIntegrationHelp:"کڕیار و هەژماری بەکارهێنەر و بەرهەم و وێنە بە داتای ڕاستەقینەوە بەستراون؛ بەشەکانی تر هەمان دیزاین دەپارێزن.",
     adminNoProducts:"هیچ بەرهەمێک نەدۆزرایەوە.",
     adminSortOrder:"ڕیزبەندی پیشاندان",
     adminProductArchiveHelp:"ناچالاککردن بەرهەمەکە دەشارێتەوە و مێژوو و وێنەکان دەپارێزێت.",
