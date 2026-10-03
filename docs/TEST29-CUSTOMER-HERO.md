@@ -7,3 +7,7 @@ Optimized local derivative: platform/frontend/public/images/test29/home/hero-cus
 Exact Persian caption: ارمغان ، تحفه‌ای که مسیرِ مهارت تا شایستگی را پیموده
 
 Arabic/English/Sorani defaults carry the same meaning. Caption remains separate text, editable via canonical hero.title/Home Content; image remains overridable by Home Media publication. Fresh public production Style Profile texts and Home Media images were empty before release, so no host-managed overrides mask this choice. Existing carousel option and prior Test26 asset remain available; Tests01–28 untouched. Root stays29. Visual/device acceptance deferred; build/source and deployed checksum verification required.
+
+## Publication evidence
+
+FTP37142660724 SUCCESS; root/Test29 both HTTP200 reference index-Cma20lYb.js / index-vxUVRJfx.css. Live optimized image200,161990bytes and matching SHA256. Public JS contains exact Persian caption and selected local image path. Frontend61/type-check/build,30 source/frozen/root checks PASS. Device/visual acceptance remains deferred; no visual claim from asset checks.
