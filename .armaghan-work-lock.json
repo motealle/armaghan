@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261003-panel-entry",
-  "scope": "Panel navigation, product upload discoverability and technical manager label",
+  "run_id": "codex-20261003-hero-fit-customer-account",
+  "scope": "Urgent hero and badges/category numbers; create login for existing offline customer",
   "base_ref": "6d67ffca26a70a55e3834942ef1908c7b8b4d83b",
-  "acquired_at": "2026-10-03T18:35:45.180Z",
-  "expires_at": "2026-10-03T18:47:01.436Z",
-  "released_at": "2026-10-03T18:47:01.436Z"
+  "acquired_at": "2026-10-03T19:22:04.262Z",
+  "expires_at": "2026-10-03T20:52:04.262Z"
 }
