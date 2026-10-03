@@ -904,6 +904,6 @@ html.dark{--product-status-gold:var(--brand-gold)}
 .product-card .product-card-title.unavailable{color:var(--product-status-gold)}
 
 /* Match ordinary subcategory typography; retain a bright gold fill with a fine contrast outline. */
-.product-card .product-card-title.unavailable{height:1.55rem;line-height:1.55rem;padding:0;font-size:.78rem;font-weight:900;color:var(--brand-gold);-webkit-text-stroke:1px #33382d;paint-order:stroke fill;text-shadow:none}
+.product-card .product-card-title.unavailable{height:1.55rem;line-height:1.55rem;padding:0;font-size:.78rem;font-weight:900;color:var(--brand-gold);-webkit-text-stroke:1px var(--c-text);paint-order:stroke fill;text-shadow:none}
 html[data-locale="en"] .product-card .product-card-title.unavailable{font-weight:600}
 html.dark .product-card .product-card-title.unavailable{-webkit-text-stroke:0}
