@@ -37,7 +37,7 @@ const navItems=computed(()=>[
   {to:'/tracking',label:locale.t('tracking'),icon:ClipboardList},
 ])
 function active(path:string){return path==='/'?route.path==='/':route.path.startsWith(path)}
-async function logout(){if(logoutBusy.value)return;logoutBusy.value=true;logoutError.value=false;try{if(admin.identity)await admin.logout();else await session.logout()}catch{logoutError.value=true}finally{logoutBusy.value=false}}
+async function logout(){if(logoutBusy.value)return;logoutBusy.value=true;logoutError.value=false;try{if(admin.identity)await admin.logout();else if(!await session.logout())throw Error('Logout failed')}catch{logoutError.value=true}finally{logoutBusy.value=false}}
 function selectLanguage(value:Locale){locale.setManual(value);languageOpen.value=false}
 function changeLanguage(event:Event){locale.setManual((event.target as HTMLSelectElement).value as Locale)}
 </script>
