@@ -1,4 +1,10 @@
 # Armaghan — Product Backlog
+## Footer correction and remaining integration batches — 2026-10-03
+
+Lease codex-20261003-footer-followthrough; baseline34c95b7. Supplied screenshot shows separate full-width logo row plus duplicated bottom-nav clearance and banner min-height larger than image height. Selected structural flow fix (10) over blanket shrinking (7), gap-only (6), absolute positioning (3), hiding content (1). Footer logo remains6.9rem but moves inside help column; footer navigation clearance is owned by main content only; category photo fills the entire explicitly bounded banner height. Frozen01–28 unchanged, root remains29. Local build/type-check/60 tests PASS; publication in progress, visual/device acceptance OPEN.
+
+Ordered followthrough: footer/banner geometry; homepage media upload/publishing; clear content-edit entry; repeat-safe order registration; structured order lines/quantity/prices/currency; private invoice/receipt attachments; audited manual stage correction; remaining custom management capabilities and account protections; end-to-end acceptance/documentation. Product photos/content/translation editing and manual timeline already implemented; do not rebuild these. Homepage shared media, bulk delete/reset/mail/tags, product specifications and shared titled WhatsApp/device settings remain real gaps, not delivered by enabling prototype links. No production data/password/email mutation for tests.
+
 ## Customer feedback: compact storefront and manual order tracking — 2026-10-03
 
 Baseline9b7f0a72709994979bac81ddbc295af0753313d8; lease codex-20261003-customer-feedback. Seven supplied mobile screenshots inspected in order. Prior final FTP37109006579 and doc FTP37109292345 both SUCCESS; previous pending publication is complete. First screenshot is a real CUSTOMER profile using a mailbox outside the three approved administrator identities; do not infer admin capabilities from its heading Panel, and never elevate an unrelated email merely from a screenshot.

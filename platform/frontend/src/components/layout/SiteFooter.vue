@@ -26,10 +26,13 @@ const admin=useAdminStore(),session=useSessionStore()
         <RouterLink to="/production">{{locale.t('production')}}</RouterLink>
         <RouterLink to="/favorites">{{locale.t('favorites')}}</RouterLink>
       </section>
-      <section>
+      <section class="test26-footer-help">
         <h2>{{locale.t('helpGuide')}}</h2>
         <button type="button" @click="emit('help')"><CircleHelp :size="16"/>{{locale.t('helpTitle')}}</button>
         <RouterLink to="/tracking"><PackageSearch :size="16"/>{{locale.t(admin.identity||session.isAuthenticated?'panel':'tracking')}}</RouterLink>
+    <div data-style-id="footer.brand" data-style-label="لوگوی فوتر" class="test26-footer-brand">
+      <img :src="'../../logo.png'" alt="Armaghan">
+    </div>
       </section>
       <section>
         <h2>{{locale.t('footerSalesTitle')}}</h2>
@@ -44,8 +47,6 @@ const admin=useAdminStore(),session=useSessionStore()
 
       </section>
     </div>
-    <div data-style-id="footer.brand" data-style-label="لوگوی فوتر" class="test26-footer-brand">
-      <img :src="'../../logo.png'" alt="Armaghan">
-    </div>
+
   </footer>
 </template>
