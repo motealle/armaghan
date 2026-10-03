@@ -226,10 +226,16 @@ jobs:
               raise SystemExit("Guest customer session incorrectly authorized")
           except HTTPError as error:
               if error.code!=401: raise
+          from urllib.request import HTTPRedirectHandler, build_opener
+          class NoRedirect(HTTPRedirectHandler):
+              def redirect_request(self, *args): return None
+          guest=build_opener(NoRedirect)
           for resource in ("products","customers"):
-              with urlopen(site+"/backend/admin/"+resource,timeout=30) as response:
-                  if not response.url.endswith("/backend/admin/login"):
-                      raise SystemExit("Guest admin resource did not require login")
+              try:
+                  guest.open(site+"/backend/admin/"+resource,timeout=30)
+                  raise SystemExit("Guest stock admin resource incorrectly authorized")
+              except HTTPError as error:
+                  if error.code!=302 or error.headers.get("Location")!=site+"/#/admin": raise
           print("Production customer/admin authentication boundary: PASS")
           PY
       - name: Promote selected existing numbered version to domain root

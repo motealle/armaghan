@@ -892,3 +892,5 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .header-language-control{padding-inline-start:0}
 .test26-why-number{border:1.85px solid color-mix(in srgb,var(--brand-gold) 100%,transparent);background:var(--c-surface);color:var(--c-secondary);font:1000 .72rem/1 Inter,Roboto,sans-serif}
 .test26-why-list.test29-why-list .test26-why-number{font-size:.72rem}
+
+/* Custom admin is the ordinary production entry; stock entry requires an owner permit. */
