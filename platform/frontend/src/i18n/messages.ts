@@ -19,7 +19,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     adminPasswordRules:"حداقل ۱۲ نویسه شامل حرف و عدد.",
     adminRealSession:"مدیریت واقعی سایت",
 
-    adminIntegrationHelp:"مدیریت مشتریان، محصولات و عکس‌ها به اطلاعات واقعی سایت متصل است؛ اتصال بقیه بخش‌های همین طراحی ادامه دارد.",
+    adminIntegrationHelp:"مدیریت مشتریان، حساب‌ها، محصولات و عکس‌ها به اطلاعات واقعی سایت متصل است؛ اتصال بقیه بخش‌های همین طراحی ادامه دارد.",
     adminNoProducts:"محصولی پیدا نشد.",
     adminSortOrder:"ترتیب نمایش",
     adminProductArchiveHelp:"غیرفعال‌کردن، محصول را از کاتالوگ پنهان می‌کند و سابقه و عکس‌ها را نگه می‌دارد.",

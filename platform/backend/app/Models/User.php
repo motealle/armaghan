@@ -20,6 +20,17 @@ class User extends Authenticatable implements FilamentUser
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    protected static function booted(): void
+    {
+        static::updating(function (User $user): void {
+            // Filament's profile form is another write surface. An administrator
+            // cannot claim a reserved owner identity by changing its mailbox.
+            if ($user->isDirty('email') && ($user->getRawOriginal('role') === UserRole::Admin->value || $user->role === UserRole::Admin)) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['email' => 'Administrator email is immutable. Use the verified identity account.']);
+            }
+        });
+    }
+
     public function customer(): HasOne
     {
         return $this->hasOne(Customer::class);

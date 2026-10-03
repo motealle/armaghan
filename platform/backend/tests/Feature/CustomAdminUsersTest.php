@@ -75,6 +75,13 @@ class CustomAdminUsersTest extends TestCase
         $this->withSession([\App\Support\CustomerSession::KEY=>$customer->id])->getJson('/api/customer/session')->assertUnauthorized();
         $this->postJson('/api/auth/login',['email'=>$row['email'],'password'=>'NewPassword2026'])->assertUnprocessable();$this->assertDatabaseHas('users',['id'=>$row['id'],'name'=>'Changed','active'=>false]);
     }
+    public function test_admin_profile_cannot_claim_owner_mailbox_even_before_owner_exists(): void
+    {
+        $user=User::factory()->admin()->create(['email'=>'amirmashti1378@gmail.com']);
+        try { $user->update(['email'=>'motealle@gmail.com']);$this->fail('Profile identity escalation accepted'); }
+        catch (\Illuminate\Validation\ValidationException) { $this->assertSame('amirmashti1378@gmail.com',$user->fresh()->email); }
+        $this->assertFalse($user->fresh()->isPrimaryOwner());
+    }
     public function test_existing_email_role_password_and_verification_cannot_be_reassigned(): void
     {
         $this->actingAs($this->owner());$row=$this->postJson('/api/admin/users',$this->fields())->json('user');
