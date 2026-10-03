@@ -89,6 +89,9 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
     Route::post('/home-media/publish/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publish'])->where('channel','staging|production');
     Route::get('/orders', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'index']);
     Route::post('/orders', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'store']);
+    Route::put('/orders/{order}/quote', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'commercial']);
+    Route::post('/orders/{order}/documents', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'uploadDocument'])->middleware('throttle:admin-product-uploads');
+    Route::get('/orders/{order}/documents/{document}', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'downloadDocument'])->whereNumber('document');
     Route::patch('/orders/{order}', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'update']);
     Route::post('/bulk-status/{resource}', [\App\Http\Controllers\Admin\BulkStatusController::class, 'update'])->whereIn('resource', ['products', 'customers', 'users']);
     Route::post('/advanced-access', [\App\Http\Controllers\Admin\AdvancedAccessController::class, 'store']);
@@ -110,6 +113,7 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
 });
 
 Route::prefix('api/customer/orders')->middleware(['customer.session', 'throttle:30,1'])->group(function (): void {
+    Route::get('/{order}/documents/{document}', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'downloadDocument'])->whereNumber('document');
     Route::get('/', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'index']);
     Route::post('/', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'store']);
 });

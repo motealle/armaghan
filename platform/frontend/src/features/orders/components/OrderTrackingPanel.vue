@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import OrderCommercialPanel from './OrderCommercialPanel.vue'
 import {computed,onMounted,ref} from 'vue'
+import {useAdminStore} from '@/features/admin/store'
 import {useLocaleStore} from '@/stores/locale'
 import {CustomerSessionApiError} from '@/features/auth/services/customerSessionApi'
 import {fetchAdminCustomers,type AdminCustomer} from '@/features/admin/services/adminApi'
 import {createTrackedOrder,fetchOrders,updateTrackedOrder,orderStages,stageLabels,type TrackedOrder,type OrderPage} from '../services/trackingApi'
 import {requestPathTitle} from '@/services/whatsapp'
 import type {RequestPath} from '@/types/domain'
-const props=defineProps<{admin?:boolean}>(),locale=useLocaleStore()
+const props=defineProps<{admin?:boolean}>(),locale=useLocaleStore(),adminIdentity=useAdminStore()
 const page=ref<OrderPage>({orders:[],page:1,last_page:1}),busy=ref(false),error=ref(''),selected=ref<number|null>(null),createOpen=ref(false)
 const customers=ref<AdminCustomer[]>([]),customerSearch=ref(''),customerId=ref<number|null>(null),description=ref(''),path=ref<RequestPath>('simple')
 const note=ref(''),stage=ref('review'),visible=ref(false),action=ref('note')
@@ -17,9 +19,9 @@ function label(value:string){return stageLabels[locale.locale][orderStages.index
 function fail(e:unknown){error.value=locale.t(e instanceof CustomerSessionApiError&&e.status===409?'adminConflict':e instanceof CustomerSessionApiError&&e.status===403?'adminPermissionDenied':'adminRequestFailed')}
 async function load(number=1){busy.value=true;error.value='';try{page.value=await fetchOrders(!!props.admin,number)}catch(e){fail(e)}finally{busy.value=false}}
 async function searchCustomers(){try{customers.value=(await fetchAdminCustomers(1,customerSearch.value)).customers}catch(e){fail(e)}}
-function open(row:TrackedOrder){selected.value=selected.value===row.id?null:row.id;note.value='';action.value='note';stage.value=orderStages[Math.min(orderStages.indexOf(row.stage)+1,8)]!;visible.value=false;error.value=''}
+function open(row:TrackedOrder){selected.value=selected.value===row.id?null:row.id;note.value='';action.value='note';stage.value=['cancelled','delivered'].includes(row.stage)?'review':orderStages[Math.min(orderStages.indexOf(row.stage)+1,8)]!;visible.value=false;error.value=''}
 async function create(){if(busy.value||description.value.trim().length<3||props.admin&&!customerId.value)return;busy.value=true;error.value='';try{await createTrackedOrder({request_path:path.value,description:description.value.trim(),...(props.admin?{customer_id:customerId.value!}:{})},!!props.admin);description.value='';createOpen.value=false;page.value=await fetchOrders(!!props.admin)}catch(e){fail(e)}finally{busy.value=false}}
-async function save(row:TrackedOrder){if(busy.value||note.value.trim().length<3)return;busy.value=true;error.value='';try{const result=await updateTrackedOrder(row,{action:action.value,...(action.value==='stage'?{stage:stage.value}:{}),note:note.value.trim(),visible_to_customer:visible.value});page.value.orders=page.value.orders.map(o=>o.id===row.id?result.order:o);note.value=''}catch(e){fail(e)}finally{busy.value=false}}
+async function save(row:TrackedOrder){if(busy.value||note.value.trim().length<3)return;busy.value=true;error.value='';try{const result=await updateTrackedOrder(row,{action:action.value,...(['stage','stage_correction'].includes(action.value)?{stage:stage.value}:{}),note:note.value.trim(),visible_to_customer:visible.value});page.value.orders=page.value.orders.map(o=>o.id===row.id?result.order:o);note.value=''}catch(e){fail(e)}finally{busy.value=false}}
 onMounted(()=>load())
 </script>
 <template>
@@ -37,12 +39,13 @@ onMounted(()=>load())
     <button class="flex min-h-11 w-full items-center justify-between gap-2 text-start" :disabled="busy" :aria-expanded="selected===order.id" @click="open(order)"><b dir="ltr">{{order.reference}}</b><b>{{label(order.stage)}}</b></button>
     <p v-if="admin" class="mb-2 text-sm font-bold">{{locale.t('customerLabel')}}: {{order.customer_name||'—'}} · #{{order.customer_id}}</p><p class="text-sm">{{order.description}}</p><p class="mt-2 text-xs">{{words.invoice}}: {{confirmation(order.invoice_confirmed_at)}} · {{words.deposit}}: {{confirmation(order.deposit_confirmed_at)}}</p>
     <div v-if="selected===order.id" class="mt-3 space-y-3">
-      <ol class="grid grid-cols-2 gap-2 sm:grid-cols-3"><li v-for="(item,index) in orderStages.slice(0,9)" :key="item" class="rounded-xl border border-[var(--c-border)] p-2 text-xs" :class="{'font-bold text-[var(--c-secondary)]':index<=orderStages.indexOf(order.stage)&&order.stage!=='cancelled'}">{{index+1}} · {{label(item)}} <span v-if="item===order.stage">●</span></li></ol>
+      <ol class="grid grid-cols-2 gap-2 sm:grid-cols-3"><li v-for="(item,index) in orderStages.slice(0,9)" :key="item" class="rounded-xl border border-[var(--c-border)] p-2 text-xs" :class="{'font-bold text-[var(--c-secondary)]':(item===order.stage||order.events.some(event=>event.stage===item))&&order.stage!=='cancelled'}">{{index+1}} · {{label(item)}} <span v-if="item===order.stage">●</span></li></ol>
       <ol class="space-y-2 border-s-2 border-[var(--c-secondary)] ps-3"><li v-for="event in order.events" :key="event.id" class="rounded-xl bg-[var(--c-surface-2)] p-3 text-sm"><b>{{label(event.stage)}}</b><time class="mx-2 text-xs">{{new Date(event.created_at).toLocaleString(locale.locale==='ku'?'ar':locale.locale)}}</time><small v-if="admin&&!event.visible_to_customer">{{words.private}}</small><p class="whitespace-pre-wrap">{{event.note}}</p></li></ol>
+      <OrderCommercialPanel :order="order" :admin="admin" @updated="row=>page.orders=page.orders.map(item=>item.id===row.id?row:item)"/>
       <form v-if="admin" class="space-y-2 border-t border-[var(--c-border)] pt-3" @submit.prevent="save(order)">
-        <label class="form-field">{{locale.t('actions')}}<select v-model="action" :disabled="busy"><option value="note">{{words.note}}</option><option v-if="!['cancelled','delivered'].includes(order.stage)" value="stage">{{words.stage}}</option><option v-if="!order.invoice_confirmed_at&&!['cancelled','delivered'].includes(order.stage)" value="invoice_confirmed">{{words.invoice}}</option><option v-if="order.invoice_confirmed_at&&!order.deposit_confirmed_at&&!['cancelled','delivered'].includes(order.stage)" value="deposit_confirmed">{{words.deposit}}</option></select></label>
-        <label v-if="action==='stage'" class="form-field">{{words.stage}}<select v-model="stage" :disabled="busy"><option v-for="item in orderStages.filter((s,i)=>s==='cancelled'||Math.abs(i-orderStages.indexOf(order.stage))===1)" :key="item" :value="item">{{label(item)}}</option></select></label>
-        <textarea v-model="note" class="w-full rounded-xl border border-[var(--c-border)] p-3" :aria-label="words.note" required minlength="3" maxlength="4000" rows="3" :disabled="busy"/><label class="flex items-center gap-2 text-sm"><input v-model="visible" type="checkbox" :disabled="busy">{{words.visible}}</label><button class="mini-action" :disabled="busy">{{locale.t('save')}}</button>
+        <label class="form-field">{{locale.t('actions')}}<select v-model="action" :disabled="busy"><option value="note">{{words.note}}</option><option v-if="!['cancelled','delivered'].includes(order.stage)||adminIdentity.identity?.is_owner" value="stage_correction">{{locale.locale==='fa'?'اصلاح دستی مرحله با ذکر دلیل':locale.locale==='ar'?'تصحيح المرحلة مع ذكر السبب':locale.locale==='ku'?'ڕاستکردنەوەی قۆناغ بە هۆکار':'Correct stage with a reason'}}</option><option v-if="!['cancelled','delivered'].includes(order.stage)" value="stage">{{words.stage}}</option><option v-if="!order.invoice_confirmed_at&&!['cancelled','delivered'].includes(order.stage)" value="invoice_confirmed">{{words.invoice}}</option><option v-if="order.invoice_confirmed_at&&!order.deposit_confirmed_at&&!['cancelled','delivered'].includes(order.stage)" value="deposit_confirmed">{{words.deposit}}</option></select></label>
+        <label v-if="['stage','stage_correction'].includes(action)" class="form-field">{{words.stage}}<select v-model="stage" :disabled="busy"><option v-for="item in orderStages.filter((s,i)=>action==='stage_correction'?s!==order.stage:s==='cancelled'||Math.abs(i-orderStages.indexOf(order.stage))===1)" :key="item" :value="item">{{label(item)}}</option></select></label>
+        <textarea v-model="note" class="w-full rounded-xl border border-[var(--c-border)] p-3" :aria-label="words.note" required :minlength="action==='stage_correction'?10:3" maxlength="4000" rows="3" :disabled="busy"/><label class="flex items-center gap-2 text-sm"><input v-model="visible" type="checkbox" :disabled="busy">{{words.visible}}</label><button class="mini-action" :disabled="busy">{{locale.t('save')}}</button>
       </form>
     </div>
   </article>

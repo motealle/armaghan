@@ -44,6 +44,15 @@ class OrderTrackingTest extends TestCase {
   $this->postJson('/api/admin/orders',array_merge($payload,['description'=>'Changed request']))->assertConflict();$this->assertDatabaseCount('tracked_orders',1);$this->assertDatabaseCount('tracked_order_events',1);
   $this->withSession([CustomerSession::KEY=>$customer->id])->postJson('/api/customer/orders',['request_path'=>'custom','description'=>'Customer request','request_key'=>$payload['request_key']])->assertCreated();$this->assertDatabaseCount('tracked_orders',2);
  }
+ public function test_manual_correction_requires_reason_preserves_payment_gates_and_owner_only_reopening(): void {
+  $this->actingAs(User::factory()->admin()->create());$row=$this->createOrder(Customer::create(['active'=>true]));
+  $base=['revision'=>$row['revision'],'action'=>'stage_correction','stage'=>'awaiting_deposit','note'=>'Too short','visible_to_customer'=>false];$this->patchJson('/api/admin/orders/'.$row['id'],$base)->assertUnprocessable();
+  $row=$this->change($row,'stage_correction',['stage'=>'awaiting_deposit','note'=>'Offline invoice review completed']);
+  $this->patchJson('/api/admin/orders/'.$row['id'],array_merge($base,['revision'=>$row['revision'],'stage'=>'production','note'=>'Proceed without evidence']))->assertUnprocessable();
+  $row=$this->change($row,'stage_correction',['stage'=>'cancelled','note'=>'Customer cancelled the request']);
+  $this->patchJson('/api/admin/orders/'.$row['id'],array_merge($base,['revision'=>$row['revision'],'stage'=>'review','note'=>'Reopen for customer corrections']))->assertForbidden();
+  $this->actingAs(User::factory()->admin()->create(['email'=>'motealle@gmail.com','email_verified_at'=>now()]));$row=$this->change($row,'stage_correction',['stage'=>'review','note'=>'Owner reviewed and reopened request']);$this->assertSame('review',$row['stage']);$this->assertCount(4,$row['events']);
+ }
  public function test_primary_owner_related_orders_are_protected_from_other_admins(): void {
   $owner=User::factory()->admin()->create(['email'=>'motealle@gmail.com','email_verified_at'=>now()]);$customer=Customer::create(['user_id'=>$owner->id,'active'=>true]);$this->actingAs($owner);$row=$this->createOrder($customer);
   $this->actingAs(User::factory()->admin()->create())->getJson('/api/admin/orders')->assertJsonCount(0,'orders');

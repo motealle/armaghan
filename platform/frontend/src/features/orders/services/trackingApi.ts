@@ -1,7 +1,8 @@
 import { requestJson } from '@/features/auth/services/customerSessionApi'
 export const orderStages=['inquiry','review','invoice','awaiting_deposit','production','quality','ready','shipped','delivered','cancelled'] as const
 export type OrderStage=typeof orderStages[number]
-export interface TrackedOrder {id:number;reference:string;customer_id?:number;customer_name?:string|null;request_path:string;description:string;stage:OrderStage;invoice_confirmed_at:string|null;deposit_confirmed_at:string|null;revision?:string;events:{id:number;action:string;stage:OrderStage;note:string;visible_to_customer:boolean;created_at:string}[]}
+export interface OrderQuote {currency:string;items:{product_code?:string|null;description:string;quantity:number;unit_price_minor:number}[];subtotal_minor:number;shipping_minor:number;discount_minor:number;tax_minor:number;total_minor:number}
+export interface TrackedOrder {quote?:OrderQuote|null;documents?:{id:number;kind:string;visible_to_customer:boolean;download_url:string}[];id:number;reference:string;customer_id?:number;customer_name?:string|null;request_path:string;description:string;stage:OrderStage;invoice_confirmed_at:string|null;deposit_confirmed_at:string|null;revision?:string;events:{id:number;action:string;stage:OrderStage;note:string;visible_to_customer:boolean;created_at:string}[]}
 export interface OrderPage {orders:TrackedOrder[];page:number;last_page:number}
 export const fetchOrders=(admin=false,page=1)=>requestJson<OrderPage>((admin?'/api/admin/orders':'/api/customer/orders')+'?page='+page)
 export async function createTrackedOrder(fields:{customer_id?:number;request_path:string;description:string},admin=false):Promise<{order:TrackedOrder}>{
