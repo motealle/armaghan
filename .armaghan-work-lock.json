@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261003-light-corrections",
-  "scope": "Owner self protection, footer layout, terminology, category-first products, availability labels and panel navigation; queue specifications and shared WhatsApp settings",
+  "run_id": "codex-20261003-bulk-status",
+  "scope": "Bounded gold typography and atomic bulk activation for custom users/customers/products",
   "base_ref": "44ed36ffa4a5da89cf3ec0106b99c11080b79baf",
-  "acquired_at": "2026-10-03T06:39:51.515Z",
-  "expires_at": "2026-10-03T07:02:27.607Z",
-  "released_at": "2026-10-03T07:02:27.607Z"
+  "acquired_at": "2026-10-03T08:04:07.324Z",
+  "expires_at": "2026-10-03T09:34:07.324Z"
 }
