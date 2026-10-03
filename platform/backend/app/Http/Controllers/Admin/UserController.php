@@ -32,13 +32,20 @@ class UserController extends Controller
             'page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total()]);
     }
 
+    public function storeForCustomer(Request $request, Customer $customer): JsonResponse
+    {
+        $request->validate(['customer_id' => ['prohibited'], 'role' => ['prohibited'], 'active' => ['prohibited']]);
+        $request->merge(['customer_id' => $customer->id, 'role' => 'customer', 'active' => true]);
+        return $this->store($request);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $request->merge(['email' => strtolower(trim((string) $request->input('email')))]);
         $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'email' => ['required', 'email', 'max:255'],
             'role' => ['required', 'in:admin,customer'], 'active' => ['required', 'boolean'],
             'password' => ['required', 'string', 'max:255', 'confirmed', Password::min(12)->letters()->numbers()],
-            'customer_id' => ['sometimes', 'required_with:customer_revision', 'integer', 'min:1'],
+            'customer_id' => ['required_with:customer_revision', 'integer', 'min:1'],
             'customer_revision' => ['required_with:customer_id', 'string', 'regex:/^[a-f0-9]{64}$/'],
             'email_verified_at' => ['prohibited'], 'is_owner' => ['prohibited'], 'user_id' => ['prohibited']]);
         abort_if($data['role'] === 'admin' && ! $request->user()->isPrimaryOwner(), 403);

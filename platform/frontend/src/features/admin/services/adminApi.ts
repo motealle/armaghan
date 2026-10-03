@@ -44,3 +44,5 @@ export const bulkAdminStatus=(resource:'products'|'customers'|'users',items:{id:
 export const saveProductSpecificationSchema=(group:AdminSubcategory,definitions:Array<{id:number|null;key:string;labels:AdminSpecification['labels'];locked:boolean}>)=>requestJson<{subcategories:AdminSubcategory[]}>('/api/admin/product-taxonomy/'+group.id+'/specifications',{method:'PUT',body:JSON.stringify({revision:group.schema_revision,acknowledged:true,definitions})})
 
 export const bulkAdminTags=(resource:'products'|'customers'|'users',items:{id:number;revision:string}[],mode:'add'|'remove'|'replace',tags:string[])=>requestJson<{updated:number}>('/api/admin/bulk-tags/'+resource,{method:'POST',body:JSON.stringify({items,mode,tags})})
+
+export const createCustomerLogin=(customer:AdminCustomer,fields:{name:string;email:string;password:string;password_confirmation:string})=>requestJson<{user:AdminUser}>('/api/admin/customers/'+customer.id+'/account',{method:'POST',body:JSON.stringify({...fields,customer_revision:customer.revision})})

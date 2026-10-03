@@ -4,7 +4,7 @@ import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import {useLocaleStore} from '@/stores/locale'
 import {useAdminStore} from '../store'
 import {CustomerSessionApiError} from '@/features/auth/services/customerSessionApi'
-import {createAdminUser,type AdminCustomer} from '../services/adminApi'
+import {createCustomerLogin,type AdminCustomer} from '../services/adminApi'
 const props=defineProps<{customer:AdminCustomer|null}>()
 const emit=defineEmits<{close:[];saved:[];busy:[value:boolean]}>()
 const locale=useLocaleStore(),admin=useAdminStore()
@@ -14,11 +14,11 @@ watch(()=>props.customer,()=>{
 },{immediate:true})
 function close(){if(!busy.value)emit('close')}
 async function save(){
-  if(!props.customer||props.customer.has_account||!acknowledged.value||busy.value)return
+  if(!props.customer||props.customer.has_account!==false||!acknowledged.value||busy.value)return
   if(password.value!==confirmation.value){error.value=locale.t('customerAccountInvalid');return}
   busy.value=true;emit('busy',true);error.value=''
   try{
-    await createAdminUser({name:name.value.trim(),email:email.value.trim(),role:'customer',active:true,password:password.value,password_confirmation:confirmation.value,customer_id:props.customer.id,customer_revision:props.customer.revision})
+    await createCustomerLogin(props.customer,{name:name.value.trim(),email:email.value.trim(),password:password.value,password_confirmation:confirmation.value})
     password.value='';confirmation.value='';emit('saved')
   }catch(e){
     const status=e instanceof CustomerSessionApiError?e.status:0

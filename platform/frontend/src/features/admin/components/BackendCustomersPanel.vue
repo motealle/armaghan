@@ -86,7 +86,7 @@ onMounted(()=>load())
         <tbody><tr v-for="row in result.customers" :key="row.id"><td><input v-model="checked" type="checkbox" :value="row.id" :aria-label="String(row.id)" :disabled="bulkBusy||loading||saving||bulkBusy"></td>
           <td><button class="text-start font-bold" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.name||'#'+row.id}}</button><RecordTags :tags="row.tags"/><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
           <td>{{row.priority}}</td><td dir="ltr">{{row.whatsapp||'—'}}</td><td dir="ltr">{{row.email||'—'}}</td>
-          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="!row.has_account&&row.active" class="mini-action ms-2" :disabled="bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
+          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="row.has_account===false&&row.active" class="mini-action ms-2" :disabled="bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
         </tr></tbody>
       </table>
       <p v-if="!loading&&!result.customers.length&&!error" class="p-4 text-sm">{{locale.t('adminNoCustomers')}}</p>

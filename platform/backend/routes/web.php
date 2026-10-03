@@ -111,6 +111,7 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
     Route::post('/logout', [\App\Http\Controllers\Admin\AdminSessionController::class, 'logout']);
     Route::get('/customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index']);
     Route::post('/customers', [\App\Http\Controllers\Admin\CustomerController::class, 'store']);
+    Route::post('/customers/{customer}/account', [\App\Http\Controllers\Admin\UserController::class, 'storeForCustomer'])->middleware('throttle:10,1');
     Route::patch('/customers/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'update']);
 });
 
