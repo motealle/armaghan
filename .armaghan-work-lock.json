@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261003-bulk-status",
-  "scope": "Bounded gold typography and atomic bulk activation for custom users/customers/products; core published, final immutable frontend FTP37109006579 still running; check workflow before new publication",
+  "run_id": "codex-20261003-customer-feedback",
+  "scope": "Customer feedback: compact storefront, labels/gold, canonical manual order timeline and editing guidance",
   "base_ref": "9b7f0a72709994979bac81ddbc295af0753313d8",
-  "acquired_at": "2026-10-03T08:04:07.324Z",
-  "expires_at": "2026-10-03T08:19:04.015Z",
-  "released_at": "2026-10-03T08:19:04.015Z"
+  "acquired_at": "2026-10-03T10:32:45.767Z",
+  "expires_at": "2026-10-03T12:02:45.769Z"
 }
