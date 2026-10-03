@@ -1,11 +1,12 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261003-bulk-status",
-  "scope": "Bounded gold typography and atomic bulk activation for custom users/customers/products",
-  "base_ref": "44ed36ffa4a5da89cf3ec0106b99c11080b79baf",
+  "scope": "Bounded gold typography and atomic bulk activation for custom users/customers/products; core published, final immutable frontend FTP37109006579 still running; check workflow before new publication",
+  "base_ref": "9b7f0a72709994979bac81ddbc295af0753313d8",
   "acquired_at": "2026-10-03T08:04:07.324Z",
-  "expires_at": "2026-10-03T09:34:07.324Z"
+  "expires_at": "2026-10-03T08:19:04.015Z",
+  "released_at": "2026-10-03T08:19:04.015Z"
 }
