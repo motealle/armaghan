@@ -39,7 +39,7 @@ export function useVisualProfileSync(
   let saveController:AbortController|undefined
   let suppressNextWatch=false
 
-  const canPublish=computed(()=>authenticated.value&&state.value!=='saving'&&state.value!=='conflict')
+  const canPublish=computed(()=>enabled.value&&authenticated.value&&!['checking','saving','conflict','error'].includes(state.value))
   const statusLabel=computed(()=>{
     switch(state.value){
       case 'checking':return 'بررسی اتصال'
@@ -124,7 +124,7 @@ export function useVisualProfileSync(
   }
 
   async function saveNow(force=false){
-    if(!authenticated.value||(state.value==='conflict'&&!force))return false
+    if(!enabled.value||!authenticated.value||(state.value==='conflict'&&!force))return false
     saveController?.abort()
     const controller=new AbortController()
     saveController=controller
@@ -170,7 +170,7 @@ export function useVisualProfileSync(
   }
 
   function queueSave(){
-    if(!initialized.value||!authenticated.value||state.value==='conflict')return
+    if(!enabled.value||!initialized.value||!authenticated.value||state.value==='conflict')return
     if(saveTimer!==undefined)window.clearTimeout(saveTimer)
     saveTimer=window.setTimeout(()=>{void saveNow()},900)
   }
@@ -239,6 +239,7 @@ export function useVisualProfileSync(
   )
 
   watch(enabled,(value)=>{
+    if(!value&&saveTimer!==undefined){window.clearTimeout(saveTimer);saveTimer=undefined}
     if(value&&!initialized.value)void connect(true)
   },{immediate:true})
 
