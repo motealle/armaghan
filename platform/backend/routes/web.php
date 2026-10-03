@@ -82,6 +82,7 @@ Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleCustomerAuthCon
 
 
 Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group(function (): void {
+    Route::post('/bulk-status/{resource}', [\App\Http\Controllers\Admin\BulkStatusController::class, 'update'])->whereIn('resource', ['products', 'customers', 'users']);
     Route::post('/advanced-access', [\App\Http\Controllers\Admin\AdvancedAccessController::class, 'store']);
     Route::delete('/advanced-access', [\App\Http\Controllers\Admin\AdvancedAccessController::class, 'destroy']);
     Route::get('/product-taxonomy', [\App\Http\Controllers\Admin\ProductController::class, 'taxonomy']);

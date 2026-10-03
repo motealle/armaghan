@@ -1,4 +1,17 @@
 # Armaghan Trading B2B Catalog — Project Handoff
+## Bounded bulk status and bright gold typography — 2026-10-03
+
+Owner requests maximum ~20 minutes; baseline 44ed36ffa4a5da89cf3ec0106b99c11080b79baf; lease codex-20261003-bulk-status. Ranked options: focused canonical bulk status (10 selected), one heavy domain (7), all-at-once (5), stock interface (3), browser-only actions (1).
+
+Custom Users/Customers/Products tables gain visible-page selection, select-all, selected count, clear and confirmation modal for activation/deactivation. Server accepts at most100 distinct ID/revision pairs; outer database transaction reuses existing single-row authorization, revision validation, account/customer synchronization and per-record audit; any missing/stale/forbidden item rolls back all changes and audit. Protected owner and actor are excluded from account bulk operations. Products preserve taxonomy/specs/media/names/availability. No schema/dependency change.
+
+Producible text now matches subcategory title .78rem/900 (English600), centered, bright brand gold with fine dark outline in light mode and unoutlined gold in dark; no navy badge. Supersedes smaller400 typography and brown #805300 per latest explicit owner instruction. Full visual/device acceptance OPEN; do not claim bright fill alone meets contrast without its outline.
+
+Local frontend build/60 tests and30 source checks PASS. Backend focused tests added for rollback/conflict, owner/actor permissions, linked customer status, product visibility and bounded/duplicate/auth failures; remote CI/deploy results pending at implementation commit. Actual authenticated owner/browser acceptance remains OPEN.
+
+NEXT: safe bulk deletion with explicit count warning and dependency/history policy; secure existing-account password reset with session revocation (never same shared password), real configured email composition/delivery and per-recipient audit, persistent editable tags displayed in rows. NOT delivered in this batch. Canonical specification editing, shared titled WhatsApp settings, orders/timeline/payments and device settings remain open; do not imply all prototype domains connected.
+
+
 
 ## Light corrections; next urgent integration batch — 2026-10-03
 

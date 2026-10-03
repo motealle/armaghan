@@ -867,7 +867,7 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .test26-section-heading [data-style-id="home.why.eyebrow"],
 .test26-section-heading [data-style-id="home.capabilities.eyebrow"],
 .test26-section-heading [data-style-id="home.product-banners.eyebrow"]{display:none}
-.product-card .product-card-title.unavailable{display:flex;margin-inline:auto;justify-content:center;text-align:center;font-size:.7rem;font-weight:400}
+.product-card .product-card-title.unavailable{display:flex;margin-inline:auto;justify-content:center;text-align:center;font-size:.78rem;font-weight:900}
 
 /* Root-safe navigation and default-hidden headings are promoted together. */
 
@@ -899,6 +899,11 @@ html.visual-editor-active .bottom-nav{display:none!important}
 .site-footer.test26-site-footer{grid-template-columns:minmax(0,1fr);align-content:start}
 .site-footer.test26-site-footer .test26-footer-grid{grid-column:1/-1;min-width:0}
 .site-footer.test26-site-footer .test26-footer-brand{grid-column:1/-1;width:100%;min-width:0;justify-self:stretch;justify-content:flex-end;direction:ltr;align-self:start;margin-top:0}
-:root{--product-status-gold:#805300}
+:root{--product-status-gold:var(--brand-gold)}
 html.dark{--product-status-gold:var(--brand-gold)}
 .product-card .product-card-title.unavailable{color:var(--product-status-gold)}
+
+/* Match ordinary subcategory typography; retain a bright gold fill with a fine contrast outline. */
+.product-card .product-card-title.unavailable{height:1.55rem;line-height:1.55rem;padding:0;font-size:.78rem;font-weight:900;color:var(--brand-gold);-webkit-text-stroke:1px #33382d;paint-order:stroke fill;text-shadow:none}
+html[data-locale="en"] .product-card .product-card-title.unavailable{font-weight:600}
+html.dark .product-card .product-card-title.unavailable{-webkit-text-stroke:0}

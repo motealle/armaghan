@@ -36,3 +36,5 @@ export interface UserPage { users:AdminUser[]; page:number; last_page:number; to
 export const fetchAdminUsers=(page=1,search='')=>requestJson<UserPage>('/api/admin/users?page='+page+'&search='+encodeURIComponent(search))
 export const createAdminUser=(fields:{name:string;email:string;role:string;active:boolean;password:string;password_confirmation:string})=>requestJson<{user:AdminUser}>('/api/admin/users',{method:'POST',body:JSON.stringify(fields)})
 export const updateAdminUser=(user:AdminUser,fields:{name:string;role:string;active:boolean})=>requestJson<{user:AdminUser}>('/api/admin/users/'+user.id,{method:'PATCH',body:JSON.stringify({...fields,revision:user.revision})})
+
+export const bulkAdminStatus=(resource:'products'|'customers'|'users',items:{id:number;revision:string}[],active:boolean)=>requestJson<{updated:number}>('/api/admin/bulk-status/'+resource,{method:'POST',body:JSON.stringify({items,active})})
