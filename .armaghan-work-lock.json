@@ -1,11 +1,12 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261003-product-specifications",
   "scope": "Canonical product specification editing in custom Vue administration",
-  "base_ref": "440dfd487ba0ee5769f49632b28ce67b0e3bd166",
+  "base_ref": "a0102b13c5ca27e7de6ef49250123d282de2c0c1",
   "acquired_at": "2026-10-03T14:49:20.796Z",
-  "expires_at": "2026-10-03T16:19:20.796Z"
+  "expires_at": "2026-10-03T15:16:42.124Z",
+  "released_at": "2026-10-03T15:16:42.124Z"
 }
