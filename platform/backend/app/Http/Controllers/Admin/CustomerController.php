@@ -90,6 +90,7 @@ class CustomerController extends Controller
     private function snapshot(Customer $customer): array
     {
         return array_merge(['id' => $customer->id], $customer->only(self::FIELDS), [
+            'has_account' => $customer->user_id !== null,
             'tags' => $customer->adminTags(),
             'name' => $customer->user?->name,
             'email' => $customer->user?->email,

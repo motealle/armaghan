@@ -38,6 +38,8 @@ class UserController extends Controller
         $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'email' => ['required', 'email', 'max:255'],
             'role' => ['required', 'in:admin,customer'], 'active' => ['required', 'boolean'],
             'password' => ['required', 'string', 'max:255', 'confirmed', Password::min(12)->letters()->numbers()],
+            'customer_id' => ['sometimes', 'required_with:customer_revision', 'integer', 'min:1'],
+            'customer_revision' => ['required_with:customer_id', 'string', 'regex:/^[a-f0-9]{64}$/'],
             'email_verified_at' => ['prohibited'], 'is_owner' => ['prohibited'], 'user_id' => ['prohibited']]);
         abort_if($data['role'] === 'admin' && ! $request->user()->isPrimaryOwner(), 403);
         // Reserved Google identities must prove ownership through Google, never
@@ -45,14 +47,33 @@ class UserController extends Controller
         if (in_array($data['email'], config('owner-access.google_admin_emails'), true)) {
             throw ValidationException::withMessages(['email' => 'Use verified Google sign-in for this identity.']);
         }
+        abort_if(isset($data['customer_id']) && ($data['role'] !== 'customer' || ! $data['active']), 422);
         try {
             $user = DB::transaction(function () use ($request, $data): User {
+                $actor = User::query()->findOrFail($request->user()->id);
+                abort_unless($actor->isActiveAdmin(), 403);
+                abort_if($data['role'] === 'admin' && ! $actor->isPrimaryOwner(), 403);
+                $customer = null;
+                if (isset($data['customer_id'])) {
+                    $customer = Customer::query()->lockForUpdate()->findOrFail($data['customer_id']);
+                    // Never reassign an existing login, including protected owner identities.
+                    abort_if($customer->user_id !== null, 409, 'Customer already has an account.');
+                    abort_unless($customer->active, 422, 'Customer must be active.');
+                    abort_unless(hash_equals(app(CustomerController::class)->revision($customer), $data['customer_revision']), 409);
+                }
                 if (User::query()->whereRaw('lower(email) = ?', [$data['email']])->exists()) {
                     throw ValidationException::withMessages(['email' => 'Account already exists.']);
                 }
                 $user = User::create(array_intersect_key($data, array_flip(['name', 'email', 'role', 'active', 'password'])));
                 if ($user->role === UserRole::Customer) {
-                    Customer::create(['user_id' => $user->id, 'active' => $user->active, 'direct_link_enabled' => false]);
+                    if ($customer) {
+                        $customer->update(['user_id' => $user->id]);
+                        ActivityLog::create(['actor_user_id' => $actor->id, 'customer_id' => $customer->id,
+                            'action' => 'admin.customer.account.created', 'subject_type' => Customer::class,
+                            'subject_id' => $customer->id, 'metadata' => ['account_id' => $user->id]]);
+                    } else {
+                        Customer::create(['user_id' => $user->id, 'active' => $user->active, 'direct_link_enabled' => false]);
+                    }
                 }
                 $this->audit($request, $user, 'created', ['name', 'role', 'active', 'password_initialized']);
                 return $user;

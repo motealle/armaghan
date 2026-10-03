@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useResolvedAppearance} from '@/composables/useResolvedAppearance'
 import {createTrackedOrder} from '@/features/orders/services/trackingApi'
 import {useSessionStore} from '@/stores/session'
 
@@ -10,6 +11,7 @@ import { useOrderWizardStore } from '@/stores/orderWizard'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import { useLocaleStore } from '@/stores/locale'
 
+const {policy}=useResolvedAppearance()
 const wizard=useOrderWizardStore()
 const locale=useLocaleStore()
 const session=useSessionStore(),trackingBusy=ref(false),trackingReference=ref(''),trackingError=ref('')
@@ -57,8 +59,8 @@ async function registerTracking(){
     <div v-else-if="wizard.step===1">
       <h3 class="mb-3 text-sm font-extrabold text-[var(--c-text)]">{{locale.t('chooseMainCategory')}}</h3>
       <div class="wizard-category-grid grid grid-cols-3 gap-2">
-        <button v-for="category in categories" :key="category.code" class="wizard-category-option" @click="wizard.chooseCategory(category.code)">
-          <span class="wizard-category-number">0{{category.code}}</span>
+        <button v-for="category in categories" :key="category.code" :class="{'wizard-category-unnumbered':!policy.showCategoryNumbers}" class="wizard-category-option" @click="wizard.chooseCategory(category.code)">
+          <span v-if="policy.showCategoryNumbers" class="wizard-category-number">0{{category.code}}</span>
           <span class="min-w-0">
             <b class="wizard-category-title">{{locale.categoryName(category.code,category.name)}}</b>
             <small class="wizard-category-subtitle">{{locale.categorySubtitle(category.code,category.subtitle)}}</small>
@@ -71,7 +73,7 @@ async function registerTracking(){
       <h3 class="mb-3 text-sm font-extrabold text-[var(--c-text)]">{{locale.t('chooseSubcategory')}}</h3>
       <div class="grid gap-2 sm:grid-cols-2">
         <button v-for="subcategory in wizard.category.subcategories" :key="subcategory.code" class="wizard-option block p-4" @click="wizard.chooseSubcategory(subcategory.code)">
-          <b class="text-sm text-[var(--c-text)]">{{subcategory.code}} · {{locale.subcategoryName(subcategory.code,subcategory.name)}}</b>
+          <b class="text-sm text-[var(--c-text)]"><span v-if="policy.showSubcategoryCodes">{{subcategory.code}} · </span>{{locale.subcategoryName(subcategory.code,subcategory.name)}}</b>
           <small class="mt-1 block text-[var(--c-muted)]">{{locale.categoryName(wizard.category.code,wizard.category.name)}}</small>
         </button>
       </div>

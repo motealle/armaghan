@@ -955,3 +955,8 @@ html.dark .product-card .product-card-title.unavailable{text-shadow:none}
  .site-footer.test26-site-footer{padding:.85rem 1rem;margin-top:1.1rem}
  .test26-product-banner{height:clamp(12rem,38vw,18rem);min-height:0}
 }
+
+/* Client approved: intrinsic hero geometry and gold on a navy status pill. */
+.test26-single-hero.test29-fitted-hero .test26-single-hero-media .smart-image{height:auto;min-height:0;aspect-ratio:16/9}
+.wizard-category-option.wizard-category-unnumbered{grid-template-columns:minmax(0,1fr)}
+.product-card .product-card-title.unavailable,html.dark .product-card .product-card-title.unavailable{height:auto;min-height:1.55rem;line-height:1.55rem;padding:.08rem .65rem;border:0;border-radius:999px;background:#101a44;color:var(--brand-gold);-webkit-text-stroke:0;paint-order:normal;text-shadow:none;box-shadow:none}

@@ -1,7 +1,7 @@
 import { requestJson } from '@/features/auth/services/customerSessionApi'
 export interface AdminIdentity { name:string; email:string; is_owner?:boolean }
 export interface AdminCustomer {
-  tags:string[]; id:number; name:string|null; email:string|null; company_name:string|null; whatsapp:string|null;
+  tags:string[]; has_account:boolean; id:number; name:string|null; email:string|null; company_name:string|null; whatsapp:string|null;
   country_code:string|null; country_name:string|null; notes:string|null; priority:number;
   active:boolean; direct_link_enabled:boolean; revision:string;
 }
@@ -36,7 +36,7 @@ export const orderAdminProductImages=(product:AdminProduct,media_ids:number[])=>
 export interface AdminUser { tags:string[]; id:number; name:string; email:string; role:'admin'|'customer'; active:boolean; is_owner:boolean; protected:boolean; revision:string }
 export interface UserPage { users:AdminUser[]; page:number; last_page:number; total:number }
 export const fetchAdminUsers=(page=1,search='')=>requestJson<UserPage>('/api/admin/users?page='+page+'&search='+encodeURIComponent(search))
-export const createAdminUser=(fields:{name:string;email:string;role:string;active:boolean;password:string;password_confirmation:string})=>requestJson<{user:AdminUser}>('/api/admin/users',{method:'POST',body:JSON.stringify(fields)})
+export const createAdminUser=(fields:{name:string;email:string;role:string;active:boolean;password:string;password_confirmation:string;customer_id?:number;customer_revision?:string})=>requestJson<{user:AdminUser}>('/api/admin/users',{method:'POST',body:JSON.stringify(fields)})
 export const updateAdminUser=(user:AdminUser,fields:{name:string;role:string;active:boolean})=>requestJson<{user:AdminUser}>('/api/admin/users/'+user.id,{method:'PATCH',body:JSON.stringify({...fields,revision:user.revision})})
 
 export const bulkAdminStatus=(resource:'products'|'customers'|'users',items:{id:number;revision:string}[],active:boolean)=>requestJson<{updated:number}>('/api/admin/bulk-status/'+resource,{method:'POST',body:JSON.stringify({items,active})})

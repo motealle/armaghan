@@ -15,7 +15,7 @@ const {policy}=useResolvedAppearance()
 
 <template>
   <HeroCarousel v-if="policy.heroMode==='carousel'"/>
-  <section v-else data-style-id="hero.shell" data-style-label="قاب هیرو" class="test26-single-hero overflow-hidden rounded-[1.5rem] shadow-xl">
+  <section v-else data-style-id="hero.shell" data-style-label="قاب هیرو" class="test26-single-hero test29-fitted-hero overflow-hidden rounded-[1.5rem] shadow-xl">
     <div data-style-id="hero.media" data-style-label="تصویر هیرو" class="test26-single-hero-media">
       <SmartImage
         :src="homeMedia.resolve('hero',test26Media.hero.image)"
@@ -23,7 +23,8 @@ const {policy}=useResolvedAppearance()
         :alt="locale.t('heroSingleAlt')"
         :label="locale.t('heroSingleAlt')"
         aspect="hero"
-        fit="contain-blur"
+        fit="contain"
+        intrinsic
         eager
       />
     </div>

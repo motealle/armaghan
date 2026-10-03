@@ -7,12 +7,19 @@ const props=withDefaults(defineProps<{
   label?:string
   aspect?:'hero'|'card'|'square'|'product'
   fit?:'cover'|'contain'|'contain-blur'|'edge-extend'
+  intrinsic?:boolean
   eager?:boolean
   fallbackSrc?:string
-}>(),{label:'',aspect:'card',fit:'cover',eager:false})
+}>(),{label:'',aspect:'card',fit:'cover',intrinsic:false,eager:false})
 
 const ratioClass=computed(()=>props.aspect==='hero'?'aspect-[16/9]':props.aspect==='square'?'aspect-square':props.aspect==='product'?'aspect-[2/3]':'aspect-[4/3]')
 const currentSrc=ref(props.src)
+const intrinsicRatio=ref('16 / 9')
+watch(currentSrc,()=>{intrinsicRatio.value='16 / 9'})
+function imageLoaded(event:Event){
+  const image=event.target as HTMLImageElement
+  if(props.intrinsic&&image.naturalWidth>0&&image.naturalHeight>0)intrinsicRatio.value=`${image.naturalWidth} / ${image.naturalHeight}`
+}
 watch(()=>props.src,(value)=>{currentSrc.value=value})
 const KNOWN_AVIF_PREFIXES=[
   '/images/final/',
@@ -35,7 +42,7 @@ function useFallback(){
 </script>
 
 <template>
-  <div class="smart-image relative overflow-hidden" :class="ratioClass" role="img" :aria-label="alt || label">
+  <div class="smart-image relative overflow-hidden" :class="ratioClass" :style="intrinsic?{aspectRatio:intrinsicRatio}:undefined" role="img" :aria-label="alt || label">
     <div class="absolute inset-0 bg-[var(--c-media-bg)]"/>
     <div class="absolute -start-10 -top-10 h-28 w-28 rounded-full bg-white/18 dark:bg-white/[.025]"/>
     <div class="absolute -bottom-12 -end-7 h-36 w-36 rounded-full bg-[color-mix(in_srgb,var(--c-primary)_4%,transparent)]"/>
@@ -60,6 +67,7 @@ function useFallback(){
         :loading="eager?'eager':'lazy'"
         :fetchpriority="eager?'high':'auto'"
         decoding="async"
+        @load="imageLoaded"
         @error="useFallback"
       >
     </picture>

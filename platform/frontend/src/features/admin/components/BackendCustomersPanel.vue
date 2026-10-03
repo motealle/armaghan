@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CustomerAccountPanel from './CustomerAccountPanel.vue'
 import RecordTags from './RecordTags.vue'
 import BulkStatusBar from './BulkStatusBar.vue'
 import { computed, onMounted, ref } from 'vue'
@@ -18,6 +19,11 @@ const error=ref('')
 const note=ref('')
 const open=ref(false)
 const selected=ref<AdminCustomer|null>(null)
+const accountCustomer=ref<AdminCustomer|null>(null),accountBusy=ref(false)
+async function accountSaved(){
+  accountCustomer.value=null;note.value=locale.t('adminSaved')
+  try{result.value=await fetchAdminCustomers(result.value.page,search.value.trim())}catch(e){error.value=failed(e)}
+}
 const draft=ref<CustomerFields|null>(null)
 let requestId=0
 function failed(e:unknown){
@@ -28,7 +34,7 @@ function failed(e:unknown){
   return locale.t(e instanceof CustomerSessionApiError&&e.status===409?'adminConflict':'adminRequestFailed')
 }
 async function load(page=1){
-  if(loading.value||saving.value||bulkBusy.value)return
+  if(loading.value||saving.value||bulkBusy.value||accountBusy.value)return
   checked.value=[]
   const id=++requestId;loading.value=true;error.value=''
   try{const response=await fetchAdminCustomers(page,search.value.trim());if(id===requestId)result.value=response}
@@ -80,7 +86,7 @@ onMounted(()=>load())
         <tbody><tr v-for="row in result.customers" :key="row.id"><td><input v-model="checked" type="checkbox" :value="row.id" :aria-label="String(row.id)" :disabled="bulkBusy||loading||saving||bulkBusy"></td>
           <td><button class="text-start font-bold" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.name||'#'+row.id}}</button><RecordTags :tags="row.tags"/><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
           <td>{{row.priority}}</td><td dir="ltr">{{row.whatsapp||'—'}}</td><td dir="ltr">{{row.email||'—'}}</td>
-          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button></td>
+          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="!row.has_account&&row.active" class="mini-action ms-2" :disabled="bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
         </tr></tbody>
       </table>
       <p v-if="!loading&&!result.customers.length&&!error" class="p-4 text-sm">{{locale.t('adminNoCustomers')}}</p>
@@ -90,6 +96,7 @@ onMounted(()=>load())
       <span>{{result.page}} / {{result.last_page}} · {{result.total}}</span>
       <button class="mini-action" :disabled="bulkBusy||loading||saving||result.page>=result.last_page" @click="load(result.page+1)">{{locale.t('adminNext')}}</button>
     </div>
+    <CustomerAccountPanel :customer="accountCustomer" @close="accountCustomer=null" @busy="accountBusy=$event" @saved="accountSaved"/>
     <AdaptivePanel :open="open" :title="locale.t('customer360')" wide @close="close">
       <form v-if="draft" class="space-y-5" @submit.prevent="save">
         <section class="customer-profile-head">

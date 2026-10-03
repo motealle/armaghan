@@ -11,3 +11,7 @@ Arabic/English/Sorani defaults carry the same meaning. Caption remains separate 
 ## Publication evidence
 
 FTP37142660724 SUCCESS; root/Test29 both HTTP200 reference index-Cma20lYb.js / index-vxUVRJfx.css. Live optimized image200,161990bytes and matching SHA256. Public JS contains exact Persian caption and selected local image path. Frontend61/type-check/build,30 source/frozen/root checks PASS. Device/visual acceptance remains deferred; no visual claim from asset checks.
+
+## Customer fit correction — 2026-10-03
+
+Latest customer rejects fixed-height contain-blur fit. Opt-in intrinsic SmartImage geometry follows loaded image width/height; hero removes earlier minimum/fixed heights, shows contained foreground without ambient blur and preserves full approved composition. Existing desktop caption grid remains; mobile image height follows width/actual aspect rather than viewport clamp. Approved photo/checksum/slogan unchanged. Actual device acceptance remains OPEN.
