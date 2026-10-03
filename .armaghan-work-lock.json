@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261003-footer-followthrough",
-  "scope": "Footer/banner geometry, remaining media/content and order followthrough; documentation",
+  "run_id": "codex-20261003-product-specifications",
+  "scope": "Canonical product specification editing in custom Vue administration",
   "base_ref": "440dfd487ba0ee5769f49632b28ce67b0e3bd166",
-  "acquired_at": "2026-10-03T13:29:09.984Z",
-  "expires_at": "2026-10-03T14:08:13.044Z",
-  "released_at": "2026-10-03T14:08:13.044Z"
+  "acquired_at": "2026-10-03T14:49:20.796Z",
+  "expires_at": "2026-10-03T16:19:20.796Z"
 }
