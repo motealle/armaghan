@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261003-custom-only-header",
-  "scope": "Custom admin default with owner justified Filament escape; editor auth/publication, responsive header and reversible capabilities intro",
+  "run_id": "codex-20261003-light-corrections",
+  "scope": "Owner self protection, footer layout, terminology, category-first products, availability labels and panel navigation; queue specifications and shared WhatsApp settings",
   "base_ref": "c988c69fbad27582fa9412d8395ce1bc4abc64d1",
-  "acquired_at": "2026-10-03T05:23:23.824Z",
-  "expires_at": "2026-10-03T06:04:37.475Z",
-  "released_at": "2026-10-03T06:04:37.475Z"
+  "acquired_at": "2026-10-03T06:39:51.515Z",
+  "expires_at": "2026-10-03T08:09:51.515Z"
 }
