@@ -14,6 +14,7 @@ class AdminSessionController extends Controller
         return response()->json(['admin' => [
             'name' => $request->user()->name,
             'email' => $request->user()->email,
+            'is_owner' => $request->user()->isPrimaryOwner(),
         ]])->header('Cache-Control', 'no-store, private');
     }
 

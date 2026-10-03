@@ -16,10 +16,11 @@ import { useDesignStore } from '@/stores/design'
 import { useLocaleStore } from '@/stores/locale'
 import { useSessionStore } from '@/stores/session'
 
+import BackendUsersPanel from './BackendUsersPanel.vue'
 import BackendCustomersPanel from './BackendCustomersPanel.vue'
 const props=defineProps<{live?:boolean}>()
 
-type AdminTab='overview'|'customers'|'products'|'content'|'appearance'|'languages'
+type AdminTab='users'|'overview'|'customers'|'products'|'content'|'appearance'|'languages'
 const catalog=useCatalogStore()
 const customers=useCustomersStore()
 const session=useSessionStore()
@@ -39,6 +40,7 @@ const customerWhatsapp=ref('')
 const customerFormError=ref('')
 
 const tabs=computed(()=>[
+  ...(props.live?[{id:'users' as const,label:locale.t('adminAccounts'),icon:UserRoundCog}]:[]),
   {id:'overview' as const,label:locale.t('adminOverview'),icon:LayoutDashboard},
   {id:'customers' as const,label:locale.t('adminCustomers'),icon:UsersRound},
   {id:'products' as const,label:locale.t('adminProducts'),icon:Boxes},
@@ -98,7 +100,7 @@ function inviteLead(id:string){
     </nav>
     <nav class="admin-surface rounded-2xl p-2" :aria-label="locale.t('adminOverview')">
       <div class="admin-tabs">
-        <button v-for="tab in tabs" :key="tab.id" :disabled="live&&!['customers','products'].includes(tab.id)" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
+        <button v-for="tab in tabs" :key="tab.id" :disabled="live&&!['customers','products','users'].includes(tab.id)" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
           <component :is="tab.icon" :size="16" class="me-1 inline"/>{{tab.label}}
         </button>
       </div>
@@ -106,7 +108,8 @@ function inviteLead(id:string){
 
     <p v-if="live" class="text-sm text-[var(--c-muted)]">{{locale.t('adminIntegrationHelp')}}</p>
     <template v-if="live">
-      <BackendCustomersPanel v-if="activeTab==='customers'"/>
+      <BackendUsersPanel v-if="activeTab==='users'"/>
+      <BackendCustomersPanel v-else-if="activeTab==='customers'"/>
       <AdminProductsPanel v-else-if="activeTab==='products'" live/>
     </template>
     <template v-else>

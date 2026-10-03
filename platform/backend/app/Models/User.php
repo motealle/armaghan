@@ -30,6 +30,12 @@ class User extends Authenticatable implements FilamentUser
         return $this->active && $this->role === UserRole::Admin;
     }
 
+    public function isPrimaryOwner(): bool
+    {
+        return $this->isActiveAdmin() && $this->email_verified_at !== null
+            && strtolower($this->email) === config('owner-access.primary_owner_email');
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return $panel->getId() === 'admin' && $this->isActiveAdmin();

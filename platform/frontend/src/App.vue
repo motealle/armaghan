@@ -11,6 +11,7 @@ import SiteFooter from '@/components/layout/SiteFooter.vue'
 import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 import LoginSheet from '@/features/auth/components/LoginSheet.vue'
 import { useDesignStore } from '@/stores/design'
+import { useAdminStore } from '@/features/admin/store'
 import { useSessionStore } from '@/stores/session'
 import { useCustomersStore } from '@/stores/customers'
 import { useCatalogStore } from '@/stores/catalog'
@@ -22,6 +23,10 @@ const loginOpen=ref(false)
 const helpOpen=ref(false)
 const design=useDesignStore()
 const session=useSessionStore()
+const admin=useAdminStore()
+const adminLogoutBusy=ref(false)
+const adminLogoutError=ref(false)
+async function logoutAdmin(){adminLogoutBusy.value=true;adminLogoutError.value=false;try{await admin.logout()}catch{adminLogoutError.value=true}finally{adminLogoutBusy.value=false}}
 const customers=useCustomersStore()
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
@@ -40,6 +45,7 @@ onMounted(async()=>{
   design.apply()
   await locale.initialize()
   void catalog.hydrateFromBackend()
+  void admin.hydrate()
   const hasBackendCustomerSession=await session.hydrateFromBackend()
   const params=new URLSearchParams(location.search)
   const customerAccess=params.get('customerAccess')
@@ -59,6 +65,12 @@ onMounted(async()=>{
     <VisualStyleRuntime/>
     <a class="skip-link" :href="pagePath+'#main-content'">{{locale.t('skipContent')}}</a>
     <AppHeader @login="loginOpen=true" @help="helpOpen=true"/>
+    <nav v-if="admin.identity" class="mx-auto flex max-w-[1500px] flex-wrap items-center gap-3 px-4 py-3 text-sm" :aria-label="locale.t('adminRealSession')">
+      <RouterLink class="mini-action" to="/admin">{{locale.t('adminRealSession')}}</RouterLink>
+      <span>{{locale.t(admin.identity.is_owner?'adminOwnerRole':'adminAdminRole')}}</span>
+      <button class="mini-action ms-auto" :disabled="adminLogoutBusy" @click="logoutAdmin">{{locale.t('logout')}}</button>
+      <p v-if="adminLogoutError" class="auth-error" role="alert">{{locale.t('logoutFailed')}}</p>
+    </nav>
     <main id="main-content" tabindex="-1" class="mx-auto max-w-[1500px] px-3 py-4 md:px-5 md:py-6 lg:px-8 lg:py-8 xl:px-10">
       <RouterView v-slot="{ Component }">
         <component :is="Component" @login="loginOpen=true" />

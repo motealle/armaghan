@@ -4,6 +4,21 @@ export type TranslationMap = Record<string,string>
 
 export const baseMessages: Record<Locale, TranslationMap> = {
   fa: {
+    adminAccounts:"حساب‌های کاربری",
+    adminAddAccount:"افزودن حساب",
+    adminOwnerRole:"مالک اصلی",
+    adminAdminRole:"مدیر",
+    adminAccountRole:"سطح دسترسی",
+    adminOwnerHelp:"ساخت و مدیریت حساب مدیران فقط در اختیار مالک اصلی است.",
+    adminBusinessHelp:"مدیریت حساب‌های مشتریان؛ مدیران تحت اختیار مالک اصلی‌اند.",
+    adminOwnPassword:"تنظیم رمز حساب خودم",
+    adminPermissionDenied:"اجازه این تغییر را ندارید.",
+    adminNoAccounts:"حسابی پیدا نشد.",
+    adminAccountSafetyHelp:"ایمیل و نوع حساب موجود ثابت می‌ماند. رمز اولیه برای حساب جدید است؛ تغییر رمز موجود از صفحه امنیت همان حساب انجام می‌شود. حساب‌های مجاز گوگل با گوگل وارد شوند.",
+    adminEditAccount:"ویرایش حساب",
+    adminPasswordRules:"حداقل ۱۲ نویسه شامل حرف و عدد.",
+    adminRealSession:"مدیریت واقعی سایت",
+
     adminIntegrationHelp:"مدیریت مشتریان، محصولات و عکس‌ها به اطلاعات واقعی سایت متصل است؛ اتصال بقیه بخش‌های همین طراحی ادامه دارد.",
     adminNoProducts:"محصولی پیدا نشد.",
     adminSortOrder:"ترتیب نمایش",
@@ -73,6 +88,21 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'ارمغان · تولید و صادرات پوشاک',footerContact:'ارتباط فروش و پیگیری سفارش از مسیرهای داخل سایت انجام می‌شود.',skipContent:'پرش به محتوای اصلی'
   },
   ar: {
+    adminAccounts:"حسابات المستخدمين",
+    adminAddAccount:"إضافة حساب",
+    adminOwnerRole:"المالك الرئيسي",
+    adminAdminRole:"مدير",
+    adminAccountRole:"مستوى الوصول",
+    adminOwnerHelp:"إنشاء حسابات المديرين وإدارتها من صلاحيات المالك الرئيسي فقط.",
+    adminBusinessHelp:"إدارة حسابات العملاء؛ المديرون يديرهم المالك الرئيسي.",
+    adminOwnPassword:"تعيين كلمة مرور حسابي",
+    adminPermissionDenied:"هذا التغيير غير مسموح.",
+    adminNoAccounts:"لم يتم العثور على حسابات.",
+    adminAccountSafetyHelp:"يبقى البريد ونوع الحساب الحالي ثابتين. كلمة المرور الأولية للحساب الجديد؛ تغيير كلمة المرور الحالية من صفحة أمان الحساب نفسه. الحسابات المحجوزة تدخل عبر Google.",
+    adminEditAccount:"تعديل الحساب",
+    adminPasswordRules:"١٢ حرفاً على الأقل تشمل حروفاً وأرقاماً.",
+    adminRealSession:"إدارة الموقع",
+
     adminIntegrationHelp:"العملاء والمنتجات والصور متصلون ببيانات الموقع؛ جارٍ توصيل بقية أقسام التصميم نفسه.",
     adminNoProducts:"لم يتم العثور على منتجات.",
     adminSortOrder:"ترتيب العرض",
@@ -142,6 +172,21 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'أرمغان · إنتاج وتصدير الملابس',footerContact:'يمكن التواصل مع المبيعات ومتابعة الطلب من داخل الموقع.',skipContent:'تخطي إلى المحتوى'
   },
   en: {
+    adminAccounts:"User accounts",
+    adminAddAccount:"Add account",
+    adminOwnerRole:"Primary owner",
+    adminAdminRole:"Administrator",
+    adminAccountRole:"Access level",
+    adminOwnerHelp:"Only the primary owner can create and manage administrator accounts.",
+    adminBusinessHelp:"Manage customer accounts. Administrators are managed by the primary owner.",
+    adminOwnPassword:"Set my account password",
+    adminPermissionDenied:"This change is not permitted.",
+    adminNoAccounts:"No accounts found.",
+    adminAccountSafetyHelp:"Existing email and role stay fixed. Initial passwords are for new accounts. Existing passwords change from that account’s security page. Reserved Google accounts must use Google sign-in.",
+    adminEditAccount:"Edit account",
+    adminPasswordRules:"At least 12 characters, including letters and numbers.",
+    adminRealSession:"Site administration",
+
     adminIntegrationHelp:"Customers, products and images use real site data; the remaining sections are being connected to the same design.",
     adminNoProducts:"No products found.",
     adminSortOrder:"Display order",
@@ -211,6 +256,21 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'Armaghan · Garment manufacturing & export',footerContact:'Sales contact and order tracking are available through the site.',skipContent:'Skip to main content'
   },
   ku: {
+    adminAccounts:"هەژمارەکانی بەکارهێنەر",
+    adminAddAccount:"زیادکردنی هەژمار",
+    adminOwnerRole:"خاوەنی سەرەکی",
+    adminAdminRole:"بەڕێوەبەر",
+    adminAccountRole:"ئاستی دەستگەیشتن",
+    adminOwnerHelp:"تەنها خاوەنی سەرەکی هەژماری بەڕێوەبەر دروست و بەڕێوەدەبات.",
+    adminBusinessHelp:"بەڕێوەبردنی هەژماری کڕیاران؛ بەڕێوەبەران لە دەستی خاوەنی سەرەکیدان.",
+    adminOwnPassword:"دانانی وشەی نهێنی هەژمارەکەم",
+    adminPermissionDenied:"ڕێگە بەو گۆڕانکارییە نادرێت.",
+    adminNoAccounts:"هیچ هەژمارێک نەدۆزرایەوە.",
+    adminAccountSafetyHelp:"ئیمەیڵ و جۆری هەژماری هەبوو ناگۆڕێت. وشەی نهێنی سەرەتایی بۆ هەژماری نوێیە؛ گۆڕینی وشەی نهێنی لە پەڕەی ئاسایشی هەمان هەژمارەوەیە. هەژماری Google بە Google دەچێتەژوورەوە.",
+    adminEditAccount:"دەستکاری هەژمار",
+    adminPasswordRules:"لانیکەم ١٢ نووسە، پیت و ژمارە لەخۆ بگرێت.",
+    adminRealSession:"بەڕێوەبردنی ماڵپەڕ",
+
     adminIntegrationHelp:"کڕیار و بەرهەم و وێنە بە داتای ڕاستەقینەوە بەستراون؛ بەشەکانی تر هەمان دیزاین دەپارێزن.",
     adminNoProducts:"هیچ بەرهەمێک نەدۆزرایەوە.",
     adminSortOrder:"ڕیزبەندی پیشاندان",

@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Customer;
+use App\Enums\UserRole;
 use Illuminate\Http\Request;
 
 final class CustomerSession
@@ -20,6 +21,9 @@ final class CustomerSession
         return Customer::query()
             ->whereKey($id)
             ->where('active', true)
+            ->where(function ($query): void {
+                $query->whereNull('user_id')->orWhereHas('user', fn ($user) => $user->where('active', true)->where('role', UserRole::Customer));
+            })
             ->first();
     }
 

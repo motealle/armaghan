@@ -4,7 +4,9 @@ ROOT=Path(__file__).resolve().parents[1]
 class CustomAdminContract(unittest.TestCase):
     def test_live_ui_isolated_from_demo_actions(self):
         s=(ROOT/'platform/frontend/src/features/admin/components/AdminDashboard.vue').read_text()
-        self.assertIn('<BackendCustomersPanel v-if="live"/>',s)
+        self.assertIn('<template v-if="live">',s)
+        self.assertIn('<BackendCustomersPanel v-else-if="activeTab===\'customers\'"/>',s)
+        self.assertIn('<BackendUsersPanel v-if="activeTab===\'users\'"/>',s)
         self.assertIn('<template v-else>',s)
         live=(ROOT/'platform/frontend/src/features/admin/components/BackendCustomersPanel.vue').read_text()
         self.assertNotIn('useCustomersStore',live)

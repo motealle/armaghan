@@ -90,7 +90,7 @@ class CustomAdminCustomersTest extends TestCase
         $admin = User::factory()->admin()->create();
         $customer = Customer::query()->create(['company_name' => 'Independent', 'active' => true]);
         $this->actingAs($admin)->withSession([CustomerSession::KEY => $customer->id]);
-        $this->getJson('/api/admin/session')->assertOk()->assertExactJson(['admin' => ['name' => $admin->name, 'email' => $admin->email]]);
+        $this->getJson('/api/admin/session')->assertOk()->assertExactJson(['admin' => ['name' => $admin->name, 'email' => $admin->email, 'is_owner' => false]]);
         $this->postJson('/api/admin/logout')->assertOk();
         $this->getJson('/api/admin/session')->assertUnauthorized();
         $this->getJson('/api/customer/session')->assertOk()->assertJsonPath('customer.id', $customer->id);

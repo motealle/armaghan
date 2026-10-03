@@ -1,5 +1,5 @@
 import { requestJson } from '@/features/auth/services/customerSessionApi'
-export interface AdminIdentity { name:string; email:string }
+export interface AdminIdentity { name:string; email:string; is_owner?:boolean }
 export interface AdminCustomer {
   id:number; name:string|null; email:string|null; company_name:string|null; whatsapp:string|null;
   country_code:string|null; country_name:string|null; notes:string|null; priority:number;
@@ -30,3 +30,9 @@ export function uploadAdminProductImage(product:AdminProduct,file:File){
   return requestJson<{product:AdminProduct}>('/api/admin/products/'+product.id+'/images',{method:'POST',body})
 }
 export const orderAdminProductImages=(product:AdminProduct,media_ids:number[])=>requestJson<{product:AdminProduct}>('/api/admin/products/'+product.id+'/images/order',{method:'PUT',body:JSON.stringify({revision:product.revision,media_ids})})
+
+export interface AdminUser { id:number; name:string; email:string; role:'admin'|'customer'; active:boolean; is_owner:boolean; protected:boolean; revision:string }
+export interface UserPage { users:AdminUser[]; page:number; last_page:number; total:number }
+export const fetchAdminUsers=(page=1,search='')=>requestJson<UserPage>('/api/admin/users?page='+page+'&search='+encodeURIComponent(search))
+export const createAdminUser=(fields:{name:string;email:string;role:string;active:boolean;password:string;password_confirmation:string})=>requestJson<{user:AdminUser}>('/api/admin/users',{method:'POST',body:JSON.stringify(fields)})
+export const updateAdminUser=(user:AdminUser,fields:{name:string;role:string;active:boolean})=>requestJson<{user:AdminUser}>('/api/admin/users/'+user.id,{method:'PATCH',body:JSON.stringify({...fields,revision:user.revision})})

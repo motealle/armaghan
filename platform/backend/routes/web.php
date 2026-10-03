@@ -88,6 +88,9 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
     Route::patch('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'update']);
     Route::post('/products/{product}/images', [\App\Http\Controllers\Admin\ProductController::class, 'upload'])->middleware('throttle:admin-product-uploads');
     Route::put('/products/{product}/images/order', [\App\Http\Controllers\Admin\ProductController::class, 'order']);
+    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index']);
+    Route::post('/users', [\App\Http\Controllers\Admin\UserController::class, 'store']);
+    Route::patch('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update']);
     Route::get('/session', [\App\Http\Controllers\Admin\AdminSessionController::class, 'show']);
     Route::post('/logout', [\App\Http\Controllers\Admin\AdminSessionController::class, 'logout']);
     Route::get('/customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index']);

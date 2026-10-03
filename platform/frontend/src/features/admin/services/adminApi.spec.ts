@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, type AdminProduct, type ProductFields } from './adminApi'
+import { createAdminUser, updateAdminUser, type AdminUser, createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, type AdminProduct, type ProductFields } from './adminApi'
 
 beforeEach(()=>vi.restoreAllMocks())
 const fields:ProductFields={subcategory_id:91,code:'11099',name_fa:'واقعی',name_ar:null,name_en:null,name_ku:null,availability:'available',active:true,sort_order:0}
@@ -31,5 +31,26 @@ describe('canonical product transport',()=>{
   it('surfaces upload and stale-edit errors without claiming success',async()=>{
     vi.spyOn(globalThis,'fetch').mockResolvedValue(new Response(JSON.stringify({message:'Conflict'}),{status:409}))
     await expect(updateAdminProduct(product.id,fields,product.revision)).rejects.toMatchObject({status:409})
+  })
+})
+
+describe('real account transport',()=>{
+  it('keeps initial passwords in the protected POST body and does not expose them in an update URL',async()=>{
+    const fetch=server()
+    const fields={name:'Buyer',email:'buyer@example.test',role:'customer',active:true,password:'InitialPass2026',password_confirmation:'InitialPass2026'}
+    await createAdminUser(fields)
+    const row:AdminUser={id:911,name:fields.name,email:fields.email,role:'customer',active:true,is_owner:false,protected:false,revision:'b'.repeat(64)}
+    await updateAdminUser(row,{name:'Updated',role:'customer',active:false})
+    const calls=fetch.mock.calls.filter(([url])=>!String(url).endsWith('/api/csrf-token'))
+    expect(calls[0]![0]).toBe('/backend/api/admin/users')
+    expect(JSON.parse(calls[0]![1]!.body as string)).toEqual(fields)
+    expect(calls[0]![1]!.credentials).toBe('same-origin')
+    expect(new Headers(calls[0]![1]!.headers).has('X-CSRF-TOKEN')).toBe(true)
+    expect(JSON.parse(calls[1]![1]!.body as string)).toEqual({name:'Updated',role:'customer',active:false,revision:row.revision})
+    expect(String(calls[1]![0])).not.toContain(fields.password)
+  })
+  it('preserves the server privilege rejection rather than fabricating a changed account',async()=>{
+    vi.spyOn(globalThis,'fetch').mockResolvedValue(new Response(JSON.stringify({message:'Forbidden'}),{status:403}))
+    await expect(createAdminUser({name:'Admin',email:'admin@example.test',role:'admin',active:true,password:'InitialPass2026',password_confirmation:'InitialPass2026'})).rejects.toMatchObject({status:403})
   })
 })
