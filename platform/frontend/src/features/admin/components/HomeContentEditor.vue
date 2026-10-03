@@ -12,9 +12,10 @@ const props=defineProps<{live?:boolean}>()
 const locale=useLocaleStore()
 const visual=useVisualStyleStore()
 const sync=useVisualProfileSync(visual,ref(!!props.live))
-function currentText(key:string){return props.live?(visual.textOverride(translationTarget(key),target.value)??locale.baseValue(key,target.value)):(locale.overrides[target.value]?.[key]??locale.baseValue(key,target.value))}
-function override(key:string,value:string){if(props.live)visual.setText(translationTarget(key),target.value,value);else locale.setOverride(target.value,key,value)}
-function clearOverride(key:string){if(props.live)visual.setText(translationTarget(key),target.value,'');else locale.resetOverride(target.value,key)}
+const targetAliases:Record<string,string>={heroSingleSlogan:'hero.title',aboutArmaghanTitle:'home.about.title',aboutArmaghanText:'home.about.text',whyArmaghanTitle:'home.why.title',whyArmaghanIntro:'home.why.intro',whyCapacityTitle:'home.why.item.1.title',whyCapacityText:'home.why.item.1.text',whyCustomTitle:'home.why.item.2.title',whyCustomText:'home.why.item.2.text',whyDirectTitle:'home.why.item.3.title',whyDirectText:'home.why.item.3.text',whyMarketTitle:'home.why.item.4.title',whyMarketText:'home.why.item.4.text',capabilitiesTitle:'home.capabilities.title',capabilitiesIntro:'home.capabilities.intro',productBannersTitle:'home.product-banners.title',productBannersIntro:'home.product-banners.intro',capabilityProductionTitle:'home.capability.production.title',capabilityProductionSummary:'home.capability.production.text',capabilityExportTitle:'home.capability.export.title',capabilityExportSummary:'home.capability.export.text',capabilityTradeTitle:'home.capability.trade.title',capabilityTradeSummary:'home.capability.trade.text'}
+function currentText(key:string){return props.live?(visual.textOverride(targetAliases[key]??translationTarget(key),target.value)??visual.textOverride(translationTarget(key),target.value)??locale.baseValue(key,target.value)):(locale.overrides[target.value]?.[key]??locale.baseValue(key,target.value))}
+function override(key:string,value:string){if(props.live){visual.setText(translationTarget(key),target.value,value);if(targetAliases[key])visual.setText(targetAliases[key]!,target.value,value)}else locale.setOverride(target.value,key,value)}
+function clearOverride(key:string){if(props.live){visual.setText(translationTarget(key),target.value,'');if(targetAliases[key])visual.setText(targetAliases[key]!,target.value,'')}else locale.resetOverride(target.value,key)}
 const target=ref<Locale>('fa')
 const saved=ref(false)
 const fields=[
@@ -34,6 +35,12 @@ const fields=[
   {key:'whyMarketText',rows:3},
   {key:'capabilitiesTitle',rows:1},
   {key:'capabilitiesIntro',rows:3},
+  {key:'capabilityProductionTitle',rows:1},
+  {key:'capabilityProductionSummary',rows:3},
+  {key:'capabilityExportTitle',rows:1},
+  {key:'capabilityExportSummary',rows:3},
+  {key:'capabilityTradeTitle',rows:1},
+  {key:'capabilityTradeSummary',rows:3},
   {key:'productBannersTitle',rows:1},
   {key:'productBannersIntro',rows:2},
   {key:'brandIntro',rows:1},
@@ -85,7 +92,6 @@ watch(()=>sync.state.value,(state)=>{if(props.live&&state==='synced')syncDrafts(
       <article v-for="item in fields" :key="item.key" class="admin-surface rounded-2xl p-4">
         <div class="mb-2 flex items-center gap-2">
           <b class="text-sm">{{locale.baseValue(item.key,target)}}</b>
-          <code class="ms-auto rounded bg-[var(--c-surface-2)] px-2 py-1 text-[10px] text-[var(--c-muted)]">{{item.key}}</code>
         </div>
         <textarea v-model="drafts[item.key]" :rows="item.rows" class="w-full resize-y rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 py-2 text-sm outline-none"/>
         <button class="mini-action mt-2" type="button" @click="reset(item.key)"><RotateCcw :size="14"/>{{locale.t('resetTranslation')}}</button>
