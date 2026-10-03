@@ -886,7 +886,7 @@ html.visual-editor-active .bottom-nav{display:none!important}
 /* Owner-selected Test29 header controls and Why-number treatment. */
 .app-header-mobile .header-action{display:inline-flex;min-width:2.75rem;min-height:2.75rem;justify-content:center;padding-inline:.35rem}
 .app-header-mobile .app-header-actions{gap:.3rem}
-.app-header-mobile .mobile-header-language{min-height:2.75rem;padding-inline:.45rem;font-size:.75rem;font-weight:800;gap:.3rem}
+.app-header-mobile .mobile-header-language{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.15);border-radius:.75rem;background:rgba(255,255,255,.08);color:inherit;min-height:2.75rem;padding-inline:.45rem;font-size:.75rem;font-weight:800;gap:.3rem}
 .language-choice{display:flex;min-height:4.25rem;align-items:center;justify-content:center;gap:.65rem;border:1px solid var(--c-border);border-radius:1rem;background:var(--c-surface);color:var(--c-text)}
 .language-choice.selected{border-color:var(--c-secondary);background:var(--c-soft);box-shadow:inset 0 0 0 1px var(--c-secondary)}
 .header-language-control{padding-inline-start:0}
