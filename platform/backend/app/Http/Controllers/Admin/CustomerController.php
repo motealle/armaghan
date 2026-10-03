@@ -81,15 +81,16 @@ class CustomerController extends Controller
         ];
     }
 
-    private function revision(Customer $customer): string
+    public function revision(Customer $customer): string
     {
         // Content fingerprint detects changes even within the same timestamp second.
-        return hash('sha256', json_encode($customer->only(array_merge(['id', 'user_id', 'updated_at'], self::FIELDS)), JSON_THROW_ON_ERROR));
+        return hash('sha256', json_encode([$customer->only(array_merge(['id', 'user_id', 'updated_at'], self::FIELDS)), $customer->adminTags()], JSON_THROW_ON_ERROR));
     }
 
     private function snapshot(Customer $customer): array
     {
         return array_merge(['id' => $customer->id], $customer->only(self::FIELDS), [
+            'tags' => $customer->adminTags(),
             'name' => $customer->user?->name,
             'email' => $customer->user?->email,
             'revision' => $this->revision($customer),

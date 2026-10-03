@@ -94,15 +94,15 @@ class UserController extends Controller
         return $this->json(['user' => $this->snapshot($updated)]);
     }
 
-    private function revision(User $user): string
+    public function revision(User $user): string
     {
         return hash('sha256', json_encode([$user->id, $user->name, $user->email, $user->role->value, $user->active,
-            $user->password, $user->updated_at?->toISOString(), $user->email_verified_at?->toISOString()], JSON_THROW_ON_ERROR));
+            $user->adminTags(), $user->password, $user->updated_at?->toISOString(), $user->email_verified_at?->toISOString()], JSON_THROW_ON_ERROR));
     }
     private function snapshot(User $user): array
     {
         return ['id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'role' => $user->role->value,
-            'active' => $user->active, 'is_owner' => $user->isPrimaryOwner(),
+            'tags' => $user->adminTags(), 'active' => $user->active, 'is_owner' => $user->isPrimaryOwner(),
             'protected' => strtolower($user->email) === config('owner-access.primary_owner_email'), 'revision' => $this->revision($user)];
     }
     private function audit(Request $request, User $user, string $action, array $fields): void

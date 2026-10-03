@@ -29,6 +29,7 @@ use Spatie\MediaLibrary\Support\PathGenerator\PathGeneratorFactory;
 class Product extends Model implements HasMedia
 {
     use HasFactory;
+    use \App\Models\Concerns\HasAdminTags;
     use InteractsWithMedia;
 
     public const MEDIA_COLLECTION = 'product-gallery';

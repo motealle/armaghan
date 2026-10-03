@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import RecordTags from './RecordTags.vue'
 import ProductSpecificationsPanel from './ProductSpecificationsPanel.vue'
 import BulkStatusBar from './BulkStatusBar.vue'
 import { computed, onMounted, ref } from 'vue'
@@ -61,7 +62,7 @@ onMounted(()=>load())
       <thead><tr><th><input type="checkbox" :aria-label="locale.t('bulkSelectPage')" :checked="!!selectable.length&&checked.length===selectable.length" :indeterminate="checked.length>0&&checked.length<selectable.length" :disabled="bulkBusy||loading||bulkBusy||!selectable.length" @change="togglePage"></th><th>{{locale.t('productsTitle')}}</th><th>{{locale.t('codeLabel')}}</th><th>{{locale.t('categoryLabel')}}</th><th>{{locale.t('subcategoryLabel')}}</th><th>{{locale.t('statusLabel')}}</th><th>{{locale.t('actions')}}</th></tr></thead>
       <tbody><tr v-for="product in result.products" :key="product.id"><td><input v-model="checked" type="checkbox" :value="product.id" :aria-label="String(product.id)" :disabled="bulkBusy||loading||bulkBusy"></td>
         <td><button class="text-start font-bold" :disabled="bulkBusy||loading" @click="edit(product)">{{locale.subcategoryName(product.subcategory_code,'')}}</button></td>
-        <td><code class="text-[var(--c-primary)]">{{product.code}}</code></td>
+        <td><code class="text-[var(--c-primary)]">{{product.code}}</code><RecordTags :tags="product.tags"/></td>
         <td>{{locale.categoryName(product.category_code,'')}}</td><td>{{locale.subcategoryName(product.subcategory_code,'')}}</td>
         <td>{{locale.t(!product.active?'adminInactive':product.availability==='available'?'available':'madeToOrder')}}</td>
         <td><button class="mini-action" :disabled="bulkBusy||loading" @click="edit(product)"><Pencil :size="15"/>{{locale.t('editProduct')}} · {{product.media.length}} {{locale.t('image')}}</button></td>

@@ -23,6 +23,7 @@ const {policy}=useResolvedAppearance()
         :alt="locale.t('heroSingleAlt')"
         :label="locale.t('heroSingleAlt')"
         aspect="hero"
+        fit="contain-blur"
         eager
       />
     </div>

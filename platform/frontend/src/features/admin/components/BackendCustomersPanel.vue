@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import RecordTags from './RecordTags.vue'
 import BulkStatusBar from './BulkStatusBar.vue'
 import { computed, onMounted, ref } from 'vue'
 import { Plus, Save, RefreshCw } from '@lucide/vue'
@@ -77,7 +78,7 @@ onMounted(()=>load())
       <table class="data-table">
         <thead><tr><th><input type="checkbox" :aria-label="locale.t('bulkSelectPage')" :checked="!!selectable.length&&checked.length===selectable.length" :indeterminate="checked.length>0&&checked.length<selectable.length" :disabled="bulkBusy||loading||saving||bulkBusy||!selectable.length" @change="togglePage"></th><th>{{locale.t('customerLabel')}}</th><th>{{locale.t('customerPriority')}}</th><th>WhatsApp</th><th>{{locale.t('email')}}</th><th>{{locale.t('statusLabel')}}</th><th>{{locale.t('actions')}}</th></tr></thead>
         <tbody><tr v-for="row in result.customers" :key="row.id"><td><input v-model="checked" type="checkbox" :value="row.id" :aria-label="String(row.id)" :disabled="bulkBusy||loading||saving||bulkBusy"></td>
-          <td><button class="text-start font-bold" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.name||'#'+row.id}}</button><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
+          <td><button class="text-start font-bold" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.name||'#'+row.id}}</button><RecordTags :tags="row.tags"/><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
           <td>{{row.priority}}</td><td dir="ltr">{{row.whatsapp||'—'}}</td><td dir="ltr">{{row.email||'—'}}</td>
           <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button></td>
         </tr></tbody>

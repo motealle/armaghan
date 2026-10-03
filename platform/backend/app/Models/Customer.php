@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Customer extends Model
 {
     use HasFactory;
+    use \App\Models\Concerns\HasAdminTags;
 
     public function user(): BelongsTo
     {

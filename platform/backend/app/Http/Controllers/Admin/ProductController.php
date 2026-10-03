@@ -205,9 +205,9 @@ class ProductController extends Controller
         return $row;
     }
 
-    private function revision(Product $product): string
+    public function revision(Product $product): string
     {
-        return hash('sha256', json_encode([$product->only(array_merge(['id', 'updated_at'], self::FIELDS)),
+        return hash('sha256', json_encode([$product->only(array_merge(['id', 'updated_at'], self::FIELDS)), $product->adminTags(),
             // Media has appended URL attributes; serializing a partial model would require its missing disk fields.
             $product->media()->where('collection_name', Product::MEDIA_COLLECTION)->orderBy('order_column')->orderBy('id')->get(['id', 'order_column', 'updated_at'])->map(fn ($m) => $m->only(['id', 'order_column', 'updated_at']))->all(),
             $product->specValues()->orderBy('id')->get(['id', 'spec_definition_id', 'value_text', 'updated_at'])->toArray(),
@@ -216,7 +216,7 @@ class ProductController extends Controller
 
     private function snapshot(Product $product): array
     {
-        return array_merge(['id' => $product->id], $product->only(self::FIELDS), ['revision' => $this->revision($product),
+        return array_merge(['id' => $product->id], $product->only(self::FIELDS), ['tags' => $product->adminTags(), 'revision' => $this->revision($product),
             'specifications' => $this->specifications($product),
             'subcategory_code' => $product->subcategory->code, 'category_code' => $product->subcategory->category->code,
             'media' => $product->getMedia(Product::MEDIA_COLLECTION)->sortBy('order_column')->values()->map(fn ($m) => [

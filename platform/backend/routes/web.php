@@ -93,6 +93,7 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
     Route::post('/orders/{order}/documents', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'uploadDocument'])->middleware('throttle:admin-product-uploads');
     Route::get('/orders/{order}/documents/{document}', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'downloadDocument'])->whereNumber('document');
     Route::patch('/orders/{order}', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'update']);
+    Route::post('/bulk-tags/{resource}', [\App\Http\Controllers\Admin\BulkTagsController::class, 'update'])->whereIn('resource', ['products', 'customers', 'users']);
     Route::post('/bulk-status/{resource}', [\App\Http\Controllers\Admin\BulkStatusController::class, 'update'])->whereIn('resource', ['products', 'customers', 'users']);
     Route::post('/advanced-access', [\App\Http\Controllers\Admin\AdvancedAccessController::class, 'store']);
     Route::delete('/advanced-access', [\App\Http\Controllers\Admin\AdvancedAccessController::class, 'destroy']);
