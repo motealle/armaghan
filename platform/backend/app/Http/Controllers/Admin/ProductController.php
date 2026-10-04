@@ -222,6 +222,7 @@ class ProductController extends Controller
             'media' => $product->getMedia(Product::MEDIA_COLLECTION)->sortBy('order_column')->values()->map(fn ($m) => [
                 'id' => $m->id, 'url' => $m->hasGeneratedConversion('card') ? $m->getUrl('card') : $m->getUrl(),
                 'thumb_url' => $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl(),
+                'detail_url' => $m->hasGeneratedConversion('detail') ? $m->getUrl('detail') : ($m->hasGeneratedConversion('card') ? $m->getUrl('card') : $m->getUrl()),
                 'detail_url' => $m->hasGeneratedConversion('detail') ? $m->getUrl('detail') : ($m->hasGeneratedConversion('card') ? $m->getUrl('card') : $m->getUrl())])->all()]);
     }
 
