@@ -146,7 +146,7 @@ class ProductController extends Controller
                 try {
                     $created = $row->addMedia($file)->usingFileName(Str::uuid().'.'.$extension)->toMediaCollection(Product::MEDIA_COLLECTION);
                     $created->refresh();
-                    abort_unless($created->hasGeneratedConversion('card') && $created->hasGeneratedConversion('thumb'), 500, 'Image processing incomplete.');
+                    abort_unless($created->hasGeneratedConversion('card') && $created->hasGeneratedConversion('thumb') && $created->hasGeneratedConversion('detail'), 500, 'Image processing incomplete.');
                     $this->audit($request, $row, 'admin.product.image-added', ['media']);
                 } catch (\Throwable $e) {
                     // An event/conversion may throw before addMedia returns. Clean while its rows still exist.
@@ -221,7 +221,8 @@ class ProductController extends Controller
             'subcategory_code' => $product->subcategory->code, 'category_code' => $product->subcategory->category->code,
             'media' => $product->getMedia(Product::MEDIA_COLLECTION)->sortBy('order_column')->values()->map(fn ($m) => [
                 'id' => $m->id, 'url' => $m->hasGeneratedConversion('card') ? $m->getUrl('card') : $m->getUrl(),
-                'thumb_url' => $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl()])->all()]);
+                'thumb_url' => $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl(),
+                'detail_url' => $m->hasGeneratedConversion('detail') ? $m->getUrl('detail') : ($m->hasGeneratedConversion('card') ? $m->getUrl('card') : $m->getUrl())])->all()]);
     }
 
     private function definition($definition): array
