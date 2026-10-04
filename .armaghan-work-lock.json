@@ -1,11 +1,12 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261004-customer-direct-contact",
   "scope": "Customer direct WhatsApp contact and phone-or-email architecture planning",
   "base_ref": "58f6a034676b908a51240e62002ce246a7869b94",
   "acquired_at": "2026-10-04T16:42:27.146Z",
-  "expires_at": "2026-10-04T18:12:27.146Z"
+  "expires_at": "2026-10-04T18:12:27.146Z",
+  "released_at": "2026-10-04T16:53:28.899Z"
 }
