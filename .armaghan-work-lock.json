@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261004-urgent-product-upload",
-  "scope": "Complete explicit staged product photo upload and failure recovery",
-  "base_ref": "main",
-  "acquired_at": "2026-10-04T06:48:58.930Z",
-  "expires_at": "2026-10-04T08:18:58.930Z",
-  "released_at": "2026-10-04T07:12:51.204Z"
+  "run_id": "codex-20261004-customer-direct-contact",
+  "scope": "Customer direct WhatsApp contact and phone-or-email architecture planning",
+  "base_ref": "58f6a034676b908a51240e62002ce246a7869b94",
+  "acquired_at": "2026-10-04T16:42:27.146Z",
+  "expires_at": "2026-10-04T18:12:27.146Z"
 }
