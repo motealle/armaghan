@@ -300,16 +300,25 @@ jobs:
           changed=sorted(set(changed))
           import sys
           sys.path.insert(0, "platform/scripts")
-          from ftp_static_upload import upload_static_file
+          from ftp_static_upload import upload_static_file, published_matches
+          from concurrent.futures import ThreadPoolExecutor
+          from urllib.parse import quote
           def connect_upload():
               connection=FTP(); connection.connect(host,port,timeout=60)
               connection.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"])
               return connection
+          def same_public_file(path):
+              return published_matches("https://armaghantrading.com/"+quote(path),path)
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              matched={path for path,equal in zip(changed,pool.map(same_public_file,changed)) if equal}
+          print(f"Verified {len(matched)} unchanged public files; no upload needed",flush=True)
           ftp=connect_upload(); ftp.cwd("/public_html")
           try: ftp.cwd("t")
           except Exception: ftp.mkd("t"); ftp.cwd("t")
           base_remote="/public_html/t"
           for local_path in changed:
+              if local_path in matched: continue
+              print("Uploading "+local_path,flush=True)
               rel_path=os.path.relpath(local_path,"t").replace(os.sep,"/"); parts=rel_path.split("/"); filename=parts[-1]
               ftp.cwd(base_remote); remote_dir=base_remote
               for part in parts[:-1]:

@@ -5,6 +5,9 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'platform/scripts'))
 from ftp_static_upload import upload_static_file
 from ftplib import error_perm
+from unittest.mock import patch
+import io
+from ftp_static_upload import published_matches
 
 
 class FakeFTP:
@@ -26,6 +29,9 @@ class FakeFTP:
     def close(self):
         self.closed = True
 
+    def rename(self, source, destination):
+        self.renamed = (source, destination)
+
 
 class RecoveryTest(unittest.TestCase):
     def test_reconnect_replaces_partial_file_from_byte_zero(self):
@@ -36,7 +42,18 @@ class RecoveryTest(unittest.TestCase):
             self.assertIs(result, fresh); self.assertTrue(failed.closed)
             self.assertEqual(fresh.bytes, b'complete asset')
             self.assertEqual(fresh.directory, '/public_html/t/29/assets')
-            self.assertEqual(fresh.command, 'STOR asset.bin')
+            self.assertEqual(fresh.command, 'STOR .asset.bin.armaghan-upload')
+            self.assertFalse(hasattr(failed, 'renamed'))
+            self.assertEqual(fresh.renamed, ('.asset.bin.armaghan-upload', 'asset.bin'))
+
+    def test_skips_only_exact_published_bytes(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'asset.bin'; path.write_bytes(b'complete')
+            for remote, expected in [(b'complete', True), (b'com', False), (b'complete extra', False)]:
+                with patch('ftp_static_upload.urlopen', return_value=io.BytesIO(remote)):
+                    self.assertEqual(published_matches('https://example.test/t/29/asset.bin', path), expected)
+            with patch('ftp_static_upload.urlopen', side_effect=TimeoutError('timeout')):
+                self.assertFalse(published_matches('https://example.test/t/29/asset.bin', path))
 
     def test_recovery_is_bounded(self):
         with tempfile.TemporaryDirectory() as folder:

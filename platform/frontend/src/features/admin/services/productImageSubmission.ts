@@ -1,4 +1,4 @@
-// Explicit Save and upload photo action: persist first, then upload once using the returned canonical ID/revision.
+// Explicit photo submission: persist first, then upload once using the returned canonical ID/revision.
 // Callers checkpoint each confirmed stage so an image failure never recreates a product.
 export async function submitProductImage<T>(options:{
   current:T|null; dirty:boolean; file:File|null;
