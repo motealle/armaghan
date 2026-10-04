@@ -1,0 +1,49 @@
+name: Generate OTP dependency lock
+
+on:
+  push:
+    branches: [work/mobile-otp-login]
+    paths:
+      - ".github/workflows/otp-dependency-lock.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform/backend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: work/mobile-otp-login
+          fetch-depth: 0
+      - name: Set up PHP 8.3 and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+          tools: composer:v2
+          extensions: ctype,curl,dom,fileinfo,filter,hash,mbstring,openssl,pcre,pdo,session,tokenizer,xml,sqlite3,pdo_sqlite,gd,exif
+      - name: Add Laravel OTP package
+        run: composer require fouladgar/laravel-otp:^6.2 --no-interaction --no-progress
+      - name: Validate generated lock
+        run: |
+          composer validate --strict
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+          touch database/database.sqlite
+          php artisan migrate:fresh --force --no-interaction
+          php artisan test
+          composer audit --locked --no-interaction
+      - name: Commit dependency files
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add platform/backend/composer.json platform/backend/composer.lock
+          git diff --cached --quiet && exit 0
+          git commit -m "build: install Laravel OTP package"
+          git push origin HEAD:work/mobile-otp-login
