@@ -19,9 +19,9 @@ export function productFailure(error:unknown):{key:string;block:boolean}{
 }
 
 // A baseline belongs to this open form; it never becomes a second persisted product store.
-export function useProductDraftGuard(draft:Ref<unknown>,busy:Ref<boolean>){
+export function useProductDraftGuard(draft:Ref<unknown>,busy:Ref<boolean>,pending?:Ref<unknown>){
   const baseline=ref(''),confirmClose=ref(false)
-  const dirty=computed(()=>draft.value!==null&&JSON.stringify(draft.value)!==baseline.value)
+  const dirty=computed(()=>Boolean(pending?.value)||(draft.value!==null&&JSON.stringify(draft.value)!==baseline.value))
   function checkpoint(){baseline.value=JSON.stringify(draft.value)??'';confirmClose.value=false}
   function requestClose(close:()=>void){
     if(busy.value)return

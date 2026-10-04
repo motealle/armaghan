@@ -7,6 +7,7 @@ import SmartImage from '@/components/media/SmartImage.vue'
 import { useLocaleStore } from '@/stores/locale'
 import { useAdminStore } from '../store'
 import { productFailure, useProductDraftGuard } from '../services/productEditorSafety'
+import { submitProductImage, validProductImage } from '../services/productImageSubmission'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
 import { createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, type AdminProduct, type AdminSubcategory, type ProductFields, type AdminSpecification } from '../services/adminApi'
 const props=defineProps<{open:boolean;product:AdminProduct|null;taxonomy:AdminSubcategory[]}>()
@@ -14,10 +15,11 @@ const emit=defineEmits<{close:[];saved:[product:AdminProduct]}>()
 const locale=useLocaleStore(),admin=useAdminStore()
 const draft=ref<ProductFields|null>(null),current=ref<AdminProduct|null>(null)
 const saving=ref(false),error=ref(''),note=ref(''),changed=ref(false),writesBlocked=ref(false)
-const guard=useProductDraftGuard(draft,saving)
+const pendingImage=ref<File|null>(null)
+const guard=useProductDraftGuard(draft,saving,pendingImage)
 const hasUnsaved=guard.dirty,confirmClose=guard.confirmClose,closePrompt=ref<HTMLElement|null>(null)
 watch(()=>[props.open,props.product] as const,([open,row])=>{
-  error.value='';note.value='';changed.value=false;writesBlocked.value=false;current.value=row
+  error.value='';note.value='';changed.value=false;writesBlocked.value=false;pendingImage.value=null;current.value=row
   draft.value=!open?null:row?fields(row):{subcategory_id:props.taxonomy[0]?.id??0,code:'',name_fa:'',name_ar:null,name_en:null,name_ku:null,availability:'available',active:true,sort_order:0,specifications:[]}
   guard.checkpoint()
 },{immediate:true})
@@ -46,20 +48,26 @@ async function save(){
   if(!draft.value||saving.value||writesBlocked.value)return
   if(!draft.value.name_fa.trim()&&!current.value)draft.value.name_fa=group.value?.name||draft.value.code
   saving.value=true;error.value='';note.value=''
+  let persisted=false
   try{
-    const response=current.value?await updateAdminProduct(current.value.id,draft.value,current.value.revision):await createAdminProduct(draft.value)
-    current.value=response.product;draft.value=fields(response.product);guard.checkpoint();changed.value=true;note.value=locale.t('adminSaved')
-    // Keep the sheet open so a newly created product can receive its gallery immediately.
-  }catch(e){error.value=failed(e)}finally{saving.value=false}
+    await submitProductImage({
+      current:current.value,dirty:dirty.value,file:pendingImage.value,
+      persist:async()=>{const response=current.value?await updateAdminProduct(current.value.id,draft.value!,current.value.revision):await createAdminProduct(draft.value!);return response.product},
+      persisted:(product)=>{current.value=product;draft.value=fields(product);guard.checkpoint();changed.value=true;persisted=true},
+      upload:async(product,file)=>(await uploadAdminProductImage(product,file)).product,
+      uploaded:(product)=>{current.value=product;pendingImage.value=null;changed.value=true;guard.checkpoint()},
+    })
+    note.value=locale.t('adminSaved')
+  }catch(e){error.value=failed(e);if(persisted&&draft.value)note.value=locale.t('adminProductSavedImagePending')}
+  finally{saving.value=false}
 }
-async function upload(event:Event){
+function upload(event:Event){
   const input=event.target as HTMLInputElement,file=input.files?.[0];input.value=''
-  if(!file||!current.value||saving.value||dirty.value||writesBlocked.value)return
-  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>8*1024*1024){error.value=locale.t('adminImageLimits');return}
-  saving.value=true;error.value='';note.value=''
-  try{current.value=(await uploadAdminProductImage(current.value,file)).product;changed.value=true;note.value=locale.t('adminSaved')}
-  catch(e){error.value=failed(e)}finally{saving.value=false}
+  if(!file||saving.value||writesBlocked.value||(current.value?.media.length??0)>=6)return
+  if(!validProductImage(file)){error.value=locale.t('adminImageLimits');return}
+  pendingImage.value=file;error.value='';note.value=''
 }
+function removePendingImage(){if(!saving.value){pendingImage.value=null;note.value=''}}
 async function move(index:number,offset:number){
   if(!current.value||saving.value||dirty.value||writesBlocked.value)return
   const ids=current.value.media.map(m=>m.id),target=index+offset
@@ -101,14 +109,18 @@ onBeforeUnmount(()=>window.removeEventListener('beforeunload',beforeUnload))
       </div></details>
       <section class="admin-surface rounded-2xl p-4">
         <h3 class="mb-3 text-sm font-black">{{locale.t('adminProductGallery')}}</h3><p class="mb-3 text-xs text-[var(--c-muted)]">{{locale.t('adminImageLimits')}}</p>
-        <p v-if="!current||dirty" class="text-sm">{{locale.t('adminSaveBeforeImage')}}</p>
+        <p class="text-sm">{{locale.t('adminImageSelectionHelp')}}</p>
         <div v-if="current" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
           <article v-for="(media,index) in current.media" :key="media.id" class="rounded-xl border border-[var(--c-border)] p-2">
             <SmartImage :src="media.thumb_url" :alt="draft.name_fa" class="aspect-[3/4] w-full rounded-lg" fit="contain"/>
             <div class="mt-2 flex items-center justify-between gap-1"><span class="text-xs">{{index+1}}</span><button type="button" class="mini-action" :disabled="writesBlocked||saving||dirty||index===0" :aria-label="locale.t('previous')" @click="move(index,-1)"><ArrowUp :size="15"/></button><button type="button" class="mini-action" :disabled="writesBlocked||saving||dirty||index===current.media.length-1" :aria-label="locale.t('next')" @click="move(index,1)"><ArrowDown :size="15"/></button></div>
           </article>
         </div>
-        <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small v-if="current" dir="ltr">{{current.media.length}} / 6</small></span><input type="file" accept="image/jpeg,image/png,image/webp" :disabled="writesBlocked||!current||dirty||saving||current.media.length>=6" @change="upload"></label>
+        <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small v-if="current" dir="ltr">{{current.media.length}} / 6</small></span><input type="file" accept="image/jpeg,image/png,image/webp" :disabled="writesBlocked||saving||(current?.media.length??0)>=6" @change="upload"></label>
+        <div v-if="pendingImage" class="mt-3 space-y-2 rounded-xl border border-[var(--c-border)] p-3">
+          <p role="status" class="break-all text-sm">{{locale.t('adminImagePending')}}: {{pendingImage.name}}</p>
+          <button type="button" class="mini-action" :disabled="saving" @click="removePendingImage">{{locale.t('adminImageRemoveSelection')}}</button>
+        </div>
       </section>
       <section class="admin-surface rounded-2xl p-4">
         <h3 class="mb-3 text-sm font-black">{{locale.t('productSpecs')}}</h3>
@@ -122,7 +134,7 @@ onBeforeUnmount(()=>window.removeEventListener('beforeunload',beforeUnload))
       </section>
       <p v-if="error" role="alert" class="auth-error">{{error}}</p><p v-if="note" role="status" class="text-xs text-[var(--c-secondary)]">{{note}}</p>
       <div class="sticky bottom-0 z-10 flex justify-end gap-2 border-t border-[var(--c-border)] bg-[color-mix(in_srgb,var(--c-surface)_96%,transparent)] py-3 backdrop-blur">
-        <button type="button" class="mini-action" :disabled="saving" @click="close">{{locale.t('close')}}</button><button class="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--c-primary)] px-4 text-sm font-black text-white" :disabled="writesBlocked||saving||!draft.code.trim()||!draft.subcategory_id"><Save :size="17"/>{{locale.t(saving?'adminLoading':'save')}}</button>
+        <button type="button" class="mini-action" :disabled="saving" @click="close">{{locale.t('close')}}</button><button class="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--c-primary)] px-4 text-sm font-black text-white" :disabled="writesBlocked||saving||!draft.code.trim()||!draft.subcategory_id"><Save :size="17"/>{{locale.t(saving?'adminLoading':pendingImage?'adminSaveAndUpload':'save')}}</button>
       </div>
     </form>
   </AdaptivePanel>
