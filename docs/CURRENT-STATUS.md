@@ -1,4 +1,16 @@
 # Armaghan — Current Status
+## ران دستی: اطمینان‌پذیری فرم محصول — ۲۰۲۶-۱۰-۰۴
+
+پیاده‌سازی و آزمون محلی کامل؛ انتشار و بررسی فایل فعال هنوز در انتظار است. مبنا: `43c9e46b8cb021e3872176dd91e537172e7a754e`؛ قفل مشترک: `codex-20261004-manual-product-reliability`. این ران زمان‌بندی تازه ایجاد نکرد.
+
+- تغییرات فرم محصول موجود و محصول تازه با تأیید صریح کنار گذاشته می‌شوند؛ ادامه ویرایش، ورودی را حفظ می‌کند. بستن یا جابه‌جایی مسیر هنگام درخواست جاری مسدود است؛ خروج از صفحه با ورودی ذخیره‌نشده هشدار مرورگر دارد.
+- خطای کد تکراری/نامعتبر، زیردسته، مشخصات، عکس و محدودیت درخواست، پیام چهارزبانه مشخص دارد. فقط نام فیلدهای خطا از سرور گرفته می‌شود؛ متن خام خطا یا مقادیر ارسال‌شده نمایش داده نمی‌شوند.
+- پاسخ نامشخص شبکه/خطای سرور یا تعارض نسخه، ارسال مجدد در همان فرم را می‌بندد. ابتدا باید فرم بسته و فهرست تازه دریافت شود؛ درخواست عکس خودکار تکرار نمی‌شود. خطای اعتبارسنجی ورودی را نگه می‌دارد و اصلاح و تلاش دوباره مجاز است.
+- ۶۸ آزمون رابط در ۱۶ فایل، بررسی نوع‌ها، ساخت برنامه و ۳۰ بررسی انتشار موفق‌اند. آزمون‌های تازه حفظ ورودی، تغییر مشخصات تو‌در‌تو، جلوگیری از بستن حین ذخیره، خطاهای مشخص، پالایش نام فیلدها و عدم تکرار آپلود نامشخص را پوشش می‌دهند.
+- سرور، ساختار پایگاه داده، ورود، عکس‌های واقعی مشتری و نسخه‌های ۰۱ تا ۲۸ تغییر نکردند. انتخاب ریشه همچنان ۲۹ است. آزمون با حساب واقعی و پذیرش بصری همچنان باز است.
+
+ادامه: بچ مستقل حساب‌ها برای بازنشانی رمز و قطع نشست‌های قبلی؛ سپس حذف با حفظ سوابق، تنظیمات مشترک واتساپ/ظاهر، فاکتور و رسید، ایمیل و پشتیبان رمزگذاری‌شده فایل‌ها. قطع نشست مشتری باید مسیر اختصاصی ورود مشتری را نیز پوشش دهد؛ استفاده صرف از خروج نشست معمول مدیر کافی نیست. شرط تأیید سطح مدل نباید به جای انجام کار دستی، مانع مصنوعی شود؛ محدودیت واقعی ابزار صادقانه گزارش می‌شود.
+
 ## Urgent presentation and offline customer login — 2026-10-03
 
 DONE and live. Baseline6d67ffca26a70a55e3834942ef1908c7b8b4d83b; lease codex-20261003-hero-fit-customer-account. Customer supersedes earlier bare-gold/shadow/outline choice: gold text on centered navy #101a44 oval, no stroke/shadow, same typography as category titles. Main single-hero uses actual loaded image aspect ratio with auto height/min-height0 and contain; removes fixed-height/blur letterboxing for approved1672×941 image while preserving composition and caption/carousel. Intrinsic geometry is opt-in to SmartImage; other images unchanged. Production wizard category numbers01–03 and subcategory codes now obey existing default-false appearance flags; unnumbered grid uses one column. Explicit admin re-enabling remains possible. Saved published appearance overrides and device/visual acceptance must be assessed separately; no screenshot was supplied this run.

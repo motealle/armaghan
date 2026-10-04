@@ -13,7 +13,7 @@ interface SessionResponse{
 }
 
 export class CustomerSessionApiError extends Error{
-  constructor(public readonly status:number,message:string){
+  constructor(public readonly status:number,message:string,public readonly fields:readonly string[]=[]){
     super(message)
     this.name='CustomerSessionApiError'
   }
@@ -74,7 +74,10 @@ export async function requestJson<T>(path:string,init:RequestInit={},allowCsrfRe
     const message=(
       payload&&typeof payload==='object'&&'message' in payload&&typeof (payload as {message?:unknown}).message==='string'
     )?(payload as {message:string}).message:'Customer session request failed ('+response.status+').'
-    throw new CustomerSessionApiError(response.status,message)
+    // Keep field identifiers only. Never render raw validation messages or submitted values.
+    const fields=payload&&typeof payload==='object'&&'errors' in payload&&payload.errors&&typeof payload.errors==='object'
+      ?Object.keys(payload.errors).filter(key=>/^[a-z_]+(?:\.\d+\.[a-z_]+)?$/.test(key)).slice(0,100):[]
+    throw new CustomerSessionApiError(response.status,message,fields)
   }
 
   return payload as T

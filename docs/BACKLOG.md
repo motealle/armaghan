@@ -1,4 +1,23 @@
 # Armaghan — Product Backlog
+## انتخاب و اجرای بچ فرم محصول — ۲۰۲۶-۱۰-۰۴
+
+| رتبه | روش | امتیاز | دلیل |
+|---:|---|---:|---|
+| ۱ | حفظ ورودی، خطای مشخص و تأیید بستن | ۱۰ | انتخاب و اجرا؛ دامنه محدود و رفتار آزمون‌پذیر |
+| ۲ | پیش‌نویس مشترک روی سرور | ۸ | نیازمند ذخیره‌سازی و سیاست تازه |
+| ۳ | پیش‌نویس مرورگر | ۶ | انتقال بین دستگاه‌ها ندارد |
+| ۴ | تکرار خودکار درخواست | ۳ | پاسخ گمشده می‌تواند به ارسال تکراری منجر شود |
+| ۵ | خطای عمومی قبلی | ۱ | علت و راه اصلاح روشن نیست |
+
+- [x] حفاظت ورودی محصول موجود/تازه هنگام بستن، مسیر جدید و خروج از صفحه؛ جلوگیری از بستن هنگام ذخیره.
+- [x] پیام چهارزبانه خطای کد/زیردسته/مشخصات/عکس و درخواست زیاد؛ حفظ ورودی در اعتبارسنجی ناموفق.
+- [x] مسدودکردن تکرار درخواست با نتیجه نامشخص یا نسخه قدیمی؛ راهنمای دریافت تازه فهرست.
+- [x] آزمون محلی: ۶۸ آزمون رابط + بررسی نوع‌ها/ساخت + ۳۰ بررسی انتشار.
+- [ ] تأیید انتشار این بچ و فایل فعال ریشه/۲۹.
+- [ ] پذیرش واقعی با حساب مدیر و دستگاه مشتری؛ آزمون خودکار جای آن را نمی‌گیرد.
+
+درس قابل تکرار: پس از خطای شبکه، «ذخیره نشد» را فرض نکن؛ ممکن است سرور ذخیره کرده و پاسخ گم شده باشد. نخست وضعیت واقعی را بخوان، سپس اقدام تازه را آغاز کن. آزمون پایدار این رفتار در `productEditorSafety.spec.ts` ثبت شد.
+
 ## Urgent presentation and offline customer login — 2026-10-03
 
 DONE and live. Baseline6d67ffca26a70a55e3834942ef1908c7b8b4d83b; lease codex-20261003-hero-fit-customer-account. Customer supersedes earlier bare-gold/shadow/outline choice: gold text on centered navy #101a44 oval, no stroke/shadow, same typography as category titles. Main single-hero uses actual loaded image aspect ratio with auto height/min-height0 and contain; removes fixed-height/blur letterboxing for approved1672×941 image while preserving composition and caption/carousel. Intrinsic geometry is opt-in to SmartImage; other images unchanged. Production wizard category numbers01–03 and subcategory codes now obey existing default-false appearance flags; unnumbered grid uses one column. Explicit admin re-enabling remains possible. Saved published appearance overrides and device/visual acceptance must be assessed separately; no screenshot was supplied this run.
