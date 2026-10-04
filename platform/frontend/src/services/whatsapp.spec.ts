@@ -1,8 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { products } from '@/data/catalog'
-import { buildProductMessage, buildProductionMessage, whatsappUrl } from './whatsapp'
+import { buildProductMessage, buildProductionMessage, whatsappUrl, directContactWhatsappUrl } from './whatsapp'
 
 describe('WhatsApp builder',()=>{
+  it('opens a blank direct chat to the configured team without customer/order/product data',()=>{
+    const url=new URL(directContactWhatsappUrl())
+    expect(url.origin).toBe('https://wa.me')
+    expect(url.pathname).toBe('/989933509793')
+    expect(url.search).toBe('');expect(url.hash).toBe('')
+  })
   it('builds a product message with code and path',()=>{
     const message=buildProductMessage(products[0]!, 'available')
     expect(message).toContain('درخواست تغییر')

@@ -55,3 +55,8 @@ export function buildProductionMessage(input:{
 export function whatsappUrl(message:string):string{
  return `https://wa.me/${SELLER_WHATSAPP}?text=${encodeURIComponent(message)}`
 }
+
+// A blank conversation never attaches product, account, or order data.
+export function directContactWhatsappUrl():string{
+ return `https://wa.me/${SELLER_WHATSAPP}`
+}

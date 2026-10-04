@@ -6,6 +6,7 @@ import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
 import {useAdminStore} from '@/features/admin/store'
 import AdminDashboard from '@/features/admin/components/AdminDashboard.vue'
+import CustomerContactCard from '@/features/customers/components/CustomerContactCard.vue'
 import CustomerDashboard from '@/features/customers/components/CustomerDashboard.vue'
 
 const route=useRoute()
@@ -30,6 +31,7 @@ async function signOut(){
       <button class="mini-action mt-3" @click="emit('login')"><LogIn :size="16"/>{{locale.t('signIn')}}</button>
     </div>
     <div class="mb-4 flex flex-wrap items-start justify-between gap-3"><div><h1 class="text-[1.75rem] font-black leading-tight text-[var(--c-text)]">{{locale.t(session.isAuthenticated?'panel':'account')}}</h1><p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('accountHelp')}}</p></div><button v-if="session.isAuthenticated" :disabled="loggingOut" class="mini-action shrink-0" @click="signOut"><LogOut :size="18"/>{{locale.t('logout')}}</button></div>
+    <CustomerContactCard/>
     <p v-if="logoutFailed" role="alert" class="auth-error mb-4">{{locale.t('logoutFailed')}}</p>
 
     <div v-if="!session.isAuthenticated" class="rounded-3xl border border-[var(--c-border)] bg-[var(--c-surface)] p-7 text-center shadow-sm">
