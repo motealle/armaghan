@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT-GPT-5.6-Sol",
   "run_id": "chatgpt-20261004-short-favorite-share-takeover",
   "scope": "Complete and release short internal WhatsApp favorites links with backwards compatibility",
@@ -13,5 +13,8 @@
     "previous_holder": "Codex",
     "previous_run_id": "codex-20261004-short-favorite-share",
     "reason": "Previous chat hit its limit and stopped before release; owner explicitly authorized takeover."
-  }
+  },
+  "released_at": "2026-10-04T17:39:00Z",
+  "final_ref": "1ed74d0bb0a25c565cd4478a7c363b42b01525f7",
+  "result": "Short FavoriteShare links implemented, tested, backend deployed, Test29 and root promoted successfully."
 }
