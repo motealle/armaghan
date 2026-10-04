@@ -1,11 +1,14 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "ChatGPT-GPT-5.6-Sol",
   "run_id": "chatgpt-20261004-mobile-otp-login",
   "scope": "Install and integrate mobile OTP login safely with provider-ready Laravel adapter",
   "base_ref": "1ed74d0bb0a25c565cd4478a7c363b42b01525f7",
   "acquired_at": "2026-10-04T17:45:00Z",
-  "expires_at": "2026-10-04T18:45:00Z"
+  "expires_at": "2026-10-04T18:45:00Z",
+  "released_at": "2026-10-04T18:15:00Z",
+  "final_ref": "f0f2476f45e71352fe05990142ce2d9beef5627c",
+  "result": "fouladgar/laravel-otp ^6.2 installed with Composer-generated lock, CI verified and deployed through additive backend release. Customer-facing SMS OTP remains disabled pending provider credentials and mobile identity flow."
 }
