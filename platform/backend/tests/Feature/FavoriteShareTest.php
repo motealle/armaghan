@@ -33,9 +33,9 @@ class FavoriteShareTest extends TestCase
         $this->assertNull(parse_url($url, PHP_URL_QUERY));
 
         $fragment = (string) parse_url($url, PHP_URL_FRAGMENT);
-        $this->assertStringStartsWith('/favorites/share/', $fragment);
+        $this->assertStringStartsWith('/s/', $fragment);
         $token = basename($fragment);
-        $this->assertSame(64, strlen($token));
+        $this->assertSame(22, strlen($token));
 
         $share = FavoriteShare::query()->sole();
         $this->assertNull($share->customer_id);
@@ -76,8 +76,24 @@ class FavoriteShareTest extends TestCase
         [$first] = $this->catalogProducts();
         $url=$this->postJson('/api/favorite-shares',['product_codes'=>[$first->code]])->assertOk()->json('share.url');
         $this->assertSame('/',parse_url($url,PHP_URL_PATH));
+        $this->assertStringStartsWith('/s/', (string) parse_url($url, PHP_URL_FRAGMENT));
         $token=basename(parse_url($url,PHP_URL_FRAGMENT));
         $this->postJson('/api/favorite-shares/resolve',['token'=>$token])->assertOk()->assertJsonPath('share.product_codes.0',$first->code);
+    }
+
+    public function test_legacy_64_character_share_tokens_still_resolve(): void
+    {
+        [$first] = $this->catalogProducts();
+        $legacyToken = str_repeat('L', 64);
+        $share = FavoriteShare::create([
+            'token_hash' => hash('sha256', $legacyToken),
+            'expires_at' => now()->addDay(),
+        ]);
+        $share->products()->attach($first->id, ['sort_order' => 0]);
+
+        $this->postJson('/api/favorite-shares/resolve', ['token' => $legacyToken])
+            ->assertOk()
+            ->assertJsonPath('share.product_codes.0', $first->code);
     }
 
     public function test_customer_owned_share_can_only_be_revoked_by_its_owner(): void

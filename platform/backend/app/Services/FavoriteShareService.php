@@ -14,6 +14,9 @@ use Illuminate\Validation\ValidationException;
 
 final class FavoriteShareService
 {
+    public const TOKEN_LENGTH = 22;
+    public const LEGACY_TOKEN_LENGTH = 64;
+
     /**
      * @param  array<int, string>  $productCodes
      * @return array{share: FavoriteShare, url: string, owned: bool}
@@ -53,7 +56,8 @@ final class FavoriteShareService
             : (int) config('armaghan.favorite_share.guest_ttl_days', 7);
         $ttlDays = max(1, min(90, $ttlDays));
 
-        $token = Str::random(64);
+        // Laravel Str::random uses random_bytes; 22 alphanumeric characters retain >128 bits of entropy.
+        $token = Str::random(self::TOKEN_LENGTH);
         $tokenHash = hash('sha256', $token);
 
         return DB::transaction(function () use ($codes, $products, $customer, $ttlDays, $token, $tokenHash): array {
@@ -91,7 +95,8 @@ final class FavoriteShareService
 
     public function resolve(string $token): FavoriteShare
     {
-        if (strlen($token) !== 64 || ! ctype_alnum($token)) {
+        $length = strlen($token);
+        if (! ctype_alnum($token) || ! in_array($length, [self::TOKEN_LENGTH, self::LEGACY_TOKEN_LENGTH], true)) {
             throw new FavoriteShareUnavailable('Favorite share is unavailable.');
         }
 
@@ -149,10 +154,12 @@ final class FavoriteShareService
     private function publicUrl(string $token): string
     {
         $origin = request()->getSchemeAndHttpHost();
-        $fragmentPath = (string) config('armaghan.favorite_share.fragment_path', '/#/favorites/share/');
+        $fragmentPath = (string) config('armaghan.favorite_share.fragment_path', '/#/s/');
 
-        // Historical host configuration must not send live shares into frozen token-unaware UI.
-        if (preg_match('~^/t/(?:0?[1-9]|1[0-9]|2[0-8])/#/favorites/share/$~', $fragmentPath)) $fragmentPath = '/#/favorites/share/';
+        // Normalize historical share routes so new WhatsApp links stay short and never target frozen UI.
+        if ($fragmentPath === '/#/favorites/share/' || preg_match('~^/t/\d{1,2}/#/favorites/share/$~', $fragmentPath)) {
+            $fragmentPath = '/#/s/';
+        }
 
         return rtrim($origin, '/').'/'.ltrim($fragmentPath, '/').$token;
     }

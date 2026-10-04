@@ -21,6 +21,8 @@ export class FavoriteShareApiError extends Error{
 const rawBase=(import.meta.env.VITE_ARMAGHAN_API_BASE as string|undefined)?.trim()??''
 const API_BASE=(rawBase||'/backend').replace(/\/$/,'')
 let csrfToken:string|null=null
+const SHARE_TOKEN_PATTERN=/^(?:[A-Za-z0-9]{22}|[A-Za-z0-9]{64})$/
+const SHARE_HASH_PATTERN=/^#\/(?:s|favorites\/share)\/((?:[A-Za-z0-9]{22}|[A-Za-z0-9]{64}))$/
 
 function cookie(name:string):string|undefined{
   if(typeof document==='undefined')return undefined
@@ -85,13 +87,13 @@ export async function issueFavoriteShare(productCodes:string[]):Promise<IssuedFa
   })
   // Keep links at the active root even during rollout of stale host configuration.
   const url=new URL(response.share.url)
-  const match=/^#\/favorites\/share\/([A-Za-z0-9]{64})$/.exec(url.hash)
+  const match=SHARE_HASH_PATTERN.exec(url.hash)
   if(!match||typeof window!=='undefined'&&url.origin!==window.location.origin)throw new FavoriteShareApiError(502,'Invalid share URL.')
-  return {...response.share,url:new URL('/#/favorites/share/'+match[1],url.origin).href}
+  return {...response.share,url:new URL('/#/s/'+match[1],url.origin).href}
 }
 
 export async function resolveFavoriteShare(token:string):Promise<ResolvedFavoriteShare>{
-  if(!/^[A-Za-z0-9]{64}$/.test(token))throw new FavoriteShareApiError(410,'Favorite share is unavailable.')
+  if(!SHARE_TOKEN_PATTERN.test(token))throw new FavoriteShareApiError(410,'Favorite share is unavailable.')
   const response=await requestJson<{share:ResolvedFavoriteShare}>('/api/favorite-shares/resolve',{
     method:'POST',
     body:JSON.stringify({token}),

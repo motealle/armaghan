@@ -19,6 +19,7 @@ export const router=createRouter({
     {path:'/products',name:'products',component:ProductsView},
     {path:'/production',name:'production',component:ProductionView},
     {path:'/favorites',name:'favorites',component:FavoritesView},
+    {path:'/s/:token',name:'favorite-share-short',component:FavoritesView},
     {path:'/favorites/share/:token',name:'favorite-share',component:FavoritesView},
     {path:'/tracking',name:'tracking',component:TrackingView},
     {path:'/magic/:token',name:'magic-link',component:MagicLinkView},

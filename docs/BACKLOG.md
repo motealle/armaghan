@@ -1,5 +1,8 @@
 # Armaghan — Product Backlog
 
+## P0 — Short WhatsApp FavoriteShare links — 2026-10-04
+Owner-authorized takeover of stopped run `codex-20261004-short-favorite-share`. Selected design: new 22-character cryptographically random token (>128-bit entropy) plus `/#/s/<token>`; raw token remains hash-only in storage and fixed POST resolution remains unchanged. Historical 64-character tokens and `/#/favorites/share/<token>` routes stay compatible. Stale numbered-test share-path configuration is normalized to root short links. No schema/dependency change. Source/tests/release verification pending at commit time.
+
 تأیید نهایی انتشار این بچ: کد e6d0d9a49f8fae970cba653d08c450fa18e6ff92؛ اجرای37218127601 در همه مراحل آزمون، اتصال هاست، انتقال نسخه۲۹ و فعال‌سازی ریشه موفق شد. خواندن تازه ریشه و /t/29/ و فایل index-CehMWVjX.js همگی۲۰۰؛ برابر بایت‌به‌بایت با خروجی محلی آزموده‌شده، SHA256=a9ddd88291015d079e28a75dd837797647cde7d2833289fcfe884adbb8edaa6e. فایل فعال حاوی پیام‌های ارتباط مستقیم، شماره فروش و «ذخیره و ارسال عکس» است. هیچ درخواست خصوصی، ارسال واقعی پیام، تغییر حساب یا پایگاه داده در این بچ انجام نشد؛ پذیرش واقعی آپلود/دستگاهی همچنان باز است.
 
 ## ارتباط مستقیم مشتری و ورود با موبایل — ۲۰۲۶-۱۰-۰۴

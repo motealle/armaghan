@@ -216,8 +216,8 @@
 
 
 ## FavoriteShare and WhatsApp rules
-161. New FavoriteShare links are Backend records. Store only a SHA-256 hash of the high-entropy raw share token; never persist or log the raw token.
-162. Raw FavoriteShare tokens belong only in the Test28 browser fragment (`#/favorites/share/<token>`), never in backend paths/query strings. Resolve shares through the fixed same-origin CSRF-protected POST endpoint.
+161. New FavoriteShare links are Backend records. Store only a SHA-256 hash of the high-entropy raw share token; never persist or log the raw token. New tokens must retain at least 128 bits of entropy; the current short format is 22 cryptographically random alphanumeric characters.
+162. New raw FavoriteShare tokens belong only in the short browser fragment (`#/s/<token>`), never in backend paths/query strings. Historical `#/favorites/share/<token>` links remain read-only compatible. Resolve both formats through the fixed same-origin CSRF-protected POST endpoint.
 163. FavoriteShare issue must preserve requested product order and fail if any requested Product, Subcategory or Category is inactive/unavailable. Public resolve must expose only ordered active product codes + expiry metadata, never share-owner identity or customer data.
 164. Guest shares expire after 7 days and intentionally have no authenticated revoke surface. Customer-owned shares expire after 30 days and may be revoked only by the same real Backend customer session. These TTL defaults are configuration-backed and may be shortened, not silently made permanent.
 165. Test28 must not generate product-code-in-URL FavoriteShare links. Historical `?shared=v1:` links may remain read-only compatible only. All new native/copy/WhatsApp sharing uses the persisted server-backed URL.

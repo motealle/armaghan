@@ -36,7 +36,7 @@ class FavoriteShareController extends Controller
     public function resolve(Request $request, FavoriteShareService $shares): JsonResponse
     {
         $validated = $request->validate([
-            'token' => ['required', 'string', 'size:64', 'alpha_num'],
+            'token' => ['required', 'string', 'max:64', 'alpha_num'],
         ]);
 
         try {

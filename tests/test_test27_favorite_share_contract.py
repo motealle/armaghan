@@ -23,7 +23,10 @@ assert "/api/favorite-shares/resolve" in api
 assert "method:'POST'" in api
 assert "/api/customer/favorite-shares/" in api
 
+assert "{path:'/s/:token',name:'favorite-share-short',component:FavoritesView}" in router
 assert "{path:'/favorites/share/:token',name:'favorite-share',component:FavoritesView}" in router
+assert "SHARE_TOKEN_PATTERN" in api
+assert "new URL('/#/s/'" in api
 assert "session.isCustomer?1" not in store
 assert "session.currentCustomerId" in store
 
