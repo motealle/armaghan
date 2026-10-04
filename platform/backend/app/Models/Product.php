@@ -80,19 +80,19 @@ class Product extends Model implements HasMedia
         $size = @getimagesize($media->getPath());
         $sourceWidth = is_array($size) ? max(1, (int) ($size[0] ?? 1)) : 1;
 
-        $this
-            ->addMediaConversion('card')
-            ->performOnCollections(self::MEDIA_COLLECTION)
-            ->width(min(960, $sourceWidth))
-            ->keepOriginalImageFormat()
-            ->nonQueued();
-
-        $this
-            ->addMediaConversion('thumb')
-            ->performOnCollections(self::MEDIA_COLLECTION)
-            ->width(min(320, $sourceWidth))
-            ->keepOriginalImageFormat()
-            ->nonQueued();
+        foreach ([
+            'thumb' => [320, 72],
+            'card' => [800, 78],
+            'detail' => [1600, 82],
+        ] as $name => [$width, $quality]) {
+            $this
+                ->addMediaConversion($name)
+                ->performOnCollections(self::MEDIA_COLLECTION)
+                ->width(min($width, $sourceWidth))
+                ->format('webp')
+                ->quality($quality)
+                ->nonQueued();
+        }
     }
 
     protected function casts(): array
