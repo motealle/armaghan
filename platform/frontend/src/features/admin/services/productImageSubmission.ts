@@ -51,7 +51,9 @@ export async function optimizeProductImage(file:File):Promise<File>{
       return file
     }
     const base=file.name.replace(/\.[^.]+$/,'')||'product'
-    const prepared=new File([blob],base+'.webp',{type:'image/webp',lastModified:file.lastModified})
+    const outputType=PRODUCT_IMAGE_TYPES.includes(blob.type)?blob.type:file.type
+    const extension=outputType==='image/jpeg'?'jpg':outputType==='image/png'?'png':'webp'
+    const prepared=new File([blob],base+'.'+extension,{type:outputType,lastModified:file.lastModified})
     const result=prepared.size<file.size?prepared:file
     if(!validPreparedProductImage(result))throw new ProductImagePreparationError()
     return result
