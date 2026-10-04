@@ -198,10 +198,13 @@ class CustomAdminProductsTest extends TestCase
         $this->assertNotNull($media); $this->assertStringEndsWith('.jpg', $media->file_name);
         $this->assertStringNotContainsString('original-label', $media->file_name);
         $this->assertStringNotContainsString($comment, file_get_contents($media->getPath()));
-        $this->assertTrue($media->hasGeneratedConversion('card')); $this->assertTrue($media->hasGeneratedConversion('thumb'));
+        $this->assertTrue($media->hasGeneratedConversion('card')); $this->assertTrue($media->hasGeneratedConversion('thumb')); $this->assertTrue($media->hasGeneratedConversion('detail'));
+        $this->assertSame('webp', pathinfo($media->getPath('thumb'), PATHINFO_EXTENSION));
+        $this->assertSame('webp', pathinfo($media->getPath('card'), PATHINFO_EXTENSION));
+        $this->assertSame('webp', pathinfo($media->getPath('detail'), PATHINFO_EXTENSION));
         $this->assertSame(24, getimagesize($media->getPath('card'))[0]);
         $this->assertNotSame($row['revision'], $response->json('product.revision'));
-        $this->getJson('/api/catalog/products')->assertJsonCount(1, 'data.0.media');
+        $this->getJson('/api/catalog/products')->assertJsonCount(1, 'data.0.media')->assertJsonPath('data.0.media.0.detail_url', fn ($value) => is_string($value) && str_contains($value, '-detail.webp'));
     }
 
     public function test_upload_rejects_disguised_corrupt_oversized_and_excess_gallery(): void

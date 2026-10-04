@@ -42,6 +42,9 @@ class PublicProductResource extends JsonResource
                     'thumb_url' => $media->hasGeneratedConversion('thumb')
                         ? $media->getFullUrl('thumb')
                         : $media->getFullUrl(),
+                    'detail_url' => $media->hasGeneratedConversion('detail')
+                        ? $media->getFullUrl('detail')
+                        : ($media->hasGeneratedConversion('card') ? $media->getFullUrl('card') : $media->getFullUrl()),
                 ])
                 ->all(),
             'category' => $category === null ? null : [

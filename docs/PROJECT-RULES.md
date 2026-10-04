@@ -1,5 +1,11 @@
 # Armaghan Project Rules
 
+## Product image upload invariant
+- Product photos must support selecting several images up to the remaining six-image capacity, preview before upload, and sequential retry-safe submission.
+- Browser optimization is performance-only; server authorization, MIME/content validation, decode/rewrite, generated filenames, rate limits and upload limits stay authoritative.
+- Canonical delivery variants are optimized WebP thumb (~320px), card (~800px), detail (~1600px), with no forced crop/upscale and safe fallback for older media.
+- Do not treat larger timeouts/file limits or an unavailable long-running queue worker as the primary upload fix.
+
 ## Deployment and immutable tests
 1. `/t` is the validation workspace; root `/public_html` is protected.
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.

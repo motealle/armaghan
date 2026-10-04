@@ -13,7 +13,7 @@ export const fetchAdminCustomers=(page=1,search='')=>requestJson<CustomerPage>('
 export const createAdminCustomer=(fields:CustomerFields)=>requestJson<{customer:AdminCustomer}>('/api/admin/customers',{method:'POST',body:JSON.stringify(fields)})
 export const updateAdminCustomer=(id:number,fields:CustomerFields,revision:string)=>requestJson<{customer:AdminCustomer}>('/api/admin/customers/'+id,{method:'PATCH',body:JSON.stringify({...fields,revision})})
 
-export interface AdminMedia { id:number; url:string; thumb_url:string }
+export interface AdminMedia { id:number; url:string; thumb_url:string; detail_url:string }
 export interface AdminSpecification { id:number; key:string; locked:boolean; labels:{fa:string; ar:string|null; en:string|null; ku:string|null}; value_text?:string|null }
 export interface ProductFields {
   specifications?:{definition_id:number;value_text:string|null}[];

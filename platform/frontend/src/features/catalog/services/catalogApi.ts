@@ -21,6 +21,7 @@ export interface PublicCatalogMedia{
   id:string
   url:string
   thumb_url:string
+  detail_url?:string
 }
 
 export interface PublicCatalogProduct{
@@ -154,8 +155,8 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
   const names=productNames(remote.names,fallback)
   const name=names.fa||fallback?.name||meta.subcategoryName
   const backendMedia=(remote.media??[])
-    .map(item=>item.url?.trim())
-    .filter((url):url is string=>Boolean(url))
+    .map(item=>({card:item.url?.trim(),detail:(item.detail_url||item.url)?.trim()}))
+    .filter((item):item is {card:string;detail:string}=>Boolean(item.card&&item.detail))
 
   return{
     ...(fallback?structuredClone(fallback):{}),
@@ -169,8 +170,8 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
     categoryName:remote.category?.names.fa?.trim()||fallback?.categoryName||meta.categoryName,
     subcategoryName:remote.subcategory?.names.fa?.trim()||fallback?.subcategoryName||meta.subcategoryName,
     availability:remote.availability,
-    gallery:backendMedia.length?backendMedia:(fallback?.gallery??[meta.image,'./images/final/details/fabric-detail.webp',meta.fallbackImage]),
-    image:backendMedia[0]??fallback?.image,
+    gallery:backendMedia.length?backendMedia.map(item=>item.detail):(fallback?.gallery??[meta.image,'./images/final/details/fabric-detail.webp',meta.fallbackImage]),
+    image:backendMedia[0]?.card??fallback?.image,
     specificationValues:remote.specifications?.map(s=>({...s,labels:{fa:s.labels.fa||undefined,ar:s.labels.ar||undefined,en:s.labels.en||undefined,ku:s.labels.ku||undefined}})),
     specs:remote.specifications?{
       locked:remote.specifications.filter(s=>s.locked).map(s=>s.labels.fa||s.key),
