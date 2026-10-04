@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261003-hero-fit-customer-account",
-  "scope": "Urgent hero and badges/category numbers; create login for existing offline customer",
+  "run_id": "codex-20261004-manual-product-reliability",
+  "scope": "Manual independent reliability batch after canceled scheduling",
   "base_ref": "43c9e46b8cb021e3872176dd91e537172e7a754e",
-  "acquired_at": "2026-10-03T19:22:04.262Z",
-  "expires_at": "2026-10-03T19:45:45.328Z",
-  "released_at": "2026-10-03T19:45:45.328Z"
+  "acquired_at": "2026-10-04T03:02:20.975Z",
+  "expires_at": "2026-10-04T04:32:20.975Z"
 }
