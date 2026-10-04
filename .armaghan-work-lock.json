@@ -1,12 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
+  "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261004-customer-direct-contact",
-  "scope": "Customer direct WhatsApp contact and phone-or-email architecture planning",
-  "base_ref": "58f6a034676b908a51240e62002ce246a7869b94",
-  "acquired_at": "2026-10-04T16:42:27.146Z",
-  "expires_at": "2026-10-04T18:12:27.146Z",
-  "released_at": "2026-10-04T16:53:28.899Z"
+  "run_id": "codex-20261004-short-favorite-share",
+  "scope": "Short internal WhatsApp favorites links with backwards compatibility",
+  "base_ref": "c68ae8e1abdd39d5223bb507902ae3c2f9fa0f20",
+  "acquired_at": "2026-10-04T17:10:12.174Z",
+  "expires_at": "2026-10-04T18:40:12.175Z"
 }
