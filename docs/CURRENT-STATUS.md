@@ -1,5 +1,8 @@
 # Armaghan — Current Status
 
+## Product photo rescue release closeout - 2026-10-04
+Runtime e939d62ee3dae57f34dd94082dffa3b9d5244cde verified: Backend CI 37230976144 PASS (124 tests, 1112 assertions); Backend Code Deploy 37230976112 PASS; FTP Deploy 37230976156 PASS including Test29 and root version 29 promotion. Automated/nonvisual verification only; real authenticated admin/device upload acceptance remains open.
+
 ## P0 — نجات مسیر عکس محصول — ۲۰۲۶-۱۰-۰۴
 
 - انتخاب چندعکس، پیش‌نمایش و ارسال ترتیبی مقاوم پیاده شد؛ هر آپلود از revision تازه عکس قبلی استفاده می‌کند و شکست یک فایل، محصول یا آپلودهای تأییدشده را برنمی‌گرداند.
