@@ -147,6 +147,8 @@ jobs:
         run: python tests/test_sqlite_offhost_backup_contract.py
       - name: Test independent root release selection
         run: python tests/test_root_release.py
+      - name: Test static FTP transfer recovery
+        run: python tests/test_ftp_static_upload.py
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
       - name: Check Python syntax
@@ -296,7 +298,14 @@ jobs:
               for root,_,files in os.walk(target_dir):
                   for filename in files: changed.append(os.path.join(root,filename))
           changed=sorted(set(changed))
-          ftp=FTP(); ftp.connect(host,port,timeout=20); ftp.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"]); ftp.cwd("/public_html")
+          import sys
+          sys.path.insert(0, "platform/scripts")
+          from ftp_static_upload import upload_static_file
+          def connect_upload():
+              connection=FTP(); connection.connect(host,port,timeout=60)
+              connection.login(os.environ["FTP_USERNAME"],os.environ["FTP_PASSWORD"])
+              return connection
+          ftp=connect_upload(); ftp.cwd("/public_html")
           try: ftp.cwd("t")
           except Exception: ftp.mkd("t"); ftp.cwd("t")
           base_remote="/public_html/t"
@@ -307,7 +316,7 @@ jobs:
                   try: ftp.cwd(part)
                   except Exception: ftp.mkd(part); ftp.cwd(part)
                   remote_dir += "/"+part
-              with open(local_path,"rb") as fh: ftp.storbinary(f"STOR {filename}",fh)
+              ftp=upload_static_file(ftp,connect_upload,remote_dir,filename,local_path)
               print("Uploaded "+remote_dir+"/"+filename)
           ftp.quit(); print(f"/t incremental deployment complete: {len(changed)} file(s). No remote files were deleted.")
           PY
