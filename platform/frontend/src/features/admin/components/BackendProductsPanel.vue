@@ -12,6 +12,8 @@ import { CustomerSessionApiError } from '@/features/auth/services/customerSessio
 import { fetchAdminProducts, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory, type ProductPage } from '../services/adminApi'
 const props=withDefaults(defineProps<{externalEditor?:boolean}>(),{externalEditor:false})
 const emit=defineEmits<{editRequest:[product:AdminProduct|null]}>()
+const props=withDefaults(defineProps<{externalEditor?:boolean}>(),{externalEditor:false})
+const emit=defineEmits<{editRequest:[product:AdminProduct|null]}>()
 const locale=useLocaleStore(),admin=useAdminStore(),catalog=useCatalogStore()
 const result=ref<ProductPage>({products:[],page:1,last_page:1,total:0})
 const taxonomy=ref<AdminSubcategory[]>([])
