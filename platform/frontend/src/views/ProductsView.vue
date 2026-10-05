@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Check, ChevronLeft, Search } from '@lucide/vue'
+import { Check, ChevronLeft, Search, Pencil } from '@lucide/vue'
 import { useRoute } from 'vue-router'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
 import BackendProductEditor from '@/features/admin/components/BackendProductEditor.vue'
+import BackendProductsPanel from '@/features/admin/components/BackendProductsPanel.vue'
+import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { useAdminStore } from '@/features/admin/store'
 import { fetchAdminProducts, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory, type ProductFields } from '@/features/admin/services/adminApi'
 import type { Product } from '@/types/domain'
@@ -17,6 +19,7 @@ const locale=useLocaleStore()
 const admin=useAdminStore()
 const {policy}=useResolvedAppearance()
 const adminEditorOpen=ref(false)
+const managerOpen=ref(false)
 const adminEditorBusy=ref(false)
 const adminEditorError=ref('')
 const adminProduct=ref<AdminProduct|null>(null)
@@ -188,5 +191,15 @@ function adminEditorClosed(){
       @close="adminEditorClosed"
       @saved="adminEditorSaved"
     />
+    <button
+      v-if="admin.identity&&!managerOpen&&!adminEditorOpen"
+      type="button"
+      class="visual-editor-quick-launcher"
+      :aria-label="locale.t('adminProducts')"
+      @click="managerOpen=true"
+    ><Pencil :size="18"/><span>{{locale.t('adminProducts')}}</span></button>
+    <AdaptivePanel :open="managerOpen" :title="locale.t('adminProducts')" wide @close="managerOpen=false">
+      <BackendProductsPanel v-if="managerOpen"/>
+    </AdaptivePanel>
   </section>
 </template>
