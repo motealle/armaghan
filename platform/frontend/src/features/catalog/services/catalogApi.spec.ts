@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { describe, expect, it } from 'vitest'
-import { categories, products } from '@/data/catalog'
+import { categories, products, subMeta } from '@/data/catalog'
 import { mergeCatalogSnapshot, type CatalogSnapshot } from './catalogApi'
 
 describe('catalog API staged merge',()=>{
@@ -44,7 +44,7 @@ describe('catalog API staged merge',()=>{
     expect(merged.categories.some(category=>category.code==='2')).toBe(true)
   })
 
-  it('uses canonical specification definitions and values instead of prototype defaults, including explicit empty schema',()=>{
+  it('uses canonical specification definitions and values instead of prototype defaults, restoring subcategory defaults for empty definitions',()=>{
     const base:CatalogSnapshot={categories:[],products:[{
       id:1,code:'11001',names:{fa:'محصول',ar:null,en:null,ku:null},availability:'available',sort_order:0,
       category:null,subcategory:null,specifications:[{key:'fabric',locked:true,labels:{fa:'جنس',ar:null,en:'Fabric',ku:null},value_text:'پنبه'}],
@@ -55,7 +55,7 @@ describe('catalog API staged merge',()=>{
     expect(product.specificationValues?.[0]?.value_text).toBe('پنبه')
     expect(product.specificationValues?.[0]?.labels.en).toBe('Fabric')
     base.products[0]!.specifications=[]
-    expect(mergeCatalogSnapshot(base).products.find(p=>p.code==='11001')?.specs).toEqual({locked:[],negotiable:[]})
+    expect(mergeCatalogSnapshot(base).products.find(p=>p.code==='11001')?.specs).toEqual(subMeta['11'].specs)
   })
 
   it('adds a new backend product with a collision-safe frontend id and existing subcategory media defaults',()=>{
@@ -131,5 +131,18 @@ it('survives repeated hydration with nested gallery proxies from an earlier merg
     const next=mergeCatalogSnapshot(snapshot,current.products,current.categories)
     current={products:reactive(next.products),categories:reactive(next.categories)}
     expect(current.products.find(p=>p.code==='11001')?.backendId).toBe(1)
+  }
+})
+
+
+it('restores all six Test28 subcategory groups even from previously emptied cached cards',()=>{
+  const codes=Object.keys(subMeta) as Array<keyof typeof subMeta>
+  const snapshot:CatalogSnapshot={categories:[],products:codes.map((code,i)=>({id:i+1,code:code+'001',names:{fa:'Test',ar:null,en:null,ku:null},availability:'available',sort_order:i,category:null,subcategory:null,specifications:[]})),managedProductCodes:[],managedCategoryCodes:[],managedSubcategoryCodes:[]}
+  const cached=products.map(p=>({...p,specs:{locked:[],negotiable:[]},specificationValues:[]}))
+  const merged=mergeCatalogSnapshot(snapshot,cached)
+  for(const code of codes){
+    const product=merged.products.find(p=>p.code===code+'001')!
+    expect(product.specs).toEqual(subMeta[code].specs)
+    expect(product.specificationValues).toBeUndefined()
   }
 })

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import { categories as seedCategories, products as seedProducts } from '@/data/catalog'
+import { categories as seedCategories, products as seedProducts, subMeta } from '@/data/catalog'
 import { fetchCatalogSnapshot, mergeCatalogSnapshot } from '@/features/catalog/services/catalogApi'
 import type { Category, Product } from '@/types/domain'
 
@@ -15,6 +15,11 @@ const legacyCategoryImages=new Set([
 function migrateProduct(product:Product):Product{
   const migrated=structuredClone(product)
   if(migrated.image&&legacyCategoryImages.has(migrated.image))delete migrated.image
+  if(!migrated.specificationValues?.length){
+    delete migrated.specificationValues
+    const defaults=subMeta[migrated.subcategoryCode]?.specs
+    if(defaults)migrated.specs=structuredClone(defaults)
+  }
   return migrated
 }
 
@@ -51,22 +56,32 @@ export const useCatalogStore=defineStore('catalog',()=>{
     lastSyncAt.value=null
   }
 
-  async function hydrateFromBackend(){
-    if(syncState.value==='loading')return
+  let hydration:Promise<void>|undefined
+  function hydrateFromBackend(force=false):Promise<void>{
+    if(hydration)return force?hydration.then(()=>hydrateFromBackend(true)):hydration
+    if(!force&&syncState.value==='synced'&&lastSyncAt.value&&Date.now()-Date.parse(lastSyncAt.value)<30_000)return Promise.resolve()
     syncState.value='loading'
-    try{
-      const snapshot=await fetchCatalogSnapshot()
-      const merged=mergeCatalogSnapshot(snapshot,items.value,categories.value)
-      items.value=merged.products
-      categories.value=merged.categories
-      syncState.value='synced'
-      lastSyncAt.value=new Date().toISOString()
-    }catch{
-      syncState.value='error'
-    }
+    hydration=(async()=>{
+      try{
+        const snapshot=await fetchCatalogSnapshot()
+        const merged=mergeCatalogSnapshot(snapshot,items.value,categories.value)
+        items.value=merged.products
+        categories.value=merged.categories
+        syncState.value='synced'
+        lastSyncAt.value=new Date().toISOString()
+      }catch{
+        syncState.value='error'
+      }finally{hydration=undefined}
+    })()
+    return hydration
   }
 
-  watch(items,(value)=>localStorage.setItem(KEY,JSON.stringify(value)),{deep:true})
+  let persisted=''
+  watch(items,(value)=>{
+    const snapshot=JSON.stringify(value)
+    if(snapshot===persisted)return
+    try{localStorage.setItem(KEY,snapshot);persisted=snapshot}catch{/* Storage limits must not interrupt browsing. */}
+  },{deep:true})
   return{
     items,
     categories,

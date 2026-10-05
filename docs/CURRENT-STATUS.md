@@ -1,5 +1,16 @@
 # Armaghan — Current Status
 
+## Loading, specifications and home media batch — 2026-10-05
+
+- Implemented the owner's loading-image request: product cards use the chosen no-photo subcategory asset during real-photo loading and failure, with no visible generic SVG.
+- Verified snapshot/test28-final supplies the same six subMeta specification groups. Live catalog returned specifications=[] for sampled products; empty remote arrays had erased the defaults. Empty/missing definitions now restore the Test28 group and remove stale empty cached values; nonempty server definitions/values remain authoritative. ProductDetailSheet also handles empty values safely. These are specification labels/classification, not invented product-specific values; server taxonomy-definition provisioning remains a follow-up if admin editing of defaults is needed.
+- Product images share one IntersectionObserver and start only within 30% of viewport height above/below the screen. Margin is calculated in pixels because percentage rootMargin uses width. Product cards use full-image contain without an eager blurred background. The same local default displays until the real image load event. No new image-size change or original modification was needed.
+- Catalog refreshes share in-flight work and reuse a successful result for 30 seconds. Admin saves bypass freshness and wait/refetch even during an existing request. Duplicate local-storage snapshots are skipped and storage errors cannot break browsing.
+- All non-admin routes load on demand. VisualEditor loads only when enabled; product admin editor/manager load only when opened. Built main JS entry reduced from 593.69 kB/176.05 kB gzip to 261.76 kB/77.39 kB gzip; shared/route chunks are additional and this is not a total-transfer or phone-speed claim.
+- Home visual editor now begins with eight localized image shortcuts. Selecting a panel or its text also exposes its image control. Existing HomeMediaPanel provides a prominent file picker and stored-image thumbnails, retains revision/auth validation and follows the editor's production/staging channel. No real authenticated image upload/publication was performed without a supplied replacement photo.
+- Local essential validation PASS: type-check/build, 17 focused tests in 6 files, current editor/auth and guarded publication contracts, frozen snapshot guard and diff hygiene. No TinyFish or broad suite. Publication pending this commit's FTP workflow; real mobile scrolling/pinch and actual host/network bottleneck acceptance remain OPEN.
+
+
 ## Lightweight card release closeout — 2026-10-05
 
 - Owner requested no TinyFish, essential tests only, and verification before repeating work from another chat. These are now durable PROJECT-RULES 185–187 and root AGENTS instructions.

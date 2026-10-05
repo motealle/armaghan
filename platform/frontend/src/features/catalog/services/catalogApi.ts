@@ -167,6 +167,7 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
   if(!subcategoryCode(remoteSubcategory))return null
 
   const meta=subMeta[remoteSubcategory]
+  const specifications=remote.specifications?.length?remote.specifications:undefined
   const names=productNames(remote.names,fallback)
   const name=names.fa||fallback?.name||meta.subcategoryName
   const backendMedia=(remote.media??[])
@@ -188,11 +189,11 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
     media:backendMedia.length?backendMedia:undefined,
     gallery:backendMedia.length?backendMedia.map(item=>item.detail):(fallback?.gallery??[meta.image,'./images/final/details/fabric-detail.webp',meta.fallbackImage]),
     image:backendMedia[0]?.card??fallback?.image,
-    specificationValues:remote.specifications?.map(s=>({...s,labels:{fa:s.labels.fa||undefined,ar:s.labels.ar||undefined,en:s.labels.en||undefined,ku:s.labels.ku||undefined}})),
-    specs:remote.specifications?{
-      locked:remote.specifications.filter(s=>s.locked).map(s=>s.labels.fa||s.key),
-      negotiable:remote.specifications.filter(s=>!s.locked).map(s=>s.labels.fa||s.key),
-    }:fallback?.specs?cloneCatalogValue(fallback.specs):cloneCatalogValue(meta.specs),
+    specificationValues:specifications?.map(s=>({...s,labels:{fa:s.labels.fa||undefined,ar:s.labels.ar||undefined,en:s.labels.en||undefined,ku:s.labels.ku||undefined}})),
+    specs:specifications?{
+      locked:specifications.filter(s=>s.locked).map(s=>s.labels.fa||s.key),
+      negotiable:specifications.filter(s=>!s.locked).map(s=>s.labels.fa||s.key),
+    }:cloneCatalogValue(meta.specs),
   }
 }
 

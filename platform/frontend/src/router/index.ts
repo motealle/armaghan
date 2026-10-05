@@ -1,10 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import ProductsView from '@/views/ProductsView.vue'
-import ProductionView from '@/views/ProductionView.vue'
-import FavoritesView from '@/views/FavoritesView.vue'
-import TrackingView from '@/views/TrackingView.vue'
-import MagicLinkView from '@/views/MagicLinkView.vue'
+const HomeView=()=>import('@/views/HomeView.vue')
+const ProductsView=()=>import('@/views/ProductsView.vue')
+const ProductionView=()=>import('@/views/ProductionView.vue')
+const FavoritesView=()=>import('@/views/FavoritesView.vue')
+const TrackingView=()=>import('@/views/TrackingView.vue')
+const MagicLinkView=()=>import('@/views/MagicLinkView.vue')
 
 const pagePath=window.location.pathname+window.location.search
 const history=createWebHashHistory(pagePath)

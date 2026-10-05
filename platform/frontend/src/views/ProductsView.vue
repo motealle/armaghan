@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { Check, ChevronLeft, Search, Pencil } from '@lucide/vue'
 import { useRoute } from 'vue-router'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
-import BackendProductEditor from '@/features/admin/components/BackendProductEditor.vue'
-import BackendProductsPanel from '@/features/admin/components/BackendProductsPanel.vue'
+const BackendProductEditor=defineAsyncComponent(()=>import('@/features/admin/components/BackendProductEditor.vue'))
+const BackendProductsPanel=defineAsyncComponent(()=>import('@/features/admin/components/BackendProductsPanel.vue'))
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { useAdminStore } from '@/features/admin/store'
 import { fetchAdminProducts, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory, type ProductFields } from '@/features/admin/services/adminApi'
@@ -85,7 +85,7 @@ async function editFromCatalog(product:Product){
 }
 async function adminEditorSaved(){
   adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null
-  await catalog.hydrateFromBackend()
+  await catalog.hydrateFromBackend(true)
 }
 function adminEditorClosed(){
   adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null
@@ -197,6 +197,7 @@ async function editFromManager(product:AdminProduct|null){
       </div>
     </div>
     <BackendProductEditor
+      v-if="adminEditorOpen"
       :open="adminEditorOpen"
       :product="adminProduct"
       :initial="adminInitial"

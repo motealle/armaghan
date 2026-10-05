@@ -43,11 +43,10 @@ describe('product card manager edit affordance',()=>{
 describe('lightweight card images',()=>{
   it('keeps detail images out of initial page requests',async()=>{
     const {html}=await render(false,{...products[0]!,image:'/card/1',gallery:['/detail/1'],media:[{thumb:'/thumb/1',card:'/card/1',detail:'/detail/1',width:1920,height:1080}]})
-    expect(html).toContain('src="/thumb/1"')
-    expect(html).toContain('srcset="/thumb/1 320w, /card/1 800w"')
+    // No image request exists until the card reaches the 30% preload zone.
+    expect(html).not.toContain('src="/thumb/1"')
     expect(html).not.toContain('/detail/1')
     expect(html).not.toContain('background-image')
-    expect(html).toContain('loading="lazy"')
-    expect(html).toContain('object-contain')
+    expect(html).not.toContain('class="smart-placeholder-svg"')
   })
 })

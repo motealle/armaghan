@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, ZoomIn } from '@lucide/vue'
 import type PhotoSwipe from 'photoswipe'
 import type { Product } from '@/types/domain'
 import SmartImage from '@/components/media/SmartImage.vue'
-import { landscapePlaceholder, productPlaceholder } from '@/data/productPlaceholders'
+import { productPlaceholder } from '@/data/productPlaceholders'
 import { useDesignStore } from '@/stores/design'
 import { useLocaleStore } from '@/stores/locale'
 import { cardMediaSources, swipeDirection } from '../services/cardMedia'
@@ -14,17 +14,11 @@ const locale=useLocaleStore()
 const design=useDesignStore()
 const productName=computed(()=>locale.productName(props.product.code,props.product.name,props.product.names))
 const portraitOrSelectedPlaceholder=computed(()=>productPlaceholder(design.placeholderSet,props.product.subcategoryCode,design.placeholderOrientation))
-const landscapeFallback=computed(()=>landscapePlaceholder(design.placeholderSet,props.product.subcategoryCode))
 const slides=computed(()=>cardMediaSources(props.product))
 const index=ref(0)
 const selected=computed(()=>slides.value[index.value])
 const productImage=computed(()=>selected.value?.thumb||portraitOrSelectedPlaceholder.value)
-const fallbackImage=computed(()=>slides.value.length?portraitOrSelectedPlaceholder.value:landscapeFallback.value)
-const mediaFit=computed<'cover'|'contain-blur'>(()=>{
-  const slide=selected.value
-  if(slide?.width&&slide?.height&&slide.width>slide.height)return 'contain-blur'
-  return 'cover'
-})
+const fallbackImage=portraitOrSelectedPlaceholder
 const labels=computed(()=>({
   fa:{open:'نمایش بزرگ تصویر',next:'تصویر بعدی',prev:'تصویر قبلی',close:'بستن',zoom:'بزرگ‌نمایی',error:'تصویر در دسترس نیست'},
   en:{open:'Enlarge image',next:'Next image',prev:'Previous image',close:'Close',zoom:'Zoom',error:'Image unavailable'},
@@ -86,7 +80,7 @@ onBeforeUnmount(()=>{disposed=true;viewer?.destroy()})
 <template>
   <div class="product-media-placeholder product-media-carousel relative overflow-hidden" style="touch-action:pan-y" @touchstart.passive="start" @touchend.passive="end" @touchcancel="touchStart=undefined">
     <svg class="product-placeholder-svg hidden" viewBox="0 0 1 1" aria-hidden="true"><path d="M0 0h1v1H0z"/></svg>
-    <SmartImage :key="productImage" :src="productImage" :fallback-src="fallbackImage" :alt="productName" aspect="product" :fit="mediaFit" />
+    <SmartImage :key="productImage" :src="productImage" :fallback-src="fallbackImage" :alt="productName" aspect="product" fit="contain" preload-near />
     <button v-if="slides.length" type="button" class="absolute inset-0 z-30 focus-visible:outline-2 focus-visible:outline-offset-[-3px]" :aria-label="labels.open" :disabled="opening" @click.stop="open">
       <span class="product-media-control absolute end-2 top-2 grid h-11 w-11 place-items-center text-white"><ZoomIn :size="19"/></span>
     </button>

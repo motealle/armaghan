@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BottomNav from '@/components/layout/BottomNav.vue'
 import HelpSheet from '@/components/layout/HelpSheet.vue'
-import VisualEditor from '@/features/visual-editor/VisualEditor.vue'
+const VisualEditor=defineAsyncComponent(()=>import('@/features/visual-editor/VisualEditor.vue'))
 import VisualEditorQuickLauncher from '@/features/visual-editor/VisualEditorQuickLauncher.vue'
 import VisualStyleRuntime from '@/features/visual-editor/VisualStyleRuntime.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
@@ -82,7 +82,7 @@ onMounted(async()=>{
     <HelpSheet :open="helpOpen" @close="helpOpen=false"/>
     <template v-if="route.path==='/'&&(admin.identity||session.isAdmin)&&!session.impersonatedCustomerId">
       <VisualEditorQuickLauncher/>
-      <VisualEditor/>
+      <VisualEditor v-if="visual.enabled"/>
     </template>
   </div>
 </template>

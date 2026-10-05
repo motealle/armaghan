@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, toRef } from 'vue'
-import { ListTree, X } from '@lucide/vue'
+import { ImagePlus, ListTree, X } from '@lucide/vue'
+import { useLocaleStore } from '@/stores/locale'
+import { homeImageTarget, homeImageTargets } from '@/features/home-media/targets'
 import { useVisualStyleStore } from './store'
 import VisualEditorInspector from './VisualEditorInspector.vue'
 import VisualEditorTargetChooser from './VisualEditorTargetChooser.vue'
@@ -12,22 +14,19 @@ import { useResizableEditorSheet } from './composables/useResizableEditorSheet'
 import { useVisualProfileSync } from './composables/useVisualProfileSync'
 
 const visual=useVisualStyleStore()
+const locale=useLocaleStore()
 const browserOpen=ref(true)
 const enabledRef=toRef(visual,'enabled')
 const {selected,candidates,choose,chooseHidden}=useVisualEditorSelection(enabledRef)
 const {height,onResizeStart,onResizeMove,onResizeEnd}=useResizableEditorSheet(enabledRef)
 const sync=useVisualProfileSync(visual,enabledRef)
 const publishedStagingVersion=computed(()=>sync.publications.value[sync.channel.value]?.version)
-const homeMediaTarget=computed(()=>{
-  const id=selected.value?.id??''
-  if(id==='hero.media')return 'hero'
-  if(id==='home.about.media')return 'about'
-  const capability=id.match(/^home\.capability\.(production|export|trade)\.media$/)
-  if(capability)return 'capability.'+capability[1]
-  const banner=id.match(/^home\.product-banner\.([123])\.media$/)
-  if(banner)return 'banner.'+banner[1]
-  return ''
-})
+const homeMediaTarget=computed(()=>homeImageTarget(selected.value?.id??''))
+const imageHeading=computed(()=>({fa:'تغییر سریع عکس پنل‌ها',en:'Change panel images',ar:'تغيير صور الأقسام',ku:'گۆڕینی وێنەکان'})[locale.locale])
+function chooseImage(item:typeof homeImageTargets[number]){
+  choose({id:item.id,label:item.labels[locale.locale],textEditable:false,tag:'media'})
+  browserOpen.value=false
+}
 
 const hiddenIds=computed(()=>Object.entries(visual.profile.styles)
   .filter(([,style])=>style.hidden)
@@ -81,6 +80,13 @@ function chooseFromBrowser(candidate:Parameters<typeof choose>[0]){
     </header>
 
     <div class="visual-editor-body">
+      <section class="mb-3 space-y-2">
+        <b class="flex items-center gap-2 text-sm"><ImagePlus :size="18"/>{{imageHeading}}</b>
+        <div class="flex flex-wrap gap-2">
+          <button v-for="item in homeImageTargets" :key="item.id" type="button" class="mini-action" :aria-pressed="homeMediaTarget===item.target" @click="chooseImage(item)">{{item.labels[locale.locale]}}</button>
+        </div>
+      </section>
+      <HomeMediaPanel v-if="!candidates.length&&selected&&homeMediaTarget" :target="homeMediaTarget" :publication-channel="sync.channel.value"/>
       <label class="form-field mb-3">مقصد انتشار<select v-model="sync.channel.value"><option value="production">دامنه اصلی</option><option value="staging">نسخه آزمایشی</option></select></label>
       <VisualEditorSyncPanel
         :state="sync.state.value"
@@ -110,7 +116,6 @@ function chooseFromBrowser(candidate:Parameters<typeof choose>[0]){
         @choose-hidden="chooseHidden"
       />
 
-      <HomeMediaPanel v-if="!candidates.length&&selected&&homeMediaTarget" :target="homeMediaTarget"/>
       <VisualEditorInspector v-if="!candidates.length&&selected" :selected="selected"/>
 
       <section v-else-if="!candidates.length" class="visual-editor-empty">

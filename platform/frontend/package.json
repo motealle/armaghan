@@ -13,7 +13,7 @@
     "build": "npm run generate:portraits && npm run type-check && npm run test:release && vite build",
     "fetch:digikala": "node scripts/fetch-digikala-assets.mjs",
     "generate:portraits": "python ../scripts/generate_placeholder_portraits.py",
-    "test:release": "vitest run src/features/catalog/services/cardMedia.spec.ts src/features/catalog/services/catalogApi.spec.ts"
+    "test:release": "vitest run src/features/catalog/services/cardMedia.spec.ts src/features/catalog/services/catalogApi.spec.ts src/components/media/nearViewport.spec.ts src/components/media/SmartImage.spec.ts src/features/home-media/targets.spec.ts src/stores/catalog.spec.ts"
   },
   "dependencies": {
     "@lucide/vue": "1.47.0",

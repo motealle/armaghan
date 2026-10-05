@@ -40,13 +40,13 @@ async function saved(){
   editorOpen.value=false;selected.value=null;note.value=locale.t('adminSaved')
   await load(result.value.page)
   // Existing public adapter handles backend-owned rows and removes archived local copies.
-  await catalog.hydrateFromBackend()
+  await catalog.hydrateFromBackend(true)
 }
 const bulkBusy=ref(false),checked=ref<number[]>([])
 const bulkRows=computed(()=>result.value.products.filter(row=>checked.value.includes(row.id)))
 const selectable=computed(()=>result.value.products.filter(row=>true))
 function togglePage(){checked.value=checked.value.length===selectable.value.length?[]:selectable.value.map(row=>row.id)}
-async function bulkSaved(){bulkBusy.value=false;await load(result.value.page);await catalog.hydrateFromBackend()}
+async function bulkSaved(){bulkBusy.value=false;await load(result.value.page);await catalog.hydrateFromBackend(true)}
 onMounted(()=>load())
 </script>
 <template>
