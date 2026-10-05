@@ -49,6 +49,16 @@ class StyleProfileCompilerTest extends TestCase
         $this->assertStringContainsString('display:none!important', $first['css']);
     }
 
+    public function test_media_fit_and_focal_point_compile_to_bounded_css_variables(): void
+    {
+        $prepared=(new StyleProfileCompiler())->prepare([
+            'hero.media'=>['imageFit'=>'cover','imagePositionX'=>25,'imagePositionY'=>70],
+        ],[]);
+        $this->assertSame('cover',$prepared['styles']['hero.media']['imageFit']);
+        $this->assertStringContainsString('--editor-media-fit:cover',$prepared['css']);
+        $this->assertStringContainsString('--editor-media-position:25% 70%',$prepared['css']);
+    }
+
     public function test_invalid_target_ids_are_rejected(): void
     {
         $this->expectException(InvalidArgumentException::class);
