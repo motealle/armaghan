@@ -23,13 +23,13 @@ const visibleTitle=computed(()=>customerProductLabel(props.product,displaySubcat
     <div data-style-id="product.media" data-style-label="بخش تصویر کارت محصول" class="product-card-media">
       <ProductMediaCarousel :product="product" />
     </div>
-    <button v-if="adminEditable" type="button" class="absolute end-2 top-2 z-40 grid h-10 w-10 place-items-center rounded-xl border border-white/70 bg-white/95 text-[var(--c-primary)] shadow-md" :aria-label="locale.t('editProduct')" @click.stop="emit('edit',product)">
-      <Pencil :size="17"/>
-    </button>
     <div class="product-card-body">
       <div data-style-id="product.title" data-style-label="عنوان کارت محصول" class="product-card-title" :class="{unavailable:product.availability!=='available'}">{{visibleTitle}}</div>
-      <div data-style-id="product.code" data-style-label="کد محصول" class="product-code-row">
+      <div data-style-id="product.code" data-style-label="کد محصول" class="product-code-row flex items-center gap-2">
         <code dir="ltr">{{product.code}}</code>
+        <button v-if="adminEditable" type="button" class="ms-auto grid h-9 w-9 place-items-center rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] text-[var(--c-primary)] shadow-sm" :aria-label="locale.t('editProduct')" @click.stop="emit('edit',product)">
+          <Pencil :size="16"/>
+        </button>
       </div>
       <div data-style-id="product.actions" data-style-label="دکمه‌های کارت محصول" class="card-actions compact grid grid-cols-3 gap-1.5">
         <button class="wa-card-action rounded-[.75rem]" :aria-label="locale.t('order')" @click="emit('whatsapp',product)">
