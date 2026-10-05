@@ -20,12 +20,10 @@ const index=ref(0)
 const selected=computed(()=>slides.value[index.value])
 const productImage=computed(()=>selected.value?.thumb||portraitOrSelectedPlaceholder.value)
 const fallbackImage=computed(()=>slides.value.length?portraitOrSelectedPlaceholder.value:landscapeFallback.value)
-const srcset=computed(()=>{
+const mediaFit=computed<'cover'|'contain-blur'>(()=>{
   const slide=selected.value
-  if(!slide||slide.thumb===slide.card)return undefined
-  const width=slide.width
-  if(width&&width<=320)return undefined
-  return `${slide.thumb} ${Math.min(320,width||320)}w, ${slide.card} ${Math.min(800,width||800)}w`
+  if(slide?.width&&slide?.height&&slide.width>slide.height)return 'contain-blur'
+  return 'cover'
 })
 const labels=computed(()=>({
   fa:{open:'نمایش بزرگ تصویر',next:'تصویر بعدی',prev:'تصویر قبلی',close:'بستن',zoom:'بزرگ‌نمایی',error:'تصویر در دسترس نیست'},
@@ -86,15 +84,15 @@ onBeforeUnmount(()=>{disposed=true;viewer?.destroy()})
 </script>
 
 <template>
-  <div class="product-media-placeholder relative overflow-hidden" style="touch-action:pan-y" @touchstart.passive="start" @touchend.passive="end" @touchcancel="touchStart=undefined">
+  <div class="product-media-placeholder product-media-carousel relative overflow-hidden" style="touch-action:pan-y" @touchstart.passive="start" @touchend.passive="end" @touchcancel="touchStart=undefined">
     <svg class="product-placeholder-svg hidden" viewBox="0 0 1 1" aria-hidden="true"><path d="M0 0h1v1H0z"/></svg>
-    <SmartImage :key="productImage" :src="productImage" :srcset="srcset" sizes="(max-width: 767px) 46vw, (max-width: 1279px) 30vw, 280px" :fallback-src="fallbackImage" :alt="productName" aspect="product" fit="contain" />
+    <SmartImage :key="productImage" :src="productImage" :fallback-src="fallbackImage" :alt="productName" aspect="product" :fit="mediaFit" />
     <button v-if="slides.length" type="button" class="absolute inset-0 z-30 focus-visible:outline-2 focus-visible:outline-offset-[-3px]" :aria-label="labels.open" :disabled="opening" @click.stop="open">
-      <span class="absolute end-2 top-2 grid h-11 w-11 place-items-center rounded-full bg-black/60 text-white"><ZoomIn :size="19"/></span>
+      <span class="product-media-control absolute end-2 top-2 grid h-11 w-11 place-items-center text-white"><ZoomIn :size="19"/></span>
     </button>
     <template v-if="slides.length>1">
-      <button type="button" class="absolute left-1 top-1/2 z-40 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-white" :aria-label="labels.prev" @click.stop="move(-1)"><ChevronLeft :size="22"/></button>
-      <button type="button" class="absolute right-1 top-1/2 z-40 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-white" :aria-label="labels.next" @click.stop="move(1)"><ChevronRight :size="22"/></button>
+      <button type="button" class="product-media-control absolute left-1 top-1/2 z-40 grid h-11 w-11 -translate-y-1/2 place-items-center text-white" :aria-label="labels.prev" @click.stop="move(-1)"><ChevronLeft :size="22"/></button>
+      <button type="button" class="product-media-control absolute right-1 top-1/2 z-40 grid h-11 w-11 -translate-y-1/2 place-items-center text-white" :aria-label="labels.next" @click.stop="move(1)"><ChevronRight :size="22"/></button>
       <div class="pointer-events-none absolute inset-x-0 bottom-2 z-40 flex justify-center gap-1.5" aria-hidden="true"><span v-for="(_,i) in slides" :key="i" class="h-1.5 w-1.5 rounded-full shadow" :class="i===index?'bg-white':'bg-black/40'"/></div>
     </template>
   </div>

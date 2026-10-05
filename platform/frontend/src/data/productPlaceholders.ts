@@ -18,19 +18,19 @@ export const placeholderSets: PlaceholderSet[] = [
     id: 'paper-cut',
     labelKey: 'placeholderPaperCut',
     descriptionKey: 'placeholderPaperCutHelp',
-    preview: './images/placeholders/paper-cut/sub-11.webp',
+    preview: './images/placeholders-lite/paper-cut/sub-11.webp',
   },
   {
     id: 'flat-geometric',
     labelKey: 'placeholderFlat',
     descriptionKey: 'placeholderFlatHelp',
-    preview: './images/placeholders/flat-geometric/sub-11.webp',
+    preview: './images/placeholders-lite/flat-geometric/sub-11.webp',
   },
   {
     id: 'dimensional',
     labelKey: 'placeholderDimensional',
     descriptionKey: 'placeholderDimensionalHelp',
-    preview: './images/placeholders/dimensional/sub-11.webp',
+    preview: './images/placeholders-lite/dimensional/sub-11.webp',
   },
 ]
 
@@ -46,7 +46,7 @@ export function landscapePlaceholder(
   set: PlaceholderSetId,
   subcategoryCode: Product['subcategoryCode'],
 ): string {
-  return `./images/placeholders/${set}/sub-${subcategoryCode}.webp`
+  return `./images/placeholders-lite/${set}/sub-${subcategoryCode}.webp`
 }
 
 export function portraitPlaceholder(

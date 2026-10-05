@@ -965,3 +965,10 @@ html.dark .product-card .product-card-title.unavailable{text-shadow:none}
 .product-media-placeholder .smart-image-content{padding:0;object-position:center}
 .product-card-media::after{display:none}
 .pswp{z-index:10000}
+
+
+/* 2026-10-05 fast product-card media polish */
+.product-media-control{border:0!important;background:transparent!important;box-shadow:none!important;padding:0}
+.product-media-control svg{filter:drop-shadow(0 2px 2px rgba(0,0,0,.9))}
+.product-media-carousel .smart-image-contained{padding:0}
+.product-card-title.unavailable,html.dark .product-card .product-card-title.unavailable{min-height:1.395rem;line-height:1.395rem;padding:.07rem .585rem;font-size:.702rem}

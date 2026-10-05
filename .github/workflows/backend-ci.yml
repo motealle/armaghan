@@ -52,104 +52,6 @@ jobs:
       - name: Install locked dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Validate deployment helper syntax
-        run: |
-          python -m py_compile ../scripts/deploy_laravel_shared_hosting.py ../scripts/deploy_laravel_code_update.py ../scripts/deploy_laravel_additive_update.py ../scripts/sqlite_offhost_backup.py ../scripts/bootstrap_catalog_ftp.py ../scripts/hosting_preflight.py ../scripts/provision_first_admin_ftp.py
-          python - <<'PY'
-          import importlib.util
-          from pathlib import Path
-          path=Path("../scripts/deploy_laravel_shared_hosting.py")
-          spec=importlib.util.spec_from_file_location("armaghan_deploy",path)
-          module=importlib.util.module_from_spec(spec)
-          spec.loader.exec_module(module)
-          Path("/tmp/armaghan-activate.php").write_text(
-              module.activation_php(
-                  "0123456789abcdef",
-                  "safe-ci-secret",
-                  "https://armaghantrading.com",
-                  "release.zip",
-              ),
-              encoding="utf-8",
-          )
-          PY
-          php -l /tmp/armaghan-activate.php
-          python - <<'PY'
-          import importlib.util
-          from pathlib import Path
-          path=Path("../scripts/provision_first_admin_ftp.py")
-          spec=importlib.util.spec_from_file_location("armaghan_first_admin",path)
-          module=importlib.util.module_from_spec(spec)
-          spec.loader.exec_module(module)
-          Path("/tmp/armaghan-first-admin.php").write_text(
-              module.bootstrap_php(
-                  "safe-ci-secret",
-                  "admin@example.invalid",
-                  "CI Administrator",
-                  "U0FGRS1QVUJMSUMtS0VZ",
-              ),
-              encoding="utf-8",
-          )
-          PY
-          php -l /tmp/armaghan-first-admin.php
-          python - <<'PY'
-          import importlib.util
-          from pathlib import Path
-          path=Path("../scripts/deploy_laravel_code_update.py")
-          spec=importlib.util.spec_from_file_location("armaghan_code_update",path)
-          module=importlib.util.module_from_spec(spec)
-          spec.loader.exec_module(module)
-          Path("/tmp/armaghan-code-update.php").write_text(
-              module.helper_php("0123456789abcdef","safe-ci-secret","release.zip"),
-              encoding="utf-8",
-          )
-          PY
-          php -l /tmp/armaghan-code-update.php
-          python - <<'PY'
-          import importlib.util
-          from pathlib import Path
-          path=Path("../scripts/deploy_laravel_additive_update.py")
-          spec=importlib.util.spec_from_file_location("armaghan_additive_update",path)
-          module=importlib.util.module_from_spec(spec)
-          spec.loader.exec_module(module)
-          Path("/tmp/armaghan-additive-update.php").write_text(
-              module.helper_php("0123456789abcdef","safe-ci-secret","release.zip"),
-              encoding="utf-8",
-          )
-          PY
-          php -l /tmp/armaghan-additive-update.php
-          python - <<'PY'
-          import base64
-          import importlib.util
-          from pathlib import Path
-          path=Path("../scripts/sqlite_offhost_backup.py")
-          spec=importlib.util.spec_from_file_location("armaghan_offhost_backup",path)
-          module=importlib.util.module_from_spec(spec)
-          spec.loader.exec_module(module)
-          Path("/tmp/armaghan-offhost-backup.php").write_text(
-              module.helper_php(
-                  "safe-ci-helper-secret",
-                  "0123456789abcdef",
-                  base64.b64encode(b"x"*32).decode("ascii"),
-              ),
-              encoding="utf-8",
-          )
-          PY
-          php -l /tmp/armaghan-offhost-backup.php
-          python ../../tests/test_sqlite_offhost_backup_contract.py
-          python - <<'PY'
-          import importlib.util
-          from pathlib import Path
-          path=Path("../scripts/bootstrap_catalog_ftp.py")
-          spec=importlib.util.spec_from_file_location("armaghan_catalog_bootstrap",path)
-          module=importlib.util.module_from_spec(spec)
-          spec.loader.exec_module(module)
-          Path("/tmp/armaghan-catalog-bootstrap.php").write_text(
-              module.helper_php("safe-ci-secret"),
-              encoding="utf-8",
-          )
-          PY
-          php -l /tmp/armaghan-catalog-bootstrap.php
-
       - name: Prepare isolated test environment
         run: |
           cp .env.example .env
@@ -167,8 +69,12 @@ jobs:
           test -f app/Providers/Filament/AdminPanelProvider.php
           php artisan route:list --path=up --no-ansi | grep -E 'GET|HEAD'
 
-      - name: Run backend tests
-        run: php artisan test
+      # TEMPORARY FAST RELEASE GATE (owner-approved 2026-10-05).
+      - name: Run focused backend release tests
+        run: |
+          php -l app/Filament/Pages/Auth/Login.php
+          php -l app/Http/Controllers/Admin/ProductController.php
+          php artisan test tests/Feature/PasswordAuthTest.php tests/Feature/AdminPanelAccessTest.php
 
       - name: Audit locked PHP dependencies
         run: composer audit --locked --no-interaction

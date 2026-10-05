@@ -130,6 +130,7 @@ class ProductController extends Controller
         $file = $request->file('image');
         // Decode before storage, and derive a safe extension from MIME, never from an uploaded name.
         $size = @getimagesize($file->getRealPath());
+        if (is_array($size) && $size[1] <= $size[0]) throw ValidationException::withMessages(['image' => 'Product images must be portrait (height greater than width).']);
         $mime = $file->getMimeType();
         $extension = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mime] ?? null;
         $decoded = $extension ? @imagecreatefromstring(file_get_contents($file->getRealPath())) : false;

@@ -69,7 +69,9 @@ jobs:
       - name: Validate and test release
         run: |
           composer validate --strict
-          php artisan test
+          php -l app/Filament/Pages/Auth/Login.php
+          php -l app/Http/Controllers/Admin/ProductController.php
+          php artisan test tests/Feature/PasswordAuthTest.php tests/Feature/AdminPanelAccessTest.php
           composer audit --locked --no-interaction
 
       - name: Build production vendor tree

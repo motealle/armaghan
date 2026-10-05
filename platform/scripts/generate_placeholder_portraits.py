@@ -19,9 +19,11 @@ ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "frontend"
 SOURCE = FRONTEND / "public/images/placeholders"
 TARGET = FRONTEND / "public/images/placeholders-portrait"
+LITE = FRONTEND / "public/images/placeholders-lite"
 SETS = ("paper-cut", "flat-geometric", "dimensional")
 CODES = ("11", "12", "21", "22", "31", "32")
-TARGET_SIZE = (960, 1440)
+TARGET_SIZE = (480, 720)
+FALLBACK_QUALITY = 64
 
 def average_edge(image: Image.Image, top: bool) -> tuple[int, int, int]:
     rgb = image.convert("RGB")
@@ -74,7 +76,21 @@ def render(source: Path, target: Path) -> dict[str, object]:
     composed = Image.alpha_composite(composed, vignette).convert("RGB")
 
     target.parent.mkdir(parents=True, exist_ok=True)
-    composed.save(target, "WEBP", quality=88, method=6)
+    composed.save(target, "WEBP", quality=FALLBACK_QUALITY, method=6)
+    return {
+        "source": str(source.relative_to(FRONTEND/"public")).replace("\\","/"),
+        "target": str(target.relative_to(FRONTEND/"public")).replace("\\","/"),
+        "source_sha256": sha256(source.read_bytes()).hexdigest(),
+        "target_sha256": sha256(target.read_bytes()).hexdigest(),
+        "bytes": target.stat().st_size,
+    }
+
+def render_lite(source: Path, target: Path) -> dict[str, object]:
+    image = Image.open(source).convert("RGB")
+    scale = min(1.0, 480 / max(1, image.width))
+    resized = image.resize((max(1, round(image.width*scale)), max(1, round(image.height*scale))), Image.Resampling.LANCZOS)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    resized.save(target, "WEBP", quality=FALLBACK_QUALITY, method=6)
     return {
         "source": str(source.relative_to(FRONTEND/"public")).replace("\\","/"),
         "target": str(target.relative_to(FRONTEND/"public")).replace("\\","/"),
@@ -91,18 +107,19 @@ def main() -> None:
             if not source.is_file():
                 raise SystemExit(f"Missing placeholder source: {source}")
             rows.append(render(source, TARGET / set_id / f"sub-{code}.webp"))
+            render_lite(source, LITE / set_id / f"sub-{code}.webp")
 
     manifest = {
         "schema": 1,
         "generator": "platform/scripts/generate_placeholder_portraits.py",
-        "strategy": "center source; sample top/bottom edge colors; extend vertically; subtle vignette",
+        "strategy": "lightweight 480x720 portrait; center source; extend vertically; subtle vignette",
         "width": TARGET_SIZE[0],
         "height": TARGET_SIZE[1],
         "items": rows,
     }
     TARGET.mkdir(parents=True, exist_ok=True)
     (TARGET/"manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
-    print(f"Generated {len(rows)} portrait placeholder derivatives in {TARGET}")
+    print(f"Generated {len(rows)} lightweight portrait derivatives plus landscape fallbacks")
 
 if __name__ == "__main__":
     main()

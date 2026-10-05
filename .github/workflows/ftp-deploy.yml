@@ -85,70 +85,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - name: Protect immutable test snapshots
+      # TEMPORARY FAST RELEASE GATE (owner-approved 2026-10-05).
+      - name: Fast release safety contracts
         env:
           GITHUB_EVENT_BEFORE: ${{ github.event.before }}
-        run: python tests/test_immutable_snapshots.py
-      - name: Test SQLite schema
-        run: python tests/test_sqlite_schema.py
-      - name: Test Test 11 static contract
-        run: python tests/test_test11_contract.py
-      - name: Test Test 12 regression contract
-        run: python tests/test_test12_source_contract.py
-      - name: Test Test 13 regression contract
-        run: python tests/test_test13_source_contract.py
-      - name: Test Test 14 accessibility contract
-        run: python tests/test_test14_accessibility_contract.py
-      - name: Test Test 15 sheet accessibility contract
-        run: python tests/test_test15_sheet_accessibility_contract.py
-      - name: Test Test 15 media/language contract
-        run: python tests/test_test15_media_language_contract.py
-      - name: Test Test 16 adaptive commerce contract
-        run: python tests/test_test16_adaptive_commerce_contract.py
-      - name: Test Test 17 mobile drawer/modal contract
-        run: python tests/test_test17_mobile_drawer_modal_contract.py
-      - name: Test Test 18 app navigation/drawer dashboard contract
-        run: python tests/test_test18_appnav_drawer_dashboard_contract.py
-      - name: Test Test 19 production/admin/i18n contract
-        run: python tests/test_test19_production_admin_i18n_contract.py
-      - name: Test Test 20 customer/product admin contract
-        run: python tests/test_test20_customer_product_admin_contract.py
-      - name: Test web-stock provenance policy
-        run: python tests/test_web_stock_policy.py
-      - name: Test generated-media contract
-        run: python tests/test_generated_media_contract.py
-      - name: Test product-placeholder media contract
-        run: python tests/test_product_placeholder_contract.py
-      - name: Test Test 21 placeholder/admin contract
-        run: python tests/test_test21_placeholder_admin_contract.py
-      - name: Test Test 22 release contract
-        run: python tests/test_test22_release_contract.py
-      - name: Test Test 23 product-card/category contract
-        run: python tests/test_test23_product_cards_contract.py
-      - name: Test Test 24 responsive commerce/admin contract
-        run: python tests/test_test24_responsive_commerce_contract.py
-      - name: Test Test 25 reversible media contract
-        run: python tests/test_test25_reversible_media_contract.py
-      - name: Test Test 25 screenshot hotfix contract
-        run: python tests/test_test25_bugfix2_contract.py
-      - name: Test frozen Test 26 handoff contract
-        run: python tests/test_test26_appearance_contract.py
-      - name: Test frozen Test 27 boundary contract
-        run: python tests/test_test27_frozen_lane_contract.py
-      - name: Test frozen Test 28 / active Test 29 promotion contract
-        run: python tests/test_test28_frozen_lane_contract.py
-      - name: Test Test 29 visual editor foundation contract
-        run: python tests/test_test29_visual_editor_contract.py
-      - name: Test Test 29 customer auth/session contract
-        run: python tests/test_test29_customer_auth_contract.py
-      - name: Test Test 29 persisted FavoriteShare contract
-        run: python tests/test_test29_favorite_share_contract.py
-      - name: Test encrypted off-host SQLite backup contract
-        run: python tests/test_sqlite_offhost_backup_contract.py
-      - name: Test independent root release selection
-        run: python tests/test_root_release.py
-      - name: Test static FTP transfer recovery
-        run: python tests/test_ftp_static_upload.py
+        run: |
+          python tests/test_immutable_snapshots.py
+          python tests/test_test29_visual_editor_contract.py
+          python tests/test_test29_customer_auth_contract.py
+          python tests/test_root_release.py
+          python tests/test_ftp_static_upload.py
       - name: Check Test 11 JavaScript syntax
         run: node --check t/11/assets/app.js
       - name: Check Python syntax

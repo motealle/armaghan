@@ -140,4 +140,19 @@ class PasswordAuthTest extends TestCase
         $this->assertTrue(Hash::check('FreshPassword2026',$user->fresh()->password));
         $this->postJson('/account/password',$data)->assertUnprocessable();
     }
+    public function test_mot_alias_is_bound_to_primary_owner_without_overwriting_owner_password(): void
+    {
+        $alias = config('temporary-admin-access.aliases.mot');
+        $this->assertSame('motealle@gmail.com', $alias['email']);
+        $this->assertTrue(Hash::check('mot', $alias['verifier_bcrypt']));
+        config(['temporary-admin-access.aliases.mot.expires_at' => now()->addDay()->toIso8601String()]);
+
+        $this->postJson('/api/auth/login', ['identifier' => 'mot', 'password' => 'mot'])
+            ->assertOk()->assertExactJson(['redirect' => '/backend/admin']);
+
+        $owner = User::where('email', 'motealle@gmail.com')->sole();
+        $this->assertTrue($owner->isPrimaryOwner());
+        $this->assertTrue($owner->isActiveAdmin());
+    }
+
 }

@@ -1,3 +1,25 @@
+## P0 fast media + owner alias batch — 2026-10-05
+
+| موضوع | 1 (انتخاب‌شده) | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| بارگذاری کارت | thumb 320 فقط در کارت + detail فقط در lightbox | srcset thumb/card | card 800 همیشه | JS resize بعد از load | original |
+| fallback | مشتق 480×720 WebP q64 + landscape max-480 | فقط AVIF | همان 960×1440 | CSS-only | فایل اصلی |
+| عکس افقی | full image با contain-blur؛ ورودی جدید portrait-only | crop ثابت | letterbox سفید | حذف legacy | stretch |
+| کنترل گالری | hit-area 44px شفاف + shadow 2px روی آیکون | نیمه‌شفاف | solid | فقط swipe | بدون کنترل |
+| mot/mot | alias محدود به primary owner موجود + rate-limit + audit، بدون تغییر رمز واقعی | تغییر رمز DB مالک | حساب دوم admin | bypass auth | رمز خام |
+| تست سریع | type-check/build + focused current-domain/safety | کل unit | کل regression تاریخی | بدون تست | تست دستی |
+
+انتخاب رتبه 1 بر مبنای responsive/lazy media، PhotoSwipe lazy loading، و authentication محدود و قابل audit است. Full test suite حذف نشده؛ فقط gate انتشار موقتاً محدود شده است.
+
+- [x] کارت اولیه فقط thumb سبک؛ detail فقط هنگام lightbox.
+- [x] قبلی/بعدی/zoom بدون زمینه، با سایه 2px و hit target لمسی 44px.
+- [x] fallbackهای portrait به 480×720/q64 و landscape fallback به max-480 کاهش یافتند.
+- [x] badge «تولیدپذیر» و بیضی آن حدود 10% کوچک‌تر شد.
+- [x] Filament login identifier فعال: mot/mot فقط به motealle@gmail.com primary owner نگاشت می‌شود، رمز واقعی overwrite نمی‌شود و backend advanced access به‌صورت 15 دقیقه‌ای/audited باز می‌شود.
+- [x] آپلود جدید محصول portrait-only؛ landscapeهای legacy با contain-blur باقی می‌مانند.
+- [x] fast release gate موقت: frontend cardMedia/catalog + type-check/build؛ backend auth/admin tests + syntax/dependency audit.
+- [ ] P0 بعدی: اگر latency route رسانه بعد از این انتشار هنوز چندثانیه‌ای بود، static/offload delivery را به‌عنوان bottleneck مستقل حل کن.
+
 # Armaghan — Product Backlog
 
 ## Card gallery release evidence — 2026-10-05
