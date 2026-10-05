@@ -53,6 +53,25 @@ class PasswordAuthTest extends TestCase
         $this->assertDatabaseCount('users',0);
         $this->assertDatabaseCount('customers',0);
     }
+    public function test_time_boxed_admin_alias_creates_or_resolves_real_admin_and_is_remembered(): void
+    {
+        config(['temporary-admin-access.aliases.testadmin'=>[
+            'email'=>'amirmashti1378@gmail.com',
+            'verifier_bcrypt'=>Hash::make('test-pass'),
+            'expires_at'=>now()->addDay()->toIso8601String(),
+        ]]);
+        $response=$this->postJson('/api/auth/login',['identifier'=>'testadmin','password'=>'test-pass'])
+            ->assertOk()->assertExactJson(['redirect'=>'/backend/admin']);
+        $user=User::where('email','amirmashti1378@gmail.com')->firstOrFail();
+        $this->assertTrue($user->isActiveAdmin());
+        $this->assertNotNull($user->password_configured_at);
+        $response->assertCookie(Auth::guard('web')->getRecallerName());
+
+        $this->postJson('/api/admin/logout')->assertOk();
+        config(['temporary-admin-access.aliases.testadmin.expires_at'=>now()->subSecond()->toIso8601String()]);
+        $this->postJson('/api/auth/login',['identifier'=>'testadmin','password'=>'test-pass'])->assertUnprocessable();
+    }
+
     public function test_password_login_denies_wrong_missing_and_inactive_accounts_generically(): void
     {
         $user=User::factory()->create(['email'=>'buyer@example.test','password'=>'BuyerPassword2026']);
@@ -79,9 +98,9 @@ class PasswordAuthTest extends TestCase
     public function test_password_login_rate_limit_is_account_bound_across_ips(): void
     {
         for($i=0;$i<5;$i++){
-            $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.'.($i+1)])->postJson('/api/auth/login',['email'=>'limited@example.test','password'=>'wrong'])->assertUnprocessable();
+            $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.'.($i+1)])->postJson('/api/auth/login',['identifier'=>'limited@example.test','password'=>'wrong'])->assertUnprocessable();
         }
-        $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.20'])->postJson('/api/auth/login',['email'=>'LIMITED@example.test','password'=>'wrong'])->assertStatus(429);
+        $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.20'])->postJson('/api/auth/login',['identifier'=>'LIMITED@example.test','password'=>'wrong'])->assertStatus(429);
     }
     public function test_password_change_requires_own_current_password_or_fresh_google_proof(): void
     {
