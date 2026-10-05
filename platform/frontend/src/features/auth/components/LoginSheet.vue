@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Globe2, LogIn, UserPlus, ShieldCheck } from '@lucide/vue'
+import { LogIn, UserPlus, ShieldCheck } from '@lucide/vue'
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
 import { registerWithPassword, signInWithPassword, CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
 import BaseModal from '@/components/ui/BaseModal.vue'
+import GoogleGIcon from '@/components/icons/GoogleGIcon.vue'
 
 const props=defineProps<{open:boolean}>()
 const emit=defineEmits<{close:[]}>()
@@ -65,7 +66,7 @@ async function googleInfo(){
       <p v-if="mode==='register'" class="text-xs leading-6 text-[var(--c-muted)]">{{locale.t('passwordRequirements')}}</p>
       <p v-if="error" role="alert" class="auth-error">{{error}}</p>
       <button class="auth-primary" :disabled="busy"><component :is="mode==='register'?UserPlus:LogIn" :size="19"/>{{locale.t(mode==='register'?'createAccount':'signIn')}}</button>
-      <button type="button" class="modal-secondary-action w-full" data-backend-endpoint="/backend/auth/google/redirect" :disabled="busy" @click="googleInfo"><Globe2 :size="17"/>{{locale.t('google')}}</button>
+      <button type="button" class="flex min-h-11 w-full items-center justify-center gap-3 rounded-xl border border-[#747775] bg-white px-4 text-sm font-medium text-[#1f1f1f] shadow-sm" data-backend-endpoint="/backend/auth/google/redirect" :disabled="busy" @click="googleInfo"><GoogleGIcon/><span>{{locale.t('google')}}</span></button>
     </form>
     <RouterLink class="mini-action mt-4" to="/admin" @click="emit('close')">{{locale.t('adminOverview')}}</RouterLink>
 
