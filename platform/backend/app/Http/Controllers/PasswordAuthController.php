@@ -5,6 +5,7 @@ use App\Enums\UserRole;
 use App\Models\Customer;
 use App\Models\User;
 use App\Support\CustomerSession;
+use App\Services\TemporaryAdminAccessService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,27 +16,47 @@ use Illuminate\Validation\ValidationException;
 
 class PasswordAuthController extends Controller
 {
-    public function login(Request $request): JsonResponse
+    public function login(Request $request, TemporaryAdminAccessService $temporary): JsonResponse
     {
-        $data = $request->validate(['email' => ['required', 'string', 'email', 'max:255'], 'password' => ['required', 'string', 'max:255']]);
-        $user = User::query()->whereRaw('lower(email) = ?', [strtolower(trim($data['email']))])->first();
-        // Equal hashing work for a missing account. This is an unusable dummy hash.
-        $valid = Hash::check($data['password'], $user?->password ?? '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.');
-        if (! $valid || ! $user || ! $user->active) {
-            throw ValidationException::withMessages(['email' => 'Authentication failed.']);
+        $identifier = trim((string) ($request->input('identifier') ?? $request->input('email') ?? ''));
+        $request->merge(['identifier' => $identifier]);
+        $data = $request->validate([
+            'identifier' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'max:255'],
+        ]);
+
+        $user = null;
+        if (str_contains($data['identifier'], '@')) {
+            $email = strtolower($data['identifier']);
+            $candidate = User::query()->whereRaw('lower(email) = ?', [$email])->first();
+            // Equal hashing work for a missing account. This is an unusable dummy hash.
+            $valid = Hash::check($data['password'], $candidate?->password ?? '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.');
+            if ($valid) {
+                $user = $candidate;
+            }
+        } else {
+            $user = $temporary->authenticate($data['identifier'], $data['password']);
         }
+
+        if (! $user || ! $user->active) {
+            throw ValidationException::withMessages(['identifier' => 'Authentication failed.']);
+        }
+
         if ($user->isActiveAdmin()) {
             Auth::guard('web')->login($user, true);
             $request->session()->forget([CustomerSession::KEY, 'password_hash_web', 'armaghan.password_setup_user_id', 'armaghan.password_setup_until']);
             $request->session()->regenerate(true);
             return response()->json(['redirect' => '/backend/admin'])->header('Cache-Control', 'no-store');
         }
+
         $customer = $user->customer;
         if ($user->role !== UserRole::Customer || ! $customer || ! $customer->active) {
-            throw ValidationException::withMessages(['email' => 'Authentication failed.']);
+            throw ValidationException::withMessages(['identifier' => 'Authentication failed.']);
         }
+
         $request->session()->forget(['armaghan.password_setup_user_id', 'armaghan.password_setup_until']);
         CustomerSession::login($request, $customer);
+
         return response()->json(['ok' => true])->header('Cache-Control', 'no-store');
     }
 
