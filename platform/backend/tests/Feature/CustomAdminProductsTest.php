@@ -131,6 +131,7 @@ class CustomAdminProductsTest extends TestCase
             $this->patchJson('/api/admin/products/'.$product->id, [])->assertStatus($status);
             $this->postJson('/api/admin/products/'.$product->id.'/images', [])->assertStatus($status);
             $this->putJson('/api/admin/products/'.$product->id.'/images/order', [])->assertStatus($status);
+            $this->deleteJson('/api/admin/products/'.$product->id.'/images', [])->assertStatus($status);
         }
         $this->assertDatabaseCount('products', 1);
     }
@@ -204,7 +205,7 @@ class CustomAdminProductsTest extends TestCase
         $this->assertSame('webp', pathinfo($media->getPath('detail'), PATHINFO_EXTENSION));
         $this->assertSame(24, getimagesize($media->getPath('card'))[0]);
         $this->assertNotSame($row['revision'], $response->json('product.revision'));
-        $this->getJson('/api/catalog/products')->assertJsonCount(1, 'data.0.media')->assertJsonPath('data.0.media.0.detail_url', fn ($value) => is_string($value) && str_contains($value, '-detail.webp'));
+        $this->getJson('/api/catalog/products')->assertJsonCount(1, 'data.0.media')->assertJsonPath('data.0.media.0.detail_url', fn ($value) => is_string($value) && str_contains($value, '/api/catalog/media/') && str_ends_with($value, '/detail'));
     }
 
     public function test_upload_rejects_disguised_corrupt_oversized_and_excess_gallery(): void
@@ -222,6 +223,34 @@ class CustomAdminProductsTest extends TestCase
         $row = $this->row($product);
         $this->postJson('/api/admin/products/'.$product->id.'/images', ['revision' => $row['revision'], 'image' => UploadedFile::fake()->image('extra.jpg')])->assertUnprocessable();
         $this->assertCount(6, $product->fresh()->getMedia(Product::MEDIA_COLLECTION));
+    }
+
+    public function test_gallery_routes_serve_real_files_and_selected_delete_is_owner_scoped(): void
+    {
+        Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());
+        $product = Product::create($this->fields()); $other = Product::create($this->fields('11098'));
+        $a = $product->addMedia(UploadedFile::fake()->image('a.jpg', 40, 60))->toMediaCollection(Product::MEDIA_COLLECTION);
+        $b = $product->addMedia(UploadedFile::fake()->image('b.jpg', 50, 70))->toMediaCollection(Product::MEDIA_COLLECTION);
+        $foreign = $other->addMedia(UploadedFile::fake()->image('foreign.jpg', 10, 10))->toMediaCollection(Product::MEDIA_COLLECTION);
+
+        $row = $this->row($product);
+        $thumb = $row['media'][0]['thumb_url'];
+        $this->assertStringContainsString('/api/catalog/media/'.$a->id.'/thumb', $thumb);
+        $this->get(parse_url($thumb, PHP_URL_PATH))->assertOk()
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Cache-Control', 'public, max-age=31536000, immutable');
+
+        $url = '/api/admin/products/'.$product->id.'/images';
+        $this->deleteJson($url, ['revision' => $row['revision'], 'media_ids' => [$foreign->id]])->assertUnprocessable();
+        $this->assertCount(2, $product->fresh()->getMedia(Product::MEDIA_COLLECTION));
+
+        $deleted = $this->deleteJson($url, ['revision' => $row['revision'], 'media_ids' => [$a->id]])
+            ->assertOk()->assertJsonCount(1, 'product.media')->json('product');
+        $this->assertDatabaseMissing('media', ['id' => $a->id]);
+        $this->assertDatabaseHas('media', ['id' => $b->id]);
+        $this->assertDatabaseHas('media', ['id' => $foreign->id]);
+        $this->assertNotSame($row['revision'], $deleted['revision']);
+        $this->deleteJson($url, ['revision' => $row['revision'], 'media_ids' => [$b->id]])->assertConflict();
     }
 
     public function test_reorder_is_exact_owner_scoped_and_visible_in_public_api(): void
