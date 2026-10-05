@@ -73,6 +73,12 @@ export class CatalogApiError extends Error{
 const rawBase=(import.meta.env.VITE_ARMAGHAN_API_BASE as string|undefined)?.trim()??''
 const API_BASE=(rawBase||'/backend').replace(/\/$/,'')
 const maxProductPages=20
+const PRODUCT_MEDIA_CACHE_REV='20261005-card-hotfix-1'
+function freshProductMediaUrl(value?:string){
+  const url=value?.trim()??''
+  if(!url||!url.includes('/backend/api/catalog/media/'))return url
+  return url+(url.includes('?')?'&':'?')+'v='+PRODUCT_MEDIA_CACHE_REV
+}
 
 function categoryCode(value:string):value is Category['code']{
   return value==='1'||value==='2'||value==='3'
@@ -95,6 +101,7 @@ async function requestJson<T>(path:string,signal?:AbortSignal):Promise<T>{
   const response=await fetch(API_BASE+path,{
     headers:{Accept:'application/json'},
     credentials:'same-origin',
+    cache:'no-store',
     signal,
   })
 
@@ -155,7 +162,7 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
   const names=productNames(remote.names,fallback)
   const name=names.fa||fallback?.name||meta.subcategoryName
   const backendMedia=(remote.media??[])
-    .map(item=>({card:item.url?.trim(),detail:(item.detail_url||item.url)?.trim()}))
+    .map(item=>({card:freshProductMediaUrl(item.url),detail:freshProductMediaUrl(item.detail_url||item.url)}))
     .filter((item):item is {card:string;detail:string}=>Boolean(item.card&&item.detail))
 
   return{
