@@ -42,9 +42,10 @@ class RecoveryTest(unittest.TestCase):
             self.assertIs(result, fresh); self.assertTrue(failed.closed)
             self.assertEqual(fresh.bytes, b'complete asset')
             self.assertEqual(fresh.directory, '/public_html/t/29/assets')
-            self.assertEqual(fresh.command, 'STOR .asset.bin.armaghan-upload')
+            self.assertEqual(failed.command, 'STOR .asset.bin.armaghan-upload-1')
+            self.assertEqual(fresh.command, 'STOR .asset.bin.armaghan-upload-2')
             self.assertFalse(hasattr(failed, 'renamed'))
-            self.assertEqual(fresh.renamed, ('.asset.bin.armaghan-upload', 'asset.bin'))
+            self.assertEqual(fresh.renamed, ('.asset.bin.armaghan-upload-2', 'asset.bin'))
 
     def test_skips_only_exact_published_bytes(self):
         with tempfile.TemporaryDirectory() as folder:

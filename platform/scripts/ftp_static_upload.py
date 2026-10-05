@@ -22,10 +22,12 @@ def upload_static_file(ftp, connect, remote_dir, filename, local_path, attempts=
         try:
             # Reopen from byte zero: a prior timeout may have written only a prefix.
             ftp.cwd(remote_dir)
+            # A shared host can leave a timed-out temporary STOR target stuck/locked.
+            # Use a fresh bounded temp name on every retry, then atomically rename.
+            temp_name = f".{filename}.armaghan-upload-{attempt + 1}"
             with open(local_path, "rb") as source:
-                ftp.storbinary(f"STOR .{filename}.armaghan-upload", source)
-            # Same atomic replacement convention already used for the root entry.
-            ftp.rename(f".{filename}.armaghan-upload", filename)
+                ftp.storbinary(f"STOR {temp_name}", source)
+            ftp.rename(temp_name, filename)
             return ftp
         except (OSError, EOFError, error_temp):
             ftp.close()
