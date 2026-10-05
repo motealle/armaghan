@@ -1,5 +1,5 @@
 import { requestJson } from '@/features/auth/services/customerSessionApi'
-export interface AdminIdentity { name:string; email:string; is_owner?:boolean }
+export interface AdminIdentity { name:string; email:string; is_owner?:boolean; password_configured?:boolean }
 export interface AdminCustomer {
   tags:string[]; has_account:boolean; id:number; name:string|null; email:string|null; company_name:string|null; whatsapp:string|null;
   country_code:string|null; country_name:string|null; notes:string|null; priority:number;
