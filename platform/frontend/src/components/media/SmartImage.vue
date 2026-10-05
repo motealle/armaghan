@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, type CSSProperties } from 'vue'
 
 const props=withDefaults(defineProps<{
   src?:string
@@ -35,7 +35,10 @@ const avifSrc=computed(()=>{
 const imageClass=computed(()=>props.fit==='cover'?'object-cover':'object-contain')
 const hasAmbientBackdrop=computed(()=>props.fit==='contain-blur'||props.fit==='edge-extend')
 const backdropStyle=computed(()=>currentSrc.value?{backgroundImage:`url("${currentSrc.value}")`,backgroundPosition:'var(--editor-media-position, 50% 50%)'}:undefined)
-const contentStyle=computed(()=>({objectFit:`var(--editor-media-fit, ${props.fit==='cover'?'cover':'contain'})`,objectPosition:'var(--editor-media-position, 50% 50%)'}))
+const contentStyle=computed<CSSProperties>(()=>({
+  objectFit:`var(--editor-media-fit, ${props.fit==='cover'?'cover':'contain'})` as CSSProperties['objectFit'],
+  objectPosition:'var(--editor-media-position, 50% 50%)',
+}))
 function useFallback(){
   if(props.fallbackSrc&&currentSrc.value!==props.fallbackSrc)currentSrc.value=props.fallbackSrc
   else currentSrc.value=undefined
