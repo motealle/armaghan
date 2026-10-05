@@ -91,6 +91,11 @@ Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleCustomerAuthCon
 
 
 Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group(function (): void {
+    Route::get('/account-archives/{resource}', [\App\Http\Controllers\Admin\AccountArchiveController::class, 'index'])->whereIn('resource', ['users', 'customers']);
+    Route::post('/account-archives/import', [\App\Http\Controllers\Admin\AccountArchiveController::class, 'import']);
+    Route::post('/account-archives/{resource}/{id}/backup', [\App\Http\Controllers\Admin\AccountArchiveController::class, 'prepare'])->whereIn('resource', ['users', 'customers'])->whereNumber('id');
+    Route::delete('/account-archives/{archive}', [\App\Http\Controllers\Admin\AccountArchiveController::class, 'destroy'])->whereUuid('archive');
+    Route::post('/account-archives/{archive}/restore', [\App\Http\Controllers\Admin\AccountArchiveController::class, 'restore'])->whereUuid('archive');
     Route::get('/home-media', [\App\Http\Controllers\Admin\HomeMediaController::class, 'index']);
     Route::get('/home-media/file/{media}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'adminFile'])->whereNumber('media')->name('admin.home-media.file');
     Route::post('/home-media', [\App\Http\Controllers\Admin\HomeMediaController::class, 'upload'])->middleware('throttle:admin-product-uploads');

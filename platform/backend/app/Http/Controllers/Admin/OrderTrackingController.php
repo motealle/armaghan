@@ -122,7 +122,7 @@ class OrderTrackingController extends Controller {
         if($data['quote'])unset($data['quote']['id'],$data['quote']['tracked_order_id']);
         $data['documents']=$order->getMedia(TrackedOrder::MEDIA_COLLECTION)->filter(fn($m)=>$admin||$m->getCustomProperty('visible_to_customer',false))->map(fn($m)=>['id'=>$m->id,'kind'=>$m->getCustomProperty('kind'),'visible_to_customer'=>$m->getCustomProperty('visible_to_customer',false),'download_url'=>'/backend/api/'.($admin?'admin':'customer').'/orders/'.$order->id.'/documents/'.$m->id])->values()->all();
         $data['events']=$events->get()->map(fn($e)=>$e->only(['id','action','stage','note','visible_to_customer','created_at']))->all();
-        if ($admin) { $data['customer_id']=$order->customer_id; $customer=Customer::with('user')->findOrFail($order->customer_id); $data['customer_name']=$customer->company_name ?: $customer->user?->name; $data['revision']=$this->revision($order); }
+        if ($admin) { $data['customer_id']=$order->customer_id; $customer=Customer::withoutGlobalScope('account_archive')->with(['user'=>fn($q)=>$q->withoutGlobalScope('account_archive')])->findOrFail($order->customer_id); $data['customer_name']=$customer->company_name ?: $customer->user?->name; $data['revision']=$this->revision($order); }
         return $data;
     }
     private function event(Request $request,TrackedOrder $order,string $action,string $note,bool $visible,bool $admin): void {

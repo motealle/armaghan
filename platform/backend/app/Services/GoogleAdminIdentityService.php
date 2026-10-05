@@ -21,7 +21,7 @@ final class GoogleAdminIdentityService
             throw new DomainException('Verified owner identity required');
         }
         return DB::transaction(function () use ($email, $identity): User {
-            $user = User::query()->whereRaw('lower(email) = ?', [$email])->lockForUpdate()->first();
+            $user = User::withoutGlobalScope('account_archive')->whereRaw('lower(email) = ?', [$email])->lockForUpdate()->first();
             if ($user && ! $user->active) {
                 throw new DomainException('Account unavailable');
             }

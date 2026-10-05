@@ -23,6 +23,7 @@ class Customer extends Model
 {
     use HasFactory;
     use \App\Models\Concerns\HasAdminTags;
+    use \App\Models\Concerns\HasAccountArchive;
 
     public function user(): BelongsTo
     {

@@ -1,3 +1,9 @@
+## Account sharing and recoverable deletion — implementation gate, 2026-10-05
+
+- Existing production share issue/resolve verified with two independent cookie sessions: 54-character URL, ordered product codes11001/22003 returned. No raw token logged or persisted in project files. Recipient UI still depends on the local catalog; targeted public product-code filtering is added for the upcoming direct-fetch UI fix.
+- Backend account deletion adds one create-only account_archives table. Backup preparation returns an encrypted recovery envelope and one-time 15-minute actor-bound receipt; deletion requires receipt, exact backup digest and explicit download confirmation. Linked customer/login records are hidden and disabled together, while IDs/order relations are retained. Protected owner/self remain undeletable; only primary owner manages other admins. Encrypted DB snapshot supports Undo and exact original JSON import. Old sessions/reset/magic credentials are revoked, including customer-session generation across Undo.
+- Backend PHP is unavailable locally. Publication is gated by focused account/share/catalog/auth/customer/order tests in Backend CI and Additive Deploy, dependency checks and a consistent private SQLite snapshot. Deployment and authenticated browser acceptance are PENDING. No real customer/user deletion performed. UI work remains local until backend activation passes. No TinyFish or broad suite.
+
 # Armaghan — Current Status
 
 ## Verified publication and focused live acceptance — 2026-10-05

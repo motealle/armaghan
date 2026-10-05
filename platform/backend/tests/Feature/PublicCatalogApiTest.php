@@ -172,6 +172,12 @@ class PublicCatalogApiTest extends TestCase
             ->assertJsonPath('data.0.code', '11002')
             ->assertJsonPath('data.0.availability', 'made_to_order');
 
+        // Shared selections must return exactly the requested active products.
+        $this->getJson('/api/catalog/products?codes[]=11002&codes[]=11003&per_page=100')
+            ->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.code', '11002');
+        $this->getJson('/api/catalog/products?codes[]=12001&per_page=100')
+            ->assertOk()->assertJsonCount(0, 'data');
+
         $this->getJson('/api/catalog/products?subcategory=12')
             ->assertOk()
             ->assertJsonCount(0, 'data');

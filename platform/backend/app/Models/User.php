@@ -20,6 +20,7 @@ class User extends Authenticatable implements FilamentUser
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
     use \App\Models\Concerns\HasAdminTags;
+    use \App\Models\Concerns\HasAccountArchive;
 
     protected static function booted(): void
     {

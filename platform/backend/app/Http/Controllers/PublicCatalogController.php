@@ -52,6 +52,8 @@ class PublicCatalogController extends Controller
     public function products(Request $request): JsonResponse
     {
         $validated = $request->validate([
+            'codes' => ['sometimes', 'array', 'min:1', 'max:80'],
+            'codes.*' => ['required', 'string', 'max:64', 'distinct'],
             'category' => ['nullable', 'string', 'max:16'],
             'subcategory' => ['nullable', 'string', 'max:16'],
             'availability' => ['nullable', Rule::enum(ProductAvailability::class)],
@@ -71,6 +73,10 @@ class PublicCatalogController extends Controller
                 ->where('active', true)
                 ->whereHas('category', fn ($category) => $category->where('active', true)))
             ->with(['subcategory.category', 'subcategory.specDefinitions', 'specValues', 'media']);
+
+        if (isset($validated['codes'])) {
+            $query->whereIn('code', $validated['codes']);
+        }
 
         if (isset($validated['category'])) {
             $query->whereHas(

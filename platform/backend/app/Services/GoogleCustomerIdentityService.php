@@ -30,7 +30,7 @@ final class GoogleCustomerIdentityService
                 $this->requireCustomer($customer);
                 return $customer;
             }
-            $user = User::query()->whereRaw('lower(email) = ?', [$email])->lockForUpdate()->first();
+            $user = User::withoutGlobalScope('account_archive')->whereRaw('lower(email) = ?', [$email])->lockForUpdate()->first();
             // Email equality alone never grants an existing account or administrator access.
             if ($user && (! $current || (int) $current->user_id !== (int) $user->id
                 || $user->role !== UserRole::Customer || ! $user->active)) {

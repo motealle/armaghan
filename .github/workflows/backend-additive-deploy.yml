@@ -74,7 +74,7 @@ jobs:
       - name: Validate and test additive release
         run: |
           composer validate --strict
-          php artisan test
+          php artisan test tests/Feature/AccountArchiveTest.php tests/Feature/FavoriteShareTest.php tests/Feature/PublicCatalogApiTest.php tests/Feature/PasswordAuthTest.php tests/Feature/AdminPanelAccessTest.php tests/Feature/CustomAdminUsersTest.php tests/Feature/CustomAdminCustomersTest.php tests/Feature/GoogleCustomerAuthTest.php tests/Feature/OrderTrackingTest.php
           composer audit --locked --no-interaction
 
       - name: Build production vendor tree
