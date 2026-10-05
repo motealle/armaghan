@@ -25,7 +25,7 @@ class PasswordAuthController extends Controller
             throw ValidationException::withMessages(['email' => 'Authentication failed.']);
         }
         if ($user->isActiveAdmin()) {
-            Auth::guard('web')->login($user);
+            Auth::guard('web')->login($user, true);
             $request->session()->forget([CustomerSession::KEY, 'password_hash_web', 'armaghan.password_setup_user_id', 'armaghan.password_setup_until']);
             $request->session()->regenerate(true);
             return response()->json(['redirect' => '/backend/admin'])->header('Cache-Control', 'no-store');
@@ -89,13 +89,19 @@ class PasswordAuthController extends Controller
     public function password(Request $request)
     {
         $user = $this->currentUser($request);
-        $data = $request->validate(['password' => ['required', 'string', 'max:255', 'confirmed', Password::min(12)->letters()->numbers()],
+        $passwordRule = $user->isActiveAdmin()
+            ? Password::min(8)
+            : Password::min(12)->letters()->numbers();
+        $data = $request->validate(['password' => ['required', 'string', 'max:255', 'confirmed', $passwordRule],
             'current_password' => ['nullable', 'string', 'max:255']]);
         if (! $this->recentGoogle($request, $user) && ! Hash::check($data['current_password'] ?? '', $user->password)) {
             throw ValidationException::withMessages(['current_password' => 'رمز فعلی درست نیست؛ یا دوباره با گوگل وارد شوید.']);
         }
-        $user->update(['password' => $data['password']]);
+        $user->update(['password' => $data['password'], 'password_configured_at' => now()]);
         $request->session()->forget(['armaghan.password_setup_user_id', 'armaghan.password_setup_until', 'password_hash_web']);
+        if ($user->isActiveAdmin()) {
+            Auth::guard('web')->login($user->fresh(), true);
+        }
         $request->session()->regenerate(true);
         $request->session()->regenerateToken();
         return redirect()->away('https://armaghantrading.com/backend/account/security')->with('status', 'رمز حساب ذخیره شد.');
