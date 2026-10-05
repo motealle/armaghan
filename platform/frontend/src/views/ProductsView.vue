@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { Check, ChevronLeft, Search, Pencil } from '@lucide/vue'
 import { useRoute } from 'vue-router'
 import { useCatalogStore } from '@/stores/catalog'
@@ -31,6 +31,7 @@ const query=ref('')
 const availability=ref('all')
 
 watch(()=>route.query.category,(value)=>{category.value=value?String(value):'all';subcategory.value='all'})
+onMounted(()=>void catalog.hydrateFromBackend())
 
 const subs=computed(()=>category.value==='all'?[]:catalog.categories.find(c=>c.code===category.value)?.subcategories ?? [])
 const filtered=computed(()=>catalog.items.filter(product=>{

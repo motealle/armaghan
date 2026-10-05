@@ -1,5 +1,13 @@
 # Armaghan — Product Backlog
 
+## P0 healing run — 2026-10-05
+- Temporary manager aliases are time-boxed and map to the real owner/business-admin accounts; plaintext passwords are not stored in the repo. Laravel remember-login remains valid until explicit logout or owner revocation.
+- Manager password setup accepts any non-empty confirmed value. Setup state moved to a dedicated additive table so production deployment no longer needs ALTER TABLE.
+- Only one global logout control remains; tracking/drawer duplicates are removed.
+- For one week, each fresh site visit performs one cache-busted reload before mounting, then cleans the query marker.
+- Products page and live admin panel both use the canonical backend product manager/editor. The products page refreshes the backend catalog on entry so routed uploaded media replaces stale local placeholders.
+- Visual acceptance is intentionally deferred to owner screenshots; no TinyFish/browser visual testing is used in this run.
+
 ## P0 — Admin UX and editor reliability — 2026-10-05
 
 Implemented the current admin-login reliability batch and the route-scoped editing flow. The home appearance editor is limited to the home page and now supports home-media selection plus fit/crop/focal controls. The products-page manager is limited to the products page, exposes edit beside the product code, supports adding products, and reuses the same canonical product editor/gallery used by the admin panel. Nested editing sheets were avoided.

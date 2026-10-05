@@ -10,6 +10,7 @@ import CustomerDetailSheet from '@/features/admin/components/CustomerDetailSheet
 import TranslationManager from '@/features/admin/components/TranslationManager.vue'
 import HomeContentEditor from '@/features/admin/components/HomeContentEditor.vue'
 import AdminProductsPanel from '@/features/admin/components/AdminProductsPanel.vue'
+import BackendProductsPanel from '@/features/admin/components/BackendProductsPanel.vue'
 import AppearanceSettings from '@/features/admin/components/AppearanceSettings.vue'
 import { placeholderSets, productPlaceholder } from '@/data/productPlaceholders'
 import { useCatalogStore } from '@/stores/catalog'
@@ -123,7 +124,7 @@ function inviteLead(id:string){
       <OrderTrackingPanel v-else-if="activeTab==='orders'" admin/>
       <BackendUsersPanel v-else-if="activeTab==='users'"/>
       <BackendCustomersPanel v-else-if="activeTab==='customers'"/>
-      <AdminProductsPanel v-else-if="activeTab==='products'" live/>
+      <BackendProductsPanel v-else-if="activeTab==='products'"/>
       <section v-else-if="activeTab==='content'" class="space-y-4"><div class="admin-surface rounded-2xl p-4"><p>{{locale.t('sharedVisualEditorHelp')}}</p><button class="mini-action mt-2" @click="editSite">{{locale.t('openVisualEditor')}}</button></div><HomeContentEditor live/><HomeMediaPanel/></section>
       <TranslationManager v-else-if="activeTab==='languages'" live/>
       <section v-else-if="activeTab==='appearance'" class="admin-surface rounded-2xl p-5"><p>{{locale.t('sharedVisualEditorHelp')}}</p><button class="mini-action mt-3" @click="editSite">{{locale.t('openVisualEditor')}}</button></section>

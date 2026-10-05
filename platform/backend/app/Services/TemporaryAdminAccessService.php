@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\UserRole;
 use App\Models\ActivityLog;
+use App\Models\AdminAuthState;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -47,7 +48,6 @@ final class TemporaryAdminAccessService
                     'name' => $alias === 'mot' ? 'Technical Owner' : 'Business Administrator',
                     'email' => $email,
                     'password' => Str::random(64),
-                    'password_configured_at' => now(),
                     'role' => UserRole::Admin,
                     'active' => true,
                 ]);
@@ -55,15 +55,12 @@ final class TemporaryAdminAccessService
                 $user->update([
                     'role' => UserRole::Admin,
                     'password' => Str::random(64),
-                    'password_configured_at' => now(),
                 ]);
                 $user->customer()->update(['active' => false]);
             }
 
-            $user->forceFill([
-                'email_verified_at' => $user->email_verified_at ?? now(),
-                'password_configured_at' => $user->password_configured_at ?? now(),
-            ])->save();
+            $user->forceFill(['email_verified_at' => $user->email_verified_at ?? now()])->save();
+            AdminAuthState::query()->updateOrCreate(['user_id' => $user->id], ['password_configured_at' => now()]);
 
             ActivityLog::create([
                 'actor_user_id' => $user->id,

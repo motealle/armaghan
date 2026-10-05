@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
+use App\Models\AdminAuthState;
 use App\Models\User;
 use App\Services\GoogleCustomerIdentityService;
 use App\Services\GoogleAdminIdentityService;
@@ -52,7 +53,7 @@ class GoogleCustomerAuthController extends Controller
                 $request->session()->forget([CustomerSession::KEY, 'password_hash_web']);
                 $request->session()->regenerate(true);
                 ActivityLog::create(['action' => 'admin.google.signed_in', 'subject_type' => User::class, 'subject_id' => $admin->id]);
-                if ($admin->password_configured_at === null) {
+                if (! AdminAuthState::query()->where('user_id', $admin->id)->whereNotNull('password_configured_at')->exists()) {
                     $request->session()->put('armaghan.password_setup_user_id', $admin->id);
                     $request->session()->put('armaghan.password_setup_until', now()->addMinutes(10)->timestamp);
                     return redirect()->away('https://armaghantrading.com/backend/account/security');
