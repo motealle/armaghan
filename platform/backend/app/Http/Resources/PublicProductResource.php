@@ -36,15 +36,9 @@ class PublicProductResource extends JsonResource
                 ->values()
                 ->map(fn (Media $media): array => [
                     'id' => (string) ($media->uuid ?: $media->id),
-                    'url' => $media->hasGeneratedConversion('card')
-                        ? $media->getFullUrl('card')
-                        : $media->getFullUrl(),
-                    'thumb_url' => $media->hasGeneratedConversion('thumb')
-                        ? $media->getFullUrl('thumb')
-                        : $media->getFullUrl(),
-                    'detail_url' => $media->hasGeneratedConversion('detail')
-                        ? $media->getFullUrl('detail')
-                        : ($media->hasGeneratedConversion('card') ? $media->getFullUrl('card') : $media->getFullUrl()),
+                    'url' => route('catalog.product-media', ['media' => $media->id, 'variant' => 'card']),
+                    'thumb_url' => route('catalog.product-media', ['media' => $media->id, 'variant' => 'thumb']),
+                    'detail_url' => route('catalog.product-media', ['media' => $media->id, 'variant' => 'detail']),
                 ])
                 ->all(),
             'category' => $category === null ? null : [
