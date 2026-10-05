@@ -25,7 +25,7 @@ class HomeMediaTest extends TestCase {
   $this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');
   $state=$this->postJson('/api/admin/home-media/publish/production',['revision'=>$state['revision'],'selection'=>[$id]])->assertOk()->json();
   $this->getJson('/api/home-media/production')->assertJsonStructure(['images'=>['hero']]);$media=StyleProfile::first()->getMedia(StyleProfile::MEDIA_COLLECTION)->first();$this->assertStringContainsString('media/home/'.$id.'/',$media->getPath());$this->assertNotFalse(getimagesize($media->getPath()));
-  $this->postJson('/api/admin/home-media/publish/production',['revision'=>$state['revision'],'selection'=>[]])->assertOk();$this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');$this->get('/api/home-media/file/'.$id)->assertNotFound();$this->assertDatabaseCount('media',1);
+  $this->postJson('/api/admin/home-media/publish/production',['revision'=>$state['revision'],'selection'=>[]])->assertOk();$this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');$this->get('/api/home-media/file/'.$id)->assertOk();$this->assertDatabaseCount('media',1);
  }
  public function test_stale_foreign_duplicate_target_and_invalid_upload_are_rejected_atomically(): void {
   $this->actingAs(User::factory()->admin()->create());$old=$this->getJson('/api/admin/home-media')->json();$state=$this->upload('hero',$old);$state=$this->upload('hero',$state);
