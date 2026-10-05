@@ -206,6 +206,27 @@ class GoogleCustomerAuthTest extends TestCase
         $this->assertSame($user->id,$service->resolve($this->identity('owner-0','motealle@gmail.com'))->id);
         $this->assertSame($hash,$user->fresh()->password);
     }
+    public function test_configured_admin_google_login_is_remembered_and_does_not_repeat_password_setup(): void
+    {
+        $this->configureGoogle();
+        $admin=User::factory()->admin()->create([
+            'email'=>'amirmashti1378@gmail.com',
+            'email_verified_at'=>now(),
+            'password_configured_at'=>now(),
+            'remember_token'=>null,
+        ]);
+        $provider=Mockery::mock();
+        $provider->shouldReceive('user')->once()->andReturn($this->identity('owner-amir',$admin->email));
+        Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
+        $response=$this->withSession(['armaghan.google.return_path'=>'/'])
+            ->get('/auth/google/callback?code=test')
+            ->assertRedirect('https://armaghantrading.com/#/admin');
+        $this->assertAuthenticatedAs($admin);
+        $this->assertNull(session('armaghan.password_setup_user_id'));
+        $this->assertNull(session('armaghan.password_setup_until'));
+        $this->assertNotNull($admin->fresh()->remember_token);
+    }
+
     public function test_unverified_owner_and_disabled_owner_cannot_be_elevated(): void
     {
         $service=app(\App\Services\GoogleAdminIdentityService::class);
