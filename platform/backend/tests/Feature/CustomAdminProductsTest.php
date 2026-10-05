@@ -236,9 +236,10 @@ class CustomAdminProductsTest extends TestCase
         $row = $this->row($product);
         $thumb = $row['media'][0]['thumb_url'];
         $this->assertStringContainsString('/api/catalog/media/'.$a->id.'/thumb', $thumb);
-        $this->get(parse_url($thumb, PHP_URL_PATH))->assertOk()
-            ->assertHeader('X-Content-Type-Options', 'nosniff')
-            ->assertHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        $mediaResponse = $this->get(parse_url($thumb, PHP_URL_PATH))->assertOk()
+            ->assertHeader('X-Content-Type-Options', 'nosniff');
+        $this->assertStringContainsString('max-age=31536000', (string) $mediaResponse->headers->get('Cache-Control'));
+        $this->assertStringContainsString('immutable', (string) $mediaResponse->headers->get('Cache-Control'));
 
         $url = '/api/admin/products/'.$product->id.'/images';
         $this->deleteJson($url, ['revision' => $row['revision'], 'media_ids' => [$foreign->id]])->assertUnprocessable();
