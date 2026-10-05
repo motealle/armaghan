@@ -21,7 +21,7 @@ class HomeMediaTest extends TestCase {
   $this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');
   $state=$this->postJson('/api/admin/home-media/publish/staging',['revision'=>$state['revision'],'selection'=>[$id]])->assertOk()->json();
   $public=$this->getJson('/api/home-media/staging')->assertJsonStructure(['images'=>['hero']])->json('images.hero');
-  $this->get(parse_url($public,PHP_URL_PATH))->assertOk()->assertHeader('X-Content-Type-Options','nosn');
+  $this->get(parse_url($public,PHP_URL_PATH))->assertOk()->assertHeader('X-Content-Type-Options','nosniff');
   $this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');
   $state=$this->postJson('/api/admin/home-media/publish/production',['revision'=>$state['revision'],'selection'=>[$id]])->assertOk()->json();
   $this->getJson('/api/home-media/production')->assertJsonStructure(['images'=>['hero']]);$media=StyleProfile::first()->getMedia(StyleProfile::MEDIA_COLLECTION)->first();$this->assertStringContainsString('media/home/'.$id.'/',$media->getPath());$this->assertNotFalse(getimagesize($media->getPath()));
