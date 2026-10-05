@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\Media\ProductMediaVariant;
 use Illuminate\Http\Response;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class PublicProductMediaController extends Controller
 {
-    public function show(Media $media, string $variant): BinaryFileResponse|Response
+    public function show(Media $media, string $variant, ProductMediaVariant $variants): BinaryFileResponse|Response
     {
         abort_unless(
             $media->model_type === Product::class
@@ -27,12 +28,8 @@ class PublicProductMediaController extends Controller
         ])));
 
         foreach ($candidates as $conversion) {
-            if (! $media->hasGeneratedConversion($conversion)) {
-                continue;
-            }
-
-            $path = $media->getPath($conversion);
-            if (is_file($path) && filesize($path) > 0) {
+            $path = $variants->path($media, $conversion);
+            if ($path !== null) {
                 return response()->file($path, [
                     'Cache-Control' => 'public, max-age=31536000, immutable',
                     'Content-Type' => str_ends_with(strtolower($path), '.webp') ? 'image/webp' : (string) $media->mime_type,
@@ -45,7 +42,7 @@ class PublicProductMediaController extends Controller
         abort_unless(is_file($original) && filesize($original) > 0, 404);
 
         return response()->file($original, [
-            'Cache-Control' => 'public, max-age=31536000, immutable',
+            'Cache-Control' => 'public, max-age=60',
             'Content-Type' => (string) $media->mime_type,
             'X-Content-Type-Options' => 'nosniff',
         ]);

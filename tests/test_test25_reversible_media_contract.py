@@ -71,7 +71,8 @@ assert "placeholderPortrait" in messages and "placeholderLandscape" in messages 
 # Product media uses selected portrait path and original landscape as fallback.
 assert "landscapePlaceholder" in media
 assert "design.placeholderOrientation" in media
-assert 'fit="edge-extend"' in media
+# Active Test29 uses plain contain; eager full-size backdrops defeat lazy loading.
+assert 'fit="contain"' in media
 assert "'edge-extend'" in smart
 assert "smart-image-vignette" in smart and "edge-extend-backdrop" in smart
 assert "/images/placeholders-portrait/" in smart

@@ -960,3 +960,8 @@ html.dark .product-card .product-card-title.unavailable{text-shadow:none}
 .test26-single-hero.test29-fitted-hero .test26-single-hero-media .smart-image{height:auto;min-height:0;aspect-ratio:16/9}
 .wizard-category-option.wizard-category-unnumbered{grid-template-columns:minmax(0,1fr)}
 .product-card .product-card-title.unavailable,html.dark .product-card .product-card-title.unavailable{height:auto;min-height:1.55rem;line-height:1.55rem;padding:.08rem .65rem;border:0;border-radius:999px;background:#101a44;color:var(--brand-gold);-webkit-text-stroke:0;paint-order:normal;text-shadow:none;box-shadow:none}
+
+/* Card images keep the complete garment, including legacy landscape photos. */
+.product-media-placeholder .smart-image-content{padding:0;object-position:center}
+.product-card-media::after{display:none}
+.pswp{z-index:10000}

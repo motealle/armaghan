@@ -12,20 +12,10 @@ Before planning a repository mutation, read:
 
 Repository rules are authoritative; `docs/CURRENT-STATUS.md` is the canonical current-state summary; chat memory is secondary.
 
-## Mandatory shared write lock
-Before the first mutating action, follow the canonical concurrency protocol in `docs/PROJECT-RULES.md` rules 64–74.
+## Owner authorization and single-thread work
+On 2026-10-05 the owner permanently authorized work, commits, pushes, merges and releases for `motealle/armaghan` on GitHub. Do not request publication permission again for ordinary project work within this repository's scope.
 
-Canonical coordination state:
-- branch: `coordination/armaghan-lock`
-- file: `.armaghan-work-lock.json`
-- default lease: 90 minutes
-- renew before 60 minutes if work is still active
-
-If another unexpired holder exists, or lock state cannot be checked safely, do not write, commit, create a numbered test, edit `/t/index.htm`, or deploy. Stop and report the collision/blocker.
-
-Acquisition and release must use the exact current blob SHA of the lock file. A conflict means another worker won the race; fail closed.
-
-Never release a lock owned by a different `run_id`.
+The owner manages one active work thread. Shared repository write-lock rules 64–74 are superseded: do not acquire, renew, inspect or enforce the historical coordination lock as a work prerequisite. Keep non-force Git updates, frozen-version protections, tests, deployment boundaries and secret protection. This does not disable GitHub branch protection or deployment serialization.
 
 ## Existing project protections
 Respect all frozen-test, deployment-scope, no-remote-delete, media, UX, QA and repository-memory rules in `docs/PROJECT-RULES.md`. In particular, older numbered tests are immutable snapshots and prototype deployment is scoped to `/public_html/t`.

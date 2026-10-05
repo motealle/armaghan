@@ -102,19 +102,18 @@
 62. Test 26 unresolved marketing-image slots may use clearly labeled `placehold.co` runtime fallbacks in the numbered prototype only. Every such slot must exist in `docs/TEST26-IMAGE-REQUIREMENTS.md`; final approved assets are local files and catalog photography remains non-hotlinked.
 63. Test 26 sections and alternate modes must remain modular: single hero must not delete the carousel, desktop expanded navigation must not delete the accessible mobile drawer, hidden Home product grid must remain recoverable, and category numbers should be hidden by policy rather than removed from domain data.
 
-## Shared concurrency lock for all chats, agents and automations
-64. The shared Armaghan write lock is mandatory for every chat, AI agent, automation, script or human-assisted tool that intends to mutate this repository, create a numbered test, update the launcher, deploy prototype content, or otherwise change project state. Read-only inspection may happen without the lock; the first mutating action may not.
-65. Canonical lock location: branch `coordination/armaghan-lock`, file `.armaghan-work-lock.json`. This coordination branch is operational state only and must never be merged into `main`.
-66. Before any write, fetch the lock file and its current blob SHA. If its state is `active` and `expires_at` is still in the future, stop the write run immediately and report that another Armaghan worker holds the lock.
-67. To acquire an available or expired lock, replace the lock file on `coordination/armaghan-lock` using the exact blob SHA just fetched. Set at least: `state=active`, `holder`, `run_id`, `acquired_at`, `expires_at`, `scope`, and `base_ref`. The default lease is 90 minutes. If the SHA-guarded update conflicts or fails, treat that as losing the race: perform no project write and re-read the lock.
-68. A worker still active near the lease limit must renew the lease before 60 minutes have elapsed, again using a fresh fetch plus exact blob-SHA update. Never overwrite the coordination file without the current SHA.
-69. Release the lock in a finally-style cleanup step by setting `state=released`, `released_at`, and preserving the holder/run metadata. Only the holder with the matching `run_id` may release its lock. Never release or rewrite another active holder's lease.
-70. An expired lease may be reclaimed only through the same SHA-guarded compare-and-update flow. If there is ambiguous evidence of very recent work by another Armaghan run, chat, workflow or branch, prefer safety: do not reclaim; skip and report the possible collision.
-71. Lock acquisition must happen before editing source/docs/backlog, creating a new `/t/NN`, changing `/t/index.htm`, committing implementation changes, or triggering a mutation/deployment that belongs to the run. Planning and repository reading may precede acquisition, but must be revalidated after acquiring if state could have changed.
-72. A CI/test/deploy workflow explicitly triggered as part of the current lock holder's change set is considered part of that holder's lease. Any independent automation that can mutate repository/project state must acquire the same lock first.
-73. Every Armaghan-focused chat/agent must read root `AGENTS.md` and this file before mutation. Tool-specific instruction files may summarize this protocol but must point back here as the canonical rule.
-74. If the lock mechanism itself is unavailable or cannot be checked reliably, fail closed: do not mutate Armaghan. Report the blocker instead.
-
+## Permanent owner authorization and single-thread work — supersedes former rules 64–74
+64. On 2026-10-05 the owner explicitly and permanently authorized project work and any repository changes on GitHub for `motealle/armaghan`, including commits, pushes, branches, pull requests, merges and guarded project releases. Routine publication within this scope does not need repeated user confirmation. Credentials/private production data remain protected.
+65. The owner manages one active work thread on this repository. The former shared repository write-lock protocol is abolished; its historical branch/file is not a prerequisite or blocker for work.
+66. Do not acquire, inspect, renew or release the historical coordination lock during ordinary work.
+67. This instruction supersedes all older mandatory-lock references in project instructions, historical handoffs, backlog and automation instructions.
+68. Always read current project state and Git history before resuming changes.
+69. Preserve ordinary non-force Git conflict detection; reconcile unexpected remote changes without overwriting work.
+70. Existing test/build gates, frozen tests 01–28, deployment scope and data/secret protections remain required.
+71. Continue bounded runs and update canonical project memory after material changes.
+72. Existing CI/deploy workflow concurrency guards remain enabled to serialize host updates; they are not the abolished repository lease.
+73. All project agents must read root AGENTS.md and these current rules; no shared-lock acquisition is required.
+74. Never promise removal of platform approval checks, GitHub branch protections or service outages. The owner's authorization is project-scoped and does not authorize publishing private records/secrets.
 
 
 ## Communication terminology rule
@@ -135,7 +134,7 @@
 84. Main-branch frontend development remains open for customer UI changes, but frozen Test 26 must never be rebuilt or redeployed from main. Any new customer-facing UI snapshot starts at Test 27 or higher.
 85. Local Vite builds must default to the non-numbered `.build/frontend` preview directory. A numbered UI output requires explicit `ARMAGHAN_UI_TARGET`; main must reject any numbered target <=26.
 86. GitHub Actions uses `ACTIVE_UI_TEST=27` as the next release lane until Test 27 is explicitly delivered. Advancing the lane requires freezing the delivered test, adding it to `docs/IMMUTABLE-TESTS.txt`, and updating release contracts in the same atomic change.
-87. Backend MVP work and UI evolution are parallel lanes: urgent customer UI requests may proceed in the next unfrozen numbered test without waiting for backend completion, provided the shared lock, regression contracts and deployment scope rules are respected.
+87. Backend MVP work and UI evolution are parallel lanes: urgent customer UI requests may proceed in the next unfrozen numbered test without waiting for backend completion, provided regression contracts and deployment scope rules are respected.
 
 
 ## Verified production-host constraints

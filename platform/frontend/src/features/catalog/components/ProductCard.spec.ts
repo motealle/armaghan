@@ -20,10 +20,10 @@ function memoryStorage(){
 Object.defineProperty(globalThis,'sessionStorage',{value:memoryStorage(),configurable:true})
 Object.defineProperty(globalThis,'localStorage',{value:memoryStorage(),configurable:true})
 
-async function render(adminEditable:boolean){
+async function render(adminEditable:boolean,product=products[0]!){
   const pinia=createPinia();setActivePinia(pinia)
   const locale=useLocaleStore();locale.locale='fa'
-  const app=createSSRApp({render:()=>h(ProductCard,{product:products[0]!,adminEditable})})
+  const app=createSSRApp({render:()=>h(ProductCard,{product,adminEditable})})
   app.use(pinia)
   return {html:await renderToString(app),locale}
 }
@@ -36,5 +36,18 @@ describe('product card manager edit affordance',()=>{
   it('is rendered only when the server-admin view enables it',async()=>{
     const {html,locale}=await render(true)
     expect(html).toContain('aria-label="'+locale.t('editProduct')+'"')
+  })
+})
+
+
+describe('lightweight card images',()=>{
+  it('keeps detail images out of initial page requests',async()=>{
+    const {html}=await render(false,{...products[0]!,image:'/card/1',gallery:['/detail/1'],media:[{thumb:'/thumb/1',card:'/card/1',detail:'/detail/1',width:1920,height:1080}]})
+    expect(html).toContain('src="/thumb/1"')
+    expect(html).toContain('srcset="/thumb/1 320w, /card/1 800w"')
+    expect(html).not.toContain('/detail/1')
+    expect(html).not.toContain('background-image')
+    expect(html).toContain('loading="lazy"')
+    expect(html).toContain('object-contain')
   })
 })
