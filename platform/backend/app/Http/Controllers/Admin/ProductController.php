@@ -182,6 +182,42 @@ class ProductController extends Controller
         return $this->json(['product' => $this->snapshot($row->refresh()->load(['subcategory.category', 'media']))]);
     }
 
+    public function deleteImages(Request $request, Product $product): JsonResponse
+    {
+        $data = $request->validate([
+            'revision' => ['required', 'string', 'regex:/^[a-f0-9]{64}$/'],
+            'media_ids' => ['required', 'array', 'min:1', 'max:6'],
+            'media_ids.*' => ['required', 'integer', 'distinct'],
+        ]);
+
+        $row = DB::transaction(function () use ($request, $product, $data) {
+            $row = $this->locked($product, $data['revision']);
+            $media = $row->getMedia(Product::MEDIA_COLLECTION)->keyBy('id');
+            $ids = array_map('intval', $data['media_ids']);
+
+            foreach ($ids as $id) {
+                if (! isset($media[$id])) {
+                    throw ValidationException::withMessages(['media_ids' => 'Selected media must belong to this product.']);
+                }
+            }
+
+            foreach ($ids as $id) {
+                $media[$id]->delete();
+            }
+
+            $remaining = $row->getMedia(Product::MEDIA_COLLECTION)->sortBy('order_column')->values();
+            foreach ($remaining as $index => $item) {
+                $item->forceFill(['order_column' => $index + 1])->save();
+            }
+
+            $this->audit($request, $row, 'admin.product.images-deleted', ['media']);
+
+            return $row;
+        });
+
+        return $this->json(['product' => $this->snapshot($row->refresh()->load(['subcategory.category', 'media']))]);
+    }
+
     private function rules(?Product $product = null): array
     {
         return ['subcategory_id' => ['required', 'integer', 'exists:subcategories,id'],
@@ -220,10 +256,11 @@ class ProductController extends Controller
             'specifications' => $this->specifications($product),
             'subcategory_code' => $product->subcategory->code, 'category_code' => $product->subcategory->category->code,
             'media' => $product->getMedia(Product::MEDIA_COLLECTION)->sortBy('order_column')->values()->map(fn ($m) => [
-                'id' => $m->id, 'url' => $m->hasGeneratedConversion('card') ? $m->getUrl('card') : $m->getUrl(),
-                'thumb_url' => $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl(),
-                'detail_url' => $m->hasGeneratedConversion('detail') ? $m->getUrl('detail') : ($m->hasGeneratedConversion('card') ? $m->getUrl('card') : $m->getUrl()),
-                'detail_url' => $m->hasGeneratedConversion('detail') ? $m->getUrl('detail') : ($m->hasGeneratedConversion('card') ? $m->getUrl('card') : $m->getUrl())])->all()]);
+                'id' => $m->id,
+                'url' => route('catalog.product-media', ['media' => $m->id, 'variant' => 'card']),
+                'thumb_url' => route('catalog.product-media', ['media' => $m->id, 'variant' => 'thumb']),
+                'detail_url' => route('catalog.product-media', ['media' => $m->id, 'variant' => 'detail']),
+            ])->all()]);;
     }
 
     private function definition($definition): array
