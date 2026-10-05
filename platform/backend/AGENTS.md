@@ -9,7 +9,7 @@ Before mutating `platform/backend`:
 1. read repository-root `AGENTS.md`;
 2. read `docs/PROJECT-RULES.md`, `docs/HANDOFF.md`, `docs/BACKLOG.md`;
 3. read `docs/BACKEND-MVP.md` and `docs/HOSTING-PREFLIGHT.md`;
-4. acquire the shared Armaghan write lock exactly as defined by project rules 64–74.
+4. follow current project rules 64–74: standing owner authorization, single-thread work, no shared repository lock.
 
 ## Backend baseline
 

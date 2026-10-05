@@ -9,6 +9,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PublicProductResource extends JsonResource
 {
+    private function mediaDimensions(Media $media): array
+    {
+        $width = (int) $media->getCustomProperty('width', 0);
+        $height = (int) $media->getCustomProperty('height', 0);
+        if ($width < 1 || $height < 1) {
+            $size = @getimagesize($media->getPath());
+            $width = is_array($size) ? (int) $size[0] : 0;
+            $height = is_array($size) ? (int) $size[1] : 0;
+        }
+        return ['width' => $width ?: null, 'height' => $height ?: null];
+    }
+
     public function toArray(Request $request): array
     {
         $subcategory = $this->subcategory;
@@ -39,6 +51,7 @@ class PublicProductResource extends JsonResource
                     'url' => route('catalog.product-media', ['media' => $media->id, 'variant' => 'card']),
                     'thumb_url' => route('catalog.product-media', ['media' => $media->id, 'variant' => 'thumb']),
                     'detail_url' => route('catalog.product-media', ['media' => $media->id, 'variant' => 'detail']),
+                    ...$this->mediaDimensions($media),
                 ])
                 ->all(),
             'category' => $category === null ? null : [

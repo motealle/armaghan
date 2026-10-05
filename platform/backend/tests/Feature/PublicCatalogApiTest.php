@@ -15,6 +15,31 @@ class PublicCatalogApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_missing_legacy_variants_are_repaired_without_serving_the_large_original(): void
+    {
+        Storage::fake('public');
+        $category = Category::create(['code' => '1', 'name_fa' => 'Baby']);
+        $subcategory = Subcategory::create(['category_id' => $category->id, 'code' => '11', 'name_fa' => 'Clothes']);
+        $product = Product::create(['subcategory_id' => $subcategory->id, 'code' => '11098', 'name_fa' => 'Photo', 'availability' => ProductAvailability::Available]);
+        $media = $product->addMedia(UploadedFile::fake()->image('landscape.jpg', 1920, 1080))->toMediaCollection(Product::MEDIA_COLLECTION);
+        $originalHash = hash_file('sha256', $media->getPath());
+        foreach (['thumb', 'card', 'detail'] as $variant) {
+            @unlink($media->getPath($variant));
+        }
+        $media->forceFill(['generated_conversions' => []])->save();
+        foreach (['thumb' => 320, 'card' => 800, 'detail' => 1600] as $variant => $width) {
+            $response = $this->get('/api/catalog/media/'.$media->id.'/'.$variant)->assertOk()->assertHeader('Content-Type', 'image/webp');
+            $path = $response->baseResponse->getFile()->getPathname();
+            $this->assertSame($width, getimagesize($path)[0]);
+            $this->assertSame((int) round(1080 * $width / 1920), getimagesize($path)[1]);
+            $this->assertNotSame($media->getPath(), $path);
+            $this->assertTrue($media->fresh()->hasGeneratedConversion($variant));
+        }
+        $this->assertSame($originalHash, hash_file('sha256', $media->getPath()));
+        $this->get('/api/catalog/media/'.$media->id.'/original')->assertNotFound();
+        $this->getJson('/api/catalog/products?q=11098')->assertJsonPath('data.0.media.0.width', 1920)->assertJsonPath('data.0.media.0.height', 1080);
+    }
+
     public function test_public_categories_return_only_active_taxonomy_with_managed_metadata(): void
     {
         $category = Category::create([

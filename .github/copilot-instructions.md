@@ -2,10 +2,6 @@
 
 Before making any change, read root `AGENTS.md` and `docs/PROJECT-RULES.md`.
 
-The shared Armaghan write lock is mandatory for every mutating task. Use:
-- branch `coordination/armaghan-lock`
-- file `.armaghan-work-lock.json`
+The owner permanently authorizes work and publication within `motealle/armaghan` and manages one active work thread. Former shared repository write-lock requirements are abolished by current rules 64–74. Do not treat the historical coordination lock as a blocker or prerequisite.
 
-Follow rules 64–74 in `docs/PROJECT-RULES.md` exactly. If the lock is active, ambiguous, unavailable, or a SHA-guarded acquisition conflicts, make no repository/project mutation and report the blocker.
-
-Also preserve all frozen numbered tests and deployment safety rules defined in the project rules.
+Preserve non-force Git updates, frozen numbered tests, automated checks, scoped deployment and secret/data protection. Existing workflow deployment serialization stays enabled.

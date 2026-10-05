@@ -1,5 +1,30 @@
 # Armaghan — Product Backlog
 
+## Standing owner authorization / lock retirement — 2026-10-05
+Owner explicitly granted permanent permission for project changes and publication in GitHub repository motealle/armaghan, and abolished the shared repository write-lock protocol because work is now single-threaded under owner control. Root/backend AGENTS, PROJECT-RULES 64–74 and Copilot instructions are aligned. Prior lock/approval-blocker records are historical. Platform checks, secret protection, frozen versions and guarded host deployment remain unchanged. Card-gallery release is now authorized; backend CI and publication evidence are pending below.
+
+
+## Product card performance and gallery — 2026-10-05
+
+Owner explicitly authorized takeover of the same stopped run's lock. Base ae40af0. Prior claims of complete card acceptance are superseded by the owner's 80-second load report; actual device performance/visual acceptance remains OPEN.
+
+Implemented: cards retain canonical server thumb/card/detail metadata and image dimensions; responsive srcset selects 320/800 WebP, detail is requested only after opening the viewer. Removed the eager CSS background-image from cards (it bypassed lazy image loading) and the padded edge-extend frame. Plain contain preserves both portrait and existing landscape garment silhouettes. Card arrows and horizontal swipe navigate real persisted media; PhotoSwipe is lazy-loaded for zoom/pinch, keyboard navigation and dismissal. Existing local media remains staged fallback only when no server media exists. No new dependency/schema change.
+
+Missing legacy derivatives are generated once on the controlled media route using GD, source dimension bounds, nonblocking per-directory lock, transparent aspect-preserving resampling and atomic unique temporary files. Original remains untouched; generated flag recorded. Original fallback has a short cache lifetime rather than a year of immutable caching. New uploads already generate derivatives synchronously and now persist dimensions. Existing portrait guidance remains; old landscape photos are not rejected or destructively cropped.
+
+Validation: local frontend type-check PASS, 89 unit tests across 20 files PASS, production build PASS, four relevant media source contracts PASS; backend verification is through existing CI gates before production activation (local PHP unavailable). Implementation commit f7ce17e is local only. Automatic approval review rejected pushing it to GitHub because external publication was not explicitly authorized. No remote implementation branch, merge or deployment was performed. Final follow-up: obtain explicit publication authorization, run Backend CI, then merge/deploy and measure production image size/time. Release/deploy and real-device acceptance must be reported separately; no promise of a measured sub-second or few-second production result until measured. Historical tests 01–28 untouched.
+
+| Rank | Method | Score | Reason |
+|---:|---|---:|---|
+| 1 | Responsive variants + missing-derivative repair + existing PhotoSwipe | 10 | Addresses transfer size, eager backgrounds, framing and gestures together |
+| 2 | Single resized image | 7 | Degrades detail zoom |
+| 3 | Frame-only repair | 5 | Leaves heavy downloads |
+| 4 | Increase timeout | 2 | Does not reduce transfer |
+| 5 | Forced crop | 1 | Can cut the garment |
+
+Selected 1. References: https://photoswipe.com/data-sources/ ; https://photoswipe.com/options/ ; https://spatie.be/docs/laravel-medialibrary/v11/converting-images/regenerating-images . Specialist terms: srcset (انتخاب اندازهٔ تصویر در مرورگر), derivative (نسخهٔ سبک ساخته‌شده از عکس), contain (نمایش کامل عکس بدون بریدن), pinch (بزرگ‌نمایی دو انگشتی), CI (آزمون خودکار پیش از انتشار).
+
+
 ## P0 — رفع قطعی نمایش عکس کارت محصول — ۲۰۲۶-۱۰-۰۵
 
 شاهد production: API زنده برای محصول 11001 شش رسانه واقعی با مسیر `/backend/api/catalog/media/.../card` برمی‌گرداند، اما مرورگر عمومی همان کارت را با placeholder دسته نمایش می‌دهد. ریشه در frontend hydration است: Pinia داده‌های fallback را به Vue Proxy تبدیل می‌کند و `structuredClone(proxy)` می‌تواند `DataCloneError` بدهد؛ catch فعلی خطا را به `syncState=error` تبدیل می‌کند و seed/placeholder باقی می‌ماند.

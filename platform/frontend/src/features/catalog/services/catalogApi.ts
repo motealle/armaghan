@@ -23,6 +23,8 @@ export interface PublicCatalogMedia{
   url:string
   thumb_url:string
   detail_url?:string
+  width?:number|null
+  height?:number|null
 }
 
 export interface PublicCatalogProduct{
@@ -74,7 +76,7 @@ export class CatalogApiError extends Error{
 const rawBase=(import.meta.env.VITE_ARMAGHAN_API_BASE as string|undefined)?.trim()??''
 const API_BASE=(rawBase||'/backend').replace(/\/$/,'')
 const maxProductPages=20
-const PRODUCT_MEDIA_CACHE_REV='20261005-card-hotfix-2'
+const PRODUCT_MEDIA_CACHE_REV='20261005-card-gallery-3'
 function cloneCatalogValue<T extends object>(value:T):T{
   return structuredClone(toRaw(value))
 }
@@ -166,8 +168,8 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
   const names=productNames(remote.names,fallback)
   const name=names.fa||fallback?.name||meta.subcategoryName
   const backendMedia=(remote.media??[])
-    .map(item=>({card:freshProductMediaUrl(item.url),detail:freshProductMediaUrl(item.detail_url||item.url)}))
-    .filter((item):item is {card:string;detail:string}=>Boolean(item.card&&item.detail))
+    .map(item=>({card:freshProductMediaUrl(item.url),thumb:freshProductMediaUrl(item.thumb_url||item.url),detail:freshProductMediaUrl(item.detail_url||item.url),width:item.width??undefined,height:item.height??undefined}))
+    .filter(item=>Boolean(item.card&&item.detail))
 
   return{
     ...(fallback?cloneCatalogValue(fallback):{}),
@@ -181,6 +183,7 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
     categoryName:remote.category?.names.fa?.trim()||fallback?.categoryName||meta.categoryName,
     subcategoryName:remote.subcategory?.names.fa?.trim()||fallback?.subcategoryName||meta.subcategoryName,
     availability:remote.availability,
+    media:backendMedia.length?backendMedia:undefined,
     gallery:backendMedia.length?backendMedia.map(item=>item.detail):(fallback?.gallery??[meta.image,'./images/final/details/fabric-detail.webp',meta.fallbackImage]),
     image:backendMedia[0]?.card??fallback?.image,
     specificationValues:remote.specifications?.map(s=>({...s,labels:{fa:s.labels.fa||undefined,ar:s.labels.ar||undefined,en:s.labels.en||undefined,ku:s.labels.ku||undefined}})),

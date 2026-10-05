@@ -58,6 +58,7 @@ class SanitizeProductMedia
 
             $media->forceFill([
                 'size' => filesize($path),
+                'custom_properties' => array_merge($media->custom_properties ?? [], ['width' => imagesx($image), 'height' => imagesy($image)]),
             ])->saveQuietly();
         } catch (\Throwable $exception) {
             @unlink($temporary);

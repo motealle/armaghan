@@ -3,6 +3,8 @@ import { computed, ref, watch, type CSSProperties } from 'vue'
 
 const props=withDefaults(defineProps<{
   src?:string
+  srcset?:string
+  sizes?:string
   alt:string
   label?:string
   aspect?:'hero'|'card'|'square'|'product'
@@ -65,6 +67,8 @@ function useFallback(){
       <source v-if="avifSrc" :srcset="avifSrc" type="image/avif">
       <img
         :src="currentSrc"
+        :srcset="currentSrc===src?srcset:undefined"
+        :sizes="currentSrc===src?sizes:undefined"
         :alt="alt"
         class="smart-image-content h-full w-full"
         :class="[imageClass,{'smart-image-contained':hasAmbientBackdrop,'smart-image-edge-extend':fit==='edge-extend'}]"
