@@ -25,6 +25,7 @@ const fallbackImage=computed(()=>hasProductMedia.value?portraitOrSelectedPlaceho
   <div class="product-media-placeholder relative overflow-hidden">
     <svg class="product-placeholder-svg hidden" viewBox="0 0 1 1" aria-hidden="true"><path d="M0 0h1v1H0z"/></svg>
     <SmartImage
+      :key="productImage"
       :src="productImage"
       :fallback-src="fallbackImage"
       :alt="productName"
