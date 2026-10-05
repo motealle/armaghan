@@ -1,29 +1,30 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
-import { ArrowUp, ArrowDown, ImagePlus, Save } from '@lucide/vue'
+import { ArrowUp, ArrowDown, ImagePlus, Save, Trash2 } from '@lucide/vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
-import SmartImage from '@/components/media/SmartImage.vue'
 import { useLocaleStore } from '@/stores/locale'
 import { useAdminStore } from '../store'
 import { productFailure, useProductDraftGuard } from '../services/productEditorSafety'
 import { ProductImagePreparationError, optimizeProductImage, submitProductImages, validProductImage } from '../services/productImageSubmission'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
-import { createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, type AdminProduct, type AdminSubcategory, type ProductFields, type AdminSpecification } from '../services/adminApi'
-const props=defineProps<{open:boolean;product:AdminProduct|null;taxonomy:AdminSubcategory[]}>()
+import { createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, deleteAdminProductImages, type AdminProduct, type AdminSubcategory, type ProductFields, type AdminSpecification } from '../services/adminApi'
+const props=withDefaults(defineProps<{open:boolean;product:AdminProduct|null;taxonomy:AdminSubcategory[];initial?:ProductFields|null}>(),{initial:null})
 const emit=defineEmits<{close:[];saved:[product:AdminProduct]}>()
 const locale=useLocaleStore(),admin=useAdminStore()
 const draft=ref<ProductFields|null>(null),current=ref<AdminProduct|null>(null)
 const saving=ref(false),error=ref(''),note=ref(''),changed=ref(false),writesBlocked=ref(false)
 type PendingImage={file:File;preview:string}
 const pendingImages=ref<PendingImage[]>([])
+const selectedMediaIds=ref<number[]>([])
+const failedMediaIds=ref<number[]>([])
 const pendingCount=computed(()=>pendingImages.value.length)
 const uploadProgress=ref({done:0,total:0})
 const guard=useProductDraftGuard(draft,saving,pendingCount)
 const hasUnsaved=guard.dirty,confirmClose=guard.confirmClose,closePrompt=ref<HTMLElement|null>(null)
-watch(()=>[props.open,props.product] as const,([open,row])=>{
-  clearPendingImages();error.value='';note.value='';changed.value=false;writesBlocked.value=false;uploadProgress.value={done:0,total:0};current.value=row
-  draft.value=!open?null:row?fields(row):{subcategory_id:props.taxonomy[0]?.id??0,code:'',name_fa:'',name_ar:null,name_en:null,name_ku:null,availability:'available',active:true,sort_order:0,specifications:[]}
+watch(()=>[props.open,props.product,props.initial] as const,([open,row,initial])=>{
+  clearPendingImages();selectedMediaIds.value=[];failedMediaIds.value=[];error.value='';note.value='';changed.value=false;writesBlocked.value=false;uploadProgress.value={done:0,total:0};current.value=row
+  draft.value=!open?null:row?fields(row):initial?structuredClone(initial):{subcategory_id:props.taxonomy[0]?.id??0,code:'',name_fa:'',name_ar:null,name_en:null,name_ku:null,availability:'available',active:true,sort_order:0,specifications:[]}
   guard.checkpoint()
 },{immediate:true})
 function fields(row:AdminProduct):ProductFields{return {subcategory_id:row.subcategory_id,code:row.code,name_fa:row.name_fa,name_ar:row.name_ar,name_en:row.name_en,name_ku:row.name_ku,availability:row.availability,active:row.active,sort_order:row.sort_order,specifications:row.specifications.map(s=>({definition_id:s.id,value_text:s.value_text??null}))}}
@@ -104,6 +105,22 @@ async function move(index:number,offset:number){
   try{current.value=(await orderAdminProductImages(current.value,ids)).product;changed.value=true;note.value=locale.t('adminSaved')}
   catch(e){error.value=failed(e)}finally{saving.value=false}
 }
+function mediaFailed(id:number){if(!failedMediaIds.value.includes(id))failedMediaIds.value.push(id)}
+function mediaLoaded(id:number){failedMediaIds.value=failedMediaIds.value.filter(value=>value!==id)}
+function toggleMedia(id:number){
+  selectedMediaIds.value=selectedMediaIds.value.includes(id)?selectedMediaIds.value.filter(value=>value!==id):[...selectedMediaIds.value,id]
+}
+async function deleteSelectedMedia(){
+  if(!current.value||!selectedMediaIds.value.length||saving.value||dirty.value||writesBlocked.value)return
+  if(!window.confirm(locale.t('adminImageDeleteConfirm')))return
+  saving.value=true;error.value='';note.value=''
+  try{
+    current.value=(await deleteAdminProductImages(current.value,selectedMediaIds.value)).product
+    selectedMediaIds.value=[];failedMediaIds.value=failedMediaIds.value.filter(id=>current.value?.media.some(media=>media.id===id))
+    changed.value=true;guard.checkpoint();note.value=locale.t('adminSaved')
+  }catch(e){error.value=failed(e)}
+  finally{saving.value=false}
+}
 function finishClose(){clearPendingImages();if(changed.value&&current.value)emit('saved',current.value);else emit('close')}
 async function close(){guard.requestClose(finishClose);if(confirmClose.value){await nextTick();closePrompt.value?.querySelector<HTMLButtonElement>('button')?.focus()}}
 function discard(){guard.discard(finishClose)}
@@ -137,11 +154,22 @@ onBeforeUnmount(()=>{clearPendingImages();window.removeEventListener('beforeunlo
       <section class="admin-surface rounded-2xl p-4">
         <h3 class="mb-3 text-sm font-black">{{locale.t('adminProductGallery')}}</h3><p class="mb-3 text-xs text-[var(--c-muted)]">{{locale.t('adminImageLimits')}}</p>
         <p class="text-sm">{{locale.t('adminImageSelectionHelp')}}</p>
-        <div v-if="current" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <article v-for="(media,index) in current.media" :key="media.id" class="rounded-xl border border-[var(--c-border)] p-2">
-            <SmartImage :src="media.thumb_url" :alt="draft.name_fa" class="aspect-[3/4] w-full rounded-lg" fit="contain"/>
+        <div v-if="current?.media.length" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <article v-for="(media,index) in current.media" :key="media.id" class="relative rounded-xl border p-2" :class="selectedMediaIds.includes(media.id)?'border-[var(--c-primary)] ring-2 ring-[color-mix(in_srgb,var(--c-primary)_18%,transparent)]':'border-[var(--c-border)]'">
+            <label class="absolute start-3 top-3 z-10 grid h-8 w-8 place-items-center rounded-lg border border-[var(--c-border)] bg-[var(--c-surface)] shadow-sm">
+              <input class="h-4 w-4" type="checkbox" :checked="selectedMediaIds.includes(media.id)" :aria-label="locale.t('adminImageSelect')" :disabled="saving||dirty" @change="toggleMedia(media.id)">
+            </label>
+            <div class="aspect-[3/4] overflow-hidden rounded-lg bg-[var(--c-media-bg)]">
+              <img v-if="!failedMediaIds.includes(media.id)" :src="media.thumb_url" :alt="draft.name_fa" class="h-full w-full object-contain" loading="lazy" decoding="async" @load="mediaLoaded(media.id)" @error="mediaFailed(media.id)">
+              <div v-else class="grid h-full place-items-center p-3 text-center text-xs font-bold text-rose-700">{{locale.t('adminImageUnavailable')}}</div>
+            </div>
             <div class="mt-2 flex items-center justify-between gap-1"><span class="text-xs">{{index+1}}</span><button type="button" class="mini-action" :disabled="writesBlocked||saving||dirty||index===0" :aria-label="locale.t('previous')" @click="move(index,-1)"><ArrowUp :size="15"/></button><button type="button" class="mini-action" :disabled="writesBlocked||saving||dirty||index===current.media.length-1" :aria-label="locale.t('next')" @click="move(index,1)"><ArrowDown :size="15"/></button></div>
           </article>
+        </div>
+        <div v-else class="mt-3 rounded-xl border border-dashed border-[var(--c-border)] p-5 text-center text-sm text-[var(--c-muted)]">{{locale.t('adminGalleryEmpty')}}</div>
+        <div v-if="selectedMediaIds.length" class="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-[var(--c-border)] p-2">
+          <b class="text-xs">{{selectedMediaIds.length}} {{locale.t('selectedCount')}}</b>
+          <button type="button" class="mini-action ms-auto text-rose-700" :disabled="saving||dirty" @click="deleteSelectedMedia"><Trash2 :size="15"/>{{locale.t('adminImageDeleteSelected')}}</button>
         </div>
         <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small dir="ltr">{{(current?.media.length??0)+pendingImages.length}} / 6</small></span><input type="file" multiple accept="image/jpeg,image/png,image/webp" :disabled="writesBlocked||saving||(current?.media.length??0)+pendingImages.length>=6" @change="upload"></label>
         <div v-if="pendingImages.length" class="mt-3 space-y-3 rounded-xl border border-[var(--c-border)] p-3">
