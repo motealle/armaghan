@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowDownRight, Heart, Menu } from '@lucide/vue'
+import { ArrowDownRight, Heart, Menu, Pencil } from '@lucide/vue'
 import { computed } from 'vue'
 import type { Product } from '@/types/domain'
 import { useFavoritesStore } from '@/stores/favorites'
@@ -8,8 +8,8 @@ import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import ProductMediaCarousel from './ProductMediaCarousel.vue'
 import { customerProductLabel } from '../presentation'
 
-const props=defineProps<{product:Product}>()
-const emit=defineEmits<{detail:[product:Product];whatsapp:[product:Product]}>()
+const props=withDefaults(defineProps<{product:Product;adminEditable?:boolean}>(),{adminEditable:false})
+const emit=defineEmits<{detail:[product:Product];whatsapp:[product:Product];edit:[product:Product]}>()
 const favorites=useFavoritesStore()
 const locale=useLocaleStore()
 const isFavorite=computed(()=>favorites.has(props.product.id))
@@ -19,10 +19,13 @@ const visibleTitle=computed(()=>customerProductLabel(props.product,displaySubcat
 
 <template>
   <!-- Test 23 low-copy hierarchy stays intact; Test 27 derives customer labels centrally from subcategory/status. -->
-  <article data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--role-product-card-background)] shadow-sm">
+  <article data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--role-product-card-background)] shadow-sm">
     <div data-style-id="product.media" data-style-label="بخش تصویر کارت محصول" class="product-card-media">
       <ProductMediaCarousel :product="product" />
     </div>
+    <button v-if="adminEditable" type="button" class="absolute end-2 top-2 z-40 grid h-10 w-10 place-items-center rounded-xl border border-white/70 bg-white/95 text-[var(--c-primary)] shadow-md" :aria-label="locale.t('editProduct')" @click.stop="emit('edit',product)">
+      <Pencil :size="17"/>
+    </button>
     <div class="product-card-body">
       <div data-style-id="product.title" data-style-label="عنوان کارت محصول" class="product-card-title" :class="{unavailable:product.availability!=='available'}">{{visibleTitle}}</div>
       <div data-style-id="product.code" data-style-label="کد محصول" class="product-code-row">
