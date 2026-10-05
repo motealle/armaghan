@@ -83,8 +83,8 @@ export async function requestJson<T>(path:string,init:RequestInit={},allowCsrfRe
   return payload as T
 }
 
-export async function signInWithPassword(email:string,password:string):Promise<{redirect?:string}>{
-  return requestJson('/api/auth/login',{method:'POST',body:JSON.stringify({email,password})})
+export async function signInWithPassword(identifier:string,password:string):Promise<{redirect?:string}>{
+  return requestJson('/api/auth/login',{method:'POST',body:JSON.stringify({identifier,password})})
 }
 export async function registerWithPassword(name:string,email:string,password:string,password_confirmation:string):Promise<void>{
   await requestJson('/api/auth/register',{method:'POST',body:JSON.stringify({name,email,password,password_confirmation})})
