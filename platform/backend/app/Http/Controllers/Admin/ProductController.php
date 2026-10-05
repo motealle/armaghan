@@ -205,6 +205,7 @@ class ProductController extends Controller
                 $media[$id]->delete();
             }
 
+            $row->unsetRelation('media');
             $remaining = $row->getMedia(Product::MEDIA_COLLECTION)->sortBy('order_column')->values();
             foreach ($remaining as $index => $item) {
                 $item->forceFill(['order_column' => $index + 1])->save();
