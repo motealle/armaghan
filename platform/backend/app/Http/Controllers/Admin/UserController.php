@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -108,7 +109,14 @@ class UserController extends Controller
             abort_if($data['role'] !== $target->role->value, 422, 'Create a new administrator; existing account roles are immutable.');
             abort_if($target->id === $actor->id && ! $protected, 403);
             abort_unless(hash_equals($this->revision($target), $data['revision']), 409, 'Account changed; reload before editing.');
+            $wasActive = $target->active;
             $target->update(array_intersect_key($data, array_flip(['name', 'role', 'active'])));
+            if ($target->role === UserRole::Admin && $wasActive && ! $target->active) {
+                // Owner-only deactivation is also a real forced sign-out: kill
+                // active sessions and invalidate all existing remember cookies.
+                DB::table('sessions')->where('user_id', $target->id)->delete();
+                $target->forceFill(['remember_token' => Str::random(60)])->saveQuietly();
+            }
             if ($target->role === UserRole::Customer) {
                 // Preserve existing customer history; never delete ownership.
                 $customer = $target->customer()->firstOrCreate([], ['active' => $target->active, 'direct_link_enabled' => false]);
