@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
-import { CircleHelp, LogIn, LogOut, X } from '@lucide/vue'
+import { CircleHelp, LogIn, X } from '@lucide/vue'
 import { useLocaleStore } from '@/stores/locale'
 import { useSessionStore } from '@/stores/session'
 import { useCustomersStore } from '@/stores/customers'
@@ -45,7 +45,6 @@ const profile=computed(()=>{
 function setLanguage(value:Locale){locale.setManual(value)}
 function login(){emit('close');emit('login')}
 function help(){emit('close');emit('help')}
-function logout(){session.logout();emit('close')}
 function controls(){return panelRef.value?Array.from(panelRef.value.querySelectorAll<HTMLElement>(focusable)):[]}
 function onKey(event:KeyboardEvent){
   if(!props.open)return
@@ -134,7 +133,6 @@ onBeforeUnmount(()=>{document.body.style.overflow='';window.removeEventListener(
                 <b class="block truncate text-xs text-[var(--c-text)]">{{profile?.name}}</b>
                 <span class="block truncate text-[10px] text-[var(--c-muted)]">{{profile?.meta}}</span>
               </div>
-              <button class="drawer-logout-button" :aria-label="locale.t('logout')" @click="logout"><LogOut :size="18"/></button>
             </div>
           </footer>
         </aside>
