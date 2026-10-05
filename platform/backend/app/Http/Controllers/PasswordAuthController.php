@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Models\Customer;
+use App\Models\AdminAuthState;
 use App\Models\User;
 use App\Support\CustomerSession;
 use App\Services\TemporaryAdminAccessService;
@@ -43,6 +44,7 @@ class PasswordAuthController extends Controller
         }
 
         if ($user->isActiveAdmin()) {
+            AdminAuthState::query()->updateOrCreate(['user_id' => $user->id], ['password_configured_at' => now()]);
             Auth::guard('web')->login($user, true);
             $request->session()->forget([CustomerSession::KEY, 'password_hash_web', 'armaghan.password_setup_user_id', 'armaghan.password_setup_until']);
             $request->session()->regenerate(true);
@@ -110,15 +112,18 @@ class PasswordAuthController extends Controller
     public function password(Request $request)
     {
         $user = $this->currentUser($request);
-        $passwordRule = $user->isActiveAdmin()
-            ? Password::min(8)
-            : Password::min(12)->letters()->numbers();
-        $data = $request->validate(['password' => ['required', 'string', 'max:255', 'confirmed', $passwordRule],
+        $passwordRules = $user->isActiveAdmin()
+            ? ['required', 'string', 'max:255', 'confirmed']
+            : ['required', 'string', 'max:255', 'confirmed', Password::min(12)->letters()->numbers()];
+        $data = $request->validate(['password' => $passwordRules,
             'current_password' => ['nullable', 'string', 'max:255']]);
-        if (! $this->recentGoogle($request, $user) && ! Hash::check($data['current_password'] ?? '', $user->password)) {
+        if (! $user->isActiveAdmin() && ! $this->recentGoogle($request, $user) && ! Hash::check($data['current_password'] ?? '', $user->password)) {
             throw ValidationException::withMessages(['current_password' => 'رمز فعلی درست نیست؛ یا دوباره با گوگل وارد شوید.']);
         }
-        $user->update(['password' => $data['password'], 'password_configured_at' => now()]);
+        $user->update(['password' => $data['password']]);
+        if ($user->isActiveAdmin()) {
+            AdminAuthState::query()->updateOrCreate(['user_id' => $user->id], ['password_configured_at' => now()]);
+        }
         $request->session()->forget(['armaghan.password_setup_user_id', 'armaghan.password_setup_until', 'password_hash_web']);
         if ($user->isActiveAdmin()) {
             Auth::guard('web')->login($user->fresh(), true);
