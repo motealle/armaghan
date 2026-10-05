@@ -1,5 +1,14 @@
 # Armaghan Trading B2B Catalog — Project Handoff
 
+## Product card media hotfix — 2026-10-05
+
+- Root cause treated as a stale-client/state path rather than an upload failure: backend media routes already served real images, but product cards could continue using cached catalog data or a renderer state that had already fallen back to a placeholder.
+- Catalog API fetches now use `cache: no-store` during the active healing window.
+- Backend product-media URLs receive a deterministic release revision query (`v=20261005-card-hotfix-1`) so cached 404/old image responses cannot mask newly available media.
+- ProductMediaCarousel remounts SmartImage when the canonical product image URL changes, clearing stale fallback state.
+- Release commit `069b8d938c726884300342c069218bea21ffbd5f`; FTP Deploy `37297704339` PASS. QA: type-check PASS, 19 test files / 85 tests PASS, production build PASS, Test29 deploy PASS and root promotion PASS.
+- No browser/TinyFish visual acceptance was performed. Owner screenshot of the affected product card is the visual acceptance source.
+
 ## P0 healing run — 2026-10-05
 - Temporary manager aliases are time-boxed and map to the real owner/business-admin accounts; plaintext passwords are not stored in the repo. Laravel remember-login remains valid until explicit logout or owner revocation.
 - Manager password setup accepts any non-empty confirmed value. Setup state moved to a dedicated additive table so production deployment no longer needs ALTER TABLE.
