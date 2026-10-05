@@ -1,5 +1,11 @@
 # Armaghan Trading B2B Catalog — Project Handoff
 
+## Admin UX / product editor batch — 2026-10-05
+
+Home appearance editing is home-only. Product management is products-page-only for real server-admin sessions; the edit affordance sits beside the product code, the manager includes Add Product, and both products/admin surfaces reuse BackendProductEditor rather than creating a second editor. Product media management remains server-authoritative with real-media cards, explicit unavailable state, selection, deletion, reorder and primary ordering. Home/product media is served through application-controlled routes.
+
+Session persistence and one-time setup behavior are included, Tracking copy remains stable after login, and redundant exit controls were reduced. Backend CI 37277405193 PASS: 129 tests / 1169 assertions. No visual acceptance was performed; request owner screenshots after release.
+
 ## P0 — Gallery Manager و ویرایش مدیر از صفحه محصولات — ۲۰۲۶-۱۰-۰۵
 
 - علت واقعی placeholderهای گمراه‌کننده: API رسانه را داشت اما URLهای `/backend/storage/media/...` روی production پاسخ 404 می‌دادند. مسیر تحویل رسانه به route عمومی کنترل‌شده Laravel منتقل شد تا فایل thumb/card/detail از storage خصوصی برنامه stream شود و به symlink وب‌سرور وابسته نباشد.
