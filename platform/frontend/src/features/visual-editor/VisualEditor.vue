@@ -6,6 +6,7 @@ import VisualEditorInspector from './VisualEditorInspector.vue'
 import VisualEditorTargetChooser from './VisualEditorTargetChooser.vue'
 import VisualEditorTargetBrowser from './VisualEditorTargetBrowser.vue'
 import VisualEditorSyncPanel from './VisualEditorSyncPanel.vue'
+import HomeMediaPanel from '@/features/home-media/HomeMediaPanel.vue'
 import { useVisualEditorSelection } from './composables/useVisualEditorSelection'
 import { useResizableEditorSheet } from './composables/useResizableEditorSheet'
 import { useVisualProfileSync } from './composables/useVisualProfileSync'
@@ -17,6 +18,16 @@ const {selected,candidates,choose,chooseHidden}=useVisualEditorSelection(enabled
 const {height,onResizeStart,onResizeMove,onResizeEnd}=useResizableEditorSheet(enabledRef)
 const sync=useVisualProfileSync(visual,enabledRef)
 const publishedStagingVersion=computed(()=>sync.publications.value[sync.channel.value]?.version)
+const homeMediaTarget=computed(()=>{
+  const id=selected.value?.id??''
+  if(id==='hero.media')return 'hero'
+  if(id==='home.about.media')return 'about'
+  const capability=id.match(/^home\.capability\.(production|export|trade)\.media$/)
+  if(capability)return 'capability.'+capability[1]
+  const banner=id.match(/^home\.product-banner\.([123])\.media$/)
+  if(banner)return 'banner.'+banner[1]
+  return ''
+})
 
 const hiddenIds=computed(()=>Object.entries(visual.profile.styles)
   .filter(([,style])=>style.hidden)
@@ -99,6 +110,7 @@ function chooseFromBrowser(candidate:Parameters<typeof choose>[0]){
         @choose-hidden="chooseHidden"
       />
 
+      <HomeMediaPanel v-if="!candidates.length&&selected&&homeMediaTarget" :target="homeMediaTarget"/>
       <VisualEditorInspector v-if="!candidates.length&&selected" :selected="selected"/>
 
       <section v-else-if="!candidates.length" class="visual-editor-empty">
