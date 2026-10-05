@@ -11,6 +11,9 @@ export interface ElementStyleOverride{
   textColor?:BrandTokenId
   backgroundColor?:BrandTokenId
   borderColor?:BrandTokenId
+  imageFit?:'contain'|'cover'
+  imagePositionX?:number
+  imagePositionY?:number
   hidden?:boolean
 }
 
@@ -38,6 +41,9 @@ function sanitizeStyle(id:string,value:unknown):ElementStyleOverride{
   if(isBrandTokenId(source.textColor)&&(allowed===null||allowed.includes('textColor')))result.textColor=source.textColor
   if(isBrandTokenId(source.backgroundColor)&&(allowed===null||allowed.includes('backgroundColor')))result.backgroundColor=source.backgroundColor
   if(isBrandTokenId(source.borderColor)&&(allowed===null||allowed.includes('borderColor')))result.borderColor=source.borderColor
+  if((source.imageFit==='contain'||source.imageFit==='cover')&&(allowed===null||allowed.includes('imageFit')))result.imageFit=source.imageFit
+  if(Number.isInteger(source.imagePositionX)&&Number(source.imagePositionX)>=0&&Number(source.imagePositionX)<=100&&(allowed===null||allowed.includes('imagePosition')))result.imagePositionX=Number(source.imagePositionX)
+  if(Number.isInteger(source.imagePositionY)&&Number(source.imagePositionY)>=0&&Number(source.imagePositionY)<=100&&(allowed===null||allowed.includes('imagePosition')))result.imagePositionY=Number(source.imagePositionY)
   if(typeof source.hidden==='boolean'&&definition?.hideable!==false)result.hidden=source.hidden
   return result
 }
@@ -93,6 +99,8 @@ function compileCss(profile:VisualStyleProfile):string{
     if(style.textColor)declarations.push(`color:${tokenVar(style.textColor)}!important`)
     if(style.backgroundColor)declarations.push(`background:${tokenVar(style.backgroundColor)}!important`)
     if(style.borderColor)declarations.push(`border-color:${tokenVar(style.borderColor)}!important`)
+    if(style.imageFit)declarations.push(`--editor-media-fit:${style.imageFit}`)
+    if(style.imagePositionX!==undefined||style.imagePositionY!==undefined)declarations.push(`--editor-media-position:${style.imagePositionX??50}% ${style.imagePositionY??50}%`)
     if(style.hidden===true)declarations.push('display:none!important')
     if(style.hidden===false)declarations.push('display:revert!important')
     if(declarations.length)blocks.push(`[data-style-id="${id}"]{${declarations.join(';')}}`)
