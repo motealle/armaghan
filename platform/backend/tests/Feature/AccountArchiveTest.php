@@ -27,7 +27,7 @@ class AccountArchiveTest extends TestCase
     {
         $controller = $resource === 'users' ? UserController::class : CustomerController::class;
         return $this->actingAs($actor)->postJson('/api/admin/account-archives/'.$resource.'/'.$row->id.'/backup',
-            ['revision' => app($controller)->revision($row)])->assertOk()->json();
+            ['revision' => app($controller)->revision($row->fresh())])->assertOk()->json();
     }
 
     private function remove(array $backup): void
@@ -41,6 +41,11 @@ class AccountArchiveTest extends TestCase
         [$user, $customer] = $this->buyer();
         $actor = User::factory()->admin()->create();
         $password = $user->password;
+        \App\Models\TrackedOrder::create(['customer_id' => $customer->id, 'reference' => 'AT-ARCHIVE-TEST',
+            'request_path' => 'simple', 'description' => 'Preserved order', 'stage' => 'inquiry']);
+        $magic = \App\Models\MagicLink::create(['customer_id' => $customer->id,
+            'token_hash' => hash('sha256', 'test-secret'), 'scope' => 'customer-portal',
+            'enabled' => true, 'expires_at' => now()->addHour()]);
         DB::table('sessions')->insert(['id' => 'old-session', 'user_id' => $user->id, 'payload' => 'x', 'last_activity' => now()->timestamp]);
         $this->withSession([CustomerSession::KEY => $customer->id]);
         $backup = $this->backup($actor, 'users', $user);
@@ -50,6 +55,8 @@ class AccountArchiveTest extends TestCase
         $this->remove($backup);
         $this->getJson('/api/admin/users')->assertJsonCount(0, 'users');
         $this->getJson('/api/admin/customers')->assertJsonCount(0, 'customers');
+        $this->getJson('/api/admin/orders')->assertOk()->assertJsonPath('orders.0.customer_name', 'Keep business');
+        $this->assertNotNull($magic->fresh()->revoked_at);
         $this->getJson('/api/customer/session')->assertUnauthorized();
         $this->assertDatabaseMissing('sessions', ['id' => 'old-session']);
         $this->assertDatabaseHas('users', ['id' => $user->id, 'password' => $password, 'active' => false]);

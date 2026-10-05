@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Create-only release; no existing customer/account columns are changed.
         Schema::create('account_archives', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('resource', 16);
