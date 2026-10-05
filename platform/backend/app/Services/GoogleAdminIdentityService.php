@@ -27,7 +27,7 @@ final class GoogleAdminIdentityService
             }
             if (! $user) {
                 $user = User::create(['name' => mb_substr((string) ($identity->getName() ?: 'Administrator'), 0, 255),
-                    'email' => $email, 'password' => Str::random(64), 'password_configured_at' => null, 'role' => UserRole::Admin, 'active' => true]);
+                    'email' => $email, 'password' => Str::random(64), 'role' => UserRole::Admin, 'active' => true]);
             } elseif ($user->role !== UserRole::Admin) {
                 // Never preserve a pre-existing customer password when elevating.
                 $user->update(['role' => UserRole::Admin, 'password' => Str::random(64), 'password_configured_at' => null]);
