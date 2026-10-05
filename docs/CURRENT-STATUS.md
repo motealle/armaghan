@@ -1,5 +1,11 @@
 # Armaghan — Current Status
 
+## Admin UX / product editor batch — 2026-10-05
+
+Home appearance editing is now home-only, while product management is products-page-only for a real server admin session. Both catalog and admin entry points reuse the canonical product editor/gallery. Product media management remains server-authoritative with real media cards, explicit unavailable state, selection, deletion, reorder and primary ordering. Home/product media delivery uses application-controlled routes.
+
+Session reliability, stable Tracking copy, one-time setup behavior and duplicate-exit cleanup are included. Backend CI 37277405193 PASS: 129 tests / 1169 assertions. Visual acceptance is deferred to owner screenshots.
+
 ## P0 — Gallery Manager و ویرایش مدیر از صفحه محصولات — ۲۰۲۶-۱۰-۰۵
 
 - علت واقعی placeholderهای گمراه‌کننده: API رسانه را داشت اما URLهای `/backend/storage/media/...` روی production پاسخ 404 می‌دادند. مسیر تحویل رسانه به route عمومی کنترل‌شده Laravel منتقل شد تا فایل thumb/card/detail از storage خصوصی برنامه stream شود و به symlink وب‌سرور وابسته نباشد.
