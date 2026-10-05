@@ -46,7 +46,9 @@ assert audit.count("| 1 |") >= 10
 assert "fit?:'cover'|'contain'|'contain-blur'" in smart or "'edge-extend'" in smart
 assert "smart-image-backdrop" in smart and "smart-image-contained" in smart
 assert "object-contain" in smart
-assert 'fit="contain-blur"' in media or 'fit="edge-extend"' in media
+assert 'fit="contain"' in media
+assert ':srcset="srcset"' in media
+assert 'touch-action:pan-y' in media
 assert ".smart-image-backdrop" in css and ".smart-image-contained" in css
 
 # Mobile hero is structurally split; desktop changes composition.

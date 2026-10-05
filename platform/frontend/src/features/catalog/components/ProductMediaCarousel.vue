@@ -56,6 +56,7 @@ async function open(){
   if(swiped){swiped=false;return}
   if(opening.value||!slides.value.length)return
   opening.value=true
+  const mediaRevision=slides.value.map(slide=>slide.card).join('|')
   try{
     const [{default:Gallery}]=await Promise.all([import('photoswipe'),import('photoswipe/style.css')])
     if(disposed)return
@@ -74,7 +75,7 @@ async function open(){
       }
       return {src:slide.detail,msrc:slide.thumb,alt:productName.value,width:Math.min(1600,width),height:Math.round(height*Math.min(1,1600/width))}
     }))
-    if(disposed)return
+    if(disposed||mediaRevision!==slides.value.map(slide=>slide.card).join('|'))return
     viewer=new Gallery({dataSource:source,index:index.value,loop:source.length>1,initialZoomLevel:'fit',secondaryZoomLevel:2,maxZoomLevel:4,showHideAnimationType:'none',closeTitle:labels.value.close,zoomTitle:labels.value.zoom,arrowPrevTitle:labels.value.prev,arrowNextTitle:labels.value.next,errorMsg:labels.value.error})
     viewer.on('change',()=>{if(viewer)index.value=viewer.currIndex})
     viewer.on('destroy',()=>{viewer=undefined})

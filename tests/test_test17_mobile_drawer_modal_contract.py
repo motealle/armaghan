@@ -29,7 +29,11 @@ assert "theme.toggle" in theme
 assert "BaseModal" in login and "BaseSheet" not in login
 assert 'role="dialog"' in modal and 'aria-modal="true"' in modal
 assert "modal-backdrop" in modal and "backdrop" in css
-assert "PhotoSwipe" not in media
+# Owner now requests a lazy enlarged gallery; no eager viewer in card rendering.
+assert "import('photoswipe')" in media
+assert "import('photoswipe/style.css')" in media
+assert "onBeforeUnmount" in media and "viewer?.destroy()" in media
+assert "initialZoomLevel:'fit'" in media
 assert "<img" not in media
 assert "<svg" in media
 assert 'tone="white"' in card
