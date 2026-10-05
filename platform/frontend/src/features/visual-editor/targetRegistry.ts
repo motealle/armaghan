@@ -1,5 +1,5 @@
 export type VisualTargetKind='section'|'panel'|'title'|'text'|'media'|'control'
-export type VisualStyleControl='textColor'|'backgroundColor'|'borderColor'
+export type VisualStyleControl='textColor'|'backgroundColor'|'borderColor'|'imageFit'|'imagePosition'
 
 export interface VisualTargetDefinition{
   id:string
@@ -33,6 +33,7 @@ const capabilityLabels={
 
 const capabilityTargets:VisualTargetDefinition[]=Object.entries(capabilityLabels).flatMap(([id,label])=>[
   {id:`home.capability.${id}`,label:`کارت توانمندی ${label}`,kind:'panel'},
+  {id:`home.capability.${id}.media`,label:`تصویر ${label}`,kind:'media',styleControls:['imageFit','imagePosition']},
   {id:`home.capability.${id}.body`,label:`پنل متن ${label}`,kind:'panel'},
   {id:`home.capability.${id}.title`,label:`عنوان ${label}`,kind:'title',textEditable:true},
   {id:`home.capability.${id}.text`,label:`متن ${label}`,kind:'text',textEditable:true},
@@ -41,6 +42,7 @@ const capabilityTargets:VisualTargetDefinition[]=Object.entries(capabilityLabels
 const bannerLabels={'1':'نوزادی','2':'بچگانه','3':'زنانه'} as const
 const bannerTargets:VisualTargetDefinition[]=Object.entries(bannerLabels).flatMap(([id,label])=>[
   {id:`home.product-banner.${id}`,label:`بنر ${label}`,kind:'panel'},
+  {id:`home.product-banner.${id}.media`,label:`تصویر بنر ${label}`,kind:'media',styleControls:['imageFit','imagePosition']},
   {id:`home.product-banner.${id}.copy`,label:`پنل متن بنر ${label}`,kind:'panel'},
 ])
 
@@ -74,7 +76,7 @@ export const visualTargetGroups:VisualTargetGroup[]=[
     label:'هیرو',
     targets:[
       {id:'hero.shell',label:'قاب هیرو',kind:'section'},
-      {id:'hero.media',label:'تصویر هیرو',kind:'media'},
+      {id:'hero.media',label:'تصویر هیرو',kind:'media',styleControls:['imageFit','imagePosition']},
       {id:'hero.caption',label:'پنل متن هیرو',kind:'panel'},
       {id:'hero.title',label:'عنوان هیرو',kind:'title',textEditable:true},
     ],
@@ -89,7 +91,7 @@ export const visualTargetGroups:VisualTargetGroup[]=[
       {id:'home.about.title',label:'عنوان درباره',kind:'title',textEditable:true},
       {id:'home.about.copy',label:'پنل متن درباره',kind:'panel'},
       {id:'home.about.text',label:'متن درباره',kind:'text',textEditable:true},
-      {id:'home.about.media',label:'تصویر درباره',kind:'media'},
+      {id:'home.about.media',label:'تصویر درباره',kind:'media',styleControls:['imageFit','imagePosition']},
     ],
   },
   {
