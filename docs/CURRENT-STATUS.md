@@ -1,5 +1,14 @@
 # Armaghan — Current Status
 
+## Verified publication and focused live acceptance — 2026-10-05
+
+- Source 9bfadb4566a9e14f6a0d65917f1ebd98bfa95b63 is published at root/Test29. FTP Deploy 37336127360 PASS: QA 111851295020, upload/HTTP checks 111851616862, guarded root promotion 111853272793. Seventeen focused release tests/type-check/build passed in CI; three additional product-card tests passed locally.
+- Fresh live DOM revision is 2026-10-05-loading-specs-home-media. At viewport height 936px, first eight card images (rows starting at 410/896px) exist and ten farther cards have no image src; all 18 product cards have zero visible SmartImage SVG placeholders. Moving to card32003 activates its sub-32 fallback. Real media2 and media3 thumbnails decoded at 320px in this desktop session.
+- Live product11001 specification sheet shows 2 fixed + 5 negotiable definitions; product32003 shows 2 fixed + 7 negotiable definitions, matching Test28. Screenshot of product11001 with real media and default-image neighboring cards saved separately. Loading fallback is additionally covered by the focused SmartImage test.
+- Curl timing samples from this environment: TLS connection ~6.18s for root/static/media; root first byte 7.74s, static8.01s, media8.45s. Most measured delay occurs before TLS finishes; remaining response+network ~1.56–2.27s. This does not prove a host-only bottleneck or phone scroll speed. Initial entry+modulepreload JS is 338338 bytes (additional route chunks load on demand).
+- OPEN: owner's real-mobile speed/pinch acceptance; isolated connection/host latency diagnosis; server taxonomy-definition provisioning if admin editing of restored default specifications is required; authenticated replacement-photo upload/publication acceptance for the new home shortcuts. No backend/schema change, no new supplied photo upload, no TinyFish, no broad suite.
+
+
 ## Loading, specifications and home media batch — 2026-10-05
 
 - Implemented the owner's loading-image request: product cards use the chosen no-photo subcategory asset during real-photo loading and failure, with no visible generic SVG.
@@ -8,7 +17,7 @@
 - Catalog refreshes share in-flight work and reuse a successful result for 30 seconds. Admin saves bypass freshness and wait/refetch even during an existing request. Duplicate local-storage snapshots are skipped and storage errors cannot break browsing.
 - All non-admin routes load on demand. VisualEditor loads only when enabled; product admin editor/manager load only when opened. Built main JS entry reduced from 593.69 kB/176.05 kB gzip to 261.76 kB/77.39 kB gzip; shared/route chunks are additional and this is not a total-transfer or phone-speed claim.
 - Home visual editor now begins with eight localized image shortcuts. Selecting a panel or its text also exposes its image control. Existing HomeMediaPanel provides a prominent file picker and stored-image thumbnails, retains revision/auth validation and follows the editor's production/staging channel. No real authenticated image upload/publication was performed without a supplied replacement photo.
-- Local essential validation PASS: type-check/build, 17 focused tests in 6 files, current editor/auth and guarded publication contracts, frozen snapshot guard and diff hygiene. No TinyFish or broad suite. Publication pending this commit's FTP workflow; real mobile scrolling/pinch and actual host/network bottleneck acceptance remain OPEN.
+- Local essential validation PASS: type-check/build, 17 focused tests in 6 files, current editor/auth and guarded publication contracts, frozen snapshot guard and diff hygiene. No TinyFish or broad suite. Publication PASS in FTP workflow 37336127360; real mobile scrolling/pinch and actual host/network bottleneck acceptance remain OPEN.
 
 
 ## Lightweight card release closeout — 2026-10-05
