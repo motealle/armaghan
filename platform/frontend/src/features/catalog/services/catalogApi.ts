@@ -1,3 +1,4 @@
+import { toRaw } from 'vue'
 import { categories as seedCategories, products as seedProducts, subMeta } from '@/data/catalog'
 import type { Category, Product, ProductNames } from '@/types/domain'
 
@@ -73,7 +74,10 @@ export class CatalogApiError extends Error{
 const rawBase=(import.meta.env.VITE_ARMAGHAN_API_BASE as string|undefined)?.trim()??''
 const API_BASE=(rawBase||'/backend').replace(/\/$/,'')
 const maxProductPages=20
-const PRODUCT_MEDIA_CACHE_REV='20261005-card-hotfix-1'
+const PRODUCT_MEDIA_CACHE_REV='20261005-card-hotfix-2'
+function cloneCatalogValue<T extends object>(value:T):T{
+  return structuredClone(toRaw(value))
+}
 function freshProductMediaUrl(value?:string){
   const url=value?.trim()??''
   if(!url||!url.includes('/backend/api/catalog/media/'))return url
@@ -166,7 +170,7 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
     .filter((item):item is {card:string;detail:string}=>Boolean(item.card&&item.detail))
 
   return{
-    ...(fallback?structuredClone(fallback):{}),
+    ...(fallback?cloneCatalogValue(fallback):{}),
     id:fallback?.id??1_000_000+remote.id,
     backendId:remote.id,
     code:remote.code,
@@ -183,7 +187,7 @@ function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|nul
     specs:remote.specifications?{
       locked:remote.specifications.filter(s=>s.locked).map(s=>s.labels.fa||s.key),
       negotiable:remote.specifications.filter(s=>!s.locked).map(s=>s.labels.fa||s.key),
-    }:fallback?.specs?structuredClone(fallback.specs):structuredClone(meta.specs),
+    }:fallback?.specs?cloneCatalogValue(fallback.specs):cloneCatalogValue(meta.specs),
   }
 }
 
@@ -205,7 +209,7 @@ function mergeProducts(
       seen.add(fallback.code)
       continue
     }
-    if(!managed.has(fallback.code))result.push(structuredClone(fallback))
+    if(!managed.has(fallback.code))result.push(cloneCatalogValue(fallback))
   }
 
   for(const remote of remoteProducts){
@@ -232,7 +236,7 @@ function mergeCategories(
   for(const fallback of fallbackCategories){
     const remote=remoteByCode.get(fallback.code)
     if(!remote){
-      if(!managedCategories.has(fallback.code))result.push(structuredClone(fallback))
+      if(!managedCategories.has(fallback.code))result.push(cloneCatalogValue(fallback))
       continue
     }
 
@@ -247,7 +251,7 @@ function mergeCategories(
           name:remoteSub.names.fa?.trim()||fallbackSub.name,
         })
       }else if(!managedSubcategories.has(fallbackSub.code)){
-        subcategories.push(structuredClone(fallbackSub))
+        subcategories.push(cloneCatalogValue(fallbackSub))
       }
     }
 
@@ -260,7 +264,7 @@ function mergeCategories(
     }
 
     result.push({
-      ...structuredClone(fallback),
+      ...cloneCatalogValue(fallback),
       name:remote.names.fa?.trim()||fallback.name,
       subcategories,
     })
@@ -272,7 +276,7 @@ function mergeCategories(
     const fallback=seedCategories.find(category=>category.code===remote.code)
     if(!fallback)continue
     result.push({
-      ...structuredClone(fallback),
+      ...cloneCatalogValue(fallback),
       name:remote.names.fa?.trim()||fallback.name,
       subcategories:remote.subcategories
         .filter(subcategory=>subcategoryCode(subcategory.code))

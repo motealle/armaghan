@@ -1,5 +1,19 @@
 # Armaghan — Product Backlog
 
+## P0 — رفع قطعی نمایش عکس کارت محصول — ۲۰۲۶-۱۰-۰۵
+
+شاهد production: API زنده برای محصول 11001 شش رسانه واقعی با مسیر `/backend/api/catalog/media/.../card` برمی‌گرداند، اما مرورگر عمومی همان کارت را با placeholder دسته نمایش می‌دهد. ریشه در frontend hydration است: Pinia داده‌های fallback را به Vue Proxy تبدیل می‌کند و `structuredClone(proxy)` می‌تواند `DataCloneError` بدهد؛ catch فعلی خطا را به `syncState=error` تبدیل می‌کند و seed/placeholder باقی می‌ماند.
+
+| رتبه | روش | امتیاز | دلیل |
+|---:|---|---:|---|
+| 1 | بازکردن Proxy با `toRaw` دقیقاً در مرز clone + تست reactive | 10 | علت واقعی را در همان لایه می‌زند؛ localStorage و backend دست‌نخورده می‌مانند؛ قابل تست و کم‌دامنه است |
+| 2 | `toRaw` فقط داخل Store پیش از merge | 8.5 | مؤثر است ولی merge در برابر callerهای reactive دیگر همچنان شکننده می‌ماند |
+| 3 | clone با JSON serialize/parse | 6 | Proxy را دور می‌زند اما semantics داده را ضعیف‌تر و خطاهای آینده را پنهان می‌کند |
+| 4 | پاک‌کردن اجباری localStorage و seed | 3 | symptom را کم می‌کند ولی علت DataCloneError را رفع نمی‌کند |
+| 5 | fetch مستقیم عکس داخل ProductCard | 1 | معماری canonical catalog را دور می‌زند و دو منبع حقیقت می‌سازد |
+
+انتخاب خودکار: گزینه 1. همچنین revision رسانه از `card-hotfix-1` به `card-hotfix-2` می‌رود تا بعد از merge صحیح، مرورگر عکس تازه را بدون cache قدیمی دریافت کند. مرجع فنی: Vue `toRaw` برای بازگشت به object اصلی Proxy و MDN برای `structuredClone`/DataCloneError.
+
 ## Product card media hotfix — 2026-10-05
 
 - Root cause treated as a stale-client/state path rather than an upload failure: backend media routes already served real images, but product cards could continue using cached catalog data or a renderer state that had already fallen back to a placeholder.

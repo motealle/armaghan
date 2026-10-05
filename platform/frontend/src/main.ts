@@ -5,7 +5,7 @@ import { router } from './router'
 import './styles/main.css'
 
 document.documentElement.dataset.uiTest='29'
-document.documentElement.dataset.uiRevision='2026-10-05-healing-products-auth'
+document.documentElement.dataset.uiRevision='2026-10-05-product-card-reactive-merge-fix'
 
 const FORCE_FRESH_UNTIL=Date.parse('2026-10-12T23:59:59+03:30')
 const freshUrl=new URL(window.location.href)
