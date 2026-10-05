@@ -3,9 +3,9 @@
   "project": "motealle/armaghan",
   "state": "active",
   "holder": "Codex",
-  "run_id": "codex-20261005-card-image-diagnosis",
-  "scope": "Diagnose and fix actual public product card photo rendering",
-  "base_ref": "da8e4a4d1588e7826309a6d3348fc0d82757001e",
-  "acquired_at": "2026-10-05T10:49:18.232Z",
-  "expires_at": "2026-10-05T12:19:18.234Z"
+  "run_id": "codex-20261005-card-gallery-performance",
+  "scope": "Owner-authorized takeover of own stopped diagnosis; responsive product media and card gallery",
+  "base_ref": "ae40af0a970f16b7b22a0bc89cc283eff7016619",
+  "acquired_at": "2026-10-05T12:05:22.649Z",
+  "expires_at": "2026-10-05T13:35:22.650Z"
 }
