@@ -1,5 +1,16 @@
 # Armaghan Trading B2B Catalog — Project Handoff
 
+## Card gallery release evidence — 2026-10-05
+
+- Standing owner authorization and lock retirement are merged in main (b48b647 / PR26). No shared repository lease is required. Keep ordinary Git conflict checks and guarded deployment serialization.
+- Backend release b48b647: Backend CI 37309303415 and 37309471663 PASS, 130 tests / 1193 assertions; Backend Code Deploy 37309471757 PASS.
+- Final UI release 1a11534018687e0fa367be6ea694a8aab5037442: FTP Deploy 37310838574 PASS, 31 publication contracts, 91 permanent frontend tests, type-check/build, Test29 upload/checksum and root promotion PASS. Prior FTP 37309471774 stopped before publication on obsolete no-PhotoSwipe contract; updated contracts require lazy loading, cleanup and contained responsive media. Intermediate publication 37309814913 PASS.
+- Live root DOM confirms fresh /thumb?v=20261005-card-gallery-3 delivery candidates, zero image padding and contain fit. Card11001 Next changes media2 to media1. PhotoSwipe opens 2/6, real detail images decode (media1 1086x1448, media2 1023x1537 and landscape media6 1600x800), zoom toggle and close work. Screenshot evidence saved separately; actual mobile pinch/swipe acceptance remains OPEN.
+- The browser test exposed a repeat-hydration failure not covered by the previous single-pass Proxy test. JSON-only catalog DTO cloning now handles nested proxies. Cached server URLs are immediately normalized to lightweight variants before network hydration, with server-only deduplication. Added permanent repeated-hydration and cached-gallery regression tests; an isolated real-public-catalog probe also passed and was removed rather than committed.
+- Public thumbnail sample media2: WebP 320x481 / 11838 bytes / HTTP200. Public media10 thumbnail: HTTP200 /1220 bytes. This is transfer-size evidence, not a measured few-second user acceptance. Public requests showed 7.9–10.9-second latency and one 12-second timeout; some cloud-browser thumbnail attempts fell back. P0 OPEN: investigate host/media latency and failed-thumbnail recovery, verify all four uploaded-product cards from a cold real mobile session. Do not mark global speed/image acceptance complete.
+- Completion sound: no task-completion sound control is exposed to this agent; plugin searches found no relevant notifier. No plugin installed and no audible alert claimed. User-facing notification configuration is Settings > Notifications; device sound control remains outside this execution surface.
+
+
 ## Standing owner authorization / lock retirement — 2026-10-05
 Owner explicitly granted permanent permission for project changes and publication in GitHub repository motealle/armaghan, and abolished the shared repository write-lock protocol because work is now single-threaded under owner control. Root/backend AGENTS, PROJECT-RULES 64–74 and Copilot instructions are aligned. Prior lock/approval-blocker records are historical. Platform checks, secret protection, frozen versions and guarded host deployment remain unchanged. Card-gallery release is now authorized; backend CI and publication evidence are pending below.
 
