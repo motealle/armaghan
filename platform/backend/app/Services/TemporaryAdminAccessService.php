@@ -59,7 +59,10 @@ final class TemporaryAdminAccessService
                 $user->customer()->update(['active' => false]);
             }
 
-            $user->forceFill(['email_verified_at' => $user->email_verified_at ?? now()])->save();
+            $user->forceFill([
+                'email_verified_at' => $user->email_verified_at ?? now(),
+                'password_configured_at' => $user->password_configured_at ?? now(),
+            ])->save();
 
             ActivityLog::create([
                 'actor_user_id' => $user->id,
