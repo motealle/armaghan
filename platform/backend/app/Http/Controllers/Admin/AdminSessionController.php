@@ -15,6 +15,7 @@ class AdminSessionController extends Controller
             'name' => $request->user()->name,
             'email' => $request->user()->email,
             'is_owner' => $request->user()->isPrimaryOwner(),
+            'password_configured' => $request->user()->password_configured_at !== null,
         ]])->header('Cache-Control', 'no-store, private');
     }
 
