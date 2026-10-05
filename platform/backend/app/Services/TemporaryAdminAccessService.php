@@ -25,7 +25,7 @@ final class TemporaryAdminAccessService
         $expiresAt = (string) ($row['expires_at'] ?? '');
 
         $valid = $email !== ''
-            && str_starts_with($verifier, '\$2y\$')
+            && $verifier !== ''
             && $expiresAt !== ''
             && in_array($email, config('owner-access.google_admin_emails', []), true)
             && now()->lessThanOrEqualTo(Carbon::parse($expiresAt))
