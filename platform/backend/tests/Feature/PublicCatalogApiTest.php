@@ -133,8 +133,9 @@ class PublicCatalogApiTest extends TestCase
             ->assertJsonCount(1, 'data.0.media')
             ->assertJsonPath('data.0.media.0.id', (string) ($media->uuid ?: $media->id));
 
-        $this->assertStringContainsString('/storage/', $page->json('data.0.media.0.url'));
-        $this->assertStringContainsString('/storage/', $page->json('data.0.media.0.thumb_url'));
+        $this->assertStringContainsString('/api/catalog/media/'.$media->id.'/card', $page->json('data.0.media.0.url'));
+        $this->assertStringContainsString('/api/catalog/media/'.$media->id.'/thumb', $page->json('data.0.media.0.thumb_url'));
+        $this->assertStringContainsString('/api/catalog/media/'.$media->id.'/detail', $page->json('data.0.media.0.detail_url'));
 
         foreach (['11001', '11002', '11003', '12001'] as $code) {
             $this->assertContains($code, $page->json('catalog.managed_codes'));

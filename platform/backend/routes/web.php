@@ -41,6 +41,12 @@ Route::prefix('api/favorite-shares')->group(function (): void {
         ->middleware('throttle:60,1');
 });
 
+Route::get('/api/catalog/media/{media}/{variant}', [\App\Http\Controllers\PublicProductMediaController::class, 'show'])
+    ->whereNumber('media')
+    ->whereIn('variant', ['thumb', 'card', 'detail'])
+    ->middleware('throttle:240,1')
+    ->name('catalog.product-media');
+
 Route::get('/api/home-media/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publicIndex'])->where('channel','staging|production')->middleware('throttle:120,1');
 
 Route::get('/api/style-profile/{channel?}', [PublicStyleProfileController::class, 'show'])
@@ -104,6 +110,7 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
     Route::patch('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'update']);
     Route::post('/products/{product}/images', [\App\Http\Controllers\Admin\ProductController::class, 'upload'])->middleware('throttle:admin-product-uploads');
     Route::put('/products/{product}/images/order', [\App\Http\Controllers\Admin\ProductController::class, 'order']);
+    Route::delete('/products/{product}/images', [\App\Http\Controllers\Admin\ProductController::class, 'deleteImages']);
     Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index']);
     Route::post('/users', [\App\Http\Controllers\Admin\UserController::class, 'store']);
     Route::patch('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update']);

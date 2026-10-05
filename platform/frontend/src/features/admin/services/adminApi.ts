@@ -32,6 +32,7 @@ export function uploadAdminProductImage(product:AdminProduct,file:File){
   return requestJson<{product:AdminProduct}>('/api/admin/products/'+product.id+'/images',{method:'POST',body})
 }
 export const orderAdminProductImages=(product:AdminProduct,media_ids:number[])=>requestJson<{product:AdminProduct}>('/api/admin/products/'+product.id+'/images/order',{method:'PUT',body:JSON.stringify({revision:product.revision,media_ids})})
+export const deleteAdminProductImages=(product:AdminProduct,media_ids:number[])=>requestJson<{product:AdminProduct}>('/api/admin/products/'+product.id+'/images',{method:'DELETE',body:JSON.stringify({revision:product.revision,media_ids})})
 
 export interface AdminUser { tags:string[]; id:number; name:string; email:string; role:'admin'|'customer'; active:boolean; is_owner:boolean; protected:boolean; revision:string }
 export interface UserPage { users:AdminUser[]; page:number; last_page:number; total:number }

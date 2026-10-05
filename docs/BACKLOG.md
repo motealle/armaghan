@@ -1,5 +1,15 @@
 # Armaghan — Product Backlog
 
+## P0 — Gallery Manager و ویرایش از صفحه محصولات — ۲۰۲۶-۱۰-۰۵
+
+ریشه شکست نمایش مشخص شد: رکوردهای رسانه واقعی در API موجود بودند (مثلاً محصول 11001 پنج رسانه داشت) اما URLهای مستقیم `/backend/storage/media/...` روی هاست 404 می‌دادند؛ SmartImage این شکست را با آیکون لباس می‌پوشاند و کارت‌های گمراه‌کننده می‌ساخت. راه منتخب: سرو رسانه از route کنترل‌شده Laravel `/api/catalog/media/{id}/{thumb|card|detail}` با fallback فایل واقعی، cache immutable و nosniff؛ عدم وابستگی به symlink عمومی هاست.
+
+Gallery Manager: صفر رسانه = صفر کارت؛ رسانه موجود عکس واقعی یا خطای صریح «تصویر در دسترس نیست» نشان می‌دهد؛ انتخاب چندتایی، حذف گروهی مالکیت‌سنجی‌شده، جابه‌جایی، برچسب تصویر اصلی و پیش‌نمایش فایل‌های pending حفظ شدند. حذف با revision انجام می‌شود، رسانه خارجی رد می‌شود و stale revision conflict می‌دهد.
+
+صفحه محصولات: فقط `admin.identity` حاصل از session واقعی سرور دکمه ویرایش روی کارت‌ها را فعال می‌کند؛ همان BackendProductEditor به‌صورت Adaptive/Bottom Sheet باز می‌شود. رکورد backend دقیق با code ویرایش می‌شود؛ seed-only آینده با همان کد/دسته/نام/مشخصات prefill و اولین save به رکورد واقعی تبدیل می‌شود. مشتری/مهمان هیچ کنترل مدیریتی نمی‌بیند.
+
+آزمون شاخه پس از دو اصلاح تستی/کش relation: Gallery Admin Slice CI `37256170956` PASS؛ backend 125 تست / 1132 assertion + Composer audit پاک؛ frontend 84 تست / 19 فایل، type-check و production build PASS. workflow موقت قبل از merge حذف شده است. انتشار production و پذیرش موبایل واقعی پس از merge باید تأیید شود.
+
 ## تأیید انتشار نجات عکس محصول — ۲۰۲۶-۱۰-۰۴
 
 انتشار نهایی commit `e939d62ee3dae57f34dd94082dffa3b9d5244cde` تأیید شد. Backend CI `37230976144`: 124 تست و 1112 assertion موفق و audit وابستگی‌ها بدون هشدار امنیتی. Backend Code Deploy `37230976112`: فعال‌سازی با پشتیبان، بدون تغییر dependency/migration و smoke عمومی موفق. FTP Deploy `37230976156`: QA/build رابط، انتشار Test29، تطبیق HTTP فایل فعال `assets/index-CPd_QK39.js` و promotion ریشه version 29 همگی PASS. این تأیید غیرتصویری است؛ آزمون واقعی آپلود با حساب مدیر و گوشی مشتری همچنان acceptance باز است.
