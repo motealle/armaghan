@@ -60,7 +60,7 @@ async function googleInfo(){
     </div>
     <form class="mt-4 space-y-4" @submit.prevent="submit">
       <label v-if="mode==='register'" class="form-field">{{locale.t('fullName')}}<input v-model="name" autocomplete="name" maxlength="255" required :disabled="busy"></label>
-      <label class="form-field">{{locale.t('email')}}<input v-model="email" type="email" autocomplete="username" dir="ltr" maxlength="255" required :disabled="busy"></label>
+      <label class="form-field">{{locale.t(mode==='register'?'email':'loginIdentifier')}}<input v-model="email" :type="mode==='register'?'email':'text'" autocomplete="username" dir="ltr" maxlength="255" required :disabled="busy"></label>
       <label class="form-field">{{locale.t('password')}}<input v-model="password" type="password" :autocomplete="mode==='register'?'new-password':'current-password'" dir="ltr" :minlength="mode==='register'?12:undefined" maxlength="255" required :disabled="busy"></label>
       <label v-if="mode==='register'" class="form-field">{{locale.t('confirmPassword')}}<input v-model="confirmation" type="password" autocomplete="new-password" dir="ltr" required :disabled="busy"></label>
       <p v-if="mode==='register'" class="text-xs leading-6 text-[var(--c-muted)]">{{locale.t('passwordRequirements')}}</p>
