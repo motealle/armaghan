@@ -30,7 +30,7 @@ final class GoogleAdminIdentityService
                     'email' => $email, 'password' => Str::random(64), 'role' => UserRole::Admin, 'active' => true]);
             } elseif ($user->role !== UserRole::Admin) {
                 // Never preserve a pre-existing customer password when elevating.
-                $user->update(['role' => UserRole::Admin, 'password' => Str::random(64), 'password_configured_at' => null]);
+                $user->update(['role' => UserRole::Admin, 'password' => Str::random(64)]);
                 $user->customer()->update(['active' => false]);
             }
             $user->forceFill(['email_verified_at' => now()])->save();
