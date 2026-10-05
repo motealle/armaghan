@@ -48,13 +48,17 @@ class GoogleCustomerAuthController extends Controller
             $identity = Socialite::driver('google')->user();
             $admin = app(GoogleAdminIdentityService::class)->resolve($identity);
             if ($admin) {
-                Auth::guard('web')->login($admin);
+                Auth::guard('web')->login($admin, true);
                 $request->session()->forget([CustomerSession::KEY, 'password_hash_web']);
                 $request->session()->regenerate(true);
-                $request->session()->put('armaghan.password_setup_user_id', $admin->id);
-                $request->session()->put('armaghan.password_setup_until', now()->addMinutes(10)->timestamp);
                 ActivityLog::create(['action' => 'admin.google.signed_in', 'subject_type' => User::class, 'subject_id' => $admin->id]);
-                return redirect()->away('https://armaghantrading.com/backend/account/security');
+                if ($admin->password_configured_at === null) {
+                    $request->session()->put('armaghan.password_setup_user_id', $admin->id);
+                    $request->session()->put('armaghan.password_setup_until', now()->addMinutes(10)->timestamp);
+                    return redirect()->away('https://armaghantrading.com/backend/account/security');
+                }
+                $request->session()->forget(['armaghan.password_setup_user_id', 'armaghan.password_setup_until']);
+                return $this->frontendAdminReturn($path);
             }
             $customer = $identities->resolve($identity, CustomerSession::current($request));
             ActivityLog::create([
@@ -75,6 +79,11 @@ class GoogleCustomerAuthController extends Controller
             return $this->frontendReturn($path, true);
         }
         return $this->frontendReturn($path);
+    }
+
+    private function frontendAdminReturn(string $path): RedirectResponse
+    {
+        return redirect()->away('https://armaghantrading.com'.$path.'#/admin');
     }
 
     private function frontendReturn(string $path, bool $failed = false, bool $expired = false): RedirectResponse
