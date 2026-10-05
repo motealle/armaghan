@@ -41,6 +41,12 @@ Route::prefix('api/favorite-shares')->group(function (): void {
         ->middleware('throttle:60,1');
 });
 
+Route::get('/api/catalog/media/{media}/{variant}', [\App\Http\Controllers\PublicProductMediaController::class, 'show'])
+    ->whereNumber('media')
+    ->whereIn('variant', ['thumb', 'card', 'detail'])
+    ->middleware('throttle:240,1')
+    ->name('catalog.product-media');
+
 Route::get('/api/home-media/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publicIndex'])->where('channel','staging|production')->middleware('throttle:120,1');
 
 Route::get('/api/style-profile/{channel?}', [PublicStyleProfileController::class, 'show'])
