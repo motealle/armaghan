@@ -1,5 +1,15 @@
 # Armaghan — Current Status
 
+## Lightweight card release closeout — 2026-10-05
+
+- Owner requested no TinyFish, essential tests only, and verification before repeating work from another chat. These are now durable PROJECT-RULES 185–187 and root AGENTS instructions.
+- Existing source commit 4c3950f52aff1091b4b0d507a69f6c63344eb865 already implements transparent previous/next/zoom controls with 2px icon shadow and 44px touch targets; smaller placeholders; and a roughly 10% smaller Producible pill. No duplicate UI implementation was needed in this run.
+- Publication was the missing item. FTP runs 37315056108 and the first attempt of 37316797792 failed on host transfer timeouts. Re-ran only failed jobs of 37316797792: second attempt PASS, scoped Test29 upload and HTTP verification PASS, guarded root promotion PASS (root job 111820366059). QA already passed type-check/build, 9 focused frontend tests in 2 files, and essential publication contracts. No broad suite was rerun.
+- Reproducible placeholders: 18 portrait WebP files at 480x720 total 165044 bytes; 18 landscape WebP files at 480x360 total 161220 bytes. Immutable source originals total 1541490 bytes and remain preserved. Representative old portrait paper-cut/11 was 59236 bytes; its new derivative is 7914 bytes.
+- Remaining P0 is measured request latency and failed-thumbnail recovery, followed by owner real-mobile acceptance of all uploaded cards. This run sampled root/static-placeholder/media/catalog requests at about 8.9–10.3 seconds from the execution environment. That includes network/environment overhead and does not isolate host latency or prove user-device scrolling speed. Avoid a broad backend delivery refactor until the bottleneck is isolated.
+- No TinyFish or visual/device test was used in this run. Existing owner-alias login/backend changes from the other chat were not modified; their CI and code deployment are already successful.
+
+
 ## Card gallery release evidence — 2026-10-05
 
 - Standing owner authorization and lock retirement are merged in main (b48b647 / PR26). No shared repository lease is required. Keep ordinary Git conflict checks and guarded deployment serialization.

@@ -272,3 +272,9 @@
 182. Only the active verified primary owner may deliberately select a genuine integration gap, diagnosis or recovery reason to open stock administration. Permit must be audited, session-scoped, expire after 15 minutes and end on logout/revocation. Other business admins retain ordinary custom-domain API permissions.
 183. Preserve the established custom tables/forms and visual editor while connecting all remaining prototype capabilities to canonical server persistence. Browser-only data or enabled links are not migration completion.
 184. Desktop language picker shows the language name alone. Mobile header always offers help, globe and language abbreviation with centered themed chooser, brightness toggle and real-session sign-in/logout icon. Fresh default is light. Capabilities intro defaults hidden with reversible feature flag.
+
+
+## Owner fast-run policy — 2026-10-05
+185. Do not use TinyFish for this project from now on; the owner explicitly stopped its use because it slows execution.
+186. The owner temporarily suspends broad automated test suites in favor of only necessary checks selected for the actual change. This supersedes broad-suite requirements in rules 35, 54, 70 and 92 while fast-release mode is active. Keep type-check/build for frontend changes and focused risk-based tests for media, authentication, deployment or other sensitive changes. Preserve existing test sources and frozen snapshots; do not delete tests. Restore broader release gates when the owner ends this temporary mode.
+187. Before implementing a resumed request, inspect current main and publication status. Reuse changes already completed in another chat and finish missing publication/verification instead of duplicating them. Report progress item by item.
