@@ -6,6 +6,14 @@
 - Canonical delivery variants are optimized WebP thumb (~320px), card (~800px), detail (~1600px), with no forced crop/upscale and safe fallback for older media.
 - Do not treat larger timeouts/file limits or an unavailable long-running queue worker as the primary upload fix.
 
+## Product gallery management invariant
+- Admin gallery tiles exist only for persisted media rows or explicit pending local files; never render fixed empty photo slots.
+- Admin gallery media must display the real file. A failed media fetch is shown as an explicit unavailable state with safe selection/deletion, never disguised as a generic garment placeholder.
+- Public product media is served through the guarded Laravel catalog-media route; do not depend on a host-level public storage symlink for customer-visible product photos.
+- Reorder and deletion are server-authoritative, active-admin-only and revision-checked. Deleting media must verify product ownership and refresh the media relation before returning the snapshot.
+- On the public Products page, edit affordances are rendered only from the real server admin session. Reuse BackendProductEditor; do not create a browser-local parallel admin editor/store.
+- A seed-only product edited by a real manager should materialize into the canonical backend row using its existing code/taxonomy rather than creating a parallel fake product.
+
 ## Deployment and immutable tests
 1. `/t` is the validation workspace; root `/public_html` is protected.
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.
