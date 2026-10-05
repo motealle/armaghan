@@ -18,3 +18,11 @@ describe('card gallery delivery',()=>{
     expect(swipeDirection(80,10)).toBe(-1)
   })
 })
+
+
+it('upgrades older cached server galleries before slow catalog hydration completes',()=>{
+  const slides=cardMediaSources({...products[0]!,image:'/backend/api/catalog/media/2/card?v=old',gallery:['/backend/api/catalog/media/2/detail?v=old','/backend/api/catalog/media/1/detail?v=old','/placeholder']})
+  expect(slides).toHaveLength(2)
+  expect(slides[0]?.thumb).toBe('/backend/api/catalog/media/2/thumb?v=20261005-card-gallery-3')
+  expect(slides[1]?.detail).toBe('/backend/api/catalog/media/1/detail?v=20261005-card-gallery-3')
+})

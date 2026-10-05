@@ -122,3 +122,14 @@ describe('catalog API staged merge',()=>{
   })
 
 })
+
+
+it('survives repeated hydration with nested gallery proxies from an earlier merge',()=>{
+  const snapshot:CatalogSnapshot={categories:[],products:[{id:1,code:'11001',names:{fa:'Test',ar:null,en:null,ku:null},availability:'available',sort_order:0,category:null,subcategory:null}],managedProductCodes:['11001'],managedCategoryCodes:[],managedSubcategoryCodes:[]}
+  let current={products:reactive(structuredClone(products)),categories:reactive(structuredClone(categories))}
+  for(let i=0;i<3;i++){
+    const next=mergeCatalogSnapshot(snapshot,current.products,current.categories)
+    current={products:reactive(next.products),categories:reactive(next.categories)}
+    expect(current.products.find(p=>p.code==='11001')?.backendId).toBe(1)
+  }
+})

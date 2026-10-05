@@ -1,7 +1,13 @@
 import type { Product } from '@/types/domain'
+import { freshProductMediaUrl } from './catalogApi'
 
 export function cardMediaSources(product:Product){
-  if(product.media?.length)return product.media
+  if(product.media?.length)return product.media.map(slide=>({...slide,thumb:freshProductMediaUrl(slide.thumb),card:freshProductMediaUrl(slide.card),detail:freshProductMediaUrl(slide.detail)}))
+  // Upgrade older persisted server galleries immediately while the catalog refreshes.
+  if(product.image?.includes('/backend/api/catalog/media/')){
+    const bases=[product.image,...(product.gallery||[])].map(url=>url.match(/^(.*\/backend\/api\/catalog\/media\/\d+)\/(?:thumb|card|detail)(?:[?#].*)?$/)?.[1]).filter((base):base is string=>Boolean(base))
+    return [...new Set(bases)].map(base=>({thumb:freshProductMediaUrl(base+'/thumb'),card:freshProductMediaUrl(base+'/card'),detail:freshProductMediaUrl(base+'/detail'),width:undefined,height:undefined}))
+  }
   if(!product.image)return []
   // A staged local product has no lightweight server variants. Preserve its actual gallery.
   const urls=[product.image,...(product.gallery||[])].filter((url,i,all)=>Boolean(url)&&all.indexOf(url)===i)

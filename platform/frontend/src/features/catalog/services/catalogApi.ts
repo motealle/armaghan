@@ -78,11 +78,13 @@ const API_BASE=(rawBase||'/backend').replace(/\/$/,'')
 const maxProductPages=20
 const PRODUCT_MEDIA_CACHE_REV='20261005-card-gallery-3'
 function cloneCatalogValue<T extends object>(value:T):T{
-  return structuredClone(toRaw(value))
+  // Catalog DTOs are JSON-only; prior hydrations can leave nested Vue proxies.
+  return JSON.parse(JSON.stringify(toRaw(value))) as T
 }
-function freshProductMediaUrl(value?:string){
+export function freshProductMediaUrl(value?:string){
   const url=value?.trim()??''
   if(!url||!url.includes('/backend/api/catalog/media/'))return url
+  if(/[?&]v=/.test(url))return url.replace(/([?&])v=[^&]*/, '$1v='+PRODUCT_MEDIA_CACHE_REV)
   return url+(url.includes('?')?'&':'?')+'v='+PRODUCT_MEDIA_CACHE_REV
 }
 
