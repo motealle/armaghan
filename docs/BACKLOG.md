@@ -1,5 +1,13 @@
 # Armaghan — Product Backlog
 
+## P0 — Admin UX and editor reliability — 2026-10-05
+
+Implemented the current admin-login reliability batch and the route-scoped editing flow. The home appearance editor is limited to the home page and now supports home-media selection plus fit/crop/focal controls. The products-page manager is limited to the products page, exposes edit beside the product code, supports adding products, and reuses the same canonical product editor/gallery used by the admin panel. Nested editing sheets were avoided.
+
+The product gallery contract remains server-authoritative: zero persisted media means zero fake slots; persisted media supports real-image rendering, explicit unavailable state, selection, deletion, reordering, and primary ordering. Home/product media delivery no longer depends on the shared-host public-storage symlink.
+
+Session persistence, one-time setup state, stable Tracking copy, reduced duplicate exit controls, and owner-controlled administrative revocation are included. Backend CI run 37277405193 passed with 129 tests / 1169 assertions. Visual acceptance is intentionally deferred to owner screenshots.
+
 ## P0 — ورود ماندگار مدیر + ویرایشگرهای محدود به صفحه — ۲۰۲۶-۱۰-۰۵
 
 - ورود مدیر با identifier (ایمیل یا نام کاربری) انجام می‌شود. دو alias موقت اپراتوری بدون ذخیره رمز خام فعال‌اند: `mot` برای مالک فنی تا ۲۰۲۶-۱۰-۱۹ و `amirau` برای مدیر کسب‌وکار تا ۲۰۲۶-۱۱-۰۵. هر دو به حساب‌های مجاز از پیش تعریف‌شده نگاشت می‌شوند؛ ورود جدید پس از تاریخ انقضا رد می‌شود، اما Remember Cookie لاراول که قبلاً صادر شده تا logout یا revoke مالک معتبر می‌ماند.
