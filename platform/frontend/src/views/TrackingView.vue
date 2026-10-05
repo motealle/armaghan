@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { LogIn, LogOut, ShieldCheck, UserRound, UserRoundX } from '@lucide/vue'
-import { ref } from 'vue'
+import { LogIn, ShieldCheck, UserRound, UserRoundX } from '@lucide/vue'
 import { useRoute } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useLocaleStore } from '@/stores/locale'
@@ -14,13 +13,6 @@ const session=useSessionStore()
 const admin=useAdminStore()
 const locale=useLocaleStore()
 const emit=defineEmits<{login:[]}>()
-const loggingOut=ref(false)
-const logoutFailed=ref(false)
-async function signOut(){
-  loggingOut.value=true
-  logoutFailed.value=!(await session.logout())
-  loggingOut.value=false
-}
 </script>
 <template>
   <section>
@@ -30,9 +22,8 @@ async function signOut(){
       <p>{{locale.t(route.query.auth_reason==='expired'?'googleSignInExpired':'googleSignInFailed')}}</p>
       <button class="mini-action mt-3" @click="emit('login')"><LogIn :size="16"/>{{locale.t('signIn')}}</button>
     </div>
-    <div class="mb-4 flex flex-wrap items-start justify-between gap-3"><div><h1 class="text-[1.75rem] font-black leading-tight text-[var(--c-text)]">{{locale.t(session.isAuthenticated?'panel':'account')}}</h1><p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('accountHelp')}}</p></div><button v-if="session.isAuthenticated" :disabled="loggingOut" class="mini-action shrink-0" @click="signOut"><LogOut :size="18"/>{{locale.t('logout')}}</button></div>
+    <div class="mb-4 flex flex-wrap items-start justify-between gap-3"><div><h1 class="text-[1.75rem] font-black leading-tight text-[var(--c-text)]">{{locale.t(session.isAuthenticated?'panel':'account')}}</h1><p class="mt-1 text-sm leading-6 text-[var(--c-muted)]">{{locale.t('accountHelp')}}</p></div></div>
     <CustomerContactCard/>
-    <p v-if="logoutFailed" role="alert" class="auth-error mb-4">{{locale.t('logoutFailed')}}</p>
 
     <div v-if="!session.isAuthenticated" class="rounded-3xl border border-[var(--c-border)] bg-[var(--c-surface)] p-7 text-center shadow-sm">
       <div class="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-[color-mix(in_srgb,var(--c-primary)_8%,var(--c-surface))] text-[var(--c-primary)]"><UserRound :size="25"/></div>
