@@ -6,6 +6,12 @@ const FavoritesView=()=>import('@/views/FavoritesView.vue')
 const TrackingView=()=>import('@/views/TrackingView.vue')
 const MagicLinkView=()=>import('@/views/MagicLinkView.vue')
 
+// Normalize historical entry timestamps before hash history captures its base.
+const entryUrl=new URL(window.location.href)
+if(entryUrl.searchParams.has('_armaghan_fresh')){
+  entryUrl.searchParams.delete('_armaghan_fresh')
+  window.history.replaceState(window.history.state,'',entryUrl.pathname+entryUrl.search+entryUrl.hash)
+}
 const pagePath=window.location.pathname+window.location.search
 const history=createWebHashHistory(pagePath)
 // Asset <base> must not send native/new-tab RouterLinks into the numbered lane.

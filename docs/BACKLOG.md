@@ -1,3 +1,8 @@
+## Hash-history normalization — 2026-10-05
+
+- Root/Test29 source9bea9dd passed FTP37350293553: QA111899206966, Test29 upload111899503287, root promotion111900412296. Live DOM confirms the shared-list recovery build, two selected cards and brand outside Help, aligned at the same desktop top as the link columns.
+- Live verification exposed hash history capturing an old timestamp query before main cleans it. Normalize legacy entry timestamps in router/index.ts before creating hash history, so URLs/links stay clean and do not restore the query. Type-check/build PASS; no business/auth/schema change. This tiny final patch is queued for guarded release. Manager backup/download/delete/restore browser acceptance remains OPEN;72 focused backend tests and26 frontend tests passed. Independent production sessions resolve ordered22003/11001 and fetch both exact active product DTOs; link length54.
+
 ## Final startup correction for shared-list release — 2026-10-05
 
 - Live cold navigation exposed a second forced full-page load on every ordinary entry until October12, with a timestamp query captured by navigation. Removed the repeated location.replace path; old timestamp URLs are still cleaned without reload and hash routes remain supported. UI revision now identifies the shared-lists/account-recovery build.
