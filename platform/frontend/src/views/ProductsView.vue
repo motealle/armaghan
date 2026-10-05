@@ -5,12 +5,23 @@ import { useRoute } from 'vue-router'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
+import BackendProductEditor from '@/features/admin/components/BackendProductEditor.vue'
+import { useAdminStore } from '@/features/admin/store'
+import { fetchAdminProducts, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory, type ProductFields } from '@/features/admin/services/adminApi'
+import type { Product } from '@/types/domain'
 import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 
 const route=useRoute()
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
+const admin=useAdminStore()
 const {policy}=useResolvedAppearance()
+const adminEditorOpen=ref(false)
+const adminEditorBusy=ref(false)
+const adminEditorError=ref('')
+const adminProduct=ref<AdminProduct|null>(null)
+const adminInitial=ref<ProductFields|null>(null)
+const adminTaxonomy=ref<AdminSubcategory[]>([])
 const category=ref(String(route.query.category ?? 'all'))
 const subcategory=ref('all')
 const query=ref('')
@@ -32,6 +43,48 @@ function resetFilters(){category.value='all';subcategory.value='all';availabilit
 function selectCategory(code:string){
   category.value=category.value===code?'all':code
   subcategory.value='all'
+}
+
+function seedFields(product:Product):ProductFields|null{
+  const group=adminTaxonomy.value.find(item=>item.code===product.subcategoryCode)
+  if(!group)return null
+  const values=product.specificationValues??[]
+  return {
+    subcategory_id:group.id,
+    code:product.code,
+    name_fa:product.names?.fa||product.name,
+    name_ar:product.names?.ar??null,
+    name_en:product.names?.en??null,
+    name_ku:product.names?.ku??null,
+    availability:product.availability==='available'?'available':'made_to_order',
+    active:true,
+    sort_order:Math.max(0,catalog.items.findIndex(item=>item.id===product.id)),
+    specifications:values.flatMap(value=>{
+      const definition=group.specifications.find(item=>item.key===value.key)
+      return definition?[{definition_id:definition.id,value_text:value.value_text??null}]:[]
+    }),
+  }
+}
+async function editFromCatalog(product:Product){
+  if(!admin.identity||adminEditorBusy.value)return
+  adminEditorBusy.value=true;adminEditorError.value=''
+  try{
+    if(!adminTaxonomy.value.length)adminTaxonomy.value=(await fetchProductTaxonomy()).subcategories
+    const result=await fetchAdminProducts(1,product.code,'',25)
+    adminProduct.value=result.products.find(row=>row.code===product.code)||null
+    adminInitial.value=adminProduct.value?null:seedFields(product)
+    if(!adminProduct.value&&!adminInitial.value)throw new Error('taxonomy missing')
+    adminEditorOpen.value=true
+  }catch{
+    adminEditorError.value=locale.t('adminRequestFailed')
+  }finally{adminEditorBusy.value=false}
+}
+async function adminEditorSaved(){
+  adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null
+  await catalog.hydrateFromBackend()
+}
+function adminEditorClosed(){
+  adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null
 }
 </script>
 
@@ -122,9 +175,18 @@ function selectCategory(code:string){
           <span class="font-bold text-[var(--c-text)]">{{filtered.length}} {{locale.t('productCount')}}</span>
           <span class="text-[var(--c-muted)]">{{locale.t('desktopFilterHelp')}}</span>
         </div>
-        <ProductGrid v-if="filtered.length" :products="filtered"/>
+        <p v-if="adminEditorError" class="auth-error mb-3" role="alert">{{adminEditorError}}</p>
+        <ProductGrid v-if="filtered.length" :products="filtered" :admin-editable="!!admin.identity&&!adminEditorBusy" @edit="editFromCatalog"/>
         <div v-else class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">—</div>
       </div>
     </div>
+    <BackendProductEditor
+      :open="adminEditorOpen"
+      :product="adminProduct"
+      :initial="adminInitial"
+      :taxonomy="adminTaxonomy"
+      @close="adminEditorClosed"
+      @saved="adminEditorSaved"
+    />
   </section>
 </template>
