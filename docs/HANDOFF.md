@@ -1,5 +1,13 @@
 # Armaghan Trading B2B Catalog — Project Handoff
 
+## P0 healing run — 2026-10-05
+- Temporary manager aliases are time-boxed and map to the real owner/business-admin accounts; plaintext passwords are not stored in the repo. Laravel remember-login remains valid until explicit logout or owner revocation.
+- Manager password setup accepts any non-empty confirmed value. Setup state moved to a dedicated additive table so production deployment no longer needs ALTER TABLE.
+- Only one global logout control remains; tracking/drawer duplicates are removed.
+- For one week, each fresh site visit performs one cache-busted reload before mounting, then cleans the query marker.
+- Products page and live admin panel both use the canonical backend product manager/editor. The products page refreshes the backend catalog on entry so routed uploaded media replaces stale local placeholders.
+- Visual acceptance is intentionally deferred to owner screenshots; no TinyFish/browser visual testing is used in this run.
+
 ## Admin UX / product editor batch — 2026-10-05
 
 Home appearance editing is home-only. Product management is products-page-only for real server-admin sessions; the edit affordance sits beside the product code, the manager includes Add Product, and both products/admin surfaces reuse BackendProductEditor rather than creating a second editor. Product media management remains server-authoritative with real-media cards, explicit unavailable state, selection, deletion, reorder and primary ordering. Home/product media is served through application-controlled routes.
