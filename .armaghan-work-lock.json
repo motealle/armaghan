@@ -1,15 +1,11 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "released",
-  "holder": "ChatGPT-GPT-5.6-Sol",
-  "run_id": "chatgpt-20261005-auth-editor-ux",
-  "scope": "Emergency healing run: make temporary admin logins live, remove duplicate logout, force fresh client load for one week, finalize product media rendering and products-page manager",
-  "base_ref": "70e75b712b947cc5e1c91b785641ee040e06f322",
-  "acquired_at": "2026-10-05T05:48:00Z",
-  "expires_at": "2026-10-05T10:15:00Z",
-  "renewed_at": "2026-10-05T09:30:00Z",
-  "released_at": "2026-10-05T10:42:00Z",
-  "final_ref": "da8e4a4d1588e7826309a6d3348fc0d82757001e",
-  "result": "Product-card media hotfix completed and promoted: fresh catalog fetch, cache-busted backend media URLs, renderer remount on canonical image change, 85 frontend tests/type-check/build PASS, Test29 and root deploy PASS. Visual acceptance deferred to owner screenshot."
+  "state": "active",
+  "holder": "Codex",
+  "run_id": "codex-20261005-card-image-diagnosis",
+  "scope": "Diagnose and fix actual public product card photo rendering",
+  "base_ref": "da8e4a4d1588e7826309a6d3348fc0d82757001e",
+  "acquired_at": "2026-10-05T10:49:18.232Z",
+  "expires_at": "2026-10-05T12:19:18.234Z"
 }
