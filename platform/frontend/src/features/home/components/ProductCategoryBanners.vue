@@ -29,6 +29,8 @@ const visual=useVisualStyleStore()
         :data-style-label="`بنر ${locale.categoryName(category.code,category.name)}`"
       >
         <SmartImage
+          :data-style-id="`home.product-banner.${category.code}.media`"
+          :data-style-label="`تصویر بنر ${locale.categoryName(category.code,category.name)}`"
           :src="homeMedia.resolve('banner.'+category.code,productBannerMedia[category.code]?.image??'')"
           :fallback-src="productBannerMedia[category.code]?.fallback"
           :alt="locale.categoryName(category.code,category.name)"
