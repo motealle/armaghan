@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Support\CustomerSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class PasswordAuthTest extends TestCase
@@ -65,9 +66,11 @@ class PasswordAuthTest extends TestCase
     }
     public function test_real_admin_password_login_uses_web_guard_and_clears_customer_identity(): void
     {
-        $admin=User::factory()->admin()->create(['password'=>'AdminPassword2026']);
-        $this->withSession([CustomerSession::KEY=>123])->postJson('/api/auth/login',['email'=>$admin->email,'password'=>'AdminPassword2026'])
+        $admin=User::factory()->admin()->create(['password'=>'AdminPassword2026','remember_token'=>null,'password_configured_at'=>now()]);
+        $response=$this->withSession([CustomerSession::KEY=>123])->postJson('/api/auth/login',['email'=>$admin->email,'password'=>'AdminPassword2026'])
             ->assertOk()->assertExactJson(['redirect'=>'/backend/admin']);
+        $response->assertCookie(Auth::guard('web')->getRecallerName());
+        $this->assertNotNull($admin->fresh()->remember_token);
         $this->assertAuthenticatedAs($admin);
         $this->assertNull(session(CustomerSession::KEY));
         $this->get('/admin/products')->assertRedirect('https://armaghantrading.com/#/admin');
@@ -92,6 +95,19 @@ class PasswordAuthTest extends TestCase
         $this->post('/account/password',$data+['current_password'=>'BuyerPassword2026'])->assertRedirect('https://armaghantrading.com/backend/account/security');
         $this->assertTrue(Hash::check('NewBuyerPassword2026',$user->fresh()->password));
     }
+    public function test_admin_may_choose_simple_eight_character_password_once_and_it_is_marked_configured(): void
+    {
+        $admin=User::factory()->admin()->create(['password'=>'GeneratedPassword2026','password_configured_at'=>null]);
+        $data=['password'=>'easy1234','password_confirmation'=>'easy1234'];
+        $this->actingAs($admin)->withSession([
+            'armaghan.password_setup_user_id'=>$admin->id,
+            'armaghan.password_setup_until'=>now()->addMinutes(10)->timestamp,
+        ])->post('/account/password',$data)->assertRedirect('https://armaghantrading.com/backend/account/security');
+        $admin->refresh();
+        $this->assertTrue(Hash::check('easy1234',$admin->password));
+        $this->assertNotNull($admin->password_configured_at);
+    }
+
     public function test_google_password_setup_is_owner_scoped_expiring_and_one_use(): void
     {
         $this->postJson('/api/auth/register',$this->registration())->assertCreated();
