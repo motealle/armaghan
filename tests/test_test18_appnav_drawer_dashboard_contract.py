@@ -37,7 +37,8 @@ assert "language-" in drawer and 'lang="item.lang"' in drawer
 assert "DrawerAccountDashboard" in drawer
 assert "drawer-account-footer" in drawer
 assert "profile" in drawer
-assert "session.logout" in drawer and "emit('login')" in drawer
+assert "session.logout" not in drawer and "emit('login')" in drawer
+assert "@click.stop=\"logout\"" in header
 assert "drawer-metric-grid" in dashboard
 for phrase in ["activeOrders","favorites.ids.length","nextCustomerAction","catalog.items.length"]:
     assert phrase in dashboard
