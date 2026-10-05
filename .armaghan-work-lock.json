@@ -1,11 +1,12 @@
 {
   "schema": 1,
   "project": "motealle/armaghan",
-  "state": "active",
+  "state": "released",
   "holder": "Codex",
   "run_id": "codex-20261005-card-gallery-performance",
-  "scope": "Owner-authorized takeover of own stopped diagnosis; responsive product media and card gallery",
+  "scope": "Owner-authorized takeover of own stopped diagnosis; responsive product media and card gallery; local implementation complete, external publication rejected pending explicit authorization",
   "base_ref": "ae40af0a970f16b7b22a0bc89cc283eff7016619",
   "acquired_at": "2026-10-05T12:05:22.649Z",
-  "expires_at": "2026-10-05T13:35:22.650Z"
+  "expires_at": "2026-10-05T13:35:22.650Z",
+  "released_at": "2026-10-05T12:16:58.756Z"
 }
