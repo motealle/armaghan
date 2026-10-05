@@ -5,7 +5,8 @@ import ProductCard from './ProductCard.vue'
 import ProductDetailSheet from './ProductDetailSheet.vue'
 import WhatsAppSheet from './WhatsAppSheet.vue'
 
-defineProps<{ products: Product[] }>()
+withDefaults(defineProps<{ products: Product[]; adminEditable?: boolean }>(),{adminEditable:false})
+const emit=defineEmits<{edit:[product:Product]}>()
 const detail = ref<Product | null>(null)
 const whatsapp = ref<Product | null>(null)
 </script>
@@ -16,8 +17,10 @@ const whatsapp = ref<Product | null>(null)
       v-for="product in products"
       :key="product.id"
       :product="product"
+      :admin-editable="adminEditable"
       @detail="detail = $event"
       @whatsapp="whatsapp = $event"
+      @edit="emit('edit',$event)"
     />
   </div>
   <ProductDetailSheet :open="!!detail" :product="detail" @close="detail = null" />
