@@ -47,3 +47,12 @@ export const saveProductSpecificationSchema=(group:AdminSubcategory,definitions:
 export const bulkAdminTags=(resource:'products'|'customers'|'users',items:{id:number;revision:string}[],mode:'add'|'remove'|'replace',tags:string[])=>requestJson<{updated:number}>('/api/admin/bulk-tags/'+resource,{method:'POST',body:JSON.stringify({items,mode,tags})})
 
 export const createCustomerLogin=(customer:AdminCustomer,fields:{name:string;email:string;password:string;password_confirmation:string})=>requestJson<{user:AdminUser}>('/api/admin/customers/'+customer.id+'/account',{method:'POST',body:JSON.stringify({...fields,customer_revision:customer.revision})})
+
+export type AccountResource='users'|'customers'
+export interface AccountArchive {id:string;label:string;resource:AccountResource;deleted_at:string}
+export interface AccountBackup {archive_id:string;receipt:string;backup:string;backup_sha256:string;filename:string}
+export const fetchAccountArchives=(resource:AccountResource)=>requestJson<{archives:AccountArchive[]}>('/api/admin/account-archives/'+resource)
+export const prepareAccountBackup=(resource:AccountResource,row:{id:number;revision:string})=>requestJson<AccountBackup>('/api/admin/account-archives/'+resource+'/'+row.id+'/backup',{method:'POST',body:JSON.stringify({revision:row.revision})})
+export const deleteBackedUpAccount=(backup:AccountBackup)=>requestJson('/api/admin/account-archives/'+backup.archive_id,{method:'DELETE',body:JSON.stringify({receipt:backup.receipt,backup_sha256:backup.backup_sha256,backup_downloaded:true})})
+export const restoreAccountArchive=(id:string)=>requestJson('/api/admin/account-archives/'+id+'/restore',{method:'POST',body:'{}'})
+export const importAccountBackup=(backup:string)=>requestJson('/api/admin/account-archives/import',{method:'POST',body:JSON.stringify({backup})})

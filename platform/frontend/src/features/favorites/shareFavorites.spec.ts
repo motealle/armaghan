@@ -110,3 +110,33 @@ describe('persisted FavoriteShare API',()=>{
     )
   })
 })
+
+it('shares one fresh CSRF request between concurrent first-device operations',async()=>{
+  vi.resetModules();vi.restoreAllMocks()
+  let release!:(value:Response)=>void
+  const csrf=new Promise<Response>(resolve=>{release=resolve})
+  const fetchMock=vi.fn().mockImplementation((url:string)=>url.endsWith('/csrf-token')?csrf:Promise.resolve(jsonResponse(200,{share:{id:1,expires_at:null,product_codes:['11001']}})))
+  vi.stubGlobal('fetch',fetchMock)
+  const {resolveFavoriteShare}=await import('./shareFavorites')
+  const first=resolveFavoriteShare('A'.repeat(22)),second=resolveFavoriteShare('B'.repeat(22))
+  expect(fetchMock).toHaveBeenCalledTimes(1)
+  release(jsonResponse(200,{token:'fresh-token'}))
+  await Promise.all([first,second])
+  expect(fetchMock).toHaveBeenCalledTimes(3)
+  vi.unstubAllGlobals()
+})
+
+it('uses the newly fetched CSRF token after an expired-session response',async()=>{
+  vi.resetModules();vi.restoreAllMocks()
+  vi.stubGlobal('document',{cookie:'XSRF-TOKEN=expired-cookie'})
+  const fetchMock=vi.fn().mockResolvedValueOnce(jsonResponse(419,{}))
+    .mockResolvedValueOnce(jsonResponse(200,{token:'new-token'}))
+    .mockResolvedValueOnce(jsonResponse(200,{share:{id:1,expires_at:null,product_codes:['11001']}}))
+  vi.stubGlobal('fetch',fetchMock)
+  const {resolveFavoriteShare}=await import('./shareFavorites')
+  await resolveFavoriteShare('A'.repeat(22))
+  const headers=(fetchMock.mock.calls[2]?.[1] as RequestInit).headers as Headers
+  expect(headers.get('X-CSRF-TOKEN')).toBe('new-token')
+  expect(headers.has('X-XSRF-TOKEN')).toBe(false)
+  vi.unstubAllGlobals()
+})

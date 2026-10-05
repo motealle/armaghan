@@ -2,6 +2,8 @@
 import { computed, ref, watch } from 'vue'
 import { Check, Copy, MessageCircleMore, Share2, ShieldOff, X } from '@lucide/vue'
 import { useRoute } from 'vue-router'
+import { fetchSharedProducts } from '@/features/catalog/services/catalogApi'
+import type { Product } from '@/types/domain'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import {
@@ -11,13 +13,11 @@ import {
   type IssuedFavoriteShare,
 } from '@/features/favorites/shareFavorites'
 import { whatsappUrl } from '@/services/whatsapp'
-import { useCatalogStore } from '@/stores/catalog'
 import { useCustomersStore } from '@/stores/customers'
 import { useFavoritesStore } from '@/stores/favorites'
 import { useLocaleStore } from '@/stores/locale'
 
 const favorites=useFavoritesStore()
-const catalog=useCatalogStore()
 const customers=useCustomersStore()
 const locale=useLocaleStore()
 const route=useRoute()
@@ -25,6 +25,9 @@ const route=useRoute()
 const shareState=ref<'idle'|'copied'|'shared'|'revoked'|'error'>('idle')
 const resolveState=ref<'idle'|'loading'|'ready'|'error'>('idle')
 const resolvedCodes=ref<string[]>([])
+const sharedProducts=ref<Product[]>([])
+let resolveRequest=0
+const resolveRetry=ref(0)
 const issuedShare=ref<IssuedFavoriteShare|null>(null)
 const issuedCodesKey=ref('')
 
@@ -40,7 +43,7 @@ const isShared=computed(()=>isBackendShare.value||route.query.shared!==undefined
 const sharedCodes=computed(()=>isBackendShare.value?resolvedCodes.value:legacyCodes.value)
 const sharedItems=computed(()=>{
   const order=new Map(sharedCodes.value.map((code,index)=>[code,index]))
-  return catalog.items
+  return sharedProducts.value
     .filter(product=>order.has(product.code))
     .sort((a,b)=>(order.get(a.code)??0)-(order.get(b.code)??0))
 })
@@ -48,16 +51,21 @@ const visibleItems=computed(()=>isShared.value?sharedItems.value:favorites.items
 const currentCodes=computed(()=>favorites.items.map(product=>product.code))
 const currentCodesKey=computed(()=>currentCodes.value.join(','))
 
-watch(shareToken,async token=>{
+watch(()=>[shareToken.value,legacyCodes.value.join(','),String(resolveRetry.value)],async ([token])=>{
+  const request=++resolveRequest
   resolvedCodes.value=[]
-  if(!token){resolveState.value='idle';return}
+  sharedProducts.value=[]
+  if(!isShared.value){resolveState.value='idle';return}
   resolveState.value='loading'
   try{
-    const share=await resolveFavoriteShare(token)
-    resolvedCodes.value=share.product_codes
+    const codes=token?(await resolveFavoriteShare(token)).product_codes:legacyCodes.value
+    const products=await fetchSharedProducts(codes)
+    if(request!==resolveRequest)return
+    resolvedCodes.value=codes
+    sharedProducts.value=products
     resolveState.value='ready'
   }catch{
-    resolveState.value='error'
+    if(request===resolveRequest)resolveState.value='error'
   }
 },{immediate:true})
 
@@ -204,12 +212,13 @@ async function revokeIssuedShare(){
       <button :aria-label="locale.t('close')" @click="customers.clearCurrentVisitorMessage()"><X :size="17"/></button>
     </div>
 
-    <div v-if="isBackendShare&&resolveState==='loading'" class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">
+    <div v-if="isShared&&resolveState==='loading'" class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">
       {{locale.t('sharedFavoritesHelp')}}
     </div>
     <ProductGrid v-else-if="visibleItems.length" :products="visibleItems"/>
     <div v-else class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">
-      {{isShared?locale.t('sharedFavoritesInvalid'):locale.t('emptyFavorites')}}
+      {{isShared?locale.t(resolveState==='error'?'shareFavoritesError':'sharedFavoritesInvalid'):locale.t('emptyFavorites')}}
+      <button v-if="isShared&&resolveState==='error'" class="mini-action mx-auto mt-3" @click="resolveRetry++">{{locale.t('adminReload')}}</button>
     </div>
   </section>
 </template>

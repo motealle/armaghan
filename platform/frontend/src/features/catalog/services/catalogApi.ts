@@ -162,7 +162,7 @@ export async function fetchCatalogSnapshot(signal?:AbortSignal):Promise<CatalogS
   }
 }
 
-function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|null{
+export function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Product|null{
   const remoteSubcategory=remote.subcategory?.code??remote.code.trim().slice(0,2)
   if(!subcategoryCode(remoteSubcategory))return null
 
@@ -310,4 +310,14 @@ export function mergeCatalogSnapshot(
       fallbackCategories,
     ),
   }
+}
+
+// Shared selections are fetched directly, independent of this device's local catalog.
+export async function fetchSharedProducts(codes:string[]):Promise<Product[]>{
+  if(!codes.length)return[]
+  const query=new URLSearchParams({per_page:'100'})
+  codes.forEach(code=>query.append('codes[]',code))
+  const response=await requestJson<ProductResponse>('/api/catalog/products?'+query.toString())
+  return response.data.map(remote=>mergeProduct(remote,seedProducts.find(p=>p.code===remote.code)))
+    .filter((product):product is Product=>product!==null)
 }

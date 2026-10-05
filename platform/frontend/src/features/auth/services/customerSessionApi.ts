@@ -22,6 +22,7 @@ export class CustomerSessionApiError extends Error{
 const rawBase=(import.meta.env.VITE_ARMAGHAN_API_BASE as string|undefined)?.trim()??''
 const API_BASE=(rawBase||'/backend').replace(/\/$/,'')
 let csrfToken:string|null=null
+let csrfRequest:Promise<string>|null=null
 
 function cookie(name:string):string|undefined{
   if(typeof document==='undefined')return undefined
@@ -29,7 +30,7 @@ function cookie(name:string):string|undefined{
   return item?decodeURIComponent(item.slice(name.length+1)):undefined
 }
 
-async function fetchCsrfToken():Promise<string>{
+async function requestCsrfToken():Promise<string>{
   const response=await fetch(API_BASE+'/api/csrf-token',{
     headers:{Accept:'application/json'},
     credentials:'same-origin',
@@ -41,6 +42,12 @@ async function fetchCsrfToken():Promise<string>{
   return payload.token
 }
 
+function fetchCsrfToken():Promise<string>{
+  if(csrfRequest)return csrfRequest
+  csrfRequest=requestCsrfToken().finally(()=>{csrfRequest=null})
+  return csrfRequest
+}
+
 export async function requestJson<T>(path:string,init:RequestInit={},allowCsrfRetry=true):Promise<T>{
   const method=(init.method??'GET').toUpperCase()
   const headers=new Headers(init.headers)
@@ -50,7 +57,8 @@ export async function requestJson<T>(path:string,init:RequestInit={},allowCsrfRe
 
   if(!['GET','HEAD','OPTIONS'].includes(method)){
     const xsrf=cookie('XSRF-TOKEN')
-    if(xsrf)headers.set('X-XSRF-TOKEN',xsrf)
+    if(csrfToken)headers.set('X-CSRF-TOKEN',csrfToken)
+    else if(xsrf)headers.set('X-XSRF-TOKEN',xsrf)
     else headers.set('X-CSRF-TOKEN',csrfToken??await fetchCsrfToken())
   }
 

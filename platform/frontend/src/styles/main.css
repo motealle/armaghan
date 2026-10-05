@@ -972,3 +972,15 @@ html.dark .product-card .product-card-title.unavailable{text-shadow:none}
 .product-media-control svg{filter:drop-shadow(0 2px 2px rgba(0,0,0,.9))}
 .product-media-carousel .smart-image-contained{padding:0}
 .product-card-title.unavailable,html.dark .product-card .product-card-title.unavailable{min-height:1.395rem;line-height:1.395rem;padding:.07rem .585rem;font-size:.702rem}
+
+/* Brand has its own aligned desktop column; link columns no longer stretch for it. */
+.site-footer.test26-site-footer{gap:1rem}
+.site-footer.test26-site-footer .test26-footer-brand{justify-self:center;align-self:center}
+@media(min-width:64rem){
+ .site-footer.test26-site-footer{grid-template-columns:7rem minmax(0,1fr);gap:1.5rem;align-items:start}
+ .site-footer.test26-site-footer .test26-footer-brand{grid-column:1;grid-row:1;align-self:start}
+ .site-footer.test26-site-footer .test26-footer-grid{grid-column:2;grid-row:1}
+}
+@media(max-width:63.99rem){
+ .site-footer.test26-site-footer .test26-footer-brand{grid-row:2;grid-column:1/-1;width:100%;justify-content:flex-end}
+}

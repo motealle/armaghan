@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AccountRecoveryPanel from './AccountRecoveryPanel.vue'
 import CustomerAccountPanel from './CustomerAccountPanel.vue'
 import RecordTags from './RecordTags.vue'
 import BulkStatusBar from './BulkStatusBar.vue'
@@ -9,6 +10,7 @@ import { useLocaleStore } from '@/stores/locale'
 import { useAdminStore } from '../store'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
 import { fetchAdminCustomers, createAdminCustomer, updateAdminCustomer, type AdminCustomer, type CustomerPage, type CustomerFields } from '../services/adminApi'
+const deleteTarget=ref<{id:number;revision:string;label:string}|null>(null),recoveryBusy=ref(false)
 const locale=useLocaleStore()
 const admin=useAdminStore()
 const result=ref<CustomerPage>({customers:[],page:1,last_page:1,total:0})
@@ -34,7 +36,7 @@ function failed(e:unknown){
   return locale.t(e instanceof CustomerSessionApiError&&e.status===409?'adminConflict':'adminRequestFailed')
 }
 async function load(page=1){
-  if(loading.value||saving.value||bulkBusy.value||accountBusy.value)return
+  if(loading.value||saving.value||bulkBusy.value||accountBusy.value||recoveryBusy.value)return
   checked.value=[]
   const id=++requestId;loading.value=true;error.value=''
   try{const response=await fetchAdminCustomers(page,search.value.trim());if(id===requestId)result.value=response}
@@ -70,31 +72,32 @@ onMounted(()=>load())
   <section class="space-y-3" :aria-busy="loading||saving">
     <div class="flex flex-wrap items-center gap-2">
       <div><h2 class="text-xl font-black">{{locale.t('adminCustomers')}}</h2></div>
-      <button class="mini-action ms-auto" :disabled="bulkBusy||loading||saving" @click="edit(null)"><Plus :size="16"/>{{locale.t('addCustomer')}}</button>
+      <button class="mini-action ms-auto" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(null)"><Plus :size="16"/>{{locale.t('addCustomer')}}</button>
     </div>
     <form class="admin-surface flex flex-wrap gap-2 rounded-2xl p-3" @submit.prevent="load(1)">
-      <label class="form-field flex-1">{{locale.t('searchLabel')}}<input v-model="search" maxlength="100" :disabled="bulkBusy||loading||saving"></label>
-      <button class="mini-action mt-auto" :disabled="bulkBusy||loading||saving"><RefreshCw :size="16"/>{{locale.t('adminReload')}}</button>
+      <label class="form-field flex-1">{{locale.t('searchLabel')}}<input v-model="search" maxlength="100" :disabled="recoveryBusy||bulkBusy||loading||saving"></label>
+      <button class="mini-action mt-auto" :disabled="recoveryBusy||bulkBusy||loading||saving"><RefreshCw :size="16"/>{{locale.t('adminReload')}}</button>
     </form>
     <p v-if="loading" role="status">{{locale.t('adminLoading')}}</p>
     <p v-if="error" role="alert" class="auth-error">{{error}}</p>
     <p v-if="note" role="status" class="text-sm text-[var(--c-secondary)]">{{note}}</p>
+    <AccountRecoveryPanel resource="customers" :target="deleteTarget" @close="deleteTarget=null" @busy="recoveryBusy=$event" @saved="recoveryBusy=false;load(result.page)"/>
     <BulkStatusBar resource="customers" :items="bulkRows" :busy="loading||saving||bulkBusy" @busy="bulkBusy=$event" @clear="checked=[]" @saved="bulkSaved"/>
     <div class="data-table-shell">
       <table class="data-table">
-        <thead><tr><th><input type="checkbox" :aria-label="locale.t('bulkSelectPage')" :checked="!!selectable.length&&checked.length===selectable.length" :indeterminate="checked.length>0&&checked.length<selectable.length" :disabled="bulkBusy||loading||saving||bulkBusy||!selectable.length" @change="togglePage"></th><th>{{locale.t('customerLabel')}}</th><th>{{locale.t('customerPriority')}}</th><th>WhatsApp</th><th>{{locale.t('email')}}</th><th>{{locale.t('statusLabel')}}</th><th>{{locale.t('actions')}}</th></tr></thead>
-        <tbody><tr v-for="row in result.customers" :key="row.id"><td><input v-model="checked" type="checkbox" :value="row.id" :aria-label="String(row.id)" :disabled="bulkBusy||loading||saving||bulkBusy"></td>
-          <td><button class="text-start font-bold" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.name||'#'+row.id}}</button><RecordTags :tags="row.tags"/><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
+        <thead><tr><th><input type="checkbox" :aria-label="locale.t('bulkSelectPage')" :checked="!!selectable.length&&checked.length===selectable.length" :indeterminate="checked.length>0&&checked.length<selectable.length" :disabled="recoveryBusy||bulkBusy||loading||saving||bulkBusy||!selectable.length" @change="togglePage"></th><th>{{locale.t('customerLabel')}}</th><th>{{locale.t('customerPriority')}}</th><th>WhatsApp</th><th>{{locale.t('email')}}</th><th>{{locale.t('statusLabel')}}</th><th>{{locale.t('actions')}}</th></tr></thead>
+        <tbody><tr v-for="row in result.customers" :key="row.id"><td><input v-model="checked" type="checkbox" :value="row.id" :aria-label="String(row.id)" :disabled="recoveryBusy||bulkBusy||loading||saving||bulkBusy"></td>
+          <td><button class="text-start font-bold" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.name||'#'+row.id}}</button><RecordTags :tags="row.tags"/><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
           <td>{{row.priority}}</td><td dir="ltr">{{row.whatsapp||'—'}}</td><td dir="ltr">{{row.email||'—'}}</td>
-          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action" :disabled="bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="row.has_account===false&&row.active" class="mini-action ms-2" :disabled="bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
+          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="row.email!==admin.identity?.email" class="mini-action ms-2 text-rose-600" :disabled="loading||saving||bulkBusy||recoveryBusy" @click="deleteTarget={id:row.id,revision:row.revision,label:row.company_name||row.name||'#'+row.id}">{{locale.t('accountDeleteTitle')}}</button><button v-if="row.has_account===false&&row.active" class="mini-action ms-2" :disabled="recoveryBusy||bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
         </tr></tbody>
       </table>
       <p v-if="!loading&&!result.customers.length&&!error" class="p-4 text-sm">{{locale.t('adminNoCustomers')}}</p>
     </div>
     <div class="flex items-center justify-between gap-3">
-      <button class="mini-action" :disabled="bulkBusy||loading||saving||result.page<=1" @click="load(result.page-1)">{{locale.t('back')}}</button>
+      <button class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving||result.page<=1" @click="load(result.page-1)">{{locale.t('back')}}</button>
       <span>{{result.page}} / {{result.last_page}} · {{result.total}}</span>
-      <button class="mini-action" :disabled="bulkBusy||loading||saving||result.page>=result.last_page" @click="load(result.page+1)">{{locale.t('adminNext')}}</button>
+      <button class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving||result.page>=result.last_page" @click="load(result.page+1)">{{locale.t('adminNext')}}</button>
     </div>
     <CustomerAccountPanel :customer="accountCustomer" @close="accountCustomer=null" @busy="accountBusy=$event" @saved="accountSaved"/>
     <AdaptivePanel :open="open" :title="locale.t('customer360')" wide @close="close">
@@ -105,21 +108,21 @@ onMounted(()=>load())
         </section>
         <section class="admin-surface grid gap-3 rounded-2xl p-4 md:grid-cols-2">
           <p class="text-xs md:col-span-2">{{locale.t('adminCustomerAccountHelp')}}</p>
-          <label class="form-field">{{locale.t('adminCompany')}}<input v-model="draft.company_name" required maxlength="255" :disabled="bulkBusy||saving"></label>
-          <label class="form-field">WhatsApp<input v-model="draft.whatsapp" dir="ltr" maxlength="64" :disabled="bulkBusy||saving"></label>
-          <label class="form-field">{{locale.t('country')}}<input v-model="draft.country_name" maxlength="255" :disabled="bulkBusy||saving"></label>
-          <label class="form-field">{{locale.t('adminCountryCode')}}<input v-model="draft.country_code" dir="ltr" maxlength="2" pattern="[A-Za-z]{2}" :disabled="bulkBusy||saving"></label>
-          <label class="form-field">{{locale.t('customerPriority')}}<input v-model.number="draft.priority" type="number" min="0" max="255" required :disabled="bulkBusy||saving"></label>
+          <label class="form-field">{{locale.t('adminCompany')}}<input v-model="draft.company_name" required maxlength="255" :disabled="recoveryBusy||bulkBusy||saving"></label>
+          <label class="form-field">WhatsApp<input v-model="draft.whatsapp" dir="ltr" maxlength="64" :disabled="recoveryBusy||bulkBusy||saving"></label>
+          <label class="form-field">{{locale.t('country')}}<input v-model="draft.country_name" maxlength="255" :disabled="recoveryBusy||bulkBusy||saving"></label>
+          <label class="form-field">{{locale.t('adminCountryCode')}}<input v-model="draft.country_code" dir="ltr" maxlength="2" pattern="[A-Za-z]{2}" :disabled="recoveryBusy||bulkBusy||saving"></label>
+          <label class="form-field">{{locale.t('customerPriority')}}<input v-model.number="draft.priority" type="number" min="0" max="255" required :disabled="recoveryBusy||bulkBusy||saving"></label>
           <div v-if="selected" class="text-sm"><b>{{selected.name}}</b><p dir="ltr">{{selected.email}}</p></div>
-          <label class="flex items-center gap-2"><input v-model="draft.active" type="checkbox" :disabled="bulkBusy||saving">{{locale.t('active')}}</label>
-          <label class="flex items-center gap-2"><input v-model="draft.direct_link_enabled" type="checkbox" :disabled="bulkBusy||saving">{{locale.t('directAccess')}}</label>
-          <label class="form-field md:col-span-2">{{locale.t('notes')}}<textarea v-model="draft.notes" rows="5" maxlength="10000" :disabled="bulkBusy||saving"></textarea></label>
+          <label class="flex items-center gap-2"><input v-model="draft.active" type="checkbox" :disabled="recoveryBusy||bulkBusy||saving">{{locale.t('active')}}</label>
+          <label class="flex items-center gap-2"><input v-model="draft.direct_link_enabled" type="checkbox" :disabled="recoveryBusy||bulkBusy||saving">{{locale.t('directAccess')}}</label>
+          <label class="form-field md:col-span-2">{{locale.t('notes')}}<textarea v-model="draft.notes" rows="5" maxlength="10000" :disabled="recoveryBusy||bulkBusy||saving"></textarea></label>
           <p class="text-xs md:col-span-2">{{locale.t('adminArchiveHelp')}}</p>
         </section>
         <p v-if="error" role="alert" class="auth-error">{{error}}</p>
         <div class="sticky bottom-0 z-10 flex justify-end gap-2 border-t border-[var(--c-border)] bg-[var(--c-surface)] py-3">
-          <button type="button" class="mini-action" :disabled="bulkBusy||saving" @click="close">{{locale.t('cancel')}}</button>
-          <button class="mini-action" :disabled="bulkBusy||saving||loading||!draft.company_name?.trim()"><Save :size="17"/>{{locale.t(saving?'adminLoading':'save')}}</button>
+          <button type="button" class="mini-action" :disabled="recoveryBusy||bulkBusy||saving" @click="close">{{locale.t('cancel')}}</button>
+          <button class="mini-action" :disabled="recoveryBusy||bulkBusy||saving||loading||!draft.company_name?.trim()"><Save :size="17"/>{{locale.t(saving?'adminLoading':'save')}}</button>
         </div>
       </form>
     </AdaptivePanel>

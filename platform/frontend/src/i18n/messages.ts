@@ -4,6 +4,17 @@ export type TranslationMap = Record<string,string>
 
 export const baseMessages: Record<Locale, TranslationMap> = {
   fa: {
+    accountDeleteTitle:"حذف قابل بازگردانی",
+    accountRecoveryTitle:"حذف‌شده‌ها و بازگردانی",
+    accountUndo:"بازگرداندن",
+    accountTrashEmpty:"حساب حذف‌شده‌ای وجود ندارد.",
+    accountImportBackup:"بارگذاری پشتیبان JSON (فایل ساخت‌یافتهٔ اطلاعات)",
+    accountDownloadBackup:"۱. دریافت فایل پشتیبان",
+    accountBackupConfirmed:"فایل را ذخیره کرده‌ام و حذف این حساب و حساب مرتبط با آن را تأیید می‌کنم.",
+    accountDeleteWarning:"حساب از فهرست‌ها حذف و ورود آن بسته می‌شود. حساب کاربری و پروندهٔ مشتری مرتبط با هم حذف می‌شوند. سوابق سفارش حفظ می‌شوند و بازگردانی از همین بخش ممکن است.",
+    accountBackupPrivacy:"فایل شامل اطلاعات خصوصی است؛ آن را در جای امن نگه دارید. رمز و اطلاعات ورود در فایل رمزگذاری شده‌اند. مرورگر دریافت فایل را آغاز می‌کند؛ پیش از تأیید، ذخیره‌شدن آن را بررسی کنید.",
+    accountRecoveryHelp:"حساب را از پایگاه داده بازگردانید یا فایل پشتیبان همان حساب را بارگذاری کنید. ورودهای قبلی و لینک‌های ورود لغوشده دوباره فعال نمی‌شوند.",
+
     advancedAdminTitle:"پنل استثنایی مدیر ارشد",
     advancedAdminHelp:"فقط برای قابلیت منتقل‌نشده، عیب‌یابی یا بازیابی؛ دسترسی ۱۵ دقیقه‌ای با ثبت دلیل. مدیریت معمول در همین رابط سفارشی انجام می‌شود.",
     advancedAdminReason:"دلیل استفاده",
@@ -129,6 +140,17 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'ارمغان · تولید و صادرات پوشاک',footerContact:'ارتباط فروش و پیگیری سفارش از مسیرهای داخل سایت انجام می‌شود.',skipContent:'پرش به محتوای اصلی'
   },
   ar: {
+    accountDeleteTitle:"حذف قابل للاستعادة",
+    accountRecoveryTitle:"الحسابات المحذوفة والاستعادة",
+    accountUndo:"التراجع عن الحذف",
+    accountTrashEmpty:"لا توجد حسابات محذوفة.",
+    accountImportBackup:"تحميل نسخة JSON الاحتياطية",
+    accountDownloadBackup:"١. تنزيل النسخة الاحتياطية",
+    accountBackupConfirmed:"حفظت الملف وأؤكد حذف الحساب والحساب المرتبط به.",
+    accountDeleteWarning:"يختفي الحساب من القوائم ويتوقف تسجيل الدخول. يُحذف حساب الدخول وملف العميل المرتبط معًا. يبقى سجل الطلبات ويمكن الاستعادة هنا.",
+    accountBackupPrivacy:"الملف يتضمن معلومات خاصة؛ احفظه بأمان. بيانات الدخول مشفرة. تحقق من حفظ الملف قبل التأكيد.",
+    accountRecoveryHelp:"استعد الحساب من قاعدة البيانات أو حمّل نسخته الأصلية. تبقى الجلسات وروابط الدخول الملغاة غير فعالة.",
+
     advancedAdminTitle:"لوحة استثنائية للمالك",
     advancedAdminHelp:"فقط لميزة لم تنقل بعد أو التشخيص أو الاستعادة؛ الوصول لمدة ١٥ دقيقة مع تسجيل السبب. الإدارة المعتادة من الواجهة المخصصة.",
     advancedAdminReason:"السبب",
@@ -254,6 +276,17 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'أرمغان · إنتاج وتصدير الملابس',footerContact:'يمكن التواصل مع المبيعات ومتابعة الطلب من داخل الموقع.',skipContent:'تخطي إلى المحتوى'
   },
   en: {
+    accountDeleteTitle:"Delete with recovery",
+    accountRecoveryTitle:"Deleted accounts and recovery",
+    accountUndo:"Undo deletion",
+    accountTrashEmpty:"No deleted accounts.",
+    accountImportBackup:"Import JSON backup",
+    accountDownloadBackup:"1. Download backup",
+    accountBackupConfirmed:"I have saved the file and confirm deletion of this account and its linked account.",
+    accountDeleteWarning:"The account disappears from lists and sign-in is disabled. The linked login and customer profile are deleted together. Order history is preserved; recovery is available here.",
+    accountBackupPrivacy:"The file contains private information. Keep it safe. Credentials are encrypted. Your browser starts the download; check that the file is saved before confirming.",
+    accountRecoveryHelp:"Undo from the database or import the original backup for that account. Revoked sessions and sign-in links remain revoked.",
+
     advancedAdminTitle:"Senior administrator exception",
     advancedAdminHelp:"Only for an unmigrated feature, diagnosis or recovery. Access lasts 15 minutes and the reason is recorded. Normal work uses the custom interface.",
     advancedAdminReason:"Reason",
@@ -379,6 +412,17 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'Armaghan · Garment manufacturing & export',footerContact:'Sales contact and order tracking are available through the site.',skipContent:'Skip to main content'
   },
   ku: {
+    accountDeleteTitle:"سڕینەوە بە توانای گەڕاندنەوە",
+    accountRecoveryTitle:"هەژمارە سڕاوەکان و گەڕاندنەوە",
+    accountUndo:"گەڕاندنەوە",
+    accountTrashEmpty:"هەژماری سڕاوە نییە.",
+    accountImportBackup:"بارکردنی پاشەکەوتی JSON",
+    accountDownloadBackup:"١. داگرتنی پاشەکەوت",
+    accountBackupConfirmed:"فایلەکەم پاشەکەوت کردووە و سڕینەوەی ئەم هەژمارە و هەژمارە پەیوەستەکە پشتڕاست دەکەمەوە.",
+    accountDeleteWarning:"هەژمار لە لیستەکان دەسڕدرێتەوە و چوونەژوورەوە ڕادەگیرێت. هەژماری بەکارهێنەر و کڕیاری پەیوەست پێکەوە دەسڕدرێنەوە. مێژووی داواکاری دەمێنێتەوە.",
+    accountBackupPrivacy:"فایلەکە زانیاری تایبەتی تێدایە؛ بە پارێزراوی بیپارێزە. زانیاری چوونەژوورەوە کۆدکراوە. پێش پشتڕاستکردنەوە دڵنیابە فایلەکە پاشەکەوت بووە.",
+    accountRecoveryHelp:"لە بنکەدراوە یان فایلە ڕەسەنەکە هەژمار بگەڕێنەوە. دانیشتنەکان و بەستەرە هەڵوەشاوەکانی چوونەژوورەوە چالاک نابنەوە.",
+
     advancedAdminTitle:"پانێڵی تایبەتی خاوەن",
     advancedAdminHelp:"تەنها بۆ تایبەتمەندی نەگوازراوە، پشکنین یان گەڕاندنەوە؛ دەستگەیشتن بۆ ١٥ خولەک و هۆکارەکە تۆمار دەکرێت. کاری ئاسایی لە ڕووکارە تایبەتەکەیە.",
     advancedAdminReason:"هۆکار",
