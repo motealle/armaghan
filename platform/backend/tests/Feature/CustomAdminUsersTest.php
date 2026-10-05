@@ -7,6 +7,7 @@ use App\Services\GoogleAdminIdentityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Two\User as GoogleUser;
 use Tests\TestCase;
 class CustomAdminUsersTest extends TestCase
@@ -60,9 +61,12 @@ class CustomAdminUsersTest extends TestCase
     }
     public function test_owner_is_protected_and_can_disable_other_admin_without_deleting_data(): void
     {
-        $owner=$this->owner();$target=User::factory()->admin()->create(['email'=>'amirmashti1378@gmail.com']);$this->actingAs($owner);$rows=collect($this->getJson('/api/admin/users')->json('users'))->keyBy('id');
+        $owner=$this->owner();$target=User::factory()->admin()->create(['email'=>'amirmashti1378@gmail.com']);$remember=$target->remember_token;
+        DB::table('sessions')->insert(['id'=>'target-session','user_id'=>$target->id,'ip_address'=>'127.0.0.1','user_agent'=>'test','payload'=>'x','last_activity'=>now()->timestamp]);
+        $this->actingAs($owner);$rows=collect($this->getJson('/api/admin/users')->json('users'))->keyBy('id');
         $this->patchJson('/api/admin/users/'.$owner->id,['name'=>'Bad','role'=>'admin','active'=>false,'revision'=>$rows[$owner->id]['revision']])->assertForbidden();
         $this->patchJson('/api/admin/users/'.$target->id,['name'=>$target->name,'role'=>'admin','active'=>false,'revision'=>$rows[$target->id]['revision']])->assertOk();
+        $this->assertDatabaseMissing('sessions',['id'=>'target-session']);$this->assertNotSame($remember,$target->fresh()->remember_token);
         $this->actingAs($target->fresh())->getJson('/api/admin/products')->assertForbidden();$this->assertDatabaseCount('users',2);
     }
     public function test_customer_deactivation_blocks_password_login_and_stale_edit_fails(): void
