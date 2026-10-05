@@ -108,8 +108,8 @@ describe('catalog API staged merge',()=>{
     const merged=mergeCatalogSnapshot(snapshot,products,categories)
     const product=merged.products.find(item=>item.code==='11001')
 
-    expect(product?.image).toBe('/backend/api/catalog/media/1/card')
-    expect(product?.gallery).toEqual(['/backend/api/catalog/media/1/detail'])
+    expect(product?.image).toBe('/backend/api/catalog/media/1/card?v=20261005-card-hotfix-1')
+    expect(product?.gallery).toEqual(['/backend/api/catalog/media/1/detail?v=20261005-card-hotfix-1'])
   })
 
 })
