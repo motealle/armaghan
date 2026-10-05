@@ -89,6 +89,18 @@ async function adminEditorSaved(){
 function adminEditorClosed(){
   adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null
 }
+async function editFromManager(product:AdminProduct|null){
+  adminEditorError.value=''
+  try{
+    if(!adminTaxonomy.value.length)adminTaxonomy.value=(await fetchProductTaxonomy()).subcategories
+    managerOpen.value=false
+    adminProduct.value=product
+    adminInitial.value=null
+    adminEditorOpen.value=true
+  }catch{
+    adminEditorError.value=locale.t('adminRequestFailed')
+  }
+}
 </script>
 
 <template>
@@ -199,7 +211,7 @@ function adminEditorClosed(){
       @click="managerOpen=true"
     ><Pencil :size="18"/><span>{{locale.t('adminProducts')}}</span></button>
     <AdaptivePanel :open="managerOpen" :title="locale.t('adminProducts')" wide @close="managerOpen=false">
-      <BackendProductsPanel v-if="managerOpen"/>
+      <BackendProductsPanel v-if="managerOpen" external-editor @edit-request="editFromManager"/>
     </AdaptivePanel>
   </section>
 </template>
