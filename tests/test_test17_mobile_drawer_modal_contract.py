@@ -21,7 +21,8 @@ assert "hidden lg:flex" in header or ("app-header-expanded" in header and "useRe
 assert "desktop-nav-link" in header
 assert "mobile-drawer-backdrop" in drawer and "mobile-drawer-panel" in drawer
 assert "locale.setManual" in drawer
-assert "session.logout" in drawer
+assert "session.logout" not in drawer
+assert "@click.stop=\"logout\"" in header
 assert "emit('login')" in drawer
 assert 'v-for="item in modes"' not in theme
 assert "theme.toggle" in theme
