@@ -1,5 +1,13 @@
 # Armaghan Trading B2B Catalog — Project Handoff
 
+## P0 — Gallery Manager و ویرایش مدیر از صفحه محصولات — ۲۰۲۶-۱۰-۰۵
+
+- علت واقعی placeholderهای گمراه‌کننده: API رسانه را داشت اما URLهای `/backend/storage/media/...` روی production پاسخ 404 می‌دادند. مسیر تحویل رسانه به route عمومی کنترل‌شده Laravel منتقل شد تا فایل thumb/card/detail از storage خصوصی برنامه stream شود و به symlink وب‌سرور وابسته نباشد.
+- گالری مدیریت فقط به تعداد رسانه واقعی کارت می‌سازد؛ صفر رسانه یعنی empty-state. هر کارت عکس واقعی، checkbox، جابه‌جایی و برچسب تصویر اصلی دارد؛ خرابی فایل صریح نمایش داده می‌شود و قابل انتخاب/حذف است.
+- حذف چندرسانه‌ای manager-only با revision و ownership check اضافه شد؛ stale revision و media خارجی رد می‌شوند.
+- فقط session واقعی `admin.identity` روی صفحه محصولات دکمه ویرایش را فعال می‌کند. همان BackendProductEditor به شکل Bottom Sheet/AdaptivePanel باز می‌شود. backend row موجود با code دقیق ویرایش می‌شود و seed-only آینده با همان داده اولیه materialize می‌شود.
+- CI شاخه `37256170956` PASS: backend 125 tests / 1132 assertions، Composer audit پاک؛ frontend 84 tests / 19 files، type-check و production build PASS. انتشار production هنوز باید بعد از merge تأیید شود.
+
 ## P0 — نجات مسیر عکس محصول — ۲۰۲۶-۱۰-۰۴
 
 - انتخاب چندعکس، پیش‌نمایش و ارسال ترتیبی مقاوم پیاده شد؛ هر آپلود از revision تازه عکس قبلی استفاده می‌کند و شکست یک فایل، محصول یا آپلودهای تأییدشده را برنمی‌گرداند.
