@@ -78,6 +78,19 @@ describe('visual style profile sanitization',()=>{
     expect(profile.styles['home.page']).toEqual({backgroundColor:'mint'})
   })
 
+  it('keeps bounded media fit and focal point controls only on media targets',()=>{
+    const profile=sanitizeVisualStyleProfile({
+      styles:{
+        'hero.media':{imageFit:'cover',imagePositionX:20,imagePositionY:80,textColor:'blue'},
+        'home.page':{imageFit:'cover',imagePositionX:20},
+        'home.about.media':{imageFit:'stretch',imagePositionX:101,imagePositionY:-1},
+      },
+    })
+    expect(profile.styles['hero.media']).toEqual({imageFit:'cover',imagePositionX:20,imagePositionY:80})
+    expect(profile.styles['home.page']).toEqual(undefined)
+    expect(profile.styles['home.about.media']).toEqual(undefined)
+  })
+
   it('compares normalized profiles deterministically',()=>{
     const a=sanitizeVisualStyleProfile({
       styles:{'hero.title':{textColor:'blue'}},

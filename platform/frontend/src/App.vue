@@ -27,15 +27,12 @@ const session=useSessionStore()
 const admin=useAdminStore()
 const visual=useVisualStyleStore()
 watch(()=>!!admin.identity||session.isAdmin,(allowed)=>{if(!allowed)visual.setEnabled(false)},{immediate:true})
-const adminLogoutBusy=ref(false)
-const adminLogoutError=ref(false)
-async function logoutAdmin(){adminLogoutBusy.value=true;adminLogoutError.value=false;try{await admin.logout()}catch{adminLogoutError.value=true}finally{adminLogoutBusy.value=false}}
 const customers=useCustomersStore()
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
 const theme=useThemeStore()
 const route=useRoute()
-watch(()=>route.path,(path)=>{if(path.startsWith('/admin')||path.startsWith('/tracking'))visual.setEnabled(false)},{immediate:true})
+watch(()=>route.path,(path)=>{if(path!=='/')visual.setEnabled(false)},{immediate:true})
 
 const {profile,policy}=useResolvedAppearance()
 const showFooter=computed(()=>policy.value.showFooter&&(profile.value!=='mobile'||route.path==='/'))
@@ -73,8 +70,6 @@ onMounted(async()=>{
     <nav v-if="admin.identity" class="mx-auto flex max-w-[1500px] flex-wrap items-center gap-3 px-4 py-3 text-sm" :aria-label="locale.t('adminRealSession')">
       <RouterLink class="mini-action" to="/admin">{{locale.t('adminRealSession')}}</RouterLink>
       <span>{{locale.t(admin.identity.is_owner?'adminOwnerRole':'adminAdminRole')}}</span>
-      <button class="mini-action ms-auto" :disabled="adminLogoutBusy" @click="logoutAdmin">{{locale.t('logout')}}</button>
-      <p v-if="adminLogoutError" class="auth-error" role="alert">{{locale.t('logoutFailed')}}</p>
     </nav>
     <main id="main-content" tabindex="-1" class="mx-auto max-w-[1500px] px-3 py-4 md:px-5 md:py-6 lg:px-8 lg:py-8 xl:px-10">
       <RouterView v-slot="{ Component }">
@@ -85,7 +80,7 @@ onMounted(async()=>{
     <BottomNav/>
     <LoginSheet :open="loginOpen" @close="loginOpen=false"/>
     <HelpSheet :open="helpOpen" @close="helpOpen=false"/>
-    <template v-if="(admin.identity||session.isAdmin)&&!session.impersonatedCustomerId">
+    <template v-if="route.path==='/'&&(admin.identity||session.isAdmin)&&!session.impersonatedCustomerId">
       <VisualEditorQuickLauncher/>
       <VisualEditor/>
     </template>

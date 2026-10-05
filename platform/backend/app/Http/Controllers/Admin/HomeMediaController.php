@@ -8,17 +8,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class HomeMediaController extends Controller {
  public const TARGETS=['hero','about','capability.production','capability.export','capability.trade','banner.1','banner.2','banner.3'];
  public function __construct(private StyleProfileService $profiles) {}
  private function json(array $data,int $status=200) {return response()->json($data,$status)->header('Cache-Control','no-store, private');}
  private function revision(StyleProfile $profile): string {return hash('sha256',json_encode($profile->media()->where('collection_name',StyleProfile::MEDIA_COLLECTION)->orderBy('id')->get(['id','custom_properties','updated_at'])->map(fn($m)=>$m->only(['id','custom_properties','updated_at']))->all(),JSON_THROW_ON_ERROR));}
- private function snapshot(StyleProfile $profile): array {return ['revision'=>$this->revision($profile),'images'=>$profile->getMedia(StyleProfile::MEDIA_COLLECTION)->map(fn($m)=>['id'=>$m->id,'target'=>$m->getCustomProperty('target'),'url'=>$m->getUrl(),'channels'=>$m->getCustomProperty('channels',[])])->values()->all()];}
+ private function snapshot(StyleProfile $profile): array {return ['revision'=>$this->revision($profile),'images'=>$profile->getMedia(StyleProfile::MEDIA_COLLECTION)->map(fn($m)=>['id'=>$m->id,'target'=>$m->getCustomProperty('target'),'url'=>route('admin.home-media.file',['media'=>$m->id]),'channels'=>$m->getCustomProperty('channels',[])])->values()->all()];}
  public function index(Request $request) {return $this->json($this->snapshot($this->profiles->ensureDefault($request->user())));}
  public function publicIndex(string $channel) {
   $profile=$this->profiles->findDefault();$images=[];
-  if($profile)foreach($profile->getMedia(StyleProfile::MEDIA_COLLECTION) as $m)if(in_array($channel,$m->getCustomProperty('channels',[]),true))$images[$m->getCustomProperty('target')]=$m->getUrl();
+  if($profile)foreach($profile->getMedia(StyleProfile::MEDIA_COLLECTION) as $m)if(in_array($channel,$m->getCustomProperty('channels',[]),true))$images[$m->getCustomProperty('target')]=route('home-media.file',['media'=>$m->id]);
   return $this->json(['images'=>(object)$images]);
+ }
+ public function adminFile(Media $media) {return $this->mediaFile($media);}
+ public function publicFile(Media $media) {
+  abort_unless(count($media->getCustomProperty('channels',[]))>0,404);
+  return $this->mediaFile($media);
+ }
+ private function mediaFile(Media $media) {
+  abort_unless($media->model_type===StyleProfile::class&&$media->collection_name===StyleProfile::MEDIA_COLLECTION,404);
+  $path=$media->getPath();abort_unless(is_file($path)&&filesize($path)>0,404);
+  return response()->file($path,['Cache-Control'=>'public, max-age=31536000, immutable','Content-Type'=>(string)$media->mime_type,'X-Content-Type-Options'=>'nosniff']);
  }
  public function upload(Request $request) {
   $data=$request->validate(['revision'=>['required','regex:/^[a-f0-9]{64}$/'],'target'=>['required',Rule::in(self::TARGETS)],'image'=>['required','file','image','mimetypes:image/jpeg,image/png,image/webp','max:8192','dimensions:max_width=5000,max_height=5000']]);

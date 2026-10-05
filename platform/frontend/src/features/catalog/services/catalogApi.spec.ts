@@ -93,8 +93,9 @@ describe('catalog API staged merge',()=>{
         sort_order:10,
         media:[{
           id:'media-1',
-          url:'/backend/storage/media/products/1/conversions/front-card.jpg',
-          thumb_url:'/backend/storage/media/products/1/conversions/front-thumb.jpg',
+          url:'/backend/api/catalog/media/1/card',
+          thumb_url:'/backend/api/catalog/media/1/thumb',
+          detail_url:'/backend/api/catalog/media/1/detail',
         }],
         category:{code:'1',names:{fa:'نوزادی',ar:null,en:null,ku:null}},
         subcategory:{code:'11',names:{fa:'لباس نوزادی',ar:null,en:null,ku:null}},
@@ -107,8 +108,8 @@ describe('catalog API staged merge',()=>{
     const merged=mergeCatalogSnapshot(snapshot,products,categories)
     const product=merged.products.find(item=>item.code==='11001')
 
-    expect(product?.image).toBe('/backend/storage/media/products/1/conversions/front-card.jpg')
-    expect(product?.gallery).toEqual(['/backend/storage/media/products/1/conversions/front-card.jpg'])
+    expect(product?.image).toBe('/backend/api/catalog/media/1/card')
+    expect(product?.gallery).toEqual(['/backend/api/catalog/media/1/detail'])
   })
 
 })

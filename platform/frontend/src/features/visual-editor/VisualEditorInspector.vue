@@ -50,6 +50,12 @@ function setToken(key:'textColor'|'backgroundColor'|'borderColor',value:BrandTok
 function clearToken(key:'textColor'|'backgroundColor'|'borderColor'){
   visual.clearStyleProperty(props.selected.id,key)
 }
+function setImageFit(value:'contain'|'cover'){
+  visual.patchStyle(props.selected.id,{imageFit:value})
+}
+function setImagePosition(key:'imagePositionX'|'imagePositionY',value:number){
+  visual.patchStyle(props.selected.id,{[key]:Math.max(0,Math.min(100,Math.round(value)))})
+}
 function updateText(event:Event){
   if(!props.selected.textEditable)return
   visual.setText(props.selected.id,locale.locale,(event.target as HTMLTextAreaElement).value)
@@ -131,6 +137,25 @@ function resetSelected(){
         @click="setToken('borderColor',token.id)"
       ><i :style="{background:token.value}"></i><span>{{token.label}}</span></button>
     </div>
+  </section>
+
+  <section v-if="targetDefinition?.kind==='media'&&allowsStyle('imageFit')" class="visual-editor-control-group">
+    <div class="visual-editor-control-title"><Palette :size="17"/><b>نحوه نمایش عکس</b></div>
+    <div class="visual-token-grid">
+      <button type="button" :class="{active:(currentStyle.imageFit??'contain')==='contain'}" @click="setImageFit('contain')">نمایش کامل</button>
+      <button type="button" :class="{active:currentStyle.imageFit==='cover'}" @click="setImageFit('cover')">کراپ برای پر کردن</button>
+    </div>
+    <small>«نمایش کامل» چیزی از عکس را نمی‌بُرد؛ «کراپ» قاب را پر می‌کند و نقطه تمرکز با کنترل‌های زیر تنظیم می‌شود.</small>
+  </section>
+
+  <section v-if="targetDefinition?.kind==='media'&&allowsStyle('imagePosition')" class="visual-editor-control-group">
+    <div class="visual-editor-control-title"><Palette :size="17"/><b>نقطه تمرکز عکس</b></div>
+    <label class="form-field">افقی · {{currentStyle.imagePositionX??50}}٪
+      <input type="range" min="0" max="100" step="1" :value="currentStyle.imagePositionX??50" @input="setImagePosition('imagePositionX',Number(($event.target as HTMLInputElement).value))">
+    </label>
+    <label class="form-field">عمودی · {{currentStyle.imagePositionY??50}}٪
+      <input type="range" min="0" max="100" step="1" :value="currentStyle.imagePositionY??50" @input="setImagePosition('imagePositionY',Number(($event.target as HTMLInputElement).value))">
+    </label>
   </section>
 
   <section class="visual-editor-row-actions">

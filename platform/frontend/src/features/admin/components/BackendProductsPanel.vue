@@ -10,6 +10,10 @@ import { useCatalogStore } from '@/stores/catalog'
 import { useAdminStore } from '../store'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
 import { fetchAdminProducts, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory, type ProductPage } from '../services/adminApi'
+const props=withDefaults(defineProps<{externalEditor?:boolean}>(),{externalEditor:false})
+const emit=defineEmits<{editRequest:[product:AdminProduct|null]}>()
+const props=withDefaults(defineProps<{externalEditor?:boolean}>(),{externalEditor:false})
+const emit=defineEmits<{editRequest:[product:AdminProduct|null]}>()
 const locale=useLocaleStore(),admin=useAdminStore(),catalog=useCatalogStore()
 const result=ref<ProductPage>({products:[],page:1,last_page:1,total:0})
 const taxonomy=ref<AdminSubcategory[]>([])
@@ -29,7 +33,11 @@ async function load(page=1){
     error.value=locale.t('adminRequestFailed')
   }finally{loading.value=false}
 }
-function edit(product:AdminProduct|null){selected.value=product;editorOpen.value=true;note.value=''}
+function edit(product:AdminProduct|null){
+  note.value=''
+  if(props.externalEditor){emit('editRequest',product);return}
+  selected.value=product;editorOpen.value=true
+}
 async function saved(){
   editorOpen.value=false;selected.value=null;note.value=locale.t('adminSaved')
   await load(result.value.page)
@@ -74,6 +82,6 @@ onMounted(()=>load())
       <button class="pagination-button" :disabled="bulkBusy||loading||result.page>=result.last_page" :aria-label="locale.t('next')" @click="load(result.page+1)"><ChevronLeft :size="17"/></button>
     </div></div>
     <ProductSpecificationsPanel :open="schemaOpen" :taxonomy="taxonomy" @close="schemaOpen=false" @saved="schemaOpen=false;saved()"/>
-    <ProductEditorPanel live :open="editorOpen" :product-id="selected?.id??null" :server-product="selected" :taxonomy="taxonomy" @close="editorOpen=false" @saved="saved"/>
+    <ProductEditorPanel v-if="!externalEditor" live :open="editorOpen" :product-id="selected?.id??null" :server-product="selected" :taxonomy="taxonomy" @close="editorOpen=false" @saved="saved"/>
   </section>
 </template>

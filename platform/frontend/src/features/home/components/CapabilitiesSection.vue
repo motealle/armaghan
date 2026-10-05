@@ -28,7 +28,7 @@ const selected=computed(()=>capabilities.find(item=>item.id===selectedId.value)?
 
     <div data-style-id="home.capabilities.grid" data-style-label="شبکه توانمندی‌ها" class="test26-capability-grid">
       <article v-for="item in capabilities" :key="item.id" :data-style-id="`home.capability.${item.id}`" :data-style-label="`کارت ${locale.t(item.titleKey)}`" class="test26-capability-card">
-        <div class="test26-capability-media">
+        <div :data-style-id="`home.capability.${item.id}.media`" :data-style-label="`تصویر ${locale.t(item.titleKey)}`" class="test26-capability-media">
           <SmartImage :src="homeMedia.resolve('capability.'+item.id,item.image)" :fallback-src="item.fallback" :alt="locale.t(item.titleKey)" :label="locale.t(item.titleKey)" aspect="hero"/>
         </div>
         <div :data-style-id="`home.capability.${item.id}.body`" :data-style-label="`پنل متن ${locale.t(item.titleKey)}`" class="test26-capability-body">

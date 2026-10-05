@@ -16,12 +16,16 @@ class HomeMediaTest extends TestCase {
  }
  public function test_uploaded_home_media_is_not_public_until_explicit_channel_publication(): void {
   $this->actingAs(User::factory()->admin()->create());$state=$this->getJson('/api/admin/home-media')->assertOk()->json();$state=$this->upload('hero',$state);$id=$state['images'][0]['id'];
+  $this->get(parse_url($state['images'][0]['url'],PHP_URL_PATH))->assertOk()->assertHeader('X-Content-Type-Options','nosniff');
+  $this->get('/api/home-media/file/'.$id)->assertNotFound();
   $this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');
   $state=$this->postJson('/api/admin/home-media/publish/staging',['revision'=>$state['revision'],'selection'=>[$id]])->assertOk()->json();
-  $this->getJson('/api/home-media/staging')->assertJsonStructure(['images'=>['hero']]);$this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');
+  $public=$this->getJson('/api/home-media/staging')->assertJsonStructure(['images'=>['hero']])->json('images.hero');
+  $this->get(parse_url($public,PHP_URL_PATH))->assertOk()->assertHeader('X-Content-Type-Options','nosniff');
+  $this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');
   $state=$this->postJson('/api/admin/home-media/publish/production',['revision'=>$state['revision'],'selection'=>[$id]])->assertOk()->json();
   $this->getJson('/api/home-media/production')->assertJsonStructure(['images'=>['hero']]);$media=StyleProfile::first()->getMedia(StyleProfile::MEDIA_COLLECTION)->first();$this->assertStringContainsString('media/home/'.$id.'/',$media->getPath());$this->assertNotFalse(getimagesize($media->getPath()));
-  $this->postJson('/api/admin/home-media/publish/production',['revision'=>$state['revision'],'selection'=>[]])->assertOk();$this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');$this->assertDatabaseCount('media',1);
+  $this->postJson('/api/admin/home-media/publish/production',['revision'=>$state['revision'],'selection'=>[]])->assertOk();$this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');$this->get('/api/home-media/file/'.$id)->assertOk();$this->assertDatabaseCount('media',1);
  }
  public function test_stale_foreign_duplicate_target_and_invalid_upload_are_rejected_atomically(): void {
   $this->actingAs(User::factory()->admin()->create());$old=$this->getJson('/api/admin/home-media')->json();$state=$this->upload('hero',$old);$state=$this->upload('hero',$state);

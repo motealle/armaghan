@@ -14,6 +14,14 @@
 - On the public Products page, edit affordances are rendered only from the real server admin session. Reuse BackendProductEditor; do not create a browser-local parallel admin editor/store.
 - A seed-only product edited by a real manager should materialize into the canonical backend row using its existing code/taxonomy rather than creating a parallel fake product.
 
+## Route-scoped admin editing invariant
+- Appearance editing belongs only on the home page; product management belongs only on the products page and admin panel.
+- All editor entry points require a real server-backed admin identity. Never enable admin editing from browser-local role flags.
+- Reuse BackendProductEditor for catalog and admin product editing. Avoid nested modal/sheet stacks; close the listing sheet before opening the editor.
+- Product and home media must be delivered through application-controlled media routes rather than shared-host public-storage symlinks.
+- Product gallery cards represent persisted media only. Zero persisted media means zero fake image slots.
+- Automated tests validate contracts/builds; visual acceptance is owner-led through screenshots and must be reported separately.
+
 ## Deployment and immutable tests
 1. `/t` is the validation workspace; root `/public_html` is protected.
 2. Never recursive-delete, mirror-delete or root-wide-sync over FTP.

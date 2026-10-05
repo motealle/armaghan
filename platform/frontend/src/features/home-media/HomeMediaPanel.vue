@@ -3,10 +3,13 @@ import {computed,onMounted,ref,watch} from 'vue'
 import {requestJson} from '@/features/auth/services/customerSessionApi'
 import {useLocaleStore} from '@/stores/locale'
 import {useHomeMediaStore} from './store'
+const props=withDefaults(defineProps<{target?:string}>(),{target:''})
 const locale=useLocaleStore(),publicMedia=useHomeMediaStore()
 const words={fa:['تصاویر صفحه خانه','تصویر اصلی','درباره ارمغان','توانمندی تولید','آماده‌سازی صادرات','اسناد و تجارت','بنر نوزادی','بنر بچگانه','بنر زنانه','نسخه آزمایشی','صفحه اصلی','انتشار تصاویر','تصویر پیش‌فرض','بارگذاری تصویر','تصاویر ذخیره شدند؛ برای نمایش عمومی انتشار را بزنید.','تصاویر منتشر شدند.','عملیات انجام نشد؛ دوباره بارگذاری کنید.'],en:['Home images','Hero','About','Production','Export','Trade','Baby banner','Kids banner','Women banner','Test version','Main site','Publish images','Default image','Upload image','Saved; publish to show publicly.','Images published.','Action failed; reload and retry.'],ar:['صور الصفحة الرئيسية','الصورة الرئيسية','عن الشركة','الإنتاج','التصدير','التجارة','بانر الرضع','بانر الأطفال','بانر النساء','نسخة تجريبية','الموقع الرئيسي','نشر الصور','الصورة الافتراضية','رفع صورة','تم الحفظ؛ انشر لإظهار الصور.','تم نشر الصور.','تعذرت العملية؛ أعد التحميل.'],ku:['وێنەکانی ماڵەوە','وێنەی سەرەکی','دەربارە','بەرهەمهێنان','هەناردە','بازرگانی','ساوا','منداڵان','ژنان','تاقیکردنەوە','ماڵپەڕی سەرەکی','بڵاوکردنەوە','وێنەی بنەڕەتی','بارکردنی وێنە','پاشەکەوت کرا؛ بڵاوی بکەرەوە.','بڵاوکرایەوە.','سەرکەوتوو نەبوو؛ نوێ بکەرەوە.']}
 const w=(i:number)=>words[locale.locale][i]??''
 const targets=['hero','about','capability.production','capability.export','capability.trade','banner.1','banner.2','banner.3']
+const visibleTargets=computed(()=>props.target&&targets.includes(props.target)?[props.target]:targets)
+const targetWord=(target:string)=>targets.indexOf(target)+1
 interface Image {id:number;target:string;url:string;channels:string[]}
 interface Snapshot {revision:string;images:Image[]}
 const state=ref<Snapshot|null>(null),channel=ref('production'),chosen=ref<Record<string,number>>({}),busy=ref(false),message=ref(''),error=ref('')
@@ -24,10 +27,10 @@ async function publish(){if(!state.value||busy.value)return;busy.value=true;erro
   <div class="flex flex-wrap gap-2"><select v-model="channel" :disabled="busy" class="field-input" :aria-label="w(11)"><option value="staging">{{w(9)}}</option><option value="production">{{w(10)}}</option></select><button class="mini-action" :disabled="!state||busy" @click="publish">{{w(11)}}</button><button class="mini-action" :disabled="busy" @click="load">{{locale.locale==='fa'?'بارگذاری مجدد':locale.locale==='ar'?'إعادة التحميل':locale.locale==='ku'?'نوێکردنەوە':'Reload'}}</button></div>
   <p v-if="message" role="status">{{message}}</p><p v-if="error" role="alert" class="text-red-700">{{error}}</p>
   <div v-if="state" class="grid gap-3 sm:grid-cols-2">
-   <article v-for="(target,index) in targets" :key="target" class="rounded-xl border border-[var(--c-border)] p-3 space-y-2">
-    <h3 class="text-sm font-bold">{{w(index+1)}}</h3>
-    <select v-model.number="chosen[target]" :disabled="busy" class="field-input" :aria-label="w(index+1)"><option :value="0">{{w(12)}}</option><option v-for="image in state.images.filter(m=>m.target===target)" :key="image.id" :value="image.id">#{{image.id}}</option></select>
-    <img v-if="chosen[target]" :src="state.images.find(m=>m.id===chosen[target])?.url" :alt="w(index+1)" class="w-full h-28 object-contain rounded-lg">
+   <article v-for="target in visibleTargets" :key="target" class="rounded-xl border border-[var(--c-border)] p-3 space-y-2">
+    <h3 class="text-sm font-bold">{{w(targetWord(target))}}</h3>
+    <select v-model.number="chosen[target]" :disabled="busy" class="field-input" :aria-label="w(targetWord(target))"><option :value="0">{{w(12)}}</option><option v-for="image in state.images.filter(m=>m.target===target)" :key="image.id" :value="image.id">#{{image.id}}</option></select>
+    <img v-if="chosen[target]" :src="state.images.find(m=>m.id===chosen[target])?.url" :alt="w(targetWord(target))" class="w-full h-28 object-contain rounded-lg">
     <label class="block text-xs">{{w(13)}}<input type="file" accept="image/jpeg,image/png,image/webp" :disabled="busy" class="block max-w-full mt-2" @change="upload(target,$event)"></label>
    </article>
   </div>

@@ -1,5 +1,25 @@
 # Armaghan — Product Backlog
 
+## P0 — Admin UX and editor reliability — 2026-10-05
+
+Implemented the current admin-login reliability batch and the route-scoped editing flow. The home appearance editor is limited to the home page and now supports home-media selection plus fit/crop/focal controls. The products-page manager is limited to the products page, exposes edit beside the product code, supports adding products, and reuses the same canonical product editor/gallery used by the admin panel. Nested editing sheets were avoided.
+
+The product gallery contract remains server-authoritative: zero persisted media means zero fake slots; persisted media supports real-image rendering, explicit unavailable state, selection, deletion, reordering, and primary ordering. Home/product media delivery no longer depends on the shared-host public-storage symlink.
+
+Session persistence, one-time setup state, stable Tracking copy, reduced duplicate exit controls, and owner-controlled administrative revocation are included. Backend CI run 37277405193 passed with 129 tests / 1169 assertions. Visual acceptance is intentionally deferred to owner screenshots.
+
+## P0 — ورود ماندگار مدیر + ویرایشگرهای محدود به صفحه — ۲۰۲۶-۱۰-۰۵
+
+- ورود مدیر با identifier (ایمیل یا نام کاربری) انجام می‌شود. دو alias موقت اپراتوری بدون ذخیره رمز خام فعال‌اند: `mot` برای مالک فنی تا ۲۰۲۶-۱۰-۱۹ و `amirau` برای مدیر کسب‌وکار تا ۲۰۲۶-۱۱-۰۵. هر دو به حساب‌های مجاز از پیش تعریف‌شده نگاشت می‌شوند؛ ورود جدید پس از تاریخ انقضا رد می‌شود، اما Remember Cookie لاراول که قبلاً صادر شده تا logout یا revoke مالک معتبر می‌ماند.
+- login مدیر با Laravel remember token ماندگار است؛ خروج اجباری مدیر دیگر فقط از مسیر مالک اصلی انجام می‌شود و deactivation هم sessionهای سرور و هم remember_token را revoke می‌کند.
+- prompt تنظیم رمز بعد از هر Google login رفع شد: وضعیت تکمیل setup در دیتابیس ثبت می‌شود و Google login بعدی مستقیم به ادمین برمی‌گردد. مدیر می‌تواند رمز ساده حداقل ۸ نویسه تعیین کند؛ مشتری عادی همان سیاست ۱۲ نویسه + حرف/عدد را نگه می‌دارد.
+- عنوان «پیگیری» بعد از ورود تغییر نمی‌کند و logout تکراری داخل نمای ادمین حذف شد؛ تنها کنترل خروج عمومی هدر باقی مانده است.
+- دکمه Google به نشان رنگی شناخته‌شده مجهز شد. خطای provider مثل Unusual traffic قابل حذف تضمینی از سمت سایت نیست؛ سیاست اصلی کاهش مراجعه مجدد به Google با remember cookie است.
+- «ویرایش ظاهر» فقط در صفحه اصلی نمایش داده می‌شود. انتخاب تصویر hero/about/capabilities/banners از همان editor به HomeMediaPanel متصل است و برای media کنترل contain/cover و focal point افقی/عمودی ذخیره‌پذیر اضافه شد. home media نیز از Laravel route سرو می‌شود تا به symlink هاست وابسته نباشد.
+- «مدیریت محصولات» فقط در صفحه محصولات برای admin session واقعی ظاهر می‌شود. دکمه مداد کنار کد هر کارت همان BackendProductEditor را برای همان محصول باز می‌کند؛ دکمه مدیریت کل محصولات یک Bottom Sheet شامل فهرست و Add Product دارد، ولی برای جلوگیری از sheet داخل sheet، انتخاب محصول Sheet فهرست را می‌بندد و همان editor واحد را باز می‌کند. پنل ادمین نیز همین editor/gallery را reuse می‌کند.
+- Gallery محصول همچنان source-of-truth سرور است: کارت فقط برای media persisted ساخته می‌شود، عکس واقعی/خطای صریح، انتخاب چندتایی، حذف، reorder و primary image دارد؛ zero media یعنی zero placeholder.
+- Backend CI روی head قبل از closeout: run `37277405193` PASS؛ 129 تست و 1169 assertion. تست بصری طبق دستور مالک انجام نشد و مرجع بصری اسکرین‌شات‌های مالک است.
+
 ## P0 — Gallery Manager و ویرایش از صفحه محصولات — ۲۰۲۶-۱۰-۰۵
 
 ریشه شکست نمایش مشخص شد: رکوردهای رسانه واقعی در API موجود بودند (مثلاً محصول 11001 پنج رسانه داشت) اما URLهای مستقیم `/backend/storage/media/...` روی هاست 404 می‌دادند؛ SmartImage این شکست را با آیکون لباس می‌پوشاند و کارت‌های گمراه‌کننده می‌ساخت. راه منتخب: سرو رسانه از route کنترل‌شده Laravel `/api/catalog/media/{id}/{thumb|card|detail}` با fallback فایل واقعی، cache immutable و nosniff؛ عدم وابستگی به symlink عمومی هاست.

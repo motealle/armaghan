@@ -68,6 +68,15 @@ class StyleProfileCompiler
                 $declarations[] = 'border-color:'.$this->tokenVar($style['borderColor']).'!important';
             }
 
+            if (isset($style['imageFit'])) {
+                $declarations[] = '--editor-media-fit:'.$style['imageFit'];
+            }
+            if (isset($style['imagePositionX']) || isset($style['imagePositionY'])) {
+                $x = (int) ($style['imagePositionX'] ?? 50);
+                $y = (int) ($style['imagePositionY'] ?? 50);
+                $declarations[] = '--editor-media-position:'.$x.'% '.$y.'%';
+            }
+
             if (($style['hidden'] ?? false) === true) {
                 $declarations[] = 'display:none!important';
             }
@@ -114,6 +123,23 @@ class StyleProfileCompiler
                 }
 
                 $entry[$key] = $token;
+            }
+
+            if (array_key_exists('imageFit', $style) && $style['imageFit'] !== null) {
+                if (! is_string($style['imageFit']) || ! in_array($style['imageFit'], ['contain', 'cover'], true)) {
+                    throw new InvalidArgumentException("Invalid image fit for [{$id}].");
+                }
+                $entry['imageFit'] = $style['imageFit'];
+            }
+
+            foreach (['imagePositionX', 'imagePositionY'] as $key) {
+                if (! array_key_exists($key, $style) || $style[$key] === null) {
+                    continue;
+                }
+                if (! is_int($style[$key]) || $style[$key] < 0 || $style[$key] > 100) {
+                    throw new InvalidArgumentException("Invalid image position for [{$id}.{$key}].");
+                }
+                $entry[$key] = $style[$key];
             }
 
             if (($style['hidden'] ?? false) === true) {

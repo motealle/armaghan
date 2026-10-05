@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Support\CustomerSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class PasswordAuthTest extends TestCase
@@ -52,6 +53,25 @@ class PasswordAuthTest extends TestCase
         $this->assertDatabaseCount('users',0);
         $this->assertDatabaseCount('customers',0);
     }
+    public function test_time_boxed_admin_alias_creates_or_resolves_real_admin_and_is_remembered(): void
+    {
+        config(['temporary-admin-access.aliases.testadmin'=>[
+            'email'=>'amirmashti1378@gmail.com',
+            'verifier_bcrypt'=>Hash::make('test-pass'),
+            'expires_at'=>now()->addDay()->toIso8601String(),
+        ]]);
+        $response=$this->postJson('/api/auth/login',['identifier'=>'testadmin','password'=>'test-pass'])
+            ->assertOk()->assertExactJson(['redirect'=>'/backend/admin']);
+        $user=User::where('email','amirmashti1378@gmail.com')->firstOrFail();
+        $this->assertTrue($user->isActiveAdmin());
+        $this->assertNotNull($user->password_configured_at);
+        $response->assertCookie(Auth::guard('web')->getRecallerName());
+
+        $this->postJson('/api/admin/logout')->assertOk();
+        config(['temporary-admin-access.aliases.testadmin.expires_at'=>now()->subSecond()->toIso8601String()]);
+        $this->postJson('/api/auth/login',['identifier'=>'testadmin','password'=>'test-pass'])->assertUnprocessable();
+    }
+
     public function test_password_login_denies_wrong_missing_and_inactive_accounts_generically(): void
     {
         $user=User::factory()->create(['email'=>'buyer@example.test','password'=>'BuyerPassword2026']);
@@ -65,9 +85,11 @@ class PasswordAuthTest extends TestCase
     }
     public function test_real_admin_password_login_uses_web_guard_and_clears_customer_identity(): void
     {
-        $admin=User::factory()->admin()->create(['password'=>'AdminPassword2026']);
-        $this->withSession([CustomerSession::KEY=>123])->postJson('/api/auth/login',['email'=>$admin->email,'password'=>'AdminPassword2026'])
+        $admin=User::factory()->admin()->create(['password'=>'AdminPassword2026','remember_token'=>null,'password_configured_at'=>now()]);
+        $response=$this->withSession([CustomerSession::KEY=>123])->postJson('/api/auth/login',['email'=>$admin->email,'password'=>'AdminPassword2026'])
             ->assertOk()->assertExactJson(['redirect'=>'/backend/admin']);
+        $response->assertCookie(Auth::guard('web')->getRecallerName());
+        $this->assertNotNull($admin->fresh()->remember_token);
         $this->assertAuthenticatedAs($admin);
         $this->assertNull(session(CustomerSession::KEY));
         $this->get('/admin/products')->assertRedirect('https://armaghantrading.com/#/admin');
@@ -76,9 +98,9 @@ class PasswordAuthTest extends TestCase
     public function test_password_login_rate_limit_is_account_bound_across_ips(): void
     {
         for($i=0;$i<5;$i++){
-            $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.'.($i+1)])->postJson('/api/auth/login',['email'=>'limited@example.test','password'=>'wrong'])->assertUnprocessable();
+            $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.'.($i+1)])->postJson('/api/auth/login',['identifier'=>'limited@example.test','password'=>'wrong'])->assertUnprocessable();
         }
-        $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.20'])->postJson('/api/auth/login',['email'=>'LIMITED@example.test','password'=>'wrong'])->assertStatus(429);
+        $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.20'])->postJson('/api/auth/login',['identifier'=>'LIMITED@example.test','password'=>'wrong'])->assertStatus(429);
     }
     public function test_password_change_requires_own_current_password_or_fresh_google_proof(): void
     {
@@ -92,6 +114,19 @@ class PasswordAuthTest extends TestCase
         $this->post('/account/password',$data+['current_password'=>'BuyerPassword2026'])->assertRedirect('https://armaghantrading.com/backend/account/security');
         $this->assertTrue(Hash::check('NewBuyerPassword2026',$user->fresh()->password));
     }
+    public function test_admin_may_choose_simple_eight_character_password_once_and_it_is_marked_configured(): void
+    {
+        $admin=User::factory()->admin()->create(['password'=>'GeneratedPassword2026','password_configured_at'=>null]);
+        $data=['password'=>'easy1234','password_confirmation'=>'easy1234'];
+        $this->actingAs($admin)->withSession([
+            'armaghan.password_setup_user_id'=>$admin->id,
+            'armaghan.password_setup_until'=>now()->addMinutes(10)->timestamp,
+        ])->post('/account/password',$data)->assertRedirect('https://armaghantrading.com/backend/account/security');
+        $admin->refresh();
+        $this->assertTrue(Hash::check('easy1234',$admin->password));
+        $this->assertNotNull($admin->password_configured_at);
+    }
+
     public function test_google_password_setup_is_owner_scoped_expiring_and_one_use(): void
     {
         $this->postJson('/api/auth/register',$this->registration())->assertCreated();

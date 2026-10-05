@@ -47,6 +47,7 @@ Route::get('/api/catalog/media/{media}/{variant}', [\App\Http\Controllers\Public
     ->middleware('throttle:240,1')
     ->name('catalog.product-media');
 
+Route::get('/api/home-media/file/{media}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publicFile'])->whereNumber('media')->middleware('throttle:240,1')->name('home-media.file');
 Route::get('/api/home-media/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publicIndex'])->where('channel','staging|production')->middleware('throttle:120,1');
 
 Route::get('/api/style-profile/{channel?}', [PublicStyleProfileController::class, 'show'])
@@ -91,6 +92,7 @@ Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleCustomerAuthCon
 
 Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group(function (): void {
     Route::get('/home-media', [\App\Http\Controllers\Admin\HomeMediaController::class, 'index']);
+    Route::get('/home-media/file/{media}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'adminFile'])->whereNumber('media')->name('admin.home-media.file');
     Route::post('/home-media', [\App\Http\Controllers\Admin\HomeMediaController::class, 'upload'])->middleware('throttle:admin-product-uploads');
     Route::post('/home-media/publish/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publish'])->where('channel','staging|production');
     Route::get('/orders', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'index']);

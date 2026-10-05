@@ -34,7 +34,8 @@ const avifSrc=computed(()=>{
 })
 const imageClass=computed(()=>props.fit==='cover'?'object-cover':'object-contain')
 const hasAmbientBackdrop=computed(()=>props.fit==='contain-blur'||props.fit==='edge-extend')
-const backdropStyle=computed(()=>currentSrc.value?{backgroundImage:`url("${currentSrc.value}")`}:undefined)
+const backdropStyle=computed(()=>currentSrc.value?{backgroundImage:`url("${currentSrc.value}")`,backgroundPosition:'var(--editor-media-position, 50% 50%)'}:undefined)
+const contentStyle=computed(()=>({objectFit:`var(--editor-media-fit, ${props.fit==='cover'?'cover':'contain'})`,objectPosition:'var(--editor-media-position, 50% 50%)'}))
 function useFallback(){
   if(props.fallbackSrc&&currentSrc.value!==props.fallbackSrc)currentSrc.value=props.fallbackSrc
   else currentSrc.value=undefined
@@ -64,6 +65,7 @@ function useFallback(){
         :alt="alt"
         class="smart-image-content h-full w-full"
         :class="[imageClass,{'smart-image-contained':hasAmbientBackdrop,'smart-image-edge-extend':fit==='edge-extend'}]"
+        :style="contentStyle"
         :loading="eager?'eager':'lazy'"
         :fetchpriority="eager?'high':'auto'"
         decoding="async"
