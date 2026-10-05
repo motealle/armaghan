@@ -4,6 +4,7 @@ namespace Tests\Feature;
 use App\Enums\UserRole;
 use App\Models\Customer;
 use App\Models\CustomerGoogleIdentity;
+use App\Models\AdminAuthState;
 use App\Models\User;
 use App\Services\GoogleCustomerIdentityService;
 use App\Support\CustomerSession;
@@ -212,9 +213,9 @@ class GoogleCustomerAuthTest extends TestCase
         $admin=User::factory()->admin()->create([
             'email'=>'amirmashti1378@gmail.com',
             'email_verified_at'=>now(),
-            'password_configured_at'=>now(),
             'remember_token'=>null,
         ]);
+        AdminAuthState::create(['user_id'=>$admin->id,'password_configured_at'=>now()]);
         $provider=Mockery::mock();
         $provider->shouldReceive('user')->once()->andReturn($this->identity('owner-amir',$admin->email));
         Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
