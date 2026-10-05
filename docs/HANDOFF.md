@@ -1,3 +1,8 @@
+## Final startup correction for shared-list release — 2026-10-05
+
+- Live cold navigation exposed a second forced full-page load on every ordinary entry until October12, with a timestamp query captured by navigation. Removed the repeated location.replace path; old timestamp URLs are still cleaned without reload and hash routes remain supported. UI revision now identifies the shared-lists/account-recovery build.
+- Type-check/build and26 focused tests PASS after this source change. Main da95f8e UI release is still transferring; this final source/config release is serialized behind it. Backend remains successfully activated at6da413a. No extra schema or account-data mutation. Final root/browser verification remains PENDING.
+
 ## Shared lists, footer and account recovery — 2026-10-05 release
 
 - Backend 6da413a38dea9a7952694fba14b3296648fcdb8c deployed successfully: Backend CI37349066060/job111895001567 PASS; Additive Deploy37349065618/job111895045557 PASS, 72 focused tests/603 assertions, dependency validation/audit, one create-only migration, consistent private database backup created, guarded activation/smoke and temporary cleanup PASS. No real account/customer was deleted. First candidate failed only on a transient newly-created test row's revision; the test now rereads persisted defaults.

@@ -5,18 +5,13 @@ import { router } from './router'
 import './styles/main.css'
 
 document.documentElement.dataset.uiTest='29'
-document.documentElement.dataset.uiRevision='2026-10-05-loading-specs-home-media'
+document.documentElement.dataset.uiRevision='2026-10-05-shared-lists-account-recovery'
 
-const FORCE_FRESH_UNTIL=Date.parse('2026-10-12T23:59:59+03:30')
+// Remove the old cache-busting URL without forcing a second page load.
 const freshUrl=new URL(window.location.href)
-if(Date.now()<FORCE_FRESH_UNTIL&&!freshUrl.searchParams.has('_armaghan_fresh')){
-  freshUrl.searchParams.set('_armaghan_fresh',String(Date.now()))
-  window.location.replace(freshUrl.toString())
-}else{
-  if(freshUrl.searchParams.has('_armaghan_fresh')){
-    freshUrl.searchParams.delete('_armaghan_fresh')
-    history.replaceState(history.state,'',freshUrl.pathname+(freshUrl.search?freshUrl.search:'')+freshUrl.hash)
-  }
-  void navigator.serviceWorker?.getRegistrations().then(registrations=>registrations.forEach(registration=>void registration.update()))
-  createApp(App).use(createPinia()).use(router).mount('#app')
+if(freshUrl.searchParams.has('_armaghan_fresh')){
+  freshUrl.searchParams.delete('_armaghan_fresh')
+  history.replaceState(history.state,'',freshUrl.pathname+freshUrl.search+freshUrl.hash)
 }
+void navigator.serviceWorker?.getRegistrations().then(registrations=>registrations.forEach(registration=>void registration.update())).catch(()=>{})
+createApp(App).use(createPinia()).use(router).mount('#app')
