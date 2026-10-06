@@ -10,6 +10,15 @@ class HomeMediaTest extends TestCase {
  use RefreshDatabase;
  protected function setUp(): void {parent::setUp();Storage::fake('public');}
  private function upload(string $target,array $state): array {return $this->post('/api/admin/home-media',['target'=>$target,'revision'=>$state['revision'],'image'=>UploadedFile::fake()->image('photo.jpg',80,60)],['Accept'=>'application/json'])->assertCreated()->json();}
+ #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
+ #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+ public function test_cold_file_request_resolves_home_path_without_loading_the_profile(): void {
+  // No StyleProfile instance has booted in this process. File reads must still find uploads.
+  $media=new \Spatie\MediaLibrary\MediaCollections\Models\Media;
+  $media->forceFill(['id'=>42,'model_type'=>StyleProfile::class,'model_id'=>1,
+   'collection_name'=>StyleProfile::MEDIA_COLLECTION,'disk'=>'public','file_name'=>'photo.jpg']);
+  $this->assertSame(Storage::disk('public')->path('media/home/42/photo.jpg'),$media->getPath());
+ }
  public function test_guest_and_non_admin_cannot_upload_or_publish(): void {
   $this->getJson('/api/admin/home-media')->assertUnauthorized();$this->actingAs(User::factory()->create())->postJson('/api/admin/home-media/publish/production',['selection'=>[]])->assertForbidden();
   $this->getJson('/api/home-media/production')->assertOk()->assertJsonMissingPath('images.hero');

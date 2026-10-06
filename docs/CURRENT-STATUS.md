@@ -1,3 +1,7 @@
+## Home published-file 404 diagnosis and bounded fix — 2026-10-06
+
+Production public Home index returns capability.production/media11 and banner.1/media13, but both standalone public file reads return404/21bytes. Their existing uploaded records must not be replaced/re-uploaded merely to conceal delivery failure. StyleProfile registered its custom media/home path only on model boot; standalone Media file requests do not instantiate that model. AppServiceProvider now registers HomePathGenerator at every application startup, preserving canonical paths, publication checks and private admin access. One separate-process regression exercises a cold path read before any StyleProfile instance. Backend CI/code-only guarded deployment pending; no migration or production data mutation. Batch1 UI deployment still transferring. This bounded delivery fix is included in run1; full authenticated upload acceptance remains run2.
+
 ## Owner two-run Home/customer batch 1 — 2026-10-06
 
 - Updated from current main32504df before changes. Other-chat manager media and direct Home-image edits preserved; prior root release FTP37449247225 succeeded. Do not duplicate that pipeline or claim real authenticated upload acceptance.
