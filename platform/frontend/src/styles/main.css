@@ -990,7 +990,7 @@ html.dark .product-card .product-card-title.unavailable{text-shadow:none}
 .mini-action.customer-whatsapp-action:hover{background:#0e713c;border-color:#0e713c}
 
 /* The localized label and digits belong to one code pill. */
-.product-code-row code.product-code-pill{display:inline-flex;align-items:center;gap:.25em;background:#101a44;color:var(--brand-white);font-family:inherit;font-weight:700}
+.product-code-row code.product-code-pill,html.dark .product-code-row code.product-code-pill{display:inline-flex;align-items:center;gap:.25em;background:#101a44;color:var(--brand-white);font-family:inherit;font-weight:700}
 .product-code-pill>span,.product-code-pill>bdi{font:inherit;color:inherit}
 
 /* Owner: category banner copy stays in the physical bottom-right corner. */
