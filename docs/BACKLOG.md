@@ -1,3 +1,19 @@
+## P0 — manager media reliability + direct home-image editing — 2026-10-06
+
+Owner reports continued client complaints while the business manager signs in through the `amirau` alias. Main was checked before changing code: product media already has `thumb/card/detail` variants, card swipe + PhotoSwipe zoom, backgroundless 2px-shadow gallery controls, the 10% smaller producible pill, landscape-to-portrait server normalization, and active-admin authorization. These completed pieces are preserved rather than rebuilt. The existing alias test already proves a non-owner time-boxed admin mapped to `amirmashti1378@gmail.com` receives active-admin access; product and Home-media routes are `active.admin`, not owner-only.
+
+| Rank | Method | Score | Why |
+|---:|---|---:|---|
+| 1 | Harden the existing media pipeline + direct inline Home edit affordances | 10 | Lowest regression risk; fixes mobile MIME, stale-revision and rate-limit friction while removing the ambiguous separate Home-image workflow |
+| 2 | Replace media management with a new uploader | 7 | Could simplify UX but duplicates stable server/media-library behavior |
+| 3 | Move all editing into Filament | 5 | Mature but violates the approved custom UI and is less friendly on phones |
+| 4 | Client-only upload fixes | 4 | Browser-dependent and cannot be authoritative for upload safety |
+| 5 | Accept raw originals and rely on CSS | 2 | Reintroduces slow media, inconsistent geometry and unsafe metadata assumptions |
+
+Selected automatically: **#1**. Batch implementation: admin identity hydrates immediately after alias/email login; safe JPG/JPEG/PNG/WebP mobile inputs tolerate `image/jpg` or missing browser MIME while the server remains authoritative; an image-only 409 refreshes the exact product and retries once (never retries uncertain network/5xx outcomes); authenticated media allowance is 30/minute instead of 10; Home uploads are client-optimized and server-bounded; every managed Home image has an inline **Edit image** control after real admin login; quick uploads publish only to the current production/staging channel and refresh the visible Home image immediately.
+
+Security keeps extension + MIME + decoded-content + size/dimension + authorization checks and application-generated filenames. Upload validation follows OWASP defense-in-depth guidance. The inline edit action follows direct-manipulation/visible-action usability guidance. Only focused media/login regressions should be run for this batch; do not expand visual test scope.
+
 ## P0 — rescue product-image upload: normalize landscape safely — 2026-10-06
 
 Evidence from the owner screenshot: product fields persisted but the two selected camera images remained pending and the UI reported that image upload failed. The existing stack already has real multi-size media (thumb 320, card 800, detail 1600), sequential multi-image submission, public application-controlled media routes, swipe/lightbox/zoom, backgroundless gallery controls with 2px icon shadow, and the 10% smaller producible pill. Those completed pieces are not rebuilt.

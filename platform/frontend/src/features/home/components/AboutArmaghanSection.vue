@@ -5,6 +5,7 @@ import SmartImage from '@/components/media/SmartImage.vue'
 import { test26Media } from '@/data/home26'
 import { useLocaleStore } from '@/stores/locale'
 import { useVisualStyleStore } from '@/features/visual-editor/store'
+import HomeMediaEditButton from '@/features/home-media/HomeMediaEditButton.vue'
 
 const locale=useLocaleStore()
 const visual=useVisualStyleStore()
@@ -20,7 +21,7 @@ const visual=useVisualStyleStore()
       <div data-style-id="home.about.copy" data-style-label="پنل متن درباره ارمغان" class="test26-about-copy">
         <p data-style-id="home.about.text" data-style-label="متن درباره ارمغان" data-editable-text="true">{{visual.resolveText('home.about.text',locale.locale,locale.t('aboutArmaghanText'))}}</p>
       </div>
-      <div data-style-id="home.about.media" data-style-label="تصویر درباره ارمغان" class="test26-about-media">
+      <div data-style-id="home.about.media" data-style-label="تصویر درباره ارمغان" class="test26-about-media relative">
         <SmartImage
           :src="homeMedia.resolve('about',test26Media.about.image)"
           :fallback-src="test26Media.about.fallback"
@@ -28,6 +29,7 @@ const visual=useVisualStyleStore()
           :label="locale.t('aboutArmaghanImageAlt')"
           aspect="hero"
         />
+        <HomeMediaEditButton target="about" :label="locale.t('aboutArmaghanImageAlt')"/>
       </div>
     </div>
   </section>

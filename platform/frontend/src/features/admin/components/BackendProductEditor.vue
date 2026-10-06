@@ -8,7 +8,7 @@ import { useAdminStore } from '../store'
 import { productFailure, useProductDraftGuard } from '../services/productEditorSafety'
 import { ProductImagePreparationError, optimizeProductImage, submitProductImages, validProductImage } from '../services/productImageSubmission'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
-import { createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, deleteAdminProductImages, type AdminProduct, type AdminSubcategory, type ProductFields, type AdminSpecification } from '../services/adminApi'
+import { createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, deleteAdminProductImages, fetchAdminProducts, type AdminProduct, type AdminSubcategory, type ProductFields, type AdminSpecification } from '../services/adminApi'
 const props=withDefaults(defineProps<{open:boolean;product:AdminProduct|null;taxonomy:AdminSubcategory[];initial?:ProductFields|null}>(),{initial:null})
 const emit=defineEmits<{close:[];saved:[product:AdminProduct]}>()
 const locale=useLocaleStore(),admin=useAdminStore()
@@ -48,6 +48,17 @@ function failed(e:unknown){
   if(e instanceof CustomerSessionApiError&&[401,403].includes(e.status)){admin.clear();draft.value=null;current.value=null;emit('close');return locale.t('adminSessionRequired')}
   const failure=productFailure(e);writesBlocked.value=failure.block;return locale.t(failure.key)
 }
+async function uploadWithStaleRecovery(product:AdminProduct,file:File){
+  try{return (await uploadAdminProductImage(product,file)).product}
+  catch(e){
+    if(!(e instanceof CustomerSessionApiError)||e.status!==409)throw e
+    const page=await fetchAdminProducts(1,product.code,'',25)
+    const fresh=page.products.find(row=>row.id===product.id)
+    if(!fresh)throw e
+    current.value=fresh;draft.value=fields(fresh);guard.checkpoint()
+    return (await uploadAdminProductImage(fresh,file)).product
+  }
+}
 async function save(){
   if(!draft.value||saving.value||writesBlocked.value)return
   if(!draft.value.name_fa.trim()&&!current.value)draft.value.name_fa=group.value?.name||draft.value.code
@@ -61,7 +72,7 @@ async function save(){
       persist:async()=>{const response=current.value?await updateAdminProduct(current.value.id,draft.value!,current.value.revision):await createAdminProduct(draft.value!);return response.product},
       persisted:(product)=>{current.value=product;draft.value=fields(product);guard.checkpoint();changed.value=true;persisted=true},
       prepare:optimizeProductImage,
-      upload:async(product,file)=>(await uploadAdminProductImage(product,file)).product,
+      upload:uploadWithStaleRecovery,
       uploaded:(product,source)=>{current.value=product;const index=pendingImages.value.findIndex(item=>item.file===source);if(index>=0){URL.revokeObjectURL(pendingImages.value[index]!.preview);pendingImages.value.splice(index,1)};uploadProgress.value.done+=1;changed.value=true;guard.checkpoint()},
     })
     note.value=locale.t('adminSaved')
@@ -171,7 +182,7 @@ onBeforeUnmount(()=>{clearPendingImages();window.removeEventListener('beforeunlo
           <b class="text-xs">{{selectedMediaIds.length}} {{locale.t('selectedCount')}}</b>
           <button type="button" class="mini-action ms-auto text-rose-700" :disabled="saving||dirty" @click="deleteSelectedMedia"><Trash2 :size="15"/>{{locale.t('adminImageDeleteSelected')}}</button>
         </div>
-        <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small dir="ltr">{{(current?.media.length??0)+pendingImages.length}} / 6</small></span><input type="file" multiple accept="image/jpeg,image/png,image/webp" :disabled="writesBlocked||saving||(current?.media.length??0)+pendingImages.length>=6" @change="upload"></label>
+        <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small dir="ltr">{{(current?.media.length??0)+pendingImages.length}} / 6</small></span><input type="file" multiple accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" :disabled="writesBlocked||saving||(current?.media.length??0)+pendingImages.length>=6" @change="upload"></label>
         <div v-if="pendingImages.length" class="mt-3 space-y-3 rounded-xl border border-[var(--c-border)] p-3">
           <p role="status" class="text-sm">{{locale.t('adminImagePending')}} · {{pendingImages.length}}</p>
           <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">

@@ -109,7 +109,7 @@ class CustomAdminProductsTest extends TestCase
     {
         $this->actingAs(User::factory()->admin()->create()); $product = Product::create($this->fields());
         for ($i = 0; $i < 15; $i++) $this->getJson('/api/admin/products')->assertOk();
-        for ($i = 0; $i < 10; $i++) $this->postJson('/api/admin/products/'.$product->id.'/images', [])->assertUnprocessable();
+        for ($i = 0; $i < 30; $i++) $this->postJson('/api/admin/products/'.$product->id.'/images', [])->assertUnprocessable();
         $this->postJson('/api/admin/products/'.$product->id.'/images', [])->assertTooManyRequests();
         $this->getJson('/api/admin/products')->assertOk();
     }

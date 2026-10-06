@@ -64,6 +64,12 @@ describe('staged product image submission',()=>{
     pendingCount.value=0;guard.requestClose(close);expect(close).toHaveBeenCalledOnce()
   })
 
+  it('accepts safe mobile jpg files even when browsers report image/jpg or omit MIME',()=>{
+    expect(validProductImage(new File(['x'],'camera.jpg',{type:'image/jpg'}))).toBe(true)
+    expect(validProductImage(new File(['x'],'camera.jpeg',{type:''}))).toBe(true)
+    expect(validProductImage(new File(['x'],'camera.php',{type:''}))).toBe(false)
+  })
+
   it('accepts large camera sources for client optimization but keeps server payload bounded',()=>{
     expect(validProductImage(file)).toBe(true)
     const camera=new File([new Uint8Array(9*1024*1024)],'camera.jpg',{type:'image/jpeg'})

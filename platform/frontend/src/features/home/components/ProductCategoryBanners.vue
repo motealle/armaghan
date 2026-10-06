@@ -7,6 +7,7 @@ import { categories } from '@/data/catalog'
 import { productBannerMedia } from '@/data/home26'
 import { useLocaleStore } from '@/stores/locale'
 import { useVisualStyleStore } from '@/features/visual-editor/store'
+import HomeMediaEditButton from '@/features/home-media/HomeMediaEditButton.vue'
 
 const locale=useLocaleStore()
 const visual=useVisualStyleStore()
@@ -20,9 +21,8 @@ const visual=useVisualStyleStore()
       <p data-style-id="home.product-banners.intro" data-style-label="مقدمه بنرهای محصول" data-editable-text="true">{{visual.resolveText('home.product-banners.intro',locale.locale,locale.t('productBannersIntro'))}}</p>
     </div>
     <div class="test26-product-banner-list">
+      <div v-for="category in categories" :key="category.code" class="relative">
       <RouterLink
-        v-for="category in categories"
-        :key="category.code"
         :to="{path:'/products',query:{category:category.code}}"
         class="test26-product-banner"
         :data-style-id="`home.product-banner.${category.code}`"
@@ -44,6 +44,8 @@ const visual=useVisualStyleStore()
         </span>
         <span class="test26-product-banner-arrow"><ArrowUpLeft :size="20"/></span>
       </RouterLink>
+      <HomeMediaEditButton :target="'banner.'+category.code" :label="locale.categoryName(category.code,category.name)"/>
+      </div>
     </div>
   </section>
 </template>

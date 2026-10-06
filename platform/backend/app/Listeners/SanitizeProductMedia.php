@@ -39,6 +39,8 @@ class SanitizeProductMedia
         if ($media->model instanceof Product && $media->collection_name === Product::MEDIA_COLLECTION) {
             $image = $this->resizeWithin($image, 1920);
             $image = $this->portraitFrame($image);
+        } elseif ($media->model instanceof \App\Models\StyleProfile && $media->collection_name === \App\Models\StyleProfile::MEDIA_COLLECTION) {
+            $image = $this->resizeWithin($image, 2200);
         }
 
         $temporary = $path.'.sanitized-'.bin2hex(random_bytes(4));

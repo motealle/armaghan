@@ -9,6 +9,7 @@ import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 import { capabilities } from '@/data/home26'
 import { useLocaleStore } from '@/stores/locale'
 import { useVisualStyleStore } from '@/features/visual-editor/store'
+import HomeMediaEditButton from '@/features/home-media/HomeMediaEditButton.vue'
 
 const locale=useLocaleStore()
 const visual=useVisualStyleStore()
@@ -28,8 +29,9 @@ const selected=computed(()=>capabilities.find(item=>item.id===selectedId.value)?
 
     <div data-style-id="home.capabilities.grid" data-style-label="شبکه توانمندی‌ها" class="test26-capability-grid">
       <article v-for="item in capabilities" :key="item.id" :data-style-id="`home.capability.${item.id}`" :data-style-label="`کارت ${locale.t(item.titleKey)}`" class="test26-capability-card">
-        <div :data-style-id="`home.capability.${item.id}.media`" :data-style-label="`تصویر ${locale.t(item.titleKey)}`" class="test26-capability-media">
+        <div :data-style-id="`home.capability.${item.id}.media`" :data-style-label="`تصویر ${locale.t(item.titleKey)}`" class="test26-capability-media relative">
           <SmartImage :src="homeMedia.resolve('capability.'+item.id,item.image)" :fallback-src="item.fallback" :alt="locale.t(item.titleKey)" :label="locale.t(item.titleKey)" aspect="hero"/>
+          <HomeMediaEditButton :target="'capability.'+item.id" :label="locale.t(item.titleKey)"/>
         </div>
         <div :data-style-id="`home.capability.${item.id}.body`" :data-style-label="`پنل متن ${locale.t(item.titleKey)}`" class="test26-capability-body">
           <div class="test26-capability-icon"><component :is="icons[item.id]" :size="22"/></div>

@@ -10,6 +10,7 @@ import VisualStyleRuntime from '@/features/visual-editor/VisualStyleRuntime.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 import LoginSheet from '@/features/auth/components/LoginSheet.vue'
+import HomeMediaQuickEditor from '@/features/home-media/HomeMediaQuickEditor.vue'
 import { useDesignStore } from '@/stores/design'
 import { useVisualStyleStore } from '@/features/visual-editor/store'
 import { useAdminStore } from '@/features/admin/store'
@@ -80,6 +81,7 @@ onMounted(async()=>{
     <BottomNav/>
     <LoginSheet :open="loginOpen" @close="loginOpen=false"/>
     <HelpSheet :open="helpOpen" @close="helpOpen=false"/>
+    <HomeMediaQuickEditor v-if="route.path==='/'&&admin.identity"/>
     <template v-if="route.path==='/'&&(admin.identity||session.isAdmin)&&!session.impersonatedCustomerId">
       <VisualEditorQuickLauncher/>
       <VisualEditor v-if="visual.enabled"/>

@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Event::listen(MediaHasBeenAddedEvent::class, SanitizeProductMedia::class);
         RateLimiter::for('admin-product-uploads', fn (Request $request) =>
-            Limit::perMinute(10)->by('product-upload:'.($request->user()?->id ?? $request->ip())));
+            Limit::perMinute(30)->by('product-upload:'.($request->user()?->id ?? $request->ip())));
         RateLimiter::for('password-login', function (Request $request) {
             $identifier = strtolower(trim((string) ($request->input('identifier') ?? $request->input('email') ?? '')));
             return [Limit::perMinute(30)->by('login-ip:'.$request->ip()),

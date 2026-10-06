@@ -32,7 +32,7 @@ class HomeMediaController extends Controller {
   return response()->file($path,['Cache-Control'=>'public, max-age=31536000, immutable','Content-Type'=>(string)$media->mime_type,'X-Content-Type-Options'=>'nosniff']);
  }
  public function upload(Request $request) {
-  $data=$request->validate(['revision'=>['required','regex:/^[a-f0-9]{64}$/'],'target'=>['required',Rule::in(self::TARGETS)],'image'=>['required','file','image','mimetypes:image/jpeg,image/png,image/webp','max:8192','dimensions:max_width=5000,max_height=5000']]);
+  $data=$request->validate(['revision'=>['required','regex:/^[a-f0-9]{64}$/'],'target'=>['required',Rule::in(self::TARGETS)],'image'=>['required','file','image','extensions:jpg,jpeg,png,webp','mimetypes:image/jpeg,image/png,image/webp','max:8192','dimensions:max_width=5000,max_height=5000']]);
   $file=$request->file('image');$extension=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'][$file->getMimeType()]??null;
   $decoded=$extension?@imagecreatefromstring(file_get_contents($file->getRealPath())):false;abort_unless($decoded,422);imagedestroy($decoded);
   $profile=$this->profiles->ensureDefault($request->user());$created=null;

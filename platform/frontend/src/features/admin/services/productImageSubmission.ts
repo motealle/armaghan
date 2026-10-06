@@ -1,17 +1,24 @@
 export const PRODUCT_IMAGE_SOURCE_MAX_BYTES=20*1024*1024
 export const PRODUCT_IMAGE_UPLOAD_MAX_BYTES=8*1024*1024
 const PRODUCT_IMAGE_TYPES=['image/jpeg','image/png','image/webp']
+const PRODUCT_IMAGE_EXTENSIONS=['jpg','jpeg','png','webp']
+
+function productImageExtension(file:File){return file.name.split('.').pop()?.toLowerCase()??''}
+function supportedProductImageInput(file:File){
+  const type=file.type.toLowerCase()
+  return PRODUCT_IMAGE_TYPES.includes(type)||type==='image/jpg'||((type===''||type==='application/octet-stream')&&PRODUCT_IMAGE_EXTENSIONS.includes(productImageExtension(file)))
+}
 
 export class ProductImagePreparationError extends Error{
   constructor(message='Product image could not be prepared safely.'){super(message);this.name='ProductImagePreparationError'}
 }
 
 export function validProductImage(file:File){
-  return PRODUCT_IMAGE_TYPES.includes(file.type)&&file.size>0&&file.size<=PRODUCT_IMAGE_SOURCE_MAX_BYTES
+  return supportedProductImageInput(file)&&file.size>0&&file.size<=PRODUCT_IMAGE_SOURCE_MAX_BYTES
 }
 
 export function validPreparedProductImage(file:File){
-  return PRODUCT_IMAGE_TYPES.includes(file.type)&&file.size>0&&file.size<=PRODUCT_IMAGE_UPLOAD_MAX_BYTES
+  return supportedProductImageInput(file)&&file.size>0&&file.size<=PRODUCT_IMAGE_UPLOAD_MAX_BYTES
 }
 
 export async function optimizeProductImage(file:File):Promise<File>{

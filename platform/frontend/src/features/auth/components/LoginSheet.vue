@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { LogIn, UserPlus, ShieldCheck } from '@lucide/vue'
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
+import { useAdminStore } from '@/features/admin/store'
 import { useLocaleStore } from '@/stores/locale'
 import { registerWithPassword, signInWithPassword, CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
 import BaseModal from '@/components/ui/BaseModal.vue'
@@ -11,6 +12,7 @@ import GoogleGIcon from '@/components/icons/GoogleGIcon.vue'
 const props=defineProps<{open:boolean}>()
 const emit=defineEmits<{close:[]}>()
 const session=useSessionStore()
+const admin=useAdminStore()
 const locale=useLocaleStore()
 const router=useRouter()
 const mode=ref<'signin'|'register'>('signin')
@@ -30,7 +32,7 @@ async function submit(){
       await registerWithPassword(name.value.trim(),email.value.trim(),password.value,confirmation.value)
     }else{
       const result=await signInWithPassword(email.value.trim(),password.value)
-      if(result.redirect==='/backend/admin'){password.value='';emit('close');router.push('/admin');return}
+      if(result.redirect==='/backend/admin'){await admin.hydrate();password.value='';emit('close');router.push('/admin');return}
     }
     if(!await session.hydrateFromBackend())throw new Error('Session unavailable')
     password.value='';confirmation.value='';emit('close');router.push('/tracking')
