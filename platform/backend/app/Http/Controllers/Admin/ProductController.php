@@ -126,11 +126,10 @@ class ProductController extends Controller
     public function upload(Request $request, Product $product): JsonResponse
     {
         $data = $request->validate(['revision' => ['required', 'string', 'regex:/^[a-f0-9]{64}$/'],
-            'image' => ['required', 'file', 'image', 'mimetypes:image/jpeg,image/png,image/webp', 'max:8192', 'dimensions:max_width=5000,max_height=5000']]);
+            'image' => ['required', 'file', 'image', 'extensions:jpg,jpeg,png,webp', 'mimetypes:image/jpeg,image/png,image/webp', 'max:8192', 'dimensions:max_width=5000,max_height=5000']]);
         $file = $request->file('image');
         // Decode before storage, and derive a safe extension from MIME, never from an uploaded name.
         $size = @getimagesize($file->getRealPath());
-        if (is_array($size) && $size[1] <= $size[0]) throw ValidationException::withMessages(['image' => 'Product images must be portrait (height greater than width).']);
         $mime = $file->getMimeType();
         $extension = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mime] ?? null;
         $decoded = $extension ? @imagecreatefromstring(file_get_contents($file->getRealPath())) : false;
@@ -147,6 +146,8 @@ class ProductController extends Controller
                 try {
                     $created = $row->addMedia($file)->usingFileName(Str::uuid().'.'.$extension)->toMediaCollection(Product::MEDIA_COLLECTION);
                     $created->refresh();
+                    $normalized = @getimagesize($created->getPath());
+                    abort_unless(is_array($normalized) && (int) $normalized[1] > (int) $normalized[0], 500, 'Image normalization incomplete.');
                     abort_unless($created->hasGeneratedConversion('card') && $created->hasGeneratedConversion('thumb') && $created->hasGeneratedConversion('detail'), 500, 'Image processing incomplete.');
                     $this->audit($request, $row, 'admin.product.image-added', ['media']);
                 } catch (\Throwable $e) {

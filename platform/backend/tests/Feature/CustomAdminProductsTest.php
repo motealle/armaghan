@@ -208,6 +208,27 @@ class CustomAdminProductsTest extends TestCase
         $this->getJson('/api/catalog/products')->assertJsonCount(1, 'data.0.media')->assertJsonPath('data.0.media.0.detail_url', fn ($value) => is_string($value) && str_contains($value, '/api/catalog/media/') && str_ends_with($value, '/detail'));
     }
 
+    public function test_landscape_upload_is_safely_normalized_to_portrait_and_keeps_derivatives(): void
+    {
+        Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());
+        $product = Product::create($this->fields()); $row = $this->row($product);
+        $source = UploadedFile::fake()->image('landscape.jpg', 120, 60);
+        $response = $this->postJson('/api/admin/products/'.$product->id.'/images', [
+            'revision' => $row['revision'],
+            'image' => $source,
+        ])->assertCreated()->assertJsonCount(1, 'product.media');
+
+        $media = $product->fresh()->getFirstMedia(Product::MEDIA_COLLECTION);
+        $this->assertNotNull($media);
+        [$width, $height] = getimagesize($media->getPath());
+        $this->assertGreaterThan($width, $height);
+        $this->assertSame(120, $width);
+        $this->assertSame(160, $height);
+        $this->assertTrue($media->hasGeneratedConversion('thumb'));
+        $this->assertTrue($media->hasGeneratedConversion('card'));
+        $this->assertTrue($media->hasGeneratedConversion('detail'));
+        $this->assertNotSame($row['revision'], $response->json('product.revision'));
+    }
     public function test_upload_rejects_disguised_corrupt_oversized_and_excess_gallery(): void
     {
         Storage::fake('public'); $this->actingAs(User::factory()->admin()->create());

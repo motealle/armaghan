@@ -1,3 +1,18 @@
+## P0 — rescue product-image upload: normalize landscape safely — 2026-10-06
+
+Evidence from the owner screenshot: product fields persisted but the two selected camera images remained pending and the UI reported that image upload failed. The existing stack already has real multi-size media (thumb 320, card 800, detail 1600), sequential multi-image submission, public application-controlled media routes, swipe/lightbox/zoom, backgroundless gallery controls with 2px icon shadow, and the 10% smaller producible pill. Those completed pieces are not rebuilt.
+
+Root cause: the backend controller rejected every landscape/square image before the sanitizing/media pipeline could run. This contradicted the current UI, which intentionally accepts ordinary camera images and optimizes them before upload. It also leaves an EXIF-orientation edge case for phone photos.
+
+| Rank | Method | Score | Why |
+|---:|---|---:|---|
+| 1 | Accept safe image input, then normalize landscape/square to a non-destructive 3:4 portrait master on the server | 10 | Fixes the current screenshot, keeps the whole photo visible, preserves one canonical portrait contract, and works even when client preprocessing is unavailable |
+| 2 | Client-only portrait framing before upload | 8 | Fast and reduces payload, but can be bypassed or unavailable on older/problem browsers |
+| 3 | Reject landscape immediately in the browser | 6 | Clearer UX but does not satisfy the current selected images and remains client-only |
+| 4 | Allow landscape permanently and depend on CSS contain | 5 | Upload works but breaks the requested portrait-media contract and keeps variable card geometry |
+| 5 | Center-crop landscape to portrait | 2 | Simple but destroys user content and can cut garments/people |
+
+Selected automatically: **#1**. The backend keeps MIME/content/dimension/size checks, adds an explicit extension allowlist, re-encodes metadata away, bounds the canonical master to 1920px, and frames landscape/square images into a 3:4 portrait with a softened same-image backdrop plus a full uncropped foreground. A focused regression test covers landscape upload and all three derivatives.
 ## Verified release closeout — shared lists, footer and account recovery, 2026-10-05
 
 - Final UI sourcea0d0f4f40eb8260adc764a483aa40934ec719676 is deployed at Test29/root. FTP37351155272 PASS: QA111902081100 (26 focused frontend tests/type-check/build), upload111902623548, root111903658015. Backend6da413a PASS in CI37349066060 and Additive Deploy37349065618:72 focused tests/603 assertions, dependency checks, consistent private database snapshot and one create-only migration before guarded activation. No production customer/user deletion performed.
