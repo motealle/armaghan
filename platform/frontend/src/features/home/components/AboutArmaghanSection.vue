@@ -24,6 +24,8 @@ const visual=useVisualStyleStore()
       <div data-style-id="home.about.media" data-style-label="تصویر درباره ارمغان" class="test26-about-media relative">
         <SmartImage
           :src="homeMedia.resolve('about',test26Media.about.image)"
+          :srcset="homeMedia.srcset('about')"
+          sizes="(min-width: 1280px) 1280px, 100vw"
           :fallback-src="test26Media.about.fallback"
           :alt="locale.t('aboutArmaghanImageAlt')"
           :label="locale.t('aboutArmaghanImageAlt')"

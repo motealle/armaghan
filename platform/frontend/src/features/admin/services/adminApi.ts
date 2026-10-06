@@ -1,17 +1,23 @@
 import { requestJson } from '@/features/auth/services/customerSessionApi'
 export interface AdminIdentity { name:string; email:string; is_owner?:boolean; password_configured?:boolean }
-export interface AdminCustomer {
+export interface CustomerBusinessFields {
+  contact_name:string|null;contact_email:string|null;phone:string|null;preferred_language:string|null;
+  city:string|null;district:string|null;shop_number:string|null;sales_product_group:string|null;
+  purchase_volume:string|null;cooperation_type:string|null;sales_type:string|null;pinned:boolean;
+}
+export const customerBusinessDefaults:CustomerBusinessFields={contact_name:null,contact_email:null,phone:null,preferred_language:null,city:null,district:null,shop_number:null,sales_product_group:null,purchase_volume:null,cooperation_type:null,sales_type:null,pinned:false}
+export interface AdminCustomer extends Partial<CustomerBusinessFields> {
   tags:string[]; has_account:boolean; id:number; name:string|null; email:string|null; company_name:string|null; whatsapp:string|null;
   country_code:string|null; country_name:string|null; notes:string|null; priority:number;
   active:boolean; direct_link_enabled:boolean; revision:string;
 }
-export type CustomerFields=Pick<AdminCustomer,'company_name'|'whatsapp'|'country_code'|'country_name'|'notes'|'priority'|'active'|'direct_link_enabled'>
+export type CustomerFields=Pick<AdminCustomer,'company_name'|'whatsapp'|'country_code'|'country_name'|'notes'|'priority'|'active'|'direct_link_enabled'>&CustomerBusinessFields
 export interface CustomerPage { customers:AdminCustomer[]; page:number; last_page:number; total:number }
 export const fetchAdminSession=()=>requestJson<{admin:AdminIdentity}>('/api/admin/session')
 export const logoutAdmin=()=>requestJson('/api/admin/logout',{method:'POST',body:'{}'})
 export const fetchAdminCustomers=(page=1,search='')=>requestJson<CustomerPage>('/api/admin/customers?page='+page+'&search='+encodeURIComponent(search))
 export const createAdminCustomer=(fields:CustomerFields)=>requestJson<{customer:AdminCustomer}>('/api/admin/customers',{method:'POST',body:JSON.stringify(fields)})
-export const updateAdminCustomer=(id:number,fields:CustomerFields,revision:string)=>requestJson<{customer:AdminCustomer}>('/api/admin/customers/'+id,{method:'PATCH',body:JSON.stringify({...fields,revision})})
+export const updateAdminCustomer=(id:number,fields:Partial<CustomerFields>,revision:string)=>requestJson<{customer:AdminCustomer}>('/api/admin/customers/'+id,{method:'PATCH',body:JSON.stringify({...fields,revision})})
 
 export interface AdminMedia { id:number; url:string; thumb_url:string; detail_url:string }
 export interface AdminSpecification { id:number; key:string; locked:boolean; labels:{fa:string; ar:string|null; en:string|null; ku:string|null}; value_text?:string|null }

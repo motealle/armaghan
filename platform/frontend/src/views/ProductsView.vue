@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { Check, ChevronLeft, Search, Pencil } from '@lucide/vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { readProductFilters, productFilterQuery } from '@/features/catalog/services/productFilters'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
@@ -14,6 +15,8 @@ import type { Product } from '@/types/domain'
 import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 
 const route=useRoute()
+const router=useRouter()
+const browseReady=ref(false)
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
 const admin=useAdminStore()
@@ -25,13 +28,23 @@ const adminEditorError=ref('')
 const adminProduct=ref<AdminProduct|null>(null)
 const adminInitial=ref<ProductFields|null>(null)
 const adminTaxonomy=ref<AdminSubcategory[]>([])
-const category=ref(String(route.query.category ?? 'all'))
-const subcategory=ref('all')
-const query=ref('')
-const availability=ref('all')
+const initialFilters=readProductFilters(route.query)
+const category=ref(initialFilters.category)
+const subcategory=ref(initialFilters.subcategory)
+const query=ref(initialFilters.query)
+const availability=ref(initialFilters.availability)
 
-watch(()=>route.query.category,(value)=>{category.value=value?String(value):'all';subcategory.value='all'})
-onMounted(()=>void catalog.hydrateFromBackend())
+watch(()=>route.query,(value)=>{
+  const filters=readProductFilters(value)
+  category.value=filters.category;subcategory.value=filters.subcategory
+  availability.value=filters.availability;query.value=filters.query
+})
+watch([category,subcategory,availability,query],()=>{
+  const filters={category:category.value,subcategory:subcategory.value,availability:availability.value,query:query.value}
+  const next=productFilterQuery(filters)
+  if(JSON.stringify(next)!==JSON.stringify(productFilterQuery(readProductFilters(route.query))))void router.replace({path:'/products',query:next})
+})
+onMounted(async()=>{try{await catalog.hydrateFromBackend()}finally{browseReady.value=true}})
 
 const subs=computed(()=>category.value==='all'?[]:catalog.categories.find(c=>c.code===category.value)?.subcategories ?? [])
 const filtered=computed(()=>catalog.items.filter(product=>{
@@ -105,7 +118,7 @@ async function editFromManager(product:AdminProduct|null){
 </script>
 
 <template>
-  <section data-style-id="products.page" data-style-label="زمینه صفحه محصولات" class="products-page">
+  <section data-style-id="products.page" data-style-label="زمینه صفحه محصولات" class="products-page" :data-browse-ready="browseReady">
     <div class="products-intro-surface">
       <div class="mb-4 flex items-end justify-between gap-3">
         <div>

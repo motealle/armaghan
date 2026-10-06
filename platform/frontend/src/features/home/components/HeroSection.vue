@@ -20,6 +20,8 @@ const {policy}=useResolvedAppearance()
     <div data-style-id="hero.media" data-style-label="تصویر هیرو" class="test26-single-hero-media relative">
       <SmartImage
         :src="homeMedia.resolve('hero',test26Media.hero.image)"
+          :srcset="homeMedia.srcset('hero')"
+          sizes="(min-width: 1280px) 1280px, 100vw"
         :fallback-src="test26Media.hero.fallback"
         :alt="locale.t('heroSingleAlt')"
         :label="locale.t('heroSingleAlt')"

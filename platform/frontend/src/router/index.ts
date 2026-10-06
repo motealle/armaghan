@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { installPositionPersistence, scrollForNavigation } from '@/services/browsingPosition'
 const HomeView=()=>import('@/views/HomeView.vue')
 const ProductsView=()=>import('@/views/ProductsView.vue')
 const ProductionView=()=>import('@/views/ProductionView.vue')
@@ -30,5 +31,7 @@ export const router=createRouter({
     {path:'/tracking',name:'tracking',component:TrackingView},
     {path:'/magic/:token',name:'magic-link',component:MagicLinkView},
   ],
-  scrollBehavior(){return{top:0}},
+  scrollBehavior(to,from,saved){return scrollForNavigation(to,!from.matched.length,saved)},
 })
+
+installPositionPersistence(router)

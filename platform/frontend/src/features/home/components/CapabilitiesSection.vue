@@ -30,7 +30,7 @@ const selected=computed(()=>capabilities.find(item=>item.id===selectedId.value)?
     <div data-style-id="home.capabilities.grid" data-style-label="شبکه توانمندی‌ها" class="test26-capability-grid">
       <article v-for="item in capabilities" :key="item.id" :data-style-id="`home.capability.${item.id}`" :data-style-label="`کارت ${locale.t(item.titleKey)}`" class="test26-capability-card">
         <div :data-style-id="`home.capability.${item.id}.media`" :data-style-label="`تصویر ${locale.t(item.titleKey)}`" class="test26-capability-media relative">
-          <SmartImage :src="homeMedia.resolve('capability.'+item.id,item.image)" :fallback-src="item.fallback" :alt="locale.t(item.titleKey)" :label="locale.t(item.titleKey)" aspect="hero"/>
+          <SmartImage :src="homeMedia.resolve('capability.'+item.id,item.image)" :srcset="homeMedia.srcset('capability.'+item.id)" sizes="(min-width: 1024px) 33vw, 100vw" :fallback-src="item.fallback" :alt="locale.t(item.titleKey)" :label="locale.t(item.titleKey)" aspect="hero"/>
           <HomeMediaEditButton :target="'capability.'+item.id" :label="locale.t(item.titleKey)"/>
         </div>
         <div :data-style-id="`home.capability.${item.id}.body`" :data-style-label="`پنل متن ${locale.t(item.titleKey)}`" class="test26-capability-body">
@@ -54,7 +54,7 @@ const selected=computed(()=>capabilities.find(item=>item.id===selectedId.value)?
 
     <AdaptivePanel :open="Boolean(selected)" :title="selected?locale.t(selected.titleKey):''" wide @close="selectedId=null">
       <div v-if="selected" class="test26-capability-detail">
-        <SmartImage :src="homeMedia.resolve('capability.'+selected.id,selected.image)" :fallback-src="selected.fallback" :alt="locale.t(selected.titleKey)" :label="locale.t(selected.titleKey)" aspect="hero"/>
+        <SmartImage :src="homeMedia.resolve('capability.'+selected.id,selected.image)" :srcset="homeMedia.srcset('capability.'+selected.id)" sizes="(min-width: 1024px) 900px, 100vw" :fallback-src="selected.fallback" :alt="locale.t(selected.titleKey)" :label="locale.t(selected.titleKey)" aspect="hero"/>
         <p>{{locale.t(selected.summaryKey)}}</p>
         <ul>
           <li v-for="key in selected.detailKeys" :key="key">{{locale.t(key)}}</li>

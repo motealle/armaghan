@@ -27,7 +27,7 @@ const visibleTitle=computed(()=>customerProductLabel(props.product,displaySubcat
     <div class="product-card-body">
       <div data-style-id="product.title" data-style-label="عنوان کارت محصول" class="product-card-title" :class="{unavailable:product.availability!=='available'}">{{visibleTitle}}</div>
       <div data-style-id="product.code" data-style-label="کد محصول" class="product-code-row flex items-center gap-2">
-        <span>{{locale.t('codeLabel')}} <code dir="ltr">{{displayCode}}</code></span>
+        <code class="product-code-pill" :dir="locale.direction"><span>{{locale.t('codeLabel')}}</span> <bdi dir="ltr">{{displayCode}}</bdi></code>
         <button v-if="adminEditable" type="button" class="ms-auto grid h-9 w-9 place-items-center rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] text-[var(--c-primary)] shadow-sm" :aria-label="locale.t('editProduct')" @click.stop="emit('edit',product)">
           <Pencil :size="16"/>
         </button>

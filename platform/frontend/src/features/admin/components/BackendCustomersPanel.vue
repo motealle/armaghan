@@ -1,16 +1,17 @@
 <script setup lang="ts">
+import CustomerBusinessFieldsForm from './CustomerBusinessFieldsForm.vue'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import AccountRecoveryPanel from './AccountRecoveryPanel.vue'
 import CustomerAccountPanel from './CustomerAccountPanel.vue'
 import RecordTags from './RecordTags.vue'
 import BulkStatusBar from './BulkStatusBar.vue'
 import { computed, onMounted, ref } from 'vue'
-import { Plus, Save, RefreshCw } from '@lucide/vue'
+import { Plus, Save, RefreshCw, Pin, PinOff } from '@lucide/vue'
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { useLocaleStore } from '@/stores/locale'
 import { useAdminStore } from '../store'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
-import { fetchAdminCustomers, createAdminCustomer, updateAdminCustomer, type AdminCustomer, type CustomerPage, type CustomerFields } from '../services/adminApi'
+import { fetchAdminCustomers, createAdminCustomer, updateAdminCustomer, type AdminCustomer, type CustomerPage, type CustomerFields, customerBusinessDefaults } from '../services/adminApi'
 function customerContactUrl(phone:string|null){const digits=(phone||'').replace(/\D/g,'');return digits.length>=8&&digits.length<=15?'https://wa.me/'+digits:null}
 const deleteTarget=ref<{id:number;revision:string;label:string}|null>(null),recoveryBusy=ref(false)
 const locale=useLocaleStore()
@@ -47,7 +48,8 @@ async function load(page=1){
 }
 function edit(row:AdminCustomer|null){
   selected.value=row;error.value='';note.value=''
-  draft.value=row?{company_name:row.company_name||row.name||'',whatsapp:row.whatsapp,country_code:row.country_code,country_name:row.country_name,notes:row.notes,priority:row.priority,active:row.active,direct_link_enabled:row.direct_link_enabled}:{company_name:'',whatsapp:null,country_code:null,country_name:null,notes:null,priority:0,active:true,direct_link_enabled:false}
+  const business=row?Object.fromEntries(Object.entries(customerBusinessDefaults).map(([key,value])=>[key,row[key as keyof AdminCustomer]??value])):customerBusinessDefaults
+  draft.value=row?{...business as typeof customerBusinessDefaults,company_name:row.company_name||row.name||'',whatsapp:row.whatsapp,country_code:row.country_code,country_name:row.country_name,notes:row.notes,priority:row.priority,active:row.active,direct_link_enabled:row.direct_link_enabled}:{...customerBusinessDefaults,company_name:'',whatsapp:null,country_code:null,country_name:null,notes:null,priority:0,active:true,direct_link_enabled:false}
   open.value=true
 }
 async function save(){
@@ -61,6 +63,12 @@ async function save(){
     open.value=false;draft.value=null;selected.value=null;note.value=locale.t('adminSaved')
     result.value=await fetchAdminCustomers(result.value.page,search.value.trim())
   }catch(e){error.value=failed(e)}finally{saving.value=false}
+}
+async function togglePin(row:AdminCustomer){
+  if(saving.value||loading.value||recoveryBusy.value||bulkBusy.value)return
+  saving.value=true;error.value=''
+  try{await updateAdminCustomer(row.id,{pinned:!row.pinned},row.revision);await load(result.value.page);note.value=locale.t('adminSaved')}
+  catch(e){error.value=failed(e)}finally{saving.value=false}
 }
 function close(){if(!saving.value){open.value=false;draft.value=null;selected.value=null;error.value=''}}
 const bulkBusy=ref(false),checked=ref<number[]>([])
@@ -89,9 +97,9 @@ onMounted(()=>load())
       <table class="data-table">
         <thead><tr><th><input type="checkbox" :aria-label="locale.t('bulkSelectPage')" :checked="!!selectable.length&&checked.length===selectable.length" :indeterminate="checked.length>0&&checked.length<selectable.length" :disabled="recoveryBusy||bulkBusy||loading||saving||bulkBusy||!selectable.length" @change="togglePage"></th><th>{{locale.t('customerLabel')}}</th><th>{{locale.t('customerPriority')}}</th><th>WhatsApp</th><th>{{locale.t('email')}}</th><th>{{locale.t('statusLabel')}}</th><th>{{locale.t('actions')}}</th></tr></thead>
         <tbody><tr v-for="row in result.customers" :key="row.id"><td><input v-model="checked" type="checkbox" :value="row.id" :aria-label="String(row.id)" :disabled="recoveryBusy||bulkBusy||loading||saving||bulkBusy"></td>
-          <td><button class="text-start font-bold" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.name||'#'+row.id}}</button><RecordTags :tags="row.tags"/><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
-          <td>{{row.priority}}</td><td dir="ltr">{{row.whatsapp||'—'}}</td><td dir="ltr">{{row.email||'—'}}</td>
-          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><a v-if="customerContactUrl(row.whatsapp)" :href="customerContactUrl(row.whatsapp)!" target="_blank" rel="noopener noreferrer" class="mini-action customer-whatsapp-action me-2"><WhatsAppIcon :size="17" tone="white"/>{{locale.t('contactCustomer')}}</a><button class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="row.email!==admin.identity?.email" class="mini-action ms-2 text-rose-600" :disabled="loading||saving||bulkBusy||recoveryBusy" @click="deleteTarget={id:row.id,revision:row.revision,label:row.company_name||row.name||'#'+row.id}">{{locale.t('accountDeleteTitle')}}</button><button v-if="row.has_account===false&&row.active" class="mini-action ms-2" :disabled="recoveryBusy||bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
+          <td><button class="text-start font-bold" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.contact_name||row.name||'#'+row.id}}</button><small v-if="row.contact_name" class="block">{{row.contact_name}}</small><Pin v-if="row.pinned" :size="14" :aria-label="locale.t('customerPinned')"/><RecordTags :tags="row.tags"/><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
+          <td>{{row.priority}}</td><td dir="ltr">{{row.whatsapp||'—'}}</td><td dir="ltr">{{row.contact_email||row.email||'—'}}</td>
+          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action me-2" :disabled="loading||saving||bulkBusy||recoveryBusy||accountBusy" :aria-label="locale.t(row.pinned?'customerUnpin':'customerPin')" :aria-pressed="!!row.pinned" @click="togglePin(row)"><PinOff v-if="row.pinned" :size="16"/><Pin v-else :size="16"/></button><a v-if="customerContactUrl(row.whatsapp)" :href="customerContactUrl(row.whatsapp)!" target="_blank" rel="noopener noreferrer" class="mini-action customer-whatsapp-action me-2"><WhatsAppIcon :size="17" tone="white"/>{{locale.t('contactCustomer')}}</a><button class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="row.email!==admin.identity?.email" class="mini-action ms-2 text-rose-600" :disabled="loading||saving||bulkBusy||recoveryBusy" @click="deleteTarget={id:row.id,revision:row.revision,label:row.company_name||row.name||'#'+row.id}">{{locale.t('accountDeleteTitle')}}</button><button v-if="row.has_account===false&&row.active" class="mini-action ms-2" :disabled="recoveryBusy||bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
         </tr></tbody>
       </table>
       <p v-if="!loading&&!result.customers.length&&!error" class="p-4 text-sm">{{locale.t('adminNoCustomers')}}</p>
@@ -108,12 +116,9 @@ onMounted(()=>load())
           <div class="profile-photo">🌐</div>
           <div class="min-w-0 flex-1"><b>{{draft.company_name||locale.t('addCustomer')}}</b><span v-if="selected" class="block text-xs">#{{selected.id}}</span></div>
         </section>
+        <CustomerBusinessFieldsForm v-model="draft" :disabled="recoveryBusy||bulkBusy||saving"/>
         <section class="admin-surface grid gap-3 rounded-2xl p-4 md:grid-cols-2">
           <p class="text-xs md:col-span-2">{{locale.t('adminCustomerAccountHelp')}}</p>
-          <label class="form-field">{{locale.t('adminCompany')}}<input v-model="draft.company_name" required maxlength="255" :disabled="recoveryBusy||bulkBusy||saving"></label>
-          <label class="form-field">WhatsApp<input v-model="draft.whatsapp" dir="ltr" maxlength="64" :disabled="recoveryBusy||bulkBusy||saving"></label>
-          <label class="form-field">{{locale.t('country')}}<input v-model="draft.country_name" maxlength="255" :disabled="recoveryBusy||bulkBusy||saving"></label>
-          <label class="form-field">{{locale.t('adminCountryCode')}}<input v-model="draft.country_code" dir="ltr" maxlength="2" pattern="[A-Za-z]{2}" :disabled="recoveryBusy||bulkBusy||saving"></label>
           <label class="form-field">{{locale.t('customerPriority')}}<input v-model.number="draft.priority" type="number" min="0" max="255" required :disabled="recoveryBusy||bulkBusy||saving"></label>
           <div v-if="selected" class="text-sm"><b>{{selected.name}}</b><p dir="ltr">{{selected.email}}</p></div>
           <label class="flex items-center gap-2"><input v-model="draft.active" type="checkbox" :disabled="recoveryBusy||bulkBusy||saving">{{locale.t('active')}}</label>

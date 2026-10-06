@@ -988,3 +988,11 @@ html.dark .product-card .product-card-title.unavailable{text-shadow:none}
 /* Customer contact opens WhatsApp without sending a message automatically. */
 .mini-action.customer-whatsapp-action{background:#128c4a;border-color:#128c4a;color:#fff}
 .mini-action.customer-whatsapp-action:hover{background:#0e713c;border-color:#0e713c}
+
+/* The localized label and digits belong to one code pill. */
+.product-code-row code.product-code-pill{display:inline-flex;align-items:center;gap:.25em;background:#101a44;color:var(--brand-white);font-family:inherit;font-weight:700}
+.product-code-pill>span,.product-code-pill>bdi{font:inherit;color:inherit}
+
+/* Owner: category banner copy stays in the physical bottom-right corner. */
+.test26-product-banner-copy{inset-inline-start:auto;inset-inline-end:auto;right:1.25rem;top:auto;bottom:1.25rem;transform:none}
+.test26-product-banner-shade,[dir="ltr"] .test26-product-banner-shade{background:linear-gradient(0deg,rgba(5,15,38,.78),rgba(5,15,38,0) 65%)}
