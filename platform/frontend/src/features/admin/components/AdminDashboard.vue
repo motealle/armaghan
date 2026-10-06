@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import HomeMediaPanel from '@/features/home-media/HomeMediaPanel.vue'
 import OrderTrackingPanel from '@/features/orders/components/OrderTrackingPanel.vue'
 import { computed, ref } from 'vue'
@@ -144,7 +145,7 @@ function inviteLead(id:string){
           <article v-for="lead in customers.wishlistLeads" :key="lead.id" class="lead-card">
             <div><b class="block text-sm">{{lead.kind==='guest'?locale.t('anonymousVisitor'):lead.label}}</b><span class="text-xs text-[var(--c-muted)]">{{lead.favoritesCount}} · {{locale.t('favorites')}}</span></div>
             <div class="ms-auto flex gap-1">
-              <button class="mini-action" @click="contactLead(lead.id)"><MessageCircleMore :size="15"/>{{lead.kind==='guest'?locale.t('guestMessage'):locale.t('contactCustomer')}}</button>
+              <button class="mini-action customer-whatsapp-action" @click="contactLead(lead.id)"><WhatsAppIcon :size="17" tone="white"/>{{lead.kind==='guest'?locale.t('guestMessage'):locale.t('contactCustomer')}}</button>
               <button v-if="lead.kind==='guest'" class="mini-action" @click="inviteLead(lead.id)"><UserPlus :size="15"/>{{locale.t('inviteAccount')}}</button>
             </div>
           </article>

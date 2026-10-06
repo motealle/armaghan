@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import AccountRecoveryPanel from './AccountRecoveryPanel.vue'
 import CustomerAccountPanel from './CustomerAccountPanel.vue'
 import RecordTags from './RecordTags.vue'
@@ -10,6 +11,7 @@ import { useLocaleStore } from '@/stores/locale'
 import { useAdminStore } from '../store'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
 import { fetchAdminCustomers, createAdminCustomer, updateAdminCustomer, type AdminCustomer, type CustomerPage, type CustomerFields } from '../services/adminApi'
+function customerContactUrl(phone:string|null){const digits=(phone||'').replace(/\D/g,'');return digits.length>=8&&digits.length<=15?'https://wa.me/'+digits:null}
 const deleteTarget=ref<{id:number;revision:string;label:string}|null>(null),recoveryBusy=ref(false)
 const locale=useLocaleStore()
 const admin=useAdminStore()
@@ -89,7 +91,7 @@ onMounted(()=>load())
         <tbody><tr v-for="row in result.customers" :key="row.id"><td><input v-model="checked" type="checkbox" :value="row.id" :aria-label="String(row.id)" :disabled="recoveryBusy||bulkBusy||loading||saving||bulkBusy"></td>
           <td><button class="text-start font-bold" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.name||'#'+row.id}}</button><RecordTags :tags="row.tags"/><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
           <td>{{row.priority}}</td><td dir="ltr">{{row.whatsapp||'—'}}</td><td dir="ltr">{{row.email||'—'}}</td>
-          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="row.email!==admin.identity?.email" class="mini-action ms-2 text-rose-600" :disabled="loading||saving||bulkBusy||recoveryBusy" @click="deleteTarget={id:row.id,revision:row.revision,label:row.company_name||row.name||'#'+row.id}">{{locale.t('accountDeleteTitle')}}</button><button v-if="row.has_account===false&&row.active" class="mini-action ms-2" :disabled="recoveryBusy||bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
+          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><a v-if="customerContactUrl(row.whatsapp)" :href="customerContactUrl(row.whatsapp)!" target="_blank" rel="noopener noreferrer" class="mini-action customer-whatsapp-action me-2"><WhatsAppIcon :size="17" tone="white"/>{{locale.t('contactCustomer')}}</a><button class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="row.email!==admin.identity?.email" class="mini-action ms-2 text-rose-600" :disabled="loading||saving||bulkBusy||recoveryBusy" @click="deleteTarget={id:row.id,revision:row.revision,label:row.company_name||row.name||'#'+row.id}">{{locale.t('accountDeleteTitle')}}</button><button v-if="row.has_account===false&&row.active" class="mini-action ms-2" :disabled="recoveryBusy||bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
         </tr></tbody>
       </table>
       <p v-if="!loading&&!result.customers.length&&!error" class="p-4 text-sm">{{locale.t('adminNoCustomers')}}</p>

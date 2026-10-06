@@ -12,6 +12,7 @@ const props=withDefaults(defineProps<{product:Product;adminEditable?:boolean}>()
 const emit=defineEmits<{detail:[product:Product];whatsapp:[product:Product];edit:[product:Product]}>()
 const favorites=useFavoritesStore()
 const locale=useLocaleStore()
+const displayCode=computed(()=>locale.locale==='fa'?props.product.code.replace(/[0-9]/g,digit=>'۰۱۲۳۴۵۶۷۸۹'[Number(digit)]!):props.product.code)
 const isFavorite=computed(()=>favorites.has(props.product.id))
 const displaySubcategory=computed(()=>locale.subcategoryName(props.product.subcategoryCode,props.product.subcategoryName))
 const visibleTitle=computed(()=>customerProductLabel(props.product,displaySubcategory.value,locale.t('unavailableOrProducible')))
@@ -26,7 +27,7 @@ const visibleTitle=computed(()=>customerProductLabel(props.product,displaySubcat
     <div class="product-card-body">
       <div data-style-id="product.title" data-style-label="عنوان کارت محصول" class="product-card-title" :class="{unavailable:product.availability!=='available'}">{{visibleTitle}}</div>
       <div data-style-id="product.code" data-style-label="کد محصول" class="product-code-row flex items-center gap-2">
-        <code dir="ltr">{{product.code}}</code>
+        <span>{{locale.t('codeLabel')}} <code dir="ltr">{{displayCode}}</code></span>
         <button v-if="adminEditable" type="button" class="ms-auto grid h-9 w-9 place-items-center rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] text-[var(--c-primary)] shadow-sm" :aria-label="locale.t('editProduct')" @click.stop="emit('edit',product)">
           <Pencil :size="16"/>
         </button>

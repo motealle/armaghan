@@ -10,11 +10,11 @@ export interface CapabilityContent{
 export const test26Media={
   hero:{
     image:'./images/test29/home/hero-customer-trade.webp',
-    fallback:'https://placehold.co/1920x1080/0B2340/FFFFFF.webp?text=IMAGE+REQUIRED%0AHome+Hero+1920x1080',
+    fallback:'./images/test29/home/hero-customer-trade.webp',
   },
   about:{
     image:'./images/test26/home/about-armaghan.webp',
-    fallback:'https://placehold.co/1600x900/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AAbout+Armaghan+1600x900',
+    fallback:'./images/test26/home/about-armaghan.webp',
   },
 } as const
 
@@ -28,7 +28,7 @@ export const capabilities:CapabilityContent[]=[
       'capabilityProductionDetail4','capabilityProductionDetail5','capabilityProductionDetail6','capabilityProductionDetail7',
     ],
     image:'./images/test26/home/capability-production.webp',
-    fallback:'https://placehold.co/1200x675/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AProduction+Capability',
+    fallback:'./images/test26/home/capability-production.webp',
   },
   {
     id:'export',
@@ -39,7 +39,7 @@ export const capabilities:CapabilityContent[]=[
       'capabilityExportDetail5','capabilityExportDetail6','capabilityExportDetail7','capabilityExportDetail8',
     ],
     image:'./images/test26/home/capability-export-prep.webp',
-    fallback:'https://placehold.co/1200x675/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0AExport+Preparation',
+    fallback:'./images/test26/home/capability-export-prep.webp',
   },
   {
     id:'trade',
@@ -50,21 +50,21 @@ export const capabilities:CapabilityContent[]=[
       'capabilityTradeDetail5','capabilityTradeDetail6','capabilityTradeDetail7','capabilityTradeDetail8',
     ],
     image:'./images/test26/home/capability-documents.webp',
-    fallback:'https://placehold.co/1200x675/E8F2EF/10243E.webp?text=IMAGE+REQUIRED%0ADocuments+and+Trade',
+    fallback:'./images/test26/home/capability-documents.webp',
   },
 ]
 
 export const productBannerMedia:Record<string,{image:string;fallback:string}>={
   '1':{
     image:'./images/test26/home/banner-baby.webp',
-    fallback:'https://placehold.co/1600x600/F1F5F4/10243E.webp?text=IMAGE+REQUIRED%0ABaby+Category+Banner',
+    fallback:'./images/test26/home/banner-baby.webp',
   },
   '2':{
     image:'./images/test26/home/banner-kids.webp',
-    fallback:'https://placehold.co/1600x600/F1F5F4/10243E.webp?text=IMAGE+REQUIRED%0AKids+Category+Banner',
+    fallback:'./images/test26/home/banner-kids.webp',
   },
   '3':{
     image:'./images/test26/home/banner-women.webp',
-    fallback:'https://placehold.co/1600x600/F1F5F4/10243E.webp?text=IMAGE+REQUIRED%0AWomen+Category+Banner',
+    fallback:'./images/test26/home/banner-women.webp',
   },
 }
