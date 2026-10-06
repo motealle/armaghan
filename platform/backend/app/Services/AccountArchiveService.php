@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Models\AccountArchive;
 use App\Models\ActivityLog;
 use App\Models\Customer;
+use App\Models\CustomerBusinessProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,7 @@ final class AccountArchiveService
                 'tags' => ['user' => $user?->adminTags() ?? [], 'customer' => $customer?->adminTags() ?? []],
                 'user' => $user?->only(['id', 'name', 'email', 'role', 'active']),
                 'customer' => $customer?->only(['id', 'user_id', 'company_name', 'whatsapp', 'country_code', 'country_name', 'notes', 'priority', 'active', 'direct_link_enabled']),
+                'customer_business' => $customer?->businessProfile?->only(CustomerBusinessProfile::FIELDS),
                 'recovery' => Crypt::encryptString(json_encode($snapshot, JSON_THROW_ON_ERROR)),
             ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
             AccountArchive::create(['id' => $uuid, 'resource' => $resource, 'target_id' => $id,
@@ -134,13 +136,17 @@ final class AccountArchiveService
         $attributes = static function ($model): ?array {
             if (! $model) return null;
             $data = $model->getAttributes();
-            foreach (['active', 'direct_link_enabled'] as $field) {
+            foreach (['active', 'direct_link_enabled', 'pinned'] as $field) {
                 if (array_key_exists($field, $data)) $data[$field] = (int) (bool) $data[$field];
             }
             return $data;
         };
-        return ['user' => $attributes($user), 'customer' => $attributes($customer),
+        $snapshot = ['user' => $attributes($user), 'customer' => $attributes($customer),
             'user_tags' => $user?->adminTags() ?? [], 'customer_tags' => $customer?->adminTags() ?? []];
+        // No new null key for old archives: their original fingerprints remain valid.
+        $profile = $customer?->businessProfile()->first();
+        if ($profile) $snapshot['customer_business'] = $attributes($profile);
+        return $snapshot;
     }
 
     private function fingerprint(array $snapshot): string

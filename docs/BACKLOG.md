@@ -1,3 +1,28 @@
+## Run2 implementation ready for guarded backend activation — 2026-10-06
+
+- One create-only customer_business_profiles table links uniquely to existing Customer. Canonical admin create/update/search/revision expose bounded optional contact/address/commercial fields and pinned; company/country/status remain existing columns. Pin ordering usesCOALESCE to keep ordinary unpinned rows in newest-first order. Contact email/name never mutate login credentials.
+- Parent-locked transactional profile writes; readable/encrypted archive snapshots include an existing business profile; legacy snapshots omit the new null key so old backup fingerprints remain compatible. Existing archived rows retain their profiles through Undo/import. Security/roundtrip acceptance added to the existing focused customer/account files.
+- Home public API now selects existing/new uploaded thumb/card/detail WebP variants and supplies actual-width responsive srcsets. Existing original URLs remain compatible; originals unchanged. Shared bounded nonblocking/atomic derivative repair is reused, without updating Home editor revisions during delivery housekeeping. Draft/private preview remains authenticated and no-store; published-channel checks precede generation. Home legacy repair test verifies original SHA, no upscale and stable revision.
+- Frontend implementation ready but held until backend activation: grouped customer form/pin, category/subcategory/search/status in query, safe route-scoped scroll saved on leave/background and restored after Products readiness with cancellation on user scroll. Private token/admin routes excluded. Owner additions: code label and digits in one navy pill with same inherited face/color; Home category copy bottom-right with readable bottom gradient.
+- One local targeted unit pass:5tests/3files PASS; type-check/Vite build PASS; required frozen/editor/customer/root/FTP contracts PASS. Backend PHP unavailable locally; focused CI/additive checks and private pre-migration snapshot are required before activation. No production business/customer data edited or account deleted. Backend/publication/live single-pass acceptance PENDING.
+
+## Additional owner steering in run2 — 2026-10-06
+
+- Include localized کد and its number INSIDE one navy pill, same inherited Persian font and number color; visible owner screenshot shows the label outside the pill. No new separate badge or displaced number.
+- Home bottom three category banners: copy goes in the physical bottom-right corner. Keep doubled height/green borders; bottom gradient keeps the white copy readable. Preserve English text direction.
+
+## Run2 execution — customer business data, browsing position and lightweight Home media — 2026-10-06
+
+Owner explicitly starts run2 and requests one final focused verification pass. Current main ad84884 confirmed; no prior run2 implementation exists. Selected ranked method: create-only one-to-one customer business profile; canonical existing Customer controller/form; product filters in hash query; safe route-scoped persisted scroll with DOM-ready restoration and user-interaction cancellation; responsive Home WebP variants using existing canonical Media Library/shared bounded derivative generator. Alternatives rank2 direct alteration of customers (8), rank3 unstructured notes/JSON-only business profile (6), rank4 parallel admin (4), rank5 browser-only customer persistence (2); selected approach10 preserves old columns and migration protections.
+
+Execution checklist:
+- [ ] Canonical contact name, store name, contact phone/email/language, country/city/district/shop number, product group, purchase volume, cooperation/sales type; persisted pin sorted first; existing active/inactive and backup-first delete reused.
+- [ ] Profile included in customer revision/search and readable/encrypted backup/fingerprint; old archives without profile remain compatible; parent-lock transactional writes.
+- [ ] Category/subcategory/search/status restored from URL; refresh scroll stored only for safe non-token routes, bounded restoration after Products ready; user scroll cancels pending jump.
+- [ ] Existing/new Home uploads serve aspect-preserving thumb/card/detail WebP; originals untouched; same-channel public selection and draft authorization maintained; no repeated expensive conversion or blocked worker.
+- [ ] One focused final pass for changed behavior + type-check/build and necessary guarded publication checks. Backend additive lane snapshots private database before create-only migration; activate backend first, then guarded Test29/root UI release.
+- [ ] Verify public legacy Home image byte reduction and one live category/subcategory/scroll reload. Real authenticated manager upload/CRM acceptance only if a valid session is available; never weaken auth to manufacture it.
+
 ## Verified batch1 publication and cold Home-file recovery — 2026-10-06
 
 - UI81ecff30e3bb6263e88a70a7eb459efea67af45c published at Test29/root: FTP37477293280 PASS (QA112315982989, Test29upload112316265609; root promotion PASS). Live revision2026-10-06-home-customer-batch1. Browser: category banners now640px vs observed prior320px at the same desktop size; all3 capability borders2px; Why outer radius17.6px,3px transparent gaps, four square internal rows with0px border. No external placehold.co images. Persian product cards show کد ۱۱۰۰۱ and قابل تولید on rgb(16,26,68).

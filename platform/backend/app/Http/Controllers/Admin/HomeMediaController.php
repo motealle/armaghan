@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\StyleProfile;
 use App\Services\StyleProfileService;
+use App\Services\Media\ProductMediaVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -14,22 +15,38 @@ class HomeMediaController extends Controller {
  public function __construct(private StyleProfileService $profiles) {}
  private function json(array $data,int $status=200) {return response()->json($data,$status)->header('Cache-Control','no-store, private');}
  private function revision(StyleProfile $profile): string {return hash('sha256',json_encode($profile->media()->where('collection_name',StyleProfile::MEDIA_COLLECTION)->orderBy('id')->get(['id','custom_properties','updated_at'])->map(fn($m)=>$m->only(['id','custom_properties','updated_at']))->all(),JSON_THROW_ON_ERROR));}
- private function snapshot(StyleProfile $profile): array {return ['revision'=>$this->revision($profile),'images'=>$profile->getMedia(StyleProfile::MEDIA_COLLECTION)->map(fn($m)=>['id'=>$m->id,'target'=>$m->getCustomProperty('target'),'url'=>route('admin.home-media.file',['media'=>$m->id]),'channels'=>$m->getCustomProperty('channels',[])])->values()->all()];}
+ private function snapshot(StyleProfile $profile): array {return ['revision'=>$this->revision($profile),'images'=>$profile->getMedia(StyleProfile::MEDIA_COLLECTION)->map(fn($m)=>['id'=>$m->id,'target'=>$m->getCustomProperty('target'),'url'=>route('admin.home-media.file',['media'=>$m->id,'variant'=>'thumb']),'channels'=>$m->getCustomProperty('channels',[])])->values()->all()];}
  public function index(Request $request) {return $this->json($this->snapshot($this->profiles->ensureDefault($request->user())));}
  public function publicIndex(string $channel) {
-  $profile=$this->profiles->findDefault();$images=[];
-  if($profile)foreach($profile->getMedia(StyleProfile::MEDIA_COLLECTION) as $m)if(in_array($channel,$m->getCustomProperty('channels',[]),true))$images[$m->getCustomProperty('target')]=route('home-media.file',['media'=>$m->id]);
-  return $this->json(['images'=>(object)$images]);
+  $profile=$this->profiles->findDefault();$images=[];$srcsets=[];
+  if($profile)foreach($profile->getMedia(StyleProfile::MEDIA_COLLECTION) as $m){
+   if(!in_array($channel,$m->getCustomProperty('channels',[]),true))continue;
+   $target=$m->getCustomProperty('target');
+   $variant=$target==='hero'||str_starts_with($target,'banner.')?'detail':'card';
+   $images[$target]=route('home-media.file',['media'=>$m->id,'variant'=>$variant]);
+   $size=@getimagesize($m->getPath());$sourceWidth=is_array($size)?(int)$size[0]:0;
+   $candidates=[];
+   foreach(['thumb'=>320,'card'=>800,'detail'=>1600] as $name=>$maximum){
+    $width=min($maximum,$sourceWidth);
+    if($width>0&&!isset($candidates[$width]))$candidates[$width]=route('home-media.file',['media'=>$m->id,'variant'=>$name]).' '.$width.'w';
+   }
+   if($candidates)$srcsets[$target]=implode(', ',array_values($candidates));
+  }
+  return $this->json(['images'=>(object)$images,'srcsets'=>(object)$srcsets]);
  }
- public function adminFile(Media $media) {return $this->mediaFile($media);}
- public function publicFile(Media $media) {
+ public function adminFile(Media $media,string $variant='original') {return $this->mediaFile($media,$variant,true);}
+ public function publicFile(Media $media,string $variant='original') {
   abort_unless(count($media->getCustomProperty('channels',[]))>0,404);
-  return $this->mediaFile($media);
+  return $this->mediaFile($media,$variant,false);
  }
- private function mediaFile(Media $media) {
+ private function mediaFile(Media $media,string $variant,bool $private) {
   abort_unless($media->model_type===StyleProfile::class&&$media->collection_name===StyleProfile::MEDIA_COLLECTION,404);
-  $path=$media->getPath();abort_unless(is_file($path)&&filesize($path)>0,404);
-  return response()->file($path,['Cache-Control'=>'public, max-age=31536000, immutable','Content-Type'=>(string)$media->mime_type,'X-Content-Type-Options'=>'nosniff']);
+  abort_unless(in_array($variant,['original','thumb','card','detail'],true),404);
+  // Derivative writes are delivery housekeeping and must not invalidate an open editor revision.
+  $derived=$variant==='original'?null:app(ProductMediaVariant::class)->path($media,$variant,false);
+  $path=$derived??$media->getPath();abort_unless(is_file($path)&&filesize($path)>0,404);
+  $cache=$private?'private, no-store':($derived||$variant==='original'?'public, max-age=31536000, immutable':'public, max-age=60');
+  return response()->file($path,['Cache-Control'=>$cache,'Content-Type'=>$derived?'image/webp':(string)$media->mime_type,'X-Content-Type-Options'=>'nosniff']);
  }
  public function upload(Request $request) {
   $data=$request->validate(['revision'=>['required','regex:/^[a-f0-9]{64}$/'],'target'=>['required',Rule::in(self::TARGETS)],'image'=>['required','file','image','extensions:jpg,jpeg,png,webp','mimetypes:image/jpeg,image/png,image/webp','max:8192','dimensions:max_width=5000,max_height=5000']]);

@@ -8,7 +8,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 /** Repair legacy/missing derivatives without a queue, changing originals, or public helpers. */
 class ProductMediaVariant
 {
-    public function path(Media $media, string $variant): ?string
+    public function path(Media $media, string $variant, bool $recordGenerated = true): ?string
     {
         $path = $media->getPath($variant);
         if (is_file($path) && filesize($path) > 0) {
@@ -57,7 +57,7 @@ class ProductMediaVariant
             if (! imagewebp($target, $temporary, $quality) || ! is_file($temporary) || filesize($temporary) < 1) return null;
             if (! @rename($temporary, $path)) return null;
             @chmod($path, 0644);
-            $media->markAsConversionGenerated($variant);
+            if ($recordGenerated) $media->markAsConversionGenerated($variant);
             return $path;
         } finally {
             if ($temporary && is_file($temporary)) @unlink($temporary);

@@ -41,6 +41,7 @@ class AccountArchiveTest extends TestCase
         [$user, $customer] = $this->buyer();
         $actor = User::factory()->admin()->create();
         $password = $user->password;
+        $customer->businessProfile()->create(['contact_name' => 'Business contact', 'city' => 'Tehran', 'pinned' => true]);
         \App\Models\TrackedOrder::create(['customer_id' => $customer->id, 'reference' => 'AT-ARCHIVE-TEST',
             'request_path' => 'simple', 'description' => 'Preserved order', 'stage' => 'inquiry']);
         $magic = \App\Models\MagicLink::create(['customer_id' => $customer->id,
@@ -50,6 +51,7 @@ class AccountArchiveTest extends TestCase
         $this->withSession([CustomerSession::KEY => $customer->id]);
         $backup = $this->backup($actor, 'users', $user);
         $this->assertStringNotContainsString($password, $backup['backup']);
+        $this->assertSame('Tehran', json_decode($backup['backup'], true)['customer_business']['city']);
         $this->assertStringNotContainsString($password, DB::table('account_archives')->value('snapshot'));
         $this->deleteJson('/api/admin/account-archives/'.$backup['archive_id'], ['receipt' => $backup['receipt']])->assertUnprocessable();
         $this->remove($backup);
@@ -64,6 +66,9 @@ class AccountArchiveTest extends TestCase
         $this->postJson('/api/admin/account-archives/'.$backup['archive_id'].'/restore')->assertOk();
         $this->assertTrue(User::findOrFail($user->id)->active);
         $this->assertTrue(Customer::findOrFail($customer->id)->active);
+        $profile = Customer::findOrFail($customer->id)->businessProfile;
+        $this->assertSame('Business contact', $profile->contact_name);
+        $this->assertTrue($profile->pinned);
         // Undo must not revive the pre-deletion customer session.
         $this->getJson('/api/customer/session')->assertUnauthorized();
         $this->postJson('/api/admin/account-archives/'.$backup['archive_id'].'/restore')->assertConflict();

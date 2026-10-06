@@ -109,4 +109,25 @@ class CustomAdminCustomersTest extends TestCase
         $this->assertDatabaseHas('users', ['id' => $owner->id]);
     }
 
+    public function test_business_profile_round_trip_pin_order_and_revision_are_canonical(): void
+    {
+        $this->actingAs(User::factory()->admin()->create());
+        $fields = ['company_name' => 'Store', 'contact_name' => 'Buyer', 'contact_email' => 'buyer@example.test',
+            'phone' => '+989120000000', 'preferred_language' => 'fa', 'country_name' => 'Iran',
+            'city' => 'Tehran', 'district' => 'Centre', 'shop_number' => '12A',
+            'sales_product_group' => 'Baby, Kids', 'purchase_volume' => '500 monthly',
+            'cooperation_type' => 'Wholesale', 'sales_type' => 'Retail', 'pinned' => true];
+        $row = $this->postJson('/api/admin/customers', $fields)->assertCreated()->json('customer');
+        $this->postJson('/api/admin/customers', ['company_name' => 'Newer'])->assertCreated();
+        $this->getJson('/api/admin/customers')->assertJsonPath('customers.0.id', $row['id']);
+        foreach ($fields as $key => $value) $this->assertSame($value, $row[$key]);
+        $this->getJson('/api/admin/customers?search=buyer%40example.test')->assertJsonPath('customers.0.contact_name', 'Buyer');
+        $changed = $this->patchJson('/api/admin/customers/'.$row['id'], ['revision' => $row['revision'],
+            'city' => 'Shiraz', 'pinned' => false, 'active' => false])->assertOk()->json('customer');
+        $this->assertNotSame($row['revision'], $changed['revision']);
+        $this->patchJson('/api/admin/customers/'.$row['id'], ['revision' => $row['revision'], 'city' => 'Stale'])->assertConflict();
+        $this->assertDatabaseHas('customer_business_profiles', ['customer_id' => $row['id'], 'city' => 'Shiraz', 'pinned' => false]);
+        $this->patchJson('/api/admin/customers/'.$row['id'], ['revision' => $changed['revision'], 'preferred_language' => 'invalid'])->assertUnprocessable();
+    }
+
 }

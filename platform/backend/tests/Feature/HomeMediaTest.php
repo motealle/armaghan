@@ -45,4 +45,22 @@ class HomeMediaTest extends TestCase {
   $this->post('/api/admin/home-media',['target'=>'about','revision'=>$state['revision'],'image'=>UploadedFile::fake()->create('bad.jpg',1,'text/plain')],['Accept'=>'application/json'])->assertUnprocessable();
   $this->assertDatabaseCount('media',2);$this->getJson('/api/home-media/production')->assertJsonMissingPath('images.hero');
  }
+ public function test_home_variants_repair_legacy_files_without_changing_original_or_editor_revision(): void {
+  $this->actingAs(User::factory()->admin()->create());
+  $state=$this->getJson('/api/admin/home-media')->json();$state=$this->upload('capability.production',$state);
+  $id=$state['images'][0]['id'];
+  $state=$this->postJson('/api/admin/home-media/publish/production',['revision'=>$state['revision'],'selection'=>[$id]])->assertOk()->json();
+  $media=StyleProfile::first()->getMedia(StyleProfile::MEDIA_COLLECTION)->first();
+  $originalHash=hash_file('sha256',$media->getPath());
+  @unlink($media->getPath('card'));
+  $public=$this->getJson('/api/home-media/production')->assertOk()->json();
+  $this->assertStringContainsString('/card',$public['images']['capability.production']);
+  $this->get('/api/home-media/file/'.$id.'/card')->assertOk()->assertHeader('Content-Type','image/webp');
+  $this->assertSame(80,getimagesize($media->getPath('card'))[0]);
+  $this->assertSame($originalHash,hash_file('sha256',$media->getPath()));
+  $this->getJson('/api/admin/home-media')->assertJsonPath('revision',$state['revision']);
+  $this->get('/api/home-media/file/'.$id.'/unknown')->assertNotFound();
+  $this->getJson('/api/home-media/staging')->assertJsonMissingPath('images.capability.production');
+ }
+
 }
