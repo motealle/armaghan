@@ -1000,3 +1000,7 @@ html.dark .product-card .product-card-title.unavailable{text-shadow:none}
 /* Reduce the rendered status text and pill by 7% from each theme's current size. */
 .product-card .product-card-title.unavailable{min-height:1.4415rem;line-height:1.4415rem;padding:.0744rem .6045rem;font-size:.7254rem}
 html.dark .product-card .product-card-title.unavailable{min-height:1.29735rem;line-height:1.29735rem;padding:.0651rem .54405rem;font-size:.65286rem}
+
+/* Compact table actions retain comfortable touch targets and accessible names. */
+.admin-row-actions{display:flex;align-items:center;gap:.375rem;flex-wrap:nowrap;white-space:nowrap}
+.admin-row-actions .mini-action{display:inline-flex;align-items:center;justify-content:center;min-inline-size:2.75rem;min-block-size:2.75rem;padding:.5rem;border-radius:.8rem;margin:0}

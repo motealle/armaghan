@@ -6,7 +6,7 @@ import CustomerAccountPanel from './CustomerAccountPanel.vue'
 import RecordTags from './RecordTags.vue'
 import BulkStatusBar from './BulkStatusBar.vue'
 import { computed, onMounted, ref } from 'vue'
-import { Plus, Save, RefreshCw, Pin, PinOff } from '@lucide/vue'
+import { Plus, Save, RefreshCw, Pin, PinOff, Pencil, Trash2, UserPlus } from '@lucide/vue'
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { useLocaleStore } from '@/stores/locale'
 import { useAdminStore } from '../store'
@@ -67,7 +67,7 @@ async function save(){
 async function togglePin(row:AdminCustomer){
   if(saving.value||loading.value||recoveryBusy.value||bulkBusy.value)return
   saving.value=true;error.value=''
-  try{await updateAdminCustomer(row.id,{pinned:!row.pinned},row.revision);await load(result.value.page);note.value=locale.t('adminSaved')}
+  try{await updateAdminCustomer(row.id,{pinned:!row.pinned},row.revision);result.value=await fetchAdminCustomers(result.value.page,search.value.trim());checked.value=[];note.value=locale.t('adminSaved')}
   catch(e){error.value=failed(e)}finally{saving.value=false}
 }
 function close(){if(!saving.value){open.value=false;draft.value=null;selected.value=null;error.value=''}}
@@ -99,7 +99,15 @@ onMounted(()=>load())
         <tbody><tr v-for="row in result.customers" :key="row.id"><td><input v-model="checked" type="checkbox" :value="row.id" :aria-label="String(row.id)" :disabled="recoveryBusy||bulkBusy||loading||saving||bulkBusy"></td>
           <td><button class="text-start font-bold" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{row.company_name||row.contact_name||row.name||'#'+row.id}}</button><small v-if="row.contact_name" class="block">{{row.contact_name}}</small><Pin v-if="row.pinned" :size="14" :aria-label="locale.t('customerPinned')"/><RecordTags :tags="row.tags"/><small v-if="row.country_name" class="block">{{row.country_name}}</small></td>
           <td>{{row.priority}}</td><td dir="ltr">{{row.whatsapp||'—'}}</td><td dir="ltr">{{row.contact_email||row.email||'—'}}</td>
-          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td><button class="mini-action me-2" :disabled="loading||saving||bulkBusy||recoveryBusy||accountBusy" :aria-label="locale.t(row.pinned?'customerUnpin':'customerPin')" :aria-pressed="!!row.pinned" @click="togglePin(row)"><PinOff v-if="row.pinned" :size="16"/><Pin v-else :size="16"/></button><a v-if="customerContactUrl(row.whatsapp)" :href="customerContactUrl(row.whatsapp)!" target="_blank" rel="noopener noreferrer" class="mini-action customer-whatsapp-action me-2"><WhatsAppIcon :size="17" tone="white"/>{{locale.t('contactCustomer')}}</a><button class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving" @click="edit(row)">{{locale.t('manageCustomer')}}</button><button v-if="row.email!==admin.identity?.email" class="mini-action ms-2 text-rose-600" :disabled="loading||saving||bulkBusy||recoveryBusy" @click="deleteTarget={id:row.id,revision:row.revision,label:row.company_name||row.name||'#'+row.id}">{{locale.t('accountDeleteTitle')}}</button><button v-if="row.has_account===false&&row.active" class="mini-action ms-2" :disabled="recoveryBusy||bulkBusy||loading||saving||accountBusy" @click="accountCustomer=row">{{locale.t('customerCreateAccount')}}</button></td>
+          <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td>
+            <div class="admin-row-actions" role="group" :aria-label="locale.t('actions')">
+              <button type="button" class="mini-action" :disabled="loading||saving||bulkBusy||recoveryBusy||accountBusy" :aria-label="locale.t(row.pinned?'customerUnpin':'customerPin')" :title="locale.t(row.pinned?'customerUnpin':'customerPin')" :aria-pressed="!!row.pinned" @click="togglePin(row)"><PinOff v-if="row.pinned" :size="18" aria-hidden="true"/><Pin v-else :size="18" aria-hidden="true"/></button>
+              <a v-if="customerContactUrl(row.whatsapp)" :href="customerContactUrl(row.whatsapp)!" target="_blank" rel="noopener noreferrer" class="mini-action customer-whatsapp-action" :aria-label="locale.t('contactCustomer')" :title="locale.t('contactCustomer')"><WhatsAppIcon :size="19" tone="white" aria-hidden="true"/></a>
+              <button type="button" class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving||accountBusy" :aria-label="locale.t('manageCustomer')" :title="locale.t('manageCustomer')" @click="edit(row)"><Pencil :size="18" aria-hidden="true"/></button>
+              <button v-if="row.email!==admin.identity?.email" type="button" class="mini-action text-rose-600" :disabled="loading||saving||bulkBusy||recoveryBusy||accountBusy" :aria-label="locale.t('accountDeleteTitle')" :title="locale.t('accountDeleteTitle')" @click="deleteTarget={id:row.id,revision:row.revision,label:row.company_name||row.name||'#'+row.id}"><Trash2 :size="18" aria-hidden="true"/></button>
+              <button v-if="row.has_account===false&&row.active" type="button" class="mini-action" :disabled="recoveryBusy||bulkBusy||loading||saving||accountBusy" :aria-label="locale.t('customerCreateAccount')" :title="locale.t('customerCreateAccount')" @click="accountCustomer=row"><UserPlus :size="18" aria-hidden="true"/></button>
+            </div>
+          </td>
         </tr></tbody>
       </table>
       <p v-if="!loading&&!result.customers.length&&!error" class="p-4 text-sm">{{locale.t('adminNoCustomers')}}</p>

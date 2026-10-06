@@ -5,7 +5,7 @@ import { router } from './router'
 import './styles/main.css'
 
 document.documentElement.dataset.uiTest='29'
-document.documentElement.dataset.uiRevision='2026-10-06-brand-pills-7pct'
+document.documentElement.dataset.uiRevision='2026-10-06-compact-admin-actions'
 
 // Remove the old cache-busting URL without forcing a second page load.
 const freshUrl=new URL(window.location.href)

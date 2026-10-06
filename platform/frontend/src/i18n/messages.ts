@@ -24,7 +24,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     customerPinned:"مشتری پین‌شده",
     customerLoginEmailHelp:"ایمیل ارتباطی مستقل از ایمیل ورود است؛ تغییر آن اطلاعات ورود را عوض نمی‌کند.",
 
-    accountDeleteTitle:"حذف قابل بازگردانی",
+    accountDeleteTitle:"حذف",
     accountRecoveryTitle:"حذف‌شده‌ها و بازگردانی",
     accountUndo:"بازگرداندن",
     accountTrashEmpty:"حساب حذف‌شده‌ای وجود ندارد.",
@@ -180,7 +180,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     customerPinned:"عميل مثبت",
     customerLoginEmailHelp:"بريد التواصل مستقل عن بريد تسجيل الدخول؛ تغييره لا يغيّر بيانات الدخول.",
 
-    accountDeleteTitle:"حذف قابل للاستعادة",
+    accountDeleteTitle:"حذف",
     accountRecoveryTitle:"الحسابات المحذوفة والاستعادة",
     accountUndo:"التراجع عن الحذف",
     accountTrashEmpty:"لا توجد حسابات محذوفة.",
@@ -336,7 +336,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     customerPinned:"Pinned customer",
     customerLoginEmailHelp:"Contact email is separate from the sign-in email; changing it does not change access.",
 
-    accountDeleteTitle:"Delete with recovery",
+    accountDeleteTitle:"Delete",
     accountRecoveryTitle:"Deleted accounts and recovery",
     accountUndo:"Undo deletion",
     accountTrashEmpty:"No deleted accounts.",
@@ -492,7 +492,7 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     customerPinned:"کڕیاری جێگیرکراو",
     customerLoginEmailHelp:"ئیمەیڵی پەیوەندی جیاوازە لە ئیمەیڵی چوونەژوورەوە؛ گۆڕینی دەستگەیشتن ناگۆڕێت.",
 
-    accountDeleteTitle:"سڕینەوە بە توانای گەڕاندنەوە",
+    accountDeleteTitle:"سڕینەوە",
     accountRecoveryTitle:"هەژمارە سڕاوەکان و گەڕاندنەوە",
     accountUndo:"گەڕاندنەوە",
     accountTrashEmpty:"هەژماری سڕاوە نییە.",
