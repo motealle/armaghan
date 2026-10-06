@@ -1,3 +1,11 @@
+## Verified batch1 publication and cold Home-file recovery — 2026-10-06
+
+- UI81ecff30e3bb6263e88a70a7eb459efea67af45c published at Test29/root: FTP37477293280 PASS (QA112315982989, Test29upload112316265609; root promotion PASS). Live revision2026-10-06-home-customer-batch1. Browser: category banners now640px vs observed prior320px at the same desktop size; all3 capability borders2px; Why outer radius17.6px,3px transparent gaps, four square internal rows with0px border. No external placehold.co images. Persian product cards show کد ۱۱۰۰۱ and قابل تولید on rgb(16,26,68).
+- Backendb1be912bdcd19361c119c7e4309bf94fba08207f activated: Backend CI37478016618/job112318474941 PASS (76focused tests/640assertions in5.12s, including separate-process cold-media regression); Code Deploy37478016953/job112318550913 PASS (16media/auth tests/125assertions, guarded activation/temp cleanup). No migration, private data update or fresh product/customer creation.
+- Production Home index already contained published production11 and baby13. Before fix both standalone public image URLs404/21bytes. After startup registration of HomePathGenerator both200, PNG1536x1024/2681971bytes andPNG1774x887/2031185bytes. Fresh Home browser renders these actual Backend URLs with their decoded natural widths1536/1774, rather than local fallback. Fresh authenticated manager upload remains unexercised; existing persisted-public-image delivery is verified separately.
+- Batch1 complete: Why unified, category height doubled, matching green capability borders, localized code prefix/fa digits, قابل تولید/navy pill, green white-icon WhatsApp contact, external English fallback removed, existing Home-file404 recovered. Desktop proof armaghan-home-batch1-1791296460943.jpg saved separately. No TinyFish or broad suite.
+- Batch2 OPEN and authorized: full categorized canonical customer data + persistent pin (including backup/Undo schema coverage); persist category/subcategory/filters and scroll after refresh when content is ready; authenticated upload/publish/refresh round-trip. Add home lightweight derivatives: current uploaded PNGs remain2.68/2.03MB despite successful delivery; preserve originals, use bounded responsive derivatives and do not claim phone speed improvement without measurement. ProductsView currently keeps subcategory only in memory and router scrollBehavior unconditionally returns top0.
+
 ## Home published-file 404 diagnosis and bounded fix — 2026-10-06
 
 Production public Home index returns capability.production/media11 and banner.1/media13, but both standalone public file reads return404/21bytes. Their existing uploaded records must not be replaced/re-uploaded merely to conceal delivery failure. StyleProfile registered its custom media/home path only on model boot; standalone Media file requests do not instantiate that model. AppServiceProvider now registers HomePathGenerator at every application startup, preserving canonical paths, publication checks and private admin access. One separate-process regression exercises a cold path read before any StyleProfile instance. Backend CI/code-only guarded deployment pending; no migration or production data mutation. Batch1 UI deployment still transferring. This bounded delivery fix is included in run1; full authenticated upload acceptance remains run2.
@@ -8,19 +16,19 @@ Production public Home index returns capability.production/media11 and banner.1/
 
 | اولویت | کار | ران | وضعیت / معیار پایان |
 |---|---|---|---|
-| فوری | چرا ارمغان: یک حباب گرد مینت، شکاف‌های جداکننده با زمینه صفحه | ۱ | پیاده‌سازی و بررسی نوع/ساخت موفق؛ انتشار در انتظار؛ چهار ردیف در یک قاب، بدون بوردر رنگی داخلی |
-| فوری | ارتفاع سه کارت نوزادی، بچگانه، زنانه دو برابر؛ بدون سرریز عرض | ۱ | پیاده‌سازی و بررسی نوع/ساخت موفق؛ انتشار در انتظار؛ ارتفاع واکنش‌گرا دو برابر مقدار فعلی |
-| فوری | بوردر سبز ۲ پیکسل دور پنل‌های تصویری بالایی با متن مینت | ۱ | پیاده‌سازی و بررسی نوع/ساخت موفق؛ انتشار در انتظار؛ هم‌رنگ کارت‌های دسته |
-| فوری | قابل تولید به جای تولیدپذیر؛ کد پیش از شماره با ارقام فارسی | ۱ | پیاده‌سازی و بررسی نوع/ساخت موفق؛ انتشار در انتظار؛ سورمه‌ای موجود حفظ و صریح تثبیت شود |
-| فوری | تماس مشتری: دکمه واتساپ سبز با آیکون سفید در مدیریت | ۱ | پیاده‌سازی و بررسی نوع/ساخت موفق؛ انتشار در انتظار؛ فقط بازکردن مسیر گفتگو، بدون ارسال خودکار |
-| فوری | حذف جایگزین IMAGE REQUIRED؛ بازیابی تصویر محلی مصوب | ۱ | پیاده‌سازی و بررسی نوع/ساخت موفق؛ انتشار در انتظار؛ بدون سرویس بیرونی جایگزین عکس |
-| فوری | آپلود و نمایش خانه: بررسی عملی اصلاحات چت دیگر و رفع ایراد باقیمانده | ۲ | باز؛ حساب مدیر، انتخاب فایل، ذخیره، انتشار در کانال درست، نمایش بعد رفرش |
+| فوری | چرا ارمغان: یک حباب گرد مینت، شکاف‌های جداکننده با زمینه صفحه | ۱ | منتشر و بررسی زنده موفق؛ چهار ردیف در یک قاب، بدون بوردر رنگی داخلی |
+| فوری | ارتفاع سه کارت نوزادی، بچگانه، زنانه دو برابر؛ بدون سرریز عرض | ۱ | منتشر و بررسی زنده موفق؛ ارتفاع واکنش‌گرا دو برابر مقدار فعلی |
+| فوری | بوردر سبز ۲ پیکسل دور پنل‌های تصویری بالایی با متن مینت | ۱ | منتشر و بررسی زنده موفق؛ هم‌رنگ کارت‌های دسته |
+| فوری | قابل تولید به جای تولیدپذیر؛ کد پیش از شماره با ارقام فارسی | ۱ | منتشر و بررسی زنده موفق؛ سورمه‌ای موجود حفظ و صریح تثبیت شود |
+| فوری | تماس مشتری: دکمه واتساپ سبز با آیکون سفید در مدیریت | ۱ | منتشر و بررسی زنده موفق؛ فقط بازکردن مسیر گفتگو، بدون ارسال خودکار |
+| فوری | حذف جایگزین IMAGE REQUIRED؛ بازیابی تصویر محلی مصوب | ۱ | منتشر و بررسی زنده موفق؛ بدون سرویس بیرونی جایگزین عکس |
+| فوری | آپلود و نمایش خانه: بررسی عملی اصلاحات چت دیگر و رفع ایراد باقیمانده | ۲ | دریافت تصاویر منتشرشده اصلاح و در مرورگر تأیید شد؛ آپلود تازه با مدیر هنوز باز: انتخاب فایل، ذخیره، انتشار در کانال درست، نمایش بعد رفرش |
 | فوری | ثبت مشتری و فیلدهای کامل تجاری در پایگاه داده + پین | ۲ | باز؛ ایجاد/ویرایش/بازخوانی، فعال/غیرفعال، پین پایدار؛ حذف با بکاپ و آندو موجود |
 | فوری | بازگشت پس از رفرش به مسیر، زیردسته و میزان اسکرول | ۲ | باز؛ انتظار برای محتوای لیزی (بارگذاری هنگام نزدیک‌شدن)، بدون ذخیره توکن‌های خصوصی |
 
 ترتیب فرم مشتری: هویت (نام مشتری، نام فروشگاه)؛ تماس (شماره تماس، واتساپ، ایمیل ارتباطی، زبان)؛ آدرس (کشور، شهر، منطقه، پلاک فروشگاه)؛ همکاری (گروه محصولات فروش، حجم خرید، نوع همکاری، نوع فروش)؛ مدیریت (فعال/غیرفعال، پین). ایمیل ارتباطی از ایمیل ورود تفکیک شود. فیلدهای جدید باید سمت سرور مجاز و اعتبارسنجی شوند و در نسخه پشتیبان/آندو نیز پوشش داده شوند؛ هر تغییر ساختار داده فقط با مهاجرت افزودنی و بکاپ خصوصی قبل انتشار. ثبت محلی مرورگر منبع رسمی مشتری نیست.
 
-مشکلات فعلی: جایگزین خارجی انگلیسی؛ اطلاعات تجاری ناقص؛ بازیابی اسکرول پیاده نشده؛ موفقیت آپلود خانه با حساب مدیر اثبات نشده؛ سرعت روی گوشی واقعی هنوز تأیید نشده. TinyFish و آزمون گسترده ممنوع؛ بررسی نوع/ساخت و کنترل ضروری انتشار حفظ می‌شود.
+مشکلات باقی‌مانده: اطلاعات تجاری ناقص؛ زیردسته و اسکرول پس از رفرش حفظ نمی‌شوند؛ آپلود تازه خانه با حساب مدیر اثبات نشده؛ تصاویر آپلودشده خانه ۲٫۷ و ۲ مگابایت و نیازمند نسخه سبک؛ سرعت روی گوشی واقعی هنوز تأیید نشده. جایگزین خارجی انگلیسی حذف و دریافت تصاویر قبلی اصلاح شد. TinyFish و آزمون گسترده ممنوع؛ بررسی نوع/ساخت و کنترل ضروری انتشار حفظ می‌شود.
 
 ## P0 — manager media reliability + direct home-image editing — 2026-10-06
 
