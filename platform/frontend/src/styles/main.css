@@ -959,7 +959,7 @@ html.dark .product-card .product-card-title.unavailable{text-shadow:none}
 /* Client approved: intrinsic hero geometry and gold on a navy status pill. */
 .test26-single-hero.test29-fitted-hero .test26-single-hero-media .smart-image{height:auto;min-height:0;aspect-ratio:16/9}
 .wizard-category-option.wizard-category-unnumbered{grid-template-columns:minmax(0,1fr)}
-.product-card .product-card-title.unavailable,html.dark .product-card .product-card-title.unavailable{height:auto;min-height:1.55rem;line-height:1.55rem;padding:.08rem .65rem;border:0;border-radius:999px;background:#101a44;color:var(--brand-gold);-webkit-text-stroke:0;paint-order:normal;text-shadow:none;box-shadow:none}
+.product-card .product-card-title.unavailable,html.dark .product-card .product-card-title.unavailable{height:auto;min-height:1.55rem;line-height:1.55rem;padding:.08rem .65rem;border:0;border-radius:999px;background:var(--brand-blue);color:var(--brand-gold);-webkit-text-stroke:0;paint-order:normal;text-shadow:none;box-shadow:none}
 
 /* Card images keep the complete garment, including legacy landscape photos. */
 .product-media-placeholder .smart-image-content{padding:0;object-position:center}
@@ -990,9 +990,13 @@ html.dark .product-card .product-card-title.unavailable{text-shadow:none}
 .mini-action.customer-whatsapp-action:hover{background:#0e713c;border-color:#0e713c}
 
 /* The localized label and digits belong to one code pill. */
-.product-code-row code.product-code-pill,html.dark .product-code-row code.product-code-pill{display:inline-flex;align-items:center;gap:.25em;background:#101a44;color:var(--brand-white);font-family:inherit;font-weight:700}
+.product-code-row code.product-code-pill,html.dark .product-code-row code.product-code-pill{display:inline-flex;align-items:center;gap:.25em;background:var(--brand-blue);color:var(--brand-white);font-family:inherit;font-weight:700}
 .product-code-pill>span,.product-code-pill>bdi{font:inherit;color:inherit}
 
 /* Owner: category banner copy stays in the physical bottom-right corner. */
 .test26-product-banner-copy{inset-inline-start:auto;inset-inline-end:auto;right:1.25rem;top:auto;bottom:1.25rem;transform:none}
 .test26-product-banner-shade,[dir="ltr"] .test26-product-banner-shade{background:linear-gradient(0deg,rgba(5,15,38,.78),rgba(5,15,38,0) 65%)}
+
+/* Reduce the rendered status text and pill by 7% from each theme's current size. */
+.product-card .product-card-title.unavailable{min-height:1.4415rem;line-height:1.4415rem;padding:.0744rem .6045rem;font-size:.7254rem}
+html.dark .product-card .product-card-title.unavailable{min-height:1.29735rem;line-height:1.29735rem;padding:.0651rem .54405rem;font-size:.65286rem}
