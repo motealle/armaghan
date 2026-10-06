@@ -1,3 +1,11 @@
+## Run2 published; focused live acceptance passed — 2026-10-06
+
+- Backend97433de27249781ad1e1030b96aa42dabf5528a4 activated by Additive Deploy37482096711/deploy112332693848: success, guarded activation, one create-only migration, temporary helper cleanup PASS. Backend CI37482096705/job112332585625:78 focused tests/678 assertions PASS. No production customer rows changed or deleted.
+- UIb4120b29146f40076909a6f8105ebcd099c2bc01 adds grouped persisted customer business fields/pin, filter URL persistence and delayed scroll restoration, responsive Home srcsets, unified navy code label/digits pill and bottom-right Home category copy. Follow-upa7b6909 preserves the navy pill in dark mode too. FTP37482923655 QA112335598032 passed: type-check,30 existing/changed release tests and build; frozen01..28 preserved. FTP37482923655 Test29/root activation PASS. Follow-upa7b6909 Test29 PASS (37483358361); root selector revision advanced explicitly to promote that tested dark-mode CSS.
+- Live public Home variants verified200/WebP: production11/card800x533/81,682bytes vs original2,681,971bytes (97.0% smaller); baby13/detail1600x800/69,684bytes vs2,031,185bytes (96.6% smaller). Responsive index exposes correct actual-width srcsets. First cold conversion read returned500; one subsequent bounded read returned200 and the derivative is present. Cold-generation/hosting latency remains a follow-up, not a claim of measured real-phone speed.
+- Live root browser: Baby/category1 + Babywear/subcategory11 survived reload with exactly819px scroll before/after;20 matching products remained. Code pill reads کد ۱۱۰۰۱, navy rgb(16,26,68), label and digits both white and Vazirmatn FD. Home category banners stay640px tall; each copy is22px from right/bottom. Screenshot armaghan-batch2-1791298919484.jpg saved separately.
+- Canonical CRM profile revision/search/pin and backup/Undo coverage passed isolated backend acceptance. Authenticated manager upload/CRM browser acceptance still requires a legitimate session; guest Home/product acceptance is independent. No auth bypass, TinyFish, broad local suite, destructive account operation or original-image replacement.
+
 ## Run2 implementation ready for guarded backend activation — 2026-10-06
 
 - One create-only customer_business_profiles table links uniquely to existing Customer. Canonical admin create/update/search/revision expose bounded optional contact/address/commercial fields and pinned; company/country/status remain existing columns. Pin ordering usesCOALESCE to keep ordinary unpinned rows in newest-first order. Contact email/name never mutate login credentials.
@@ -48,12 +56,12 @@ Production public Home index returns capability.production/media11 and banner.1/
 | فوری | تماس مشتری: دکمه واتساپ سبز با آیکون سفید در مدیریت | ۱ | منتشر و بررسی زنده موفق؛ فقط بازکردن مسیر گفتگو، بدون ارسال خودکار |
 | فوری | حذف جایگزین IMAGE REQUIRED؛ بازیابی تصویر محلی مصوب | ۱ | منتشر و بررسی زنده موفق؛ بدون سرویس بیرونی جایگزین عکس |
 | فوری | آپلود و نمایش خانه: بررسی عملی اصلاحات چت دیگر و رفع ایراد باقیمانده | ۲ | دریافت تصاویر منتشرشده اصلاح و در مرورگر تأیید شد؛ آپلود تازه با مدیر هنوز باز: انتخاب فایل، ذخیره، انتشار در کانال درست، نمایش بعد رفرش |
-| فوری | ثبت مشتری و فیلدهای کامل تجاری در پایگاه داده + پین | ۲ | باز؛ ایجاد/ویرایش/بازخوانی، فعال/غیرفعال، پین پایدار؛ حذف با بکاپ و آندو موجود |
-| فوری | بازگشت پس از رفرش به مسیر، زیردسته و میزان اسکرول | ۲ | باز؛ انتظار برای محتوای لیزی (بارگذاری هنگام نزدیک‌شدن)، بدون ذخیره توکن‌های خصوصی |
+| فوری | ثبت مشتری و فیلدهای کامل تجاری در پایگاه داده + پین | ۲ | پیاده‌سازی و انتشار انجام شد؛ آزمون سرور موفق؛ پذیرش مرورگری مدیر باز؛ ایجاد/ویرایش/بازخوانی، فعال/غیرفعال، پین پایدار؛ حذف با بکاپ و آندو موجود |
+| فوری | بازگشت پس از رفرش به مسیر، زیردسته و میزان اسکرول | ۲ | منتشر و بررسی زنده موفق (زیردسته۱۱، اسکرول۸۱۹)؛ انتظار برای محتوای لیزی (بارگذاری هنگام نزدیک‌شدن)، بدون ذخیره توکن‌های خصوصی |
 
 ترتیب فرم مشتری: هویت (نام مشتری، نام فروشگاه)؛ تماس (شماره تماس، واتساپ، ایمیل ارتباطی، زبان)؛ آدرس (کشور، شهر، منطقه، پلاک فروشگاه)؛ همکاری (گروه محصولات فروش، حجم خرید، نوع همکاری، نوع فروش)؛ مدیریت (فعال/غیرفعال، پین). ایمیل ارتباطی از ایمیل ورود تفکیک شود. فیلدهای جدید باید سمت سرور مجاز و اعتبارسنجی شوند و در نسخه پشتیبان/آندو نیز پوشش داده شوند؛ هر تغییر ساختار داده فقط با مهاجرت افزودنی و بکاپ خصوصی قبل انتشار. ثبت محلی مرورگر منبع رسمی مشتری نیست.
 
-مشکلات باقی‌مانده: اطلاعات تجاری ناقص؛ زیردسته و اسکرول پس از رفرش حفظ نمی‌شوند؛ آپلود تازه خانه با حساب مدیر اثبات نشده؛ تصاویر آپلودشده خانه ۲٫۷ و ۲ مگابایت و نیازمند نسخه سبک؛ سرعت روی گوشی واقعی هنوز تأیید نشده. جایگزین خارجی انگلیسی حذف و دریافت تصاویر قبلی اصلاح شد. TinyFish و آزمون گسترده ممنوع؛ بررسی نوع/ساخت و کنترل ضروری انتشار حفظ می‌شود.
+مشکلات باقی‌مانده: پذیرش مرورگری اطلاعات تجاری با حساب مدیر؛ آپلود تازه خانه با حساب مدیر اثبات نشده؛ نسخه سبک تصاویر خانه حدود۹۷٪ کم‌حجم‌تر شد؛ پاسخ۵۰۰ نخستین تولید سرد و تأخیر میزبان نیازمند پیگیری؛ سرعت روی گوشی واقعی هنوز تأیید نشده. جایگزین خارجی انگلیسی حذف و دریافت تصاویر قبلی اصلاح شد. TinyFish و آزمون گسترده ممنوع؛ بررسی نوع/ساخت و کنترل ضروری انتشار حفظ می‌شود.
 
 ## P0 — manager media reliability + direct home-image editing — 2026-10-06
 
