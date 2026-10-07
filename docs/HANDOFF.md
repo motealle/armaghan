@@ -1,3 +1,9 @@
+## Photo loading/retry controls published — 2026-10-07
+
+Source9d6aeb614a390119f046f99774f41f7d2670c5f8. FTP37653930573 PASS: QA112904170348 (56tests/17files, type-check/build/safety gates), Test29deployment112904523305 and guarded root112905496919. Local8focused media tests PASS; a temporary DOM-render diagnostic additionally exercised actual SmartImage spinner→two automatic retries→manual arrow→fresh request→successful load/removal of controls PASS. No new dependency, backend mutation or frozen-version changes in this follow-up.
+
+Independent HTTP200 root bundle index-D8m-etk8.js, product UI chunk ProductGrid-OSWyjao6.js and ring CSS ProductGrid-PBbJPMA8.css all match local SHA256. Three total automatic attempts, then user-initiated new cycle.25s per active request; two photos at once/browser; no fake retry for zero-photo cards. Current remaining P0s are intermittent hosting timeouts/503, real-phone/fresh authenticated upload acceptance and prior queued FTP37642388074 cancellation (GitHub sign-in approval remains unanswered). Application delivery/recovery changes are published; all-device success and elimination of hosting failures are not claimed.
+
 ## Owner follow-up: photo loading ring and manual retry — 2026-10-07 (publication pending)
 
 Product cards show a small spinning ring only for actual photos while receiving/waiting/retrying, retaining the chosen no-photo loading image. Three total automatic attempts (initial +2 after1.5/4s); each active network attempt bounded25s. On exhaustion show an accessible48px Lucide circular-arrow button; user activation requests a fresh URL and renews the bounded cycle. No spinner/retry on products with no uploaded/source photo; translated labels in all4languages, keyboard focus and reduced-motion support.
