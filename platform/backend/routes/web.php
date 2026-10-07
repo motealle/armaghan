@@ -114,6 +114,7 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
     Route::get('/product-taxonomy', [\App\Http\Controllers\Admin\ProductController::class, 'taxonomy']);
     Route::get('/products', [\App\Http\Controllers\Admin\ProductController::class, 'index']);
     Route::post('/products', [\App\Http\Controllers\Admin\ProductController::class, 'store']);
+    Route::get('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'show'])->whereNumber('product');
     Route::patch('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'update']);
     Route::post('/products/{product}/images', [\App\Http\Controllers\Admin\ProductController::class, 'upload'])->middleware('throttle:admin-product-uploads');
     Route::put('/products/{product}/images/order', [\App\Http\Controllers\Admin\ProductController::class, 'order']);

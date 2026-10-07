@@ -76,7 +76,7 @@ class ProductController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $input = $request->validate(['page' => ['sometimes', 'integer', 'min:1'], 'search' => ['nullable', 'string', 'max:100'],
+        $input = $request->validate(['page' => ['sometimes', 'integer', 'min:1'], 'search' => ['nullable', 'string', 'max:100'], 'code' => ['sometimes', 'required', 'string', 'max:64'],
             'subcategory_id' => ['nullable', 'integer', 'exists:subcategories,id'], 'per_page' => ['sometimes', 'integer', Rule::in([25, 50, 100])]]);
         $query = Product::query()->with(['subcategory.category', 'media']);
         if ($search = trim($input['search'] ?? '')) {
@@ -86,11 +86,17 @@ class ProductController extends Controller
                 }
             });
         }
+        if (isset($input['code'])) $query->where('code', $input['code']);
         if (! empty($input['subcategory_id'])) $query->where('subcategory_id', $input['subcategory_id']);
         $page = $query->orderBy('sort_order')->orderBy('id')->paginate($input['per_page'] ?? 25);
 
         return $this->json(['products' => $page->getCollection()->map(fn ($p) => $this->snapshot($p))->all(),
             'page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total()]);
+    }
+
+    public function show(Product $product): JsonResponse
+    {
+        return $this->json(['product' => $this->snapshot($product->load(['subcategory.category', 'media']))]);
     }
 
     public function store(Request $request): JsonResponse

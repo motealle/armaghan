@@ -114,6 +114,26 @@ class CustomAdminProductsTest extends TestCase
         $this->getJson('/api/admin/products')->assertOk();
     }
 
+    public function test_exact_card_lookup_and_code_edit_keep_the_same_product_identity(): void
+    {
+        $this->actingAs(User::factory()->admin()->create());
+        $fields = $this->fields('11001'); $product = Product::create($fields);
+        for ($i = 0; $i < 30; $i++) Product::create(array_merge($this->fields('119'.str_pad((string) $i, 3, '0', STR_PAD_LEFT)), ['name_fa' => '11001 search match', 'sort_order' => 0]));
+        $product->update(['sort_order' => 999]);
+        $definition = \App\Models\SpecDefinition::create(['subcategory_id' => $product->subcategory_id, 'key' => 'fabric', 'label_fa' => 'جنس']);
+        $product->specValues()->create(['spec_definition_id' => $definition->id, 'value_text' => 'پنبه']);
+        $this->getJson('/api/admin/products?code=11001')->assertOk()->assertJsonPath('total', 1)->assertJsonPath('products.0.id', $product->id);
+        $row = $this->getJson('/api/admin/products/'.$product->id)->assertOk()->assertJsonPath('product.id', $product->id)->json('product');
+        $updated = $this->patchJson('/api/admin/products/'.$product->id, array_merge($fields, ['code' => '11199', 'name_fa' => 'Edited card', 'revision' => $row['revision']]))
+            ->assertOk()->assertJsonPath('product.id', $product->id)->assertJsonPath('product.code', '11199')->assertJsonPath('product.specifications.0.value_text', 'پنبه')->json('product');
+        $this->patchJson('/api/admin/products/'.$product->id, array_merge($fields, ['code' => '11199', 'name_fa' => 'Second edit', 'revision' => $updated['revision']]))->assertOk()->assertJsonPath('product.id', $product->id);
+        $this->assertDatabaseCount('products', 31);
+        $this->assertDatabaseMissing('products', ['code' => '11001']);
+        $this->getJson('/api/admin/products?code=11001')->assertJsonPath('total', 0);
+        $this->getJson('/api/admin/products/'.$product->id)->assertJsonPath('product.name_fa', 'Second edit');
+        $this->getJson('/api/admin/products/999999')->assertNotFound();
+    }
+
     private function row(Product $product): array
     {
         return $this->getJson('/api/admin/products?search='.$product->code)->assertOk()->json('products.0');
@@ -125,6 +145,7 @@ class CustomAdminProductsTest extends TestCase
         foreach ([null, User::factory()->create(), User::factory()->admin()->inactive()->create()] as $actor) {
             if ($actor) $this->actingAs($actor);
             $status = $actor ? 403 : 401;
+            $this->getJson('/api/admin/products/'.$product->id)->assertStatus($status);
             $this->getJson('/api/admin/products')->assertStatus($status)->assertJsonMissing(['name_en' => 'Real product']);
             $this->getJson('/api/admin/product-taxonomy')->assertStatus($status);
             $this->postJson('/api/admin/products', $this->fields('11098'))->assertStatus($status);

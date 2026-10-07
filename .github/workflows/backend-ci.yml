@@ -74,7 +74,7 @@ jobs:
         run: |
           php -l app/Filament/Pages/Auth/Login.php
           php -l app/Http/Controllers/Admin/ProductController.php
-          php artisan test tests/Feature/AccountArchiveTest.php tests/Feature/FavoriteShareTest.php tests/Feature/PublicCatalogApiTest.php tests/Feature/PasswordAuthTest.php tests/Feature/AdminPanelAccessTest.php tests/Feature/CustomAdminUsersTest.php tests/Feature/CustomAdminCustomersTest.php tests/Feature/GoogleCustomerAuthTest.php tests/Feature/OrderTrackingTest.php tests/Feature/HomeMediaTest.php
+          php artisan test tests/Feature/CustomAdminProductsTest.php tests/Feature/AccountArchiveTest.php tests/Feature/FavoriteShareTest.php tests/Feature/PublicCatalogApiTest.php tests/Feature/PasswordAuthTest.php tests/Feature/AdminPanelAccessTest.php tests/Feature/CustomAdminUsersTest.php tests/Feature/CustomAdminCustomersTest.php tests/Feature/GoogleCustomerAuthTest.php tests/Feature/OrderTrackingTest.php tests/Feature/HomeMediaTest.php
 
       - name: Audit locked PHP dependencies
         run: composer audit --locked --no-interaction

@@ -71,7 +71,7 @@ jobs:
           composer validate --strict
           php -l app/Filament/Pages/Auth/Login.php
           php -l app/Http/Controllers/Admin/ProductController.php
-          php artisan test tests/Feature/PasswordAuthTest.php tests/Feature/AdminPanelAccessTest.php tests/Feature/HomeMediaTest.php
+          php artisan test tests/Feature/CustomAdminProductsTest.php tests/Feature/PasswordAuthTest.php tests/Feature/AdminPanelAccessTest.php tests/Feature/HomeMediaTest.php
           composer audit --locked --no-interaction
 
       - name: Build production vendor tree
