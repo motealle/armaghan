@@ -201,6 +201,7 @@ function mergeProducts(
   remoteProducts:PublicCatalogProduct[],
   managedCodes:string[],
   fallbackProducts:Product[],
+  includeUnmanagedFallback:boolean,
 ):Product[]{
   const managed=new Set(managedCodes)
   const remoteByCode=new Map(remoteProducts.map(product=>[product.code,product]))
@@ -219,7 +220,7 @@ function mergeProducts(
     }
     // A server-owned row absent from a successful full snapshot is archived/deleted,
     // not an unmanaged sample to resurrect. API failure never enters this merge.
-    if(fallback.backendId===undefined&&!managed.has(fallback.code))result.push(cloneCatalogValue(fallback))
+    if(includeUnmanagedFallback&&fallback.backendId===undefined&&!managed.has(fallback.code))result.push(cloneCatalogValue(fallback))
   }
 
   for(const remote of remoteProducts){
@@ -304,9 +305,10 @@ export function mergeCatalogSnapshot(
   snapshot:CatalogSnapshot,
   fallbackProducts:Product[]=seedProducts,
   fallbackCategories:Category[]=seedCategories,
+  includeUnmanagedFallback=true,
 ){
   return{
-    products:mergeProducts(snapshot.products,snapshot.managedProductCodes,fallbackProducts),
+    products:mergeProducts(snapshot.products,snapshot.managedProductCodes,fallbackProducts,includeUnmanagedFallback),
     categories:mergeCategories(
       snapshot.categories,
       snapshot.managedCategoryCodes,

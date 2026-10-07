@@ -73,7 +73,7 @@ export const useCatalogStore=defineStore('catalog',()=>{
     hydration=(async()=>{
       try{
         const snapshot=await fetchCatalogSnapshot()
-        const merged=mergeCatalogSnapshot(snapshot,items.value,categories.value)
+        const merged=mergeCatalogSnapshot(snapshot,items.value,categories.value,false)
         items.value=merged.products
         categories.value=merged.categories
         syncState.value='synced'

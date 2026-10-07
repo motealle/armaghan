@@ -43,7 +43,7 @@ it('waits for an in-flight refresh and still fetches again after an admin save',
 
 it('binds the materialized sample before refresh so even a changed first code replaces the original card',async()=>{
  const store=useCatalogStore();const original=store.items[0]!
- const localId=original.id;const before=store.items.length
+ const localId=original.id;store.items=[original];const before=store.items.length
  const remote={id:77,code:'11199',names:{fa:'Edited sample',ar:null,en:null,ku:null},availability:'made_to_order' as const,sort_order:0,category:null,subcategory:null}
  store.acceptBackendProduct(localId,remote)
  expect(store.items.find(p=>p.id===localId)).toMatchObject({code:'11199',name:'Edited sample',backendId:77})
@@ -55,4 +55,21 @@ it('binds the materialized sample before refresh so even a changed first code re
  expect(store.items.some(p=>p.code==='11001')).toBe(false)
  await store.hydrateFromBackend(true)
  expect(store.items).toHaveLength(before)
+})
+
+it('shows only server products on a fresh device after a sample was renamed elsewhere',async()=>{
+ const store=useCatalogStore()
+ expect(store.items.some(p=>p.code==='11001')).toBe(true)
+ vi.mocked(fetchCatalogSnapshot).mockResolvedValue({categories:[],products:[{id:77,code:'11199',names:{fa:'Edited on another device',ar:null,en:null,ku:null},availability:'available',sort_order:0,category:null,subcategory:null}],managedCategoryCodes:[],managedSubcategoryCodes:[],managedProductCodes:['11199']})
+ await store.hydrateFromBackend(true)
+ expect(store.items).toHaveLength(1)
+ expect(store.items[0]).toMatchObject({backendId:77,code:'11199'})
+ expect(store.items.some(p=>p.code==='11001')).toBe(false)
+})
+it('preserves the existing catalog when the server cannot be read',async()=>{
+ const store=useCatalogStore();const before=JSON.stringify(store.items)
+ vi.mocked(fetchCatalogSnapshot).mockRejectedValue(new Error('offline'))
+ await store.hydrateFromBackend(true)
+ expect(JSON.stringify(store.items)).toBe(before)
+ expect(store.syncState).toBe('error')
 })
