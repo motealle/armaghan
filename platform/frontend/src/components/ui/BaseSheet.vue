@@ -12,7 +12,7 @@ const panelRef=ref<HTMLElement|null>(null)
 let previousFocus:HTMLElement|null=null
 const focusableSelector=[
   'a[href]','button:not([disabled])','input:not([disabled])','select:not([disabled])',
-  'textarea:not([disabled])','[tabindex]:not([tabindex="-1"])'
+  'textarea:not([disabled])','summary','[tabindex]:not([tabindex="-1"])'
 ].join(',')
 
 function controls(){return panelRef.value?Array.from(panelRef.value.querySelectorAll<HTMLElement>(focusableSelector)):[]}

@@ -3,7 +3,7 @@ import { computed, defineAsyncComponent, nextTick, onMounted, ref, watch } from 
 import { useRoute } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import BottomNav from '@/components/layout/BottomNav.vue'
-import HelpSheet from '@/components/layout/HelpSheet.vue'
+const HelpSheet=defineAsyncComponent(()=>import('@/components/layout/HelpSheet.vue'))
 const VisualEditor=defineAsyncComponent(()=>import('@/features/visual-editor/VisualEditor.vue'))
 import VisualEditorQuickLauncher from '@/features/visual-editor/VisualEditorQuickLauncher.vue'
 import VisualStyleRuntime from '@/features/visual-editor/VisualStyleRuntime.vue'
@@ -80,7 +80,7 @@ onMounted(async()=>{
     </main>
     <BottomNav/>
     <LoginSheet :open="loginOpen" @close="loginOpen=false"/>
-    <HelpSheet :open="helpOpen" @close="helpOpen=false"/>
+    <HelpSheet v-if="helpOpen" :open="helpOpen" @close="helpOpen=false"/>
     <HomeMediaQuickEditor v-if="route.path==='/'&&admin.identity"/>
     <template v-if="route.path==='/'&&(admin.identity||session.isAdmin)&&!session.impersonatedCustomerId">
       <VisualEditorQuickLauncher/>
