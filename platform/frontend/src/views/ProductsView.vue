@@ -2,7 +2,7 @@
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { Check, ChevronLeft, Search, Pencil } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
-import { readProductFilters, productFilterQuery } from '@/features/catalog/services/productFilters'
+import { readProductFilters, productFilterQuery, filterCatalogProducts } from '@/features/catalog/services/productFilters'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
@@ -48,14 +48,11 @@ watch([category,subcategory,availability,query],()=>{
 onMounted(async()=>{try{await catalog.hydrateFromBackend()}finally{browseReady.value=true}})
 
 const subs=computed(()=>category.value==='all'?[]:catalog.categories.find(c=>c.code===category.value)?.subcategories ?? [])
-const filtered=computed(()=>catalog.items.filter(product=>{
-  if(category.value!=='all'&&product.categoryCode!==category.value)return false
-  if(subcategory.value!=='all'&&product.subcategoryCode!==subcategory.value)return false
-  if(availability.value==='available'&&product.availability!=='available')return false
-  if(availability.value==='made_to_order'&&product.availability==='available')return false
-  const needle=query.value.trim().toLowerCase()
-  return !needle||(`${locale.productName(product.code,product.name)} ${product.code} ${locale.subcategoryName(product.subcategoryCode,product.subcategoryName)}`).toLowerCase().includes(needle)
-}))
+const filtered=computed(()=>filterCatalogProducts(catalog.items,
+  {category:category.value,subcategory:subcategory.value,availability:availability.value,query:query.value},
+  product=>locale.productName(product.code,product.name,product.names),
+  product=>locale.subcategoryName(product.subcategoryCode,product.subcategoryName),
+))
 const activeCount=computed(()=>Number(category.value!=='all')+Number(subcategory.value!=='all')+Number(availability.value!=='all')+Number(Boolean(query.value.trim())))
 function resetFilters(){category.value='all';subcategory.value='all';availability.value='all';query.value=''}
 function selectCategory(code:string){
