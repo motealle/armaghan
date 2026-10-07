@@ -76,6 +76,7 @@ export class CatalogApiError extends Error{
 const rawBase=(import.meta.env.VITE_ARMAGHAN_API_BASE as string|undefined)?.trim()??''
 const API_BASE=(rawBase||'/backend').replace(/\/$/,'')
 const maxProductPages=20
+let refreshSequence=0
 const PRODUCT_MEDIA_CACHE_REV='20261005-card-gallery-3'
 function cloneCatalogValue<T extends object>(value:T):T{
   // Catalog DTOs are JSON-only; prior hydrations can leave nested Vue proxies.
@@ -126,18 +127,18 @@ async function requestJson<T>(path:string,signal?:AbortSignal):Promise<T>{
   return payload as T
 }
 
-async function fetchAllProducts(signal?:AbortSignal):Promise<{
+async function fetchAllProducts(signal?:AbortSignal,refresh=''):Promise<{
   products:PublicCatalogProduct[]
   managedCodes:string[]
 }>{
-  const first=await requestJson<ProductResponse>('/api/catalog/products?per_page=100&page=1',signal)
+  const first=await requestJson<ProductResponse>('/api/catalog/products?per_page=100&page=1'+refresh,signal)
   const lastPage=Math.max(1,Number(first.meta?.last_page??1))
 
   if(lastPage>maxProductPages)throw new CatalogApiError(413,'Catalog exceeds the staged client sync limit.')
 
   const products=[...first.data]
   for(let page=2;page<=lastPage;page+=1){
-    const next=await requestJson<ProductResponse>('/api/catalog/products?per_page=100&page='+page,signal)
+    const next=await requestJson<ProductResponse>('/api/catalog/products?per_page=100&page='+page+refresh,signal)
     products.push(...next.data)
   }
 
@@ -147,10 +148,13 @@ async function fetchAllProducts(signal?:AbortSignal):Promise<{
   }
 }
 
-export async function fetchCatalogSnapshot(signal?:AbortSignal):Promise<CatalogSnapshot>{
+export async function fetchCatalogSnapshot(signal?:AbortSignal,fresh=false):Promise<CatalogSnapshot>{
+  // Public responses permit stale-while-revalidate. After an admin write, use a
+  // unique read URL so a shared cache cannot roll the saved card back on close.
+  const refresh=fresh?'&refresh='+Date.now().toString(36)+'-'+(++refreshSequence):''
   const [categoryPayload,productPayload]=await Promise.all([
-    requestJson<CategoryResponse>('/api/catalog/categories',signal),
-    fetchAllProducts(signal),
+    requestJson<CategoryResponse>('/api/catalog/categories'+(refresh?'?'+refresh.slice(1):''),signal),
+    fetchAllProducts(signal,refresh),
   ])
 
   return{

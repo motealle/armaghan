@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { categories, products, subMeta } from '@/data/catalog'
-import { mergeCatalogSnapshot, type CatalogSnapshot } from './catalogApi'
+import { fetchCatalogSnapshot, mergeCatalogSnapshot, type CatalogSnapshot } from './catalogApi'
 
 describe('catalog API staged merge',()=>{
   it('overlays managed backend products, hides managed inactive rows, and keeps unmanaged fallback rows',()=>{
@@ -164,4 +164,22 @@ it('does not resurrect absent server-owned products as local fallback after rena
   const local=structuredClone(products[1]!)
   const stale={...structuredClone(products[0]!),backendId:77}
   expect(mergeCatalogSnapshot(snapshot,[stale,local]).products).toEqual([local])
+})
+
+it('bypasses public stale responses after saving with one unique URL for all pages',async()=>{
+ const spy=vi.spyOn(globalThis,'fetch').mockImplementation(async input=>{
+  const path=String(input)
+  return new Response(JSON.stringify(path.includes('/categories')?{data:[],catalog:{}}:{data:[],meta:{last_page:2},catalog:{managed_codes:[]}}),{status:200})
+ })
+ try{
+  await fetchCatalogSnapshot(undefined,true)
+  const first=spy.mock.calls.map(([path])=>new URL(String(path),'https://example.test'))
+  const tokens=first.map(path=>path.searchParams.get('refresh'))
+  expect(first).toHaveLength(3);expect(tokens.every(Boolean)).toBe(true)
+  expect(new Set(tokens).size).toBe(1)
+  await fetchCatalogSnapshot(undefined,true)
+  expect(new URL(String(spy.mock.calls[3]![0]),'https://example.test').searchParams.get('refresh')).not.toBe(tokens[0])
+  await fetchCatalogSnapshot()
+  expect(spy.mock.calls.slice(6).every(([path])=>!String(path).includes('refresh='))).toBe(true)
+ }finally{spy.mockRestore()}
 })
