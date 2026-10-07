@@ -80,7 +80,7 @@ onBeforeUnmount(()=>{disposed=true;viewer?.destroy()})
 <template>
   <div class="product-media-placeholder product-media-carousel relative overflow-hidden" style="touch-action:pan-y" @touchstart.passive="start" @touchend.passive="end" @touchcancel="touchStart=undefined">
     <svg class="product-placeholder-svg hidden" viewBox="0 0 1 1" aria-hidden="true"><path d="M0 0h1v1H0z"/></svg>
-    <SmartImage :key="productImage" :src="productImage" :fallback-src="fallbackImage" :alt="productName" aspect="product" fit="contain" preload-near />
+    <SmartImage :key="productImage" :src="productImage" :fallback-src="fallbackImage" :alt="productName" aspect="product" fit="contain" preload-near interactive-loading :loading-label="locale.t('photoLoading')" :retry-label="locale.t('photoRetry')" />
     <button v-if="slides.length" type="button" class="absolute inset-0 z-30 focus-visible:outline-2 focus-visible:outline-offset-[-3px]" :aria-label="labels.open" :disabled="opening" @click.stop="open">
       <span class="product-media-control absolute end-2 top-2 grid h-11 w-11 place-items-center text-white"><ZoomIn :size="19"/></span>
     </button>

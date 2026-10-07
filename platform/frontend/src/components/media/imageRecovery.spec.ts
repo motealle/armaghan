@@ -23,3 +23,17 @@ it('cancels old-product retries on navigation and does not retry missing placeho
   recovery.failed('/backend/api/catalog/media/43/thumb');recovery.cancel()
   vi.runAllTimers();expect(retry).not.toHaveBeenCalled()
 })
+
+it('manual retry starts immediately with a fresh URL and renews the bounded automatic attempts',()=>{
+  vi.useFakeTimers();const retry=vi.fn(),recovery=createImageRecovery(retry)
+  const src='/backend/api/catalog/media/42/thumb?v=release'
+  recovery.failed(src);vi.advanceTimersByTime(1500)
+  recovery.failed(src);vi.advanceTimersByTime(4000)
+  expect(recovery.failed(src)).toBe(false)
+  recovery.retryNow(src)
+  expect(retry).toHaveBeenCalledTimes(3)
+  expect(retry.mock.calls[2]![0]).toMatch(/&image_retry=.+-0$/)
+  expect(recovery.failed(src)).toBe(true)
+  vi.advanceTimersByTime(1500)
+  expect(retry).toHaveBeenCalledTimes(4)
+})

@@ -16,3 +16,10 @@ it('creates no offscreen image requests before controlled preload activates',asy
   const html=await renderToString(createSSRApp({render:()=>h(SmartImage,{src:'/photo.webp',fallbackSrc:'/default.webp',alt:'Product',preloadNear:true})}))
   expect(html).not.toContain('src="')
 })
+
+it('shows a spinner only for an actual active photo request',async()=>{
+ const render=(src:string,preloadNear=false)=>renderToString(createSSRApp({render:()=>h(SmartImage,{src,fallbackSrc:'/default.webp',alt:'Product',interactiveLoading:true,preloadNear})}))
+ expect(await render('/photo.webp')).toContain('photo-loading-ring')
+ expect(await render('/default.webp')).not.toContain('photo-loading-ring')
+ expect(await render('/photo.webp',true)).not.toContain('photo-loading-ring')
+})

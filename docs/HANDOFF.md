@@ -1,3 +1,15 @@
+## Owner follow-up: photo loading ring and manual retry — 2026-10-07 (publication pending)
+
+Product cards show a small spinning ring only for actual photos while receiving/waiting/retrying, retaining the chosen no-photo loading image. Three total automatic attempts (initial +2 after1.5/4s); each active network attempt bounded25s. On exhaustion show an accessible48px Lucide circular-arrow button; user activation requests a fresh URL and renews the bounded cycle. No spinner/retry on products with no uploaded/source photo; translated labels in all4languages, keyboard focus and reduced-motion support.
+
+Two simultaneous public photo requests per browser cap bursts; completion/error/timeout/navigation releases capacity, offscreen30% preload preserved. Final original-task checks encountered three timeouts and one503 during a small photo batch; next bounded health/photo reads returned200. This transient host failure is observed, not attributed conclusively to a phone or claimed eliminated. No host-account/cache/security configuration change. Focused regression/type-check/build and guarded Test29/root publication pending.
+
+## P0 product-photo repair published — 2026-10-07
+
+Sourcec533b8cd42230b00b8ef69a9799ffeb66e9645ea published. Backend CI37652138568/job112897902687 PASS95tests/943assertions; Code Deploy37652138589/job112897960485 PASS38tests/474assertions, guarded activation/smoke/temp cleanup. FTP37652138646 PASS53tests/16files, type-check/build, Test29job112898450733 and root112899477618. Independent root bundle index-6nlcvcCI.js matches local SHA256 and contains photo-recovery cache revision; all frozen lanes/original uploads preserved.
+
+Post-activation public samples77/223/185/3: HTTP200 WebP thumbnails8–12KB, no Set-Cookie, independent media1200/min; categories200 without cookies/catalog120/min. Remaining host latency7–9s in this environment is real and not claimed solved. A temporary focused diagnostic merged all202 actual public catalog products/recent media223 successfully. Cloud UI cannot access /backend/api/catalog/products (ERR_BLOCKED_BY_CLIENT); real-phone and authenticated fresh-upload acceptance therefore remain open. Old FTP37642388074 remains queued; cancellation was previously blocked at GitHub sign-in by automatic approval review, explicit sign-in approval unanswered. Do not bypass that boundary; older UI publication could still supersede the current UI, while this backend fix is independent.
+
 ## P0 product-photo delivery repair — 2026-10-07 (publication pending)
 
 Owner reports uploaded photos failing on several phones. Live guest checks: catalog 202 products, sampled legacy/recent media77/78/54/55/46/47/41/186/223/185/3/80/162 all HTTP200 WebP thumbnails7–25KB, but requests6–12s; public photo responses emit XSRF cookies and share numeric throttle bucket with catalog/auth. Device failure cannot be inferred from these successful samples alone.

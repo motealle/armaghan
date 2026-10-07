@@ -4,6 +4,8 @@ export type TranslationMap = Record<string,string>
 
 export const baseMessages: Record<Locale, TranslationMap> = {
   fa: {
+    photoLoading:"در حال دریافت عکس",
+    photoRetry:"تلاش دوباره برای دریافت عکس",
     customerIdentityGroup:"هویت و تماس",
     customerAddressGroup:"آدرس فروشگاه",
     customerBusinessGroup:"همکاری تجاری",
@@ -160,6 +162,8 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'ارمغان · تولید و صادرات پوشاک',footerContact:'ارتباط فروش و پیگیری سفارش از مسیرهای داخل سایت انجام می‌شود.',skipContent:'پرش به محتوای اصلی'
   },
   ar: {
+    photoLoading:"جارٍ تحميل الصورة",
+    photoRetry:"إعادة محاولة تحميل الصورة",
     customerIdentityGroup:"الهوية والاتصال",
     customerAddressGroup:"عنوان المتجر",
     customerBusinessGroup:"التعاون التجاري",
@@ -316,6 +320,8 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'أرمغان · إنتاج وتصدير الملابس',footerContact:'يمكن التواصل مع المبيعات ومتابعة الطلب من داخل الموقع.',skipContent:'تخطي إلى المحتوى'
   },
   en: {
+    photoLoading:"Loading photo",
+    photoRetry:"Retry loading photo",
     customerIdentityGroup:"Identity and contact",
     customerAddressGroup:"Store address",
     customerBusinessGroup:"Business cooperation",
@@ -472,6 +478,8 @@ export const baseMessages: Record<Locale, TranslationMap> = {
     footerText:'Armaghan · Garment manufacturing & export',footerContact:'Sales contact and order tracking are available through the site.',skipContent:'Skip to main content'
   },
   ku: {
+    photoLoading:"وێنە بار دەکرێت",
+    photoRetry:"دووبارە هەوڵی بارکردنی وێنە بدەوە",
     customerIdentityGroup:"ناسنامە و پەیوەندی",
     customerAddressGroup:"ناونیشانی فرۆشگا",
     customerBusinessGroup:"هاوکاری بازرگانی",
