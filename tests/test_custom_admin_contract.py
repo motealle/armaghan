@@ -6,7 +6,7 @@ class CustomAdminContract(unittest.TestCase):
         s=(ROOT/'platform/frontend/src/features/admin/components/AdminDashboard.vue').read_text()
         self.assertIn('<template v-if="live">',s)
         self.assertIn('<BackendCustomersPanel v-else-if="activeTab===\'customers\'"/>',s)
-        self.assertIn('<BackendUsersPanel v-if="activeTab===\'users\'"/>',s)
+        self.assertIn('<BackendUsersPanel v-else-if="activeTab===\'users\'"/>',s)
         self.assertIn('<template v-else>',s)
         live=(ROOT/'platform/frontend/src/features/admin/components/BackendCustomersPanel.vue').read_text()
         self.assertNotIn('useCustomersStore',live)

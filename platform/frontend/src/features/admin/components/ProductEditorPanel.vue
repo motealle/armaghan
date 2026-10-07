@@ -96,7 +96,7 @@ function save(){
 </script>
 
 <template>
-  <BackendProductEditor v-if="live" :open="open" :product="serverProduct??null" :taxonomy="taxonomy??[]" @close="emit('close')" @saved="emit('saved',$event)"/>
+  <BackendProductEditor v-if="live" :open="open" :product="serverProduct??null" :mode="productId===null?'create':'edit'" :taxonomy="taxonomy??[]" @close="emit('close')" @saved="emit('saved',$event)"/>
   <AdaptivePanel v-else :open="open" :title="productId===null?locale.t('addProduct'):locale.t('editProduct')" wide @close="emit('close')">
     <div v-if="draft" class="space-y-5">
       <section class="admin-surface rounded-2xl p-4">

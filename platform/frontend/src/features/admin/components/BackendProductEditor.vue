@@ -8,9 +8,9 @@ import { useAdminStore } from '../store'
 import { productFailure, useProductDraftGuard } from '../services/productEditorSafety'
 import { ProductImagePreparationError, optimizeProductImage, submitProductImages, validProductImage } from '../services/productImageSubmission'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
-import { createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, deleteAdminProductImages, fetchAdminProducts, type AdminProduct, type AdminSubcategory, type ProductFields, type AdminSpecification } from '../services/adminApi'
-const props=withDefaults(defineProps<{open:boolean;product:AdminProduct|null;taxonomy:AdminSubcategory[];initial?:ProductFields|null}>(),{initial:null})
-const emit=defineEmits<{close:[];saved:[product:AdminProduct]}>()
+import { createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, deleteAdminProductImages, fetchAdminProduct, type AdminProduct, type AdminSubcategory, type ProductFields, type AdminSpecification } from '../services/adminApi'
+const props=withDefaults(defineProps<{open:boolean;product:AdminProduct|null;taxonomy:AdminSubcategory[];initial?:ProductFields|null;mode?:'create'|'edit'|'materialize'}>(),{initial:null})
+const emit=defineEmits<{close:[];saved:[product:AdminProduct];persisted:[product:AdminProduct]}>()
 const locale=useLocaleStore(),admin=useAdminStore()
 const draft=ref<ProductFields|null>(null),current=ref<AdminProduct|null>(null)
 const saving=ref(false),error=ref(''),note=ref(''),changed=ref(false),writesBlocked=ref(false)
@@ -24,7 +24,7 @@ const guard=useProductDraftGuard(draft,saving,pendingCount)
 const hasUnsaved=guard.dirty,confirmClose=guard.confirmClose,closePrompt=ref<HTMLElement|null>(null)
 watch(()=>[props.open,props.product,props.initial] as const,([open,row,initial])=>{
   clearPendingImages();selectedMediaIds.value=[];failedMediaIds.value=[];error.value='';note.value='';changed.value=false;writesBlocked.value=false;uploadProgress.value={done:0,total:0};current.value=row
-  draft.value=!open?null:row?fields(row):initial?structuredClone(initial):{subcategory_id:props.taxonomy[0]?.id??0,code:'',name_fa:'',name_ar:null,name_en:null,name_ku:null,availability:'available',active:true,sort_order:0,specifications:[]}
+  draft.value=!open?null:row?fields(row):initial?JSON.parse(JSON.stringify(initial)) as ProductFields:{subcategory_id:props.taxonomy[0]?.id??0,code:'',name_fa:'',name_ar:null,name_en:null,name_ku:null,availability:'available',active:true,sort_order:0,specifications:[]}
   guard.checkpoint()
 },{immediate:true})
 function fields(row:AdminProduct):ProductFields{return {subcategory_id:row.subcategory_id,code:row.code,name_fa:row.name_fa,name_ar:row.name_ar,name_en:row.name_en,name_ku:row.name_ku,availability:row.availability,active:row.active,sort_order:row.sort_order,specifications:row.specifications.map(s=>({definition_id:s.id,value_text:s.value_text??null}))}}
@@ -52,9 +52,7 @@ async function uploadWithStaleRecovery(product:AdminProduct,file:File){
   try{return (await uploadAdminProductImage(product,file)).product}
   catch(e){
     if(!(e instanceof CustomerSessionApiError)||e.status!==409)throw e
-    const page=await fetchAdminProducts(1,product.code,'',25)
-    const fresh=page.products.find(row=>row.id===product.id)
-    if(!fresh)throw e
+    const fresh=(await fetchAdminProduct(product.id)).product
     current.value=fresh;draft.value=fields(fresh);guard.checkpoint()
     return (await uploadAdminProductImage(fresh,file)).product
   }
@@ -62,18 +60,23 @@ async function uploadWithStaleRecovery(product:AdminProduct,file:File){
 async function save(){
   if(!draft.value||saving.value||writesBlocked.value)return
   if(!draft.value.name_fa.trim()&&!current.value)draft.value.name_fa=group.value?.name||draft.value.code
+  // Freeze the intended row/payload before asynchronous image preparation or requests.
+  // An unresolved edit must fail closed rather than silently become a create.
+  const target=current.value
+  if(props.mode==='edit'&&!target){writesBlocked.value=true;error.value=locale.t('adminProductConflict');return}
+  const payload=JSON.parse(JSON.stringify(draft.value)) as ProductFields
   saving.value=true;error.value='';note.value=''
   let persisted=false
   const files=pendingImages.value.map(item=>item.file)
   uploadProgress.value={done:0,total:files.length}
   try{
     await submitProductImages({
-      current:current.value,dirty:dirty.value,files,
-      persist:async()=>{const response=current.value?await updateAdminProduct(current.value.id,draft.value!,current.value.revision):await createAdminProduct(draft.value!);return response.product},
-      persisted:(product)=>{current.value=product;draft.value=fields(product);guard.checkpoint();changed.value=true;persisted=true},
+      current:target,dirty:dirty.value,files,
+      persist:async()=>{const response=target?await updateAdminProduct(target.id,payload,target.revision):await createAdminProduct(payload);return response.product},
+      persisted:(product)=>{current.value=product;draft.value=fields(product);guard.checkpoint();changed.value=true;persisted=true;emit('persisted',product)},
       prepare:optimizeProductImage,
       upload:uploadWithStaleRecovery,
-      uploaded:(product,source)=>{current.value=product;const index=pendingImages.value.findIndex(item=>item.file===source);if(index>=0){URL.revokeObjectURL(pendingImages.value[index]!.preview);pendingImages.value.splice(index,1)};uploadProgress.value.done+=1;changed.value=true;guard.checkpoint()},
+      uploaded:(product,source)=>{current.value=product;const index=pendingImages.value.findIndex(item=>item.file===source);if(index>=0){URL.revokeObjectURL(pendingImages.value[index]!.preview);pendingImages.value.splice(index,1)};uploadProgress.value.done+=1;changed.value=true;guard.checkpoint();emit('persisted',product)},
     })
     note.value=locale.t('adminSaved')
   }catch(e){
@@ -113,7 +116,7 @@ async function move(index:number,offset:number){
   if(target<0||target>=ids.length)return
   const id=ids[index]!;ids[index]=ids[target]!;ids[target]=id
   saving.value=true;error.value=''
-  try{current.value=(await orderAdminProductImages(current.value,ids)).product;changed.value=true;note.value=locale.t('adminSaved')}
+  try{current.value=(await orderAdminProductImages(current.value,ids)).product;changed.value=true;emit('persisted',current.value);note.value=locale.t('adminSaved')}
   catch(e){error.value=failed(e)}finally{saving.value=false}
 }
 function mediaFailed(id:number){if(!failedMediaIds.value.includes(id))failedMediaIds.value.push(id)}
@@ -128,7 +131,7 @@ async function deleteSelectedMedia(){
   try{
     current.value=(await deleteAdminProductImages(current.value,selectedMediaIds.value)).product
     selectedMediaIds.value=[];failedMediaIds.value=failedMediaIds.value.filter(id=>current.value?.media.some(media=>media.id===id))
-    changed.value=true;guard.checkpoint();note.value=locale.t('adminSaved')
+    changed.value=true;guard.checkpoint();emit('persisted',current.value);note.value=locale.t('adminSaved')
   }catch(e){error.value=failed(e)}
   finally{saving.value=false}
 }
@@ -141,7 +144,7 @@ onMounted(()=>window.addEventListener('beforeunload',beforeUnload))
 onBeforeUnmount(()=>{clearPendingImages();window.removeEventListener('beforeunload',beforeUnload)})
 </script>
 <template>
-  <AdaptivePanel :open="open" :title="current?locale.t('editProduct'):locale.t('addProduct')" wide @close="close">
+  <AdaptivePanel :open="open" :title="current||props.mode==='materialize'||props.mode==='edit'?locale.t('editProduct'):locale.t('addProduct')" wide @close="close">
     <section v-if="confirmClose" ref="closePrompt" role="alert" class="admin-surface mb-4 space-y-3 rounded-2xl p-4">
       <p>{{locale.t('adminProductDiscardHelp')}}</p>
       <div class="flex flex-wrap gap-2"><button type="button" class="mini-action" @click="confirmClose=false">{{locale.t('adminProductKeepEditing')}}</button><button type="button" class="mini-action" @click="discard">{{locale.t('adminProductDiscard')}}</button></div>

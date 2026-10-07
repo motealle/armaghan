@@ -31,6 +31,13 @@ export interface AdminSubcategory { id:number; code:string; name:string; categor
 export interface ProductPage { products:AdminProduct[]; page:number; last_page:number; total:number }
 export const fetchProductTaxonomy=()=>requestJson<{subcategories:AdminSubcategory[]}>('/api/admin/product-taxonomy')
 export const fetchAdminProducts=(page=1,search='',subcategory='',perPage=25)=>requestJson<ProductPage>('/api/admin/products?page='+page+'&search='+encodeURIComponent(search)+'&subcategory_id='+encodeURIComponent(subcategory)+'&per_page='+perPage)
+// An edit is addressed by immutable server ID, never an editable product code.
+export const fetchAdminProduct=(id:number)=>requestJson<{product:AdminProduct}>('/api/admin/products/'+id)
+export async function resolveCatalogProduct(product:{backendId?:number;code:string}):Promise<AdminProduct|null>{
+  if(product.backendId!==undefined)return (await fetchAdminProduct(product.backendId)).product
+  const page=await requestJson<ProductPage>('/api/admin/products?code='+encodeURIComponent(product.code))
+  return page.products.find(row=>row.code===product.code)??null
+}
 export const createAdminProduct=(fields:ProductFields)=>requestJson<{product:AdminProduct}>('/api/admin/products',{method:'POST',body:JSON.stringify(fields)})
 export const updateAdminProduct=(id:number,fields:ProductFields,revision:string)=>requestJson<{product:AdminProduct}>('/api/admin/products/'+id,{method:'PATCH',body:JSON.stringify({...fields,revision})})
 export function uploadAdminProductImage(product:AdminProduct,file:File){

@@ -204,18 +204,22 @@ function mergeProducts(
 ):Product[]{
   const managed=new Set(managedCodes)
   const remoteByCode=new Map(remoteProducts.map(product=>[product.code,product]))
+  const remoteById=new Map(remoteProducts.map(product=>[product.id,product]))
   const seen=new Set<string>()
   const result:Product[]=[]
 
   for(const fallback of fallbackProducts){
-    const remote=remoteByCode.get(fallback.code)
+    const remote=fallback.backendId!==undefined?remoteById.get(fallback.backendId):remoteByCode.get(fallback.code)
     if(remote){
+      if(seen.has(remote.code))continue
       const merged=mergeProduct(remote,fallback)
       if(merged)result.push(merged)
-      seen.add(fallback.code)
+      seen.add(remote.code)
       continue
     }
-    if(!managed.has(fallback.code))result.push(cloneCatalogValue(fallback))
+    // A server-owned row absent from a successful full snapshot is archived/deleted,
+    // not an unmanaged sample to resurrect. API failure never enters this merge.
+    if(fallback.backendId===undefined&&!managed.has(fallback.code))result.push(cloneCatalogValue(fallback))
   }
 
   for(const remote of remoteProducts){

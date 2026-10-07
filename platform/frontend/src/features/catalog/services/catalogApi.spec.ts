@@ -146,3 +146,22 @@ it('restores all six Test28 subcategory groups even from previously emptied cach
     expect(product.specificationValues).toBeUndefined()
   }
 })
+
+
+it('reconciles a renamed server product by immutable backend identity and removes stale duplicate cards',()=>{
+  const row={id:77,code:'11199',names:{fa:'Edited',ar:null,en:null,ku:null},availability:'made_to_order' as const,sort_order:0,category:null,subcategory:null}
+  const snapshot:CatalogSnapshot={categories:[],products:[row],managedProductCodes:['11199'],managedCategoryCodes:[],managedSubcategoryCodes:[]}
+  const original={...structuredClone(products[0]!),backendId:77}
+  const duplicate={...original,id:1_000_077,code:'11199'}
+  const merged=mergeCatalogSnapshot(snapshot,[original,duplicate]).products
+  expect(merged).toHaveLength(1)
+  expect(merged[0]).toMatchObject({id:original.id,backendId:77,code:'11199',name:'Edited',availability:'made_to_order'})
+  expect(mergeCatalogSnapshot(snapshot,merged).products).toEqual(merged)
+})
+
+it('does not resurrect absent server-owned products as local fallback after rename/archive',()=>{
+  const snapshot:CatalogSnapshot={categories:[],products:[],managedProductCodes:[],managedCategoryCodes:[],managedSubcategoryCodes:[]}
+  const local=structuredClone(products[1]!)
+  const stale={...structuredClone(products[0]!),backendId:77}
+  expect(mergeCatalogSnapshot(snapshot,[stale,local]).products).toEqual([local])
+})

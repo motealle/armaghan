@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import { categories as seedCategories, products as seedProducts, subMeta } from '@/data/catalog'
-import { fetchCatalogSnapshot, mergeCatalogSnapshot } from '@/features/catalog/services/catalogApi'
+import { fetchCatalogSnapshot, mergeCatalogSnapshot, mergeProduct, type PublicCatalogProduct } from '@/features/catalog/services/catalogApi'
 import type { Category, Product } from '@/types/domain'
 
 const KEY='armaghan:test29:products-v1'
@@ -42,6 +42,15 @@ export const useCatalogStore=defineStore('catalog',()=>{
   function update(product: Product){
     const index=items.value.findIndex(item=>item.id===product.id)
     if(index>=0)items.value[index]=structuredClone(product)
+  }
+  function acceptBackendProduct(localId:number,remote:PublicCatalogProduct){
+    const original=items.value.find(item=>item.id===localId)
+    if(!original)return
+    const saved=mergeProduct(remote,original)
+    if(!saved)return
+    // Replace the clicked card immediately, before closing or another network read.
+    items.value=items.value.filter(item=>item.id===localId||item.backendId!==remote.id)
+      .map(item=>item.id===localId?saved:item)
   }
   function remove(id:number){items.value=items.value.filter(p=>p.id!==id)}
   function removeMany(ids:number[]){const set=new Set(ids);items.value=items.value.filter(p=>!set.has(p.id))}
@@ -89,6 +98,7 @@ export const useCatalogStore=defineStore('catalog',()=>{
     lastSyncAt,
     add,
     update,
+    acceptBackendProduct,
     remove,
     removeMany,
     updateImage,

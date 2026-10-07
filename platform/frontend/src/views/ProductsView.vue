@@ -10,7 +10,7 @@ const BackendProductEditor=defineAsyncComponent(()=>import('@/features/admin/com
 const BackendProductsPanel=defineAsyncComponent(()=>import('@/features/admin/components/BackendProductsPanel.vue'))
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { useAdminStore } from '@/features/admin/store'
-import { fetchAdminProducts, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory, type ProductFields } from '@/features/admin/services/adminApi'
+import { resolveCatalogProduct, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory, type ProductFields } from '@/features/admin/services/adminApi'
 import type { Product } from '@/types/domain'
 import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 
@@ -25,6 +25,8 @@ const adminEditorOpen=ref(false)
 const managerOpen=ref(false)
 const adminEditorBusy=ref(false)
 const adminEditorError=ref('')
+const editingCatalogId=ref<number|null>(null)
+const editorMode=ref<'create'|'edit'|'materialize'>('create')
 const adminProduct=ref<AdminProduct|null>(null)
 const adminInitial=ref<ProductFields|null>(null)
 const adminTaxonomy=ref<AdminSubcategory[]>([])
@@ -87,8 +89,9 @@ async function editFromCatalog(product:Product){
   adminEditorBusy.value=true;adminEditorError.value=''
   try{
     if(!adminTaxonomy.value.length)adminTaxonomy.value=(await fetchProductTaxonomy()).subcategories
-    const result=await fetchAdminProducts(1,product.code,'',25)
-    adminProduct.value=result.products.find(row=>row.code===product.code)||null
+    adminProduct.value=await resolveCatalogProduct(product)
+    editingCatalogId.value=product.id
+    editorMode.value=adminProduct.value?'edit':'materialize'
     adminInitial.value=adminProduct.value?null:seedFields(product)
     if(!adminProduct.value&&!adminInitial.value)throw new Error('taxonomy missing')
     adminEditorOpen.value=true
@@ -96,18 +99,32 @@ async function editFromCatalog(product:Product){
     adminEditorError.value=locale.t('adminRequestFailed')
   }finally{adminEditorBusy.value=false}
 }
+function adminProductPersisted(product:AdminProduct){
+  if(editingCatalogId.value===null)return
+  const group=adminTaxonomy.value.find(item=>item.id===product.subcategory_id)
+  catalog.acceptBackendProduct(editingCatalogId.value,{
+    id:product.id,code:product.code,
+    names:{fa:product.name_fa,ar:product.name_ar,en:product.name_en,ku:product.name_ku},
+    availability:product.availability,sort_order:product.sort_order,
+    category:{code:product.category_code,names:{fa:group?.category_name??null,ar:null,en:null,ku:null}},
+    subcategory:{code:product.subcategory_code,names:{fa:group?.name??null,ar:null,en:null,ku:null}},
+    specifications:product.specifications.map(spec=>({key:spec.key,locked:spec.locked,labels:spec.labels,value_text:spec.value_text??null})),
+    media:product.media.map(media=>({...media,id:String(media.id)})),
+  })
+}
 async function adminEditorSaved(){
-  adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null
+  adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null;editingCatalogId.value=null
   await catalog.hydrateFromBackend(true)
 }
 function adminEditorClosed(){
-  adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null
+  adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null;editingCatalogId.value=null
 }
 async function editFromManager(product:AdminProduct|null){
   adminEditorError.value=''
   try{
     if(!adminTaxonomy.value.length)adminTaxonomy.value=(await fetchProductTaxonomy()).subcategories
     managerOpen.value=false
+    editingCatalogId.value=null;editorMode.value=product?'edit':'create'
     adminProduct.value=product
     adminInitial.value=null
     adminEditorOpen.value=true
@@ -214,6 +231,8 @@ async function editFromManager(product:AdminProduct|null){
       :open="adminEditorOpen"
       :product="adminProduct"
       :initial="adminInitial"
+      :mode="editorMode"
+      @persisted="adminProductPersisted"
       :taxonomy="adminTaxonomy"
       @close="adminEditorClosed"
       @saved="adminEditorSaved"

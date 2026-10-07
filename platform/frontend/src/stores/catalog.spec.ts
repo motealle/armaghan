@@ -40,3 +40,19 @@ it('waits for an in-flight refresh and still fetches again after an admin save',
   release();await Promise.all([first,forced])
   expect(fetchCatalogSnapshot).toHaveBeenCalledTimes(2)
 })
+
+it('binds the materialized sample before refresh so even a changed first code replaces the original card',async()=>{
+ const store=useCatalogStore();const original=store.items[0]!
+ const localId=original.id;const before=store.items.length
+ const remote={id:77,code:'11199',names:{fa:'Edited sample',ar:null,en:null,ku:null},availability:'made_to_order' as const,sort_order:0,category:null,subcategory:null}
+ store.acceptBackendProduct(localId,remote)
+ expect(store.items.find(p=>p.id===localId)).toMatchObject({code:'11199',name:'Edited sample',backendId:77})
+ vi.mocked(fetchCatalogSnapshot).mockResolvedValue({categories:[],products:[remote],managedCategoryCodes:[],managedSubcategoryCodes:[],managedProductCodes:['11199']})
+ await store.hydrateFromBackend(true)
+ expect(store.items).toHaveLength(before)
+ expect(store.items.filter(p=>p.backendId===77)).toHaveLength(1)
+ expect(store.items.find(p=>p.id===localId)).toMatchObject({code:'11199',name:'Edited sample',backendId:77})
+ expect(store.items.some(p=>p.code==='11001')).toBe(false)
+ await store.hydrateFromBackend(true)
+ expect(store.items).toHaveLength(before)
+})
