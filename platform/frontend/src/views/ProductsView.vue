@@ -10,7 +10,7 @@ const BackendProductEditor=defineAsyncComponent(()=>import('@/features/admin/com
 const BackendProductsPanel=defineAsyncComponent(()=>import('@/features/admin/components/BackendProductsPanel.vue'))
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { useAdminStore } from '@/features/admin/store'
-import { resolveCatalogProduct, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory, type ProductFields } from '@/features/admin/services/adminApi'
+import { resolveCatalogProduct, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory } from '@/features/admin/services/adminApi'
 import type { Product } from '@/types/domain'
 import { useResolvedAppearance } from '@/composables/useResolvedAppearance'
 
@@ -26,9 +26,8 @@ const managerOpen=ref(false)
 const adminEditorBusy=ref(false)
 const adminEditorError=ref('')
 const editingCatalogId=ref<number|null>(null)
-const editorMode=ref<'create'|'edit'|'materialize'>('create')
+const editorMode=ref<'create'|'edit'>('create')
 const adminProduct=ref<AdminProduct|null>(null)
-const adminInitial=ref<ProductFields|null>(null)
 const adminTaxonomy=ref<AdminSubcategory[]>([])
 const initialFilters=readProductFilters(route.query)
 const category=ref(initialFilters.category)
@@ -64,36 +63,17 @@ function selectCategory(code:string){
   subcategory.value='all'
 }
 
-function seedFields(product:Product):ProductFields|null{
-  const group=adminTaxonomy.value.find(item=>item.code===product.subcategoryCode)
-  if(!group)return null
-  const values=product.specificationValues??[]
-  return {
-    subcategory_id:group.id,
-    code:product.code,
-    name_fa:product.names?.fa||product.name,
-    name_ar:product.names?.ar??null,
-    name_en:product.names?.en??null,
-    name_ku:product.names?.ku??null,
-    availability:product.availability==='available'?'available':'made_to_order',
-    active:true,
-    sort_order:Math.max(0,catalog.items.findIndex(item=>item.id===product.id)),
-    specifications:values.flatMap(value=>{
-      const definition=group.specifications.find(item=>item.key===value.key)
-      return definition?[{definition_id:definition.id,value_text:value.value_text??null}]:[]
-    }),
-  }
-}
 async function editFromCatalog(product:Product){
-  if(!admin.identity||adminEditorBusy.value)return
+  if(!admin.identity||adminEditorBusy.value||catalog.syncState!=='synced')return
   adminEditorBusy.value=true;adminEditorError.value=''
   try{
     if(!adminTaxonomy.value.length)adminTaxonomy.value=(await fetchProductTaxonomy()).subcategories
-    adminProduct.value=await resolveCatalogProduct(product)
+    const current=catalog.items.find(item=>item.id===product.id)
+    if(!current?.backendId)throw new Error('persisted product required')
+    adminProduct.value=await resolveCatalogProduct(current)
     editingCatalogId.value=product.id
-    editorMode.value=adminProduct.value?'edit':'materialize'
-    adminInitial.value=adminProduct.value?null:seedFields(product)
-    if(!adminProduct.value&&!adminInitial.value)throw new Error('taxonomy missing')
+    editorMode.value='edit'
+    if(!adminProduct.value)throw new Error('persisted product required')
     adminEditorOpen.value=true
   }catch{
     adminEditorError.value=locale.t('adminRequestFailed')
@@ -113,11 +93,11 @@ function adminProductPersisted(product:AdminProduct){
   })
 }
 async function adminEditorSaved(){
-  adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null;editingCatalogId.value=null
+  adminEditorOpen.value=false;adminProduct.value=null;editingCatalogId.value=null
   await catalog.hydrateFromBackend(true)
 }
 function adminEditorClosed(){
-  adminEditorOpen.value=false;adminProduct.value=null;adminInitial.value=null;editingCatalogId.value=null
+  adminEditorOpen.value=false;adminProduct.value=null;editingCatalogId.value=null
 }
 async function editFromManager(product:AdminProduct|null){
   adminEditorError.value=''
@@ -126,7 +106,6 @@ async function editFromManager(product:AdminProduct|null){
     managerOpen.value=false
     editingCatalogId.value=null;editorMode.value=product?'edit':'create'
     adminProduct.value=product
-    adminInitial.value=null
     adminEditorOpen.value=true
   }catch{
     adminEditorError.value=locale.t('adminRequestFailed')
@@ -222,7 +201,7 @@ async function editFromManager(product:AdminProduct|null){
           <span class="text-[var(--c-muted)]">{{locale.t('desktopFilterHelp')}}</span>
         </div>
         <p v-if="adminEditorError" class="auth-error mb-3" role="alert">{{adminEditorError}}</p>
-        <ProductGrid v-if="filtered.length" :products="filtered" :admin-editable="!!admin.identity&&!adminEditorBusy" @edit="editFromCatalog"/>
+        <ProductGrid v-if="filtered.length" :products="filtered" :admin-editable="!!admin.identity&&!adminEditorBusy&&catalog.syncState==='synced'" @edit="editFromCatalog"/>
         <div v-else class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">—</div>
       </div>
     </div>
@@ -230,7 +209,6 @@ async function editFromManager(product:AdminProduct|null){
       v-if="adminEditorOpen"
       :open="adminEditorOpen"
       :product="adminProduct"
-      :initial="adminInitial"
       :mode="editorMode"
       @persisted="adminProductPersisted"
       :taxonomy="adminTaxonomy"
