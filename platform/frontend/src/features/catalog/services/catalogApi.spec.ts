@@ -109,8 +109,8 @@ describe('catalog API staged merge',()=>{
     const merged=mergeCatalogSnapshot(snapshot,products,categories)
     const product=merged.products.find(item=>item.code==='11001')
 
-    expect(product?.image).toBe('/backend/api/catalog/media/1/card?v=20261005-card-gallery-3')
-    expect(product?.gallery).toEqual(['/backend/api/catalog/media/1/detail?v=20261005-card-gallery-3'])
+    expect(product?.image).toBe('/backend/api/catalog/media/1/card?v=20261007-photo-recovery-4')
+    expect(product?.gallery).toEqual(['/backend/api/catalog/media/1/detail?v=20261007-photo-recovery-4'])
 
     const reactiveMerged=mergeCatalogSnapshot(
       snapshot,
@@ -118,7 +118,7 @@ describe('catalog API staged merge',()=>{
       reactive(structuredClone(categories)) as typeof categories,
     )
     expect(reactiveMerged.products.find(item=>item.code==='11001')?.image)
-      .toBe('/backend/api/catalog/media/1/card?v=20261005-card-gallery-3')
+      .toBe('/backend/api/catalog/media/1/card?v=20261007-photo-recovery-4')
   })
 
 })

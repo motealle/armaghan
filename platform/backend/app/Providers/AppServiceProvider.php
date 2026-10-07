@@ -29,6 +29,13 @@ class AppServiceProvider extends ServiceProvider
         // Register at application startup so cold public/admin file reads use the upload path.
         \Spatie\MediaLibrary\Support\PathGenerator\PathGeneratorFactory::setCustomPathGenerators(
             \App\Models\StyleProfile::class, \App\Media\HomePathGenerator::class);
+        \Spatie\MediaLibrary\Support\PathGenerator\PathGeneratorFactory::setCustomPathGenerators(
+            \App\Models\Product::class, \App\Media\ProductPathGenerator::class);
+        // Independent buckets: image browsing must never exhaust login/catalog limits.
+        RateLimiter::for('public-media', fn (Request $request) =>
+            Limit::perMinute(1200)->by('public-media:'.$request->ip()));
+        RateLimiter::for('public-catalog', fn (Request $request) =>
+            Limit::perMinute(120)->by('public-catalog:'.$request->ip()));
         Event::listen(MediaHasBeenAddedEvent::class, SanitizeProductMedia::class);
         RateLimiter::for('admin-product-uploads', fn (Request $request) =>
             Limit::perMinute(30)->by('product-upload:'.($request->user()?->id ?? $request->ip())));

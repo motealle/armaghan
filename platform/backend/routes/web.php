@@ -41,20 +41,32 @@ Route::prefix('api/favorite-shares')->group(function (): void {
         ->middleware('throttle:60,1');
 });
 
+// Public read-only media/catalog never needs a session or anti-forgery cookie.
+// Keep route bindings; authenticated/mutating routes retain the complete web stack.
+$publicReadWithoutSession = [
+    \Illuminate\Cookie\Middleware\EncryptCookies::class,
+    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+    \Illuminate\Session\Middleware\StartSession::class,
+    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+    \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
+];
+
 Route::get('/api/catalog/media/{media}/{variant}', [\App\Http\Controllers\PublicProductMediaController::class, 'show'])
     ->whereNumber('media')
     ->whereIn('variant', ['thumb', 'card', 'detail'])
-    ->middleware('throttle:240,1')
+    ->withoutMiddleware($publicReadWithoutSession)
+    ->middleware('throttle:public-media')
     ->name('catalog.product-media');
 
-Route::get('/api/home-media/file/{media}/{variant?}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publicFile'])->whereNumber('media')->middleware('throttle:240,1')->name('home-media.file');
-Route::get('/api/home-media/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publicIndex'])->where('channel','staging|production')->middleware('throttle:120,1');
+Route::get('/api/home-media/file/{media}/{variant?}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publicFile'])->whereNumber('media')->withoutMiddleware($publicReadWithoutSession)->middleware('throttle:public-media')->name('home-media.file');
+Route::get('/api/home-media/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publicIndex'])->where('channel','staging|production')->withoutMiddleware($publicReadWithoutSession)->middleware('throttle:public-catalog');
 
 Route::get('/api/style-profile/{channel?}', [PublicStyleProfileController::class, 'show'])
     ->where('channel', 'staging|production');
 
 Route::prefix('api/catalog')
-    ->middleware('throttle:120,1')
+    ->withoutMiddleware($publicReadWithoutSession)
+    ->middleware('throttle:public-catalog')
     ->group(function (): void {
         Route::get('/categories', [PublicCatalogController::class, 'categories']);
         Route::get('/products', [PublicCatalogController::class, 'products']);

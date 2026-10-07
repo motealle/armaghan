@@ -28,10 +28,11 @@ class PublicProductMediaController extends Controller
         ])));
 
         foreach ($candidates as $conversion) {
-            $path = $variants->path($media, $conversion);
+            // Public reads must not write media rows / editor revisions in SQLite.
+            $path = $variants->path($media, $conversion, false);
             if ($path !== null) {
                 return response()->file($path, [
-                    'Cache-Control' => 'public, max-age=31536000, immutable',
+                    'Cache-Control' => $conversion === $variant ? 'public, max-age=31536000, immutable' : 'public, max-age=60',
                     'Content-Type' => str_ends_with(strtolower($path), '.webp') ? 'image/webp' : (string) $media->mime_type,
                     'X-Content-Type-Options' => 'nosniff',
                 ]);

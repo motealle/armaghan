@@ -1,3 +1,9 @@
+## P0 product-photo delivery repair — 2026-10-07 (publication pending)
+
+Owner reports uploaded photos failing on several phones. Live guest checks: catalog 202 products, sampled legacy/recent media77/78/54/55/46/47/41/186/223/185/3/80/162 all HTTP200 WebP thumbnails7–25KB, but requests6–12s; public photo responses emit XSRF cookies and share numeric throttle bucket with catalog/auth. Device failure cannot be inferred from these successful samples alone.
+
+Bounded repair: independent public-media1200/min/IP and catalog120/min/IP buckets; public GET catalog/Home/photo routes skip session/cookie/anti-forgery middleware while retaining route binding and all authenticated/mutating protections. Startup registration resolves Product canonical paths before model boot. Public derivative repair avoids media-row writes/editor revision changes; reduced fallback variants cache only60s. Frontend retries public product photos twice after1.5/4s with fresh URLs, cancels on navigation/unmount, keeps no-photo loading fallback and30% viewport preload; fresh media revision and up to3 concurrent catalog pages reduce serial hydration delay. Originals/private data/schema untouched. Focused regression/build and guarded Backend/Test29/root deployment pending; no claim of real-phone acceptance yet.
+
 ## انجام شد — ویرایش فقط همان محصول و دریافت تازه پس از رفرش — ۲۰۲۶-۱۰-۰۷
 
 ## انتشار ترتیب، جست‌وجو و مرکز راهنما — پایان کار کد، مانع تثبیت صف — ۲۰۲۶-۱۰-۰۷

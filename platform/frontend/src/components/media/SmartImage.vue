@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount, ref, watch, type CSSProperties } from 'vue'
 import { whenNearViewport } from './nearViewport'
+import { createImageRecovery } from './imageRecovery'
 
 const props=withDefaults(defineProps<{
   src?:string
@@ -22,18 +23,20 @@ const container=ref<HTMLElement>()
 const ready=ref(!props.preloadNear||props.eager)
 const loaded=ref(false)
 let stopWatching:undefined|(()=>void)
+const recovery=createImageRecovery(value=>{currentSrc.value=value})
 onMounted(()=>{
   if(!ready.value&&container.value)stopWatching=whenNearViewport(container.value,()=>{ready.value=true})
 })
-onBeforeUnmount(()=>stopWatching?.())
+onBeforeUnmount(()=>{stopWatching?.();recovery.cancel()})
 const intrinsicRatio=ref('16 / 9')
 watch(currentSrc,()=>{intrinsicRatio.value='16 / 9';loaded.value=false})
 function imageLoaded(event:Event){
+  recovery.cancel()
   loaded.value=true
   const image=event.target as HTMLImageElement
   if(props.intrinsic&&image.naturalWidth>0&&image.naturalHeight>0)intrinsicRatio.value=`${image.naturalWidth} / ${image.naturalHeight}`
 }
-watch(()=>props.src,(value)=>{currentSrc.value=value})
+watch(()=>props.src,(value)=>{recovery.reset();currentSrc.value=value})
 const KNOWN_AVIF_PREFIXES=[
   '/images/final/',
   '/images/placeholders/dimensional/',
@@ -53,6 +56,7 @@ const contentStyle=computed<CSSProperties>(()=>({
   objectPosition:'var(--editor-media-position, 50% 50%)',
 }))
 function useFallback(){
+  if(currentSrc.value!==props.fallbackSrc&&props.src&&recovery.failed(props.src))return
   if(props.fallbackSrc&&currentSrc.value!==props.fallbackSrc)currentSrc.value=props.fallbackSrc
   else currentSrc.value=undefined
 }
@@ -78,6 +82,7 @@ function useFallback(){
       <!-- compatibility contract: <img :src="src" -->
       <source v-if="avifSrc" :srcset="avifSrc" type="image/avif">
       <img
+        :key="currentSrc"
         :src="currentSrc"
         :srcset="currentSrc===src?srcset:undefined"
         :sizes="currentSrc===src?sizes:undefined"

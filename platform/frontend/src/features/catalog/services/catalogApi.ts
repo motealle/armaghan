@@ -77,7 +77,7 @@ const rawBase=(import.meta.env.VITE_ARMAGHAN_API_BASE as string|undefined)?.trim
 const API_BASE=(rawBase||'/backend').replace(/\/$/,'')
 const maxProductPages=20
 let refreshSequence=0
-const PRODUCT_MEDIA_CACHE_REV='20261005-card-gallery-3'
+const PRODUCT_MEDIA_CACHE_REV='20261007-photo-recovery-4'
 function cloneCatalogValue<T extends object>(value:T):T{
   // Catalog DTOs are JSON-only; prior hydrations can leave nested Vue proxies.
   return JSON.parse(JSON.stringify(toRaw(value))) as T
@@ -137,9 +137,12 @@ async function fetchAllProducts(signal?:AbortSignal,refresh=''):Promise<{
   if(lastPage>maxProductPages)throw new CatalogApiError(413,'Catalog exceeds the staged client sync limit.')
 
   const products=[...first.data]
-  for(let page=2;page<=lastPage;page+=1){
-    const next=await requestJson<ProductResponse>('/api/catalog/products?per_page=100&page='+page+refresh,signal)
-    products.push(...next.data)
+  // Fetch at most three pages together: newly uploaded photos should not wait
+  // behind a long serial catalog read. Promise.all preserves page order.
+  for(let start=2;start<=lastPage;start+=3){
+    const pages=Array.from({length:Math.min(3,lastPage-start+1)},(_,i)=>start+i)
+    const batch=await Promise.all(pages.map(page=>requestJson<ProductResponse>('/api/catalog/products?per_page=100&page='+page+refresh,signal)))
+    for(const next of batch)products.push(...next.data)
   }
 
   return{

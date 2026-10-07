@@ -15,6 +15,34 @@ class PublicCatalogApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
+    #[\PHPUnit\Framework\Attributes\PreserveGlobalState(false)]
+    public function test_cold_product_read_finds_the_uploaded_path_before_product_boot(): void
+    {
+        Storage::fake('public');
+        $media = new \Spatie\MediaLibrary\MediaCollections\Models\Media;
+        $media->forceFill(['id' => 42, 'model_type' => Product::class, 'model_id' => 1,
+            'collection_name' => Product::MEDIA_COLLECTION, 'disk' => 'public', 'file_name' => 'photo.jpg']);
+        $this->assertSame(Storage::disk('public')->path('media/products/42/photo.jpg'), $media->getPath());
+    }
+
+    public function test_image_browsing_has_an_independent_limit_and_does_not_start_sessions(): void
+    {
+        // Exercise the real route middleware, without hundreds of HTTP requests.
+        $limiter = \Illuminate\Support\Facades\RateLimiter::limiter('public-media');
+        $request = \Illuminate\Http\Request::create('/api/catalog/media/1/thumb');
+        $limit = $limiter($request);
+        $this->assertSame(1200, $limit->maxAttempts);
+        // Laravel prefixes a named limiter's keys internally.
+        \Illuminate\Support\Facades\RateLimiter::hit(md5('public-media'.$limit->key), 60);
+        $response = $this->getJson('/api/catalog/categories')->assertOk();
+        $this->assertSame([], $response->baseResponse->headers->getCookies());
+        $this->assertSame(119, (int) $response->headers->get('X-RateLimit-Remaining'));
+        $this->assertDatabaseCount('sessions', 0);
+        $this->get('/api/catalog/media/999999/thumb')->assertNotFound();
+        $this->getJson('/api/admin/products')->assertUnauthorized();
+    }
+
     public function test_missing_legacy_variants_are_repaired_without_serving_the_large_original(): void
     {
         Storage::fake('public');
@@ -35,7 +63,8 @@ class PublicCatalogApiTest extends TestCase
             $this->assertSame($expectedWidth, getimagesize($path)[0]);
             $this->assertSame((int) round($masterHeight * $expectedWidth / $masterWidth), getimagesize($path)[1]);
             $this->assertNotSame($media->getPath(), $path);
-            $this->assertTrue($media->fresh()->hasGeneratedConversion($variant));
+            $this->assertFalse($media->fresh()->hasGeneratedConversion($variant));
+            $this->assertSame([], $response->baseResponse->headers->getCookies());
         }
         $this->assertSame($originalHash, hash_file('sha256', $media->getPath()));
         $this->get('/api/catalog/media/'.$media->id.'/original')->assertNotFound();
