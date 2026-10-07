@@ -72,7 +72,9 @@ export const useCatalogStore=defineStore('catalog',()=>{
     syncState.value='loading'
     hydration=(async()=>{
       try{
-        const snapshot=await fetchCatalogSnapshot(undefined,force)
+        // Browser no-store does not bypass the observed shared public cache.
+        // Always request a fresh full snapshot; the 30-second store guard coalesces reads.
+        const snapshot=await fetchCatalogSnapshot(undefined,true)
         const merged=mergeCatalogSnapshot(snapshot,items.value,categories.value,false)
         items.value=merged.products
         categories.value=merged.categories

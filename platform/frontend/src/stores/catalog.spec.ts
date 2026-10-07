@@ -20,6 +20,7 @@ it('skips a recent duplicate hydration but refreshes immediately after an admin 
   const store=useCatalogStore()
   await store.hydrateFromBackend();await store.hydrateFromBackend()
   expect(fetchCatalogSnapshot).toHaveBeenCalledTimes(1)
+  expect(fetchCatalogSnapshot).toHaveBeenCalledWith(undefined,true)
   await store.hydrateFromBackend(true)
   expect(fetchCatalogSnapshot).toHaveBeenCalledTimes(2)
 })
