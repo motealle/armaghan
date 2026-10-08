@@ -1,3 +1,11 @@
+## Mobile image-format upload correction — 2026-10-08 (publication pending)
+
+Owner screenshot: a selected ~0.9 MiB PNG is rejected with the generic format/size hint. The original file bytes were not attached, so its exact rejection cause is unproven. Reproduced four actual preparation defects before changes: noncanonical mobile PNG MIME rejected, small image bytes/extension mismatch passed unchanged, bitmap-decoder failure sent oversized originals unchanged, and disguised non-image content was never checked locally.
+
+Frontend preparation now reads JPEG/PNG/WebP signatures, canonicalizes MIME/extension from bytes, requires decode, falls back to the native image decoder when bitmap decoding is unavailable/fails, resizes to max1920px without crop/upscale, and never selects an oversized original instead of the resized result. Temporary decode URLs are revoked; fallback decode/export are bounded to15s. Actual invalid-content and preparation failures have separate localized messages. Shared Home upload preparation receives the same fix. Server content/decode validation,8MiB/5000px/six-image limits, authorization/revision/CSRF safeguards remain authoritative and unchanged. No dependency or backend schema/code change.
+
+Focused preparation/submission checks, type-check/build and guarded Test29/root publication are required. Physical-phone acceptance and the exact screenshot file remain unverified; intermittent hosting failures and prior queued-release cancellation remain separately open.
+
 ## Photo loading/retry controls published — 2026-10-07
 
 Source9d6aeb614a390119f046f99774f41f7d2670c5f8. FTP37653930573 PASS: QA112904170348 (56tests/17files, type-check/build/safety gates), Test29deployment112904523305 and guarded root112905496919. Local8focused media tests PASS; a temporary DOM-render diagnostic additionally exercised actual SmartImage spinner→two automatic retries→manual arrow→fresh request→successful load/removal of controls PASS. No new dependency, backend mutation or frozen-version changes in this follow-up.

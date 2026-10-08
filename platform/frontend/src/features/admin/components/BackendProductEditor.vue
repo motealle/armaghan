@@ -80,7 +80,7 @@ async function save(){
     })
     note.value=locale.t('adminSaved')
   }catch(e){
-    if(e instanceof ProductImagePreparationError){error.value=locale.t('adminImageLimits');writesBlocked.value=false}
+    if(e instanceof ProductImagePreparationError){error.value=locale.t(e.key);writesBlocked.value=false}
     else error.value=failed(e)
     if(persisted&&draft.value)note.value=locale.t('adminProductSavedImagePending')
   }finally{saving.value=false;uploadProgress.value={done:0,total:0}}

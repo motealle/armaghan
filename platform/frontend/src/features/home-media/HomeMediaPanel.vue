@@ -36,7 +36,7 @@ async function upload(target:string,event:Event){
   state.value=await requestJson<Snapshot>('/api/admin/home-media',{method:'POST',body})
   const image=state.value.images.filter(m=>m.target===target).at(-1);if(image)chosen.value[target]=image.id
   if(props.quick){await publishSelection();message.value=quickSavedLabel.value}else message.value=w(14)
- }catch(e){error.value=e instanceof ProductImagePreparationError?locale.t('adminImageLimits'):w(16)}finally{busy.value=false;input.value=''}
+ }catch(e){error.value=e instanceof ProductImagePreparationError?locale.t(e.key):w(16)}finally{busy.value=false;input.value=''}
 }
 async function publish(){if(!state.value||busy.value)return;busy.value=true;error.value='';message.value='';try{await publishSelection();message.value=props.quick?quickSavedLabel.value:w(15)}catch{error.value=w(16)}finally{busy.value=false}}
 </script>
