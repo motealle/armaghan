@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { optimizeProductImage, validProductImage } from './productImageSubmission'
-const png=Uint8Array.from(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==','base64'))
+const png=Uint8Array.from(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==','base64'))
 afterEach(()=>vi.unstubAllGlobals())
 function canvas(blob:Blob){const drawImage=vi.fn();vi.stubGlobal('document',{createElement:()=>({getContext:()=>({drawImage}),toBlob:(done:(value:Blob)=>void)=>done(blob)})});return drawImage}
 describe('mobile product image preparation',()=>{
