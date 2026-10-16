@@ -8,6 +8,7 @@ use App\Services\Media\ProductMediaVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class HomeMediaController extends Controller {
@@ -18,21 +19,33 @@ class HomeMediaController extends Controller {
  private function snapshot(StyleProfile $profile): array {return ['revision'=>$this->revision($profile),'images'=>$profile->getMedia(StyleProfile::MEDIA_COLLECTION)->map(fn($m)=>['id'=>$m->id,'target'=>$m->getCustomProperty('target'),'url'=>route('admin.home-media.file',['media'=>$m->id,'variant'=>'thumb']),'channels'=>$m->getCustomProperty('channels',[])])->values()->all()];}
  public function index(Request $request) {return $this->json($this->snapshot($this->profiles->ensureDefault($request->user())));}
  public function publicIndex(string $channel) {
-  $profile=$this->profiles->findDefault();$images=[];$srcsets=[];
-  if($profile)foreach($profile->getMedia(StyleProfile::MEDIA_COLLECTION) as $m){
-   if(!in_array($channel,$m->getCustomProperty('channels',[]),true))continue;
-   $target=$m->getCustomProperty('target');
-   $variant=$target==='hero'||str_starts_with($target,'banner.')?'detail':'card';
-   $images[$target]=route('home-media.file',['media'=>$m->id,'variant'=>$variant]);
-   $size=@getimagesize($m->getPath());$sourceWidth=is_array($size)?(int)$size[0]:0;
-   $candidates=[];
-   foreach(['thumb'=>320,'card'=>800,'detail'=>1600] as $name=>$maximum){
-    $width=min($maximum,$sourceWidth);
-    if($width>0&&!isset($candidates[$width]))$candidates[$width]=route('home-media.file',['media'=>$m->id,'variant'=>$name]).' '.$width.'w';
+  $profile=$this->profiles->findDefault();
+  if (! $profile) return $this->json(['images'=>(object)[], 'srcsets'=>(object)[]]);
+  $media=$profile->getMedia(StyleProfile::MEDIA_COLLECTION)->filter(
+   fn($m)=>in_array($channel,$m->getCustomProperty('channels',[]),true)
+  );
+  // Cache expensive image-header/dimension lookups server-side. The fingerprint
+  // includes the actual published selection, so publish automatically invalidates it.
+  $fingerprint=hash('sha256',json_encode($media->map(
+   fn($m)=>[$m->id,$m->getCustomProperty('target'),$m->custom_properties,$m->updated_at?->toISOString()]
+  )->values()->all(),JSON_THROW_ON_ERROR));
+  $result=Cache::remember('home-index:'.$channel.':'.$fingerprint,3600,function()use($media){
+   $images=[];$srcsets=[];
+   foreach($media as $m){
+    $target=$m->getCustomProperty('target');
+    $variant=$target==='hero'||str_starts_with($target,'banner.')?'detail':'card';
+    $images[$target]=route('home-media.file',['media'=>$m->id,'variant'=>$variant]);
+    $size=@getimagesize($m->getPath());$sourceWidth=is_array($size)?(int)$size[0]:0;
+    $candidates=[];
+    foreach(['thumb'=>320,'card'=>800,'detail'=>1600] as $name=>$maximum){
+     $width=min($maximum,$sourceWidth);
+     if($width>0&&!isset($candidates[$width]))$candidates[$width]=route('home-media.file',['media'=>$m->id,'variant'=>$name]).' '.$width.'w';
+    }
+    if($candidates)$srcsets[$target]=implode(', ',array_values($candidates));
    }
-   if($candidates)$srcsets[$target]=implode(', ',array_values($candidates));
-  }
-  return $this->json(['images'=>(object)$images,'srcsets'=>(object)$srcsets]);
+   return ['images'=>(object)$images,'srcsets'=>(object)$srcsets];
+  });
+  return $this->json($result);
  }
  public function adminFile(Media $media,string $variant='original') {return $this->mediaFile($media,$variant,true);}
  public function publicFile(Media $media,string $variant='original') {

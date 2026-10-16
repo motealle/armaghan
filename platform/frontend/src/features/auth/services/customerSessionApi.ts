@@ -6,6 +6,17 @@ export interface BackendCustomerSession{
   whatsapp:string|null
   country_code:string|null
   country_name:string|null
+  contact_name:string|null
+  contact_email:string|null
+  phone:string|null
+  preferred_language:string|null
+  city:string|null
+  district:string|null
+  shop_number:string|null
+  sales_product_group:string|null
+  purchase_volume:string|null
+  cooperation_type:string|null
+  sales_type:string|null
 }
 
 interface SessionResponse{
@@ -117,7 +128,7 @@ export async function fetchCustomerSession():Promise<BackendCustomerSession|null
 }
 
 export async function updateCustomerSession(
-  patch:Partial<Pick<BackendCustomerSession,'company_name'|'whatsapp'|'country_code'|'country_name'>>,
+  patch:Partial<Pick<BackendCustomerSession,'company_name'|'whatsapp'|'country_code'|'country_name'|'contact_name'|'contact_email'|'phone'|'preferred_language'|'city'|'district'|'shop_number'|'sales_product_group'|'purchase_volume'|'cooperation_type'|'sales_type'>>,
 ):Promise<BackendCustomerSession>{
   const response=await requestJson<SessionResponse>('/api/customer/session',{
     method:'PATCH',

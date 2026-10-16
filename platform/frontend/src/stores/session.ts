@@ -159,7 +159,7 @@ export const useSessionStore=defineStore('session',()=>{
   }
 
   async function saveBackendCustomer(
-    patch:Partial<Pick<BackendCustomerSession,'company_name'|'whatsapp'|'country_code'|'country_name'>>,
+    patch:Partial<Pick<BackendCustomerSession,'company_name'|'whatsapp'|'country_code'|'country_name'|'contact_name'|'contact_email'|'phone'|'preferred_language'|'city'|'district'|'shop_number'|'sales_product_group'|'purchase_volume'|'cooperation_type'|'sales_type'>>,
   ):Promise<boolean>{
     if(!backendAuthenticated.value)return false
     try{
