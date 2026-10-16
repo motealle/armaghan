@@ -60,12 +60,12 @@ class CustomerPhoneRegistrationTest extends TestCase
     {
         $this->postJson('/api/auth/register', $this->form(['username'=>'mot']))->assertUnprocessable();
         $this->postJson('/api/auth/register', $this->form(['phone'=>'07701234567']))->assertUnprocessable();
-        $this->postJson('/api/auth/register', $this->form(['password'=>'short123','password_confirmation'=>'short123']))->assertUnprocessable();
+        $this->postJson('/api/auth/register', $this->form(['password'=>'abc123','password_confirmation'=>'abc123']))->assertUnprocessable();
         $this->assertDatabaseCount('users',0);
 
         $this->postJson('/api/auth/register', $this->form())->assertCreated();
-        $this->postJson('/api/auth/register', $this->form(['username'=>'BAGHDADSHOP', 'phone'=>'+9647809876543']))->assertUnprocessable();
-        $this->postJson('/api/auth/register', $this->form(['username'=>'shopother', 'phone'=>'009647701234567']))->assertUnprocessable();
+        $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.101'])->postJson('/api/auth/register', $this->form(['username'=>'BAGHDADSHOP', 'phone'=>'+9647809876543']))->assertUnprocessable();
+        $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.102'])->postJson('/api/auth/register', $this->form(['username'=>'shopother', 'phone'=>'009647701234567']))->assertUnprocessable();
         $this->assertDatabaseCount('users',1);
         $this->assertDatabaseCount('customer_login_identities',1);
         $this->assertDatabaseCount('customers',1);
@@ -95,7 +95,7 @@ class CustomerPhoneRegistrationTest extends TestCase
         $this->postJson('/api/customer/logout')->assertOk();
         $this->postJson('/api/auth/login',['identifier'=>'emailbuyer@example.test','password'=>'EmailBuyer2026'])->assertOk();
         $this->postJson('/api/customer/logout')->assertOk();
-        $this->postJson('/api/auth/register',[
+        $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.110'])->postJson('/api/auth/register',[
             'name'=>'Spoofer','email'=>'phone-guess@accounts.armaghan.invalid',
             'password'=>'EmailBuyer2026','password_confirmation'=>'EmailBuyer2026',
         ])->assertUnprocessable();
