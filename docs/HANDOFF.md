@@ -1,3 +1,12 @@
+## Verified GitHub and production closeout — 2026-10-16
+
+- GitHub connection and actual write capability verified by branch creation, commits and merges. PR #32 merged as b151ebf002ea08b667e4408af598877543bdeff8; compatibility PR #33 merged as cedda26279c4b6949332e1573425b9e79b790a11. Final runtime includes optional six-digit customer PIN, shared alias failure budget and Unicode-digit compatibility for existing stronger passwords. Exact legacy password checks, email/admin/Google policies preserved.
+- Backend PR32 CI 38903071111 PASS; PR33 CI 38903485605 PASS. Final main Backend CI 38903591449 PASS: 107 tests / 1060 assertions; dependency audit PASS. Code Deploy 38903189053 and final 38903591526 PASS; final deploy job 116981601059. Earlier PR31 additive migration deployment 38870473270 independently confirmed SUCCESS.
+- Frontend PR32 38903070993 PASS. FTP release 38903189192 PASS: 74 focused frontend checks across 19 files, type-check/build, 28 frozen snapshot guard, scoped Test29 upload and guarded root promotion. Final backend-only FTP 38903591429 PASS (no frontend publication required).
+- Independent public HTTP: root 200 serves Test29 index-DkG3KY3c.js; main JS and HelpSheet-D0j0PVxt.js SHA256 exactly match local verified build. Existing searchable 86-question / 21-topic HelpSheet preserved and signup guidance updated; full guide remains Persian with four-language controls.
+- Actual production service acceptance using ONLY one synthetic customer (id 9): 123456 rejected; six-digit signup without SMS 201; own session/read successful; synthetic shop fields saved; logout guest401; repeat login by username and by mobile both 200 with same customer ID and all saved fields intact; final logout guest401. Used reserved fictional NANP phone; no SMS/messages sent. No credentials/session values recorded. Synthetic QA record remains explicitly labeled; no real customer records were read or edited.
+- OPEN and not inferred from these successes: original failing handset photo upload/display, real mobile/desktop visual acceptance, Baghdad connectivity and customer network latency. Issue #29 stays open for those remaining gates. No DNS/host configuration, dependency, database-schema or frozen snapshot changes in this follow-up.
+
 ## Customer PIN follow-up — 2026-10-16; publication gates pending
 
 - GitHub read access restored; actual branch creation on `fix/customer-pin-release-20261016` succeeded, proving repository write access. Base main: `078f661156f473802a675cdd2982d161e547a9ff`.
