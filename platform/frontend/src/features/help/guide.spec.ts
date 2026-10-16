@@ -18,3 +18,11 @@ it('searches questions, answers and topic names with Persian normalization while
   expect(searchHelp('پیراهنی که وجود ندارد')).toEqual([])
   expect(searchHelp('۱۱۲۲','15')).toEqual([])
 })
+
+
+it('explains the released phone signup and keeps recovery limitations explicit',()=>{
+  const answer=helpSections.find(section=>section.id==='2')?.items.find(item=>item.id==='2-1')?.answer??''
+  expect(answer).toContain('۶ رقمی')
+  expect(answer).toContain('پیامک لازم نیست')
+  expect(answer).toContain('بازیابی خودکار حساب با شماره فعال نیست')
+})

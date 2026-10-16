@@ -7,6 +7,8 @@ use App\Models\AdminAuthState;
 use App\Models\User;
 use App\Models\CustomerLoginIdentity;
 use App\Support\CustomerPhone;
+use App\Rules\CustomerSimplePassword;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use App\Support\CustomerSession;
 use App\Services\TemporaryAdminAccessService;
@@ -49,8 +51,25 @@ class PasswordAuthController extends Controller
                     : ($username ? CustomerLoginIdentity::query()->where('username', $username)->first() : null);
                 $candidate = $identity?->user;
                 // Equal work for existing and missing account; no account enumeration.
-                if (Hash::check($data['password'], $candidate?->password ?? '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.')) {
+                // Share failed-attempt budget across username and phone aliases.
+                $accountKey = $candidate ? 'customer-login-account:'.$candidate->getKey() : null;
+                $blocked = $accountKey && RateLimiter::tooManyAttempts($accountKey, 10);
+                $hash = $candidate?->password ?? '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.';
+                // Exact legacy passwords stay valid. Normalize digit-only PINs only
+                // for phone-identity customers; never alter email or admin passwords.
+                $valid = Hash::check($data['password'], $hash);
+                $pin = CustomerSimplePassword::normalizedPin($data['password']);
+                if (! $valid && $pin !== $data['password']) {
+                    $valid = Hash::check($pin, $hash);
+                }
+                if ($blocked) {
+                    throw ValidationException::withMessages(['identifier' => 'Authentication failed.']);
+                }
+                if ($valid) {
+                    if ($accountKey) RateLimiter::clear($accountKey);
                     $user = $candidate;
+                } elseif ($accountKey) {
+                    RateLimiter::hit($accountKey, 900);
                 }
             }
         }
@@ -109,12 +128,16 @@ class PasswordAuthController extends Controller
     {
         $username = CustomerPhone::username((string) $request->input('username', ''));
         $phone = CustomerPhone::normalize((string) $request->input('phone', ''));
-        $request->merge(['username' => $username, 'phone' => $phone]);
+        $request->merge([
+            'username' => $username, 'phone' => $phone,
+            'password' => CustomerSimplePassword::normalizedPin($request->input('password')),
+            'password_confirmation' => CustomerSimplePassword::normalizedPin($request->input('password_confirmation')),
+        ]);
         $data = $request->validate([
             'username' => ['required','string','regex:/^[a-z][a-z0-9._-]{2,31}$/D'],
             'phone' => ['required','string','regex:/^\\+[1-9][0-9]{7,14}$/D'],
             'name' => ['sometimes','nullable','string','max:255'],
-            'password' => ['required','string','max:255','confirmed', Password::min(8)->letters()->numbers()],
+            'password' => ['required','string','max:255','confirmed', new CustomerSimplePassword()],
         ]);
         $reserved = array_merge(['admin','administrator','root','mot','amirau'], array_keys(config('temporary-admin-access.aliases', [])));
         if (in_array($data['username'], $reserved, true)) {

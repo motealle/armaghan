@@ -43,7 +43,8 @@ class AppServiceProvider extends ServiceProvider
             $raw = trim((string) ($request->input('identifier') ?? $request->input('email') ?? ''));
             $identifier = \App\Support\CustomerPhone::normalize($raw) ?? strtolower($raw);
             return [Limit::perMinute(30)->by('login-ip:'.$request->ip()),
-                Limit::perMinute(5)->by('login-account:'.hash('sha256', $identifier))];
+                Limit::perMinute(5)->by('login-account:'.hash('sha256', $identifier)),
+                Limit::perHour(30)->by('login-account-hour:'.hash('sha256', $identifier))];
         });
     }
 }
