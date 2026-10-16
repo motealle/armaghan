@@ -15,3 +15,7 @@ Selected: option 1. Reference: https://laravel.com/framework/docs/13.x/upgrade#c
 Regression: real database-backed serialized cache, compare cold/warm published hero and srcsets, reject PHP class metadata, preserve empty JSON maps in unselected staging channel. Existing channel, upload, revision and authorization tests remain. No frontend/build, schema, cache-policy, customer records, published image selections or frozen snapshots change. New v2 namespace lets old entries expire naturally without a global cache purge. Backend CI and guarded code deploy must pass before claiming live repair.
 
 Other acceptance this run: live HelpSheet shows 86 questions, search for ۶ رقمی finds exactly one correct signup answer and accordion expands. Product page lists 280 products; three sampled real backend thumbnails load in browser. Full device acceptance, actual failing original photo and Baghdad network remain open.
+
+## Verified closeout
+
+PR34 merged edad2569. Backend CI38916802362: 108 tests /1075 assertions PASS; main CI38916921055 and Code Deploy38916920926 PASS. Live home-media cold/warm reads match, six published image and srcset targets preserved, no incomplete-class metadata. Original handset upload and Baghdad network acceptance remain open.
