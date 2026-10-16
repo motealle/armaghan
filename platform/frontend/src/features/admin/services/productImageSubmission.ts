@@ -86,7 +86,7 @@ export async function optimizeProductImage(file:File):Promise<File>{
     const extension=blob.type==='image/jpeg'?'jpg':blob.type==='image/png'?'png':'webp'
     const prepared=new File([blob],canonical.name.replace(/\.[^.]+$/,'')+'.'+extension,{type:blob.type,lastModified:file.lastModified})
     // A resized image must not revert to an oversized original just because its bytes are smaller.
-    const result=scale===1&&canonical.size<prepared.size?canonical:prepared
+    const result=scale===1&&canonical.type!=='image/heic'&&canonical.size<prepared.size?canonical:prepared
     if(!validPreparedProductImage(result))throw new ProductImagePreparationError('adminImageLimits')
     return result
   }catch(error){
