@@ -1,3 +1,12 @@
+## Customer PIN follow-up — 2026-10-16; publication gates pending
+
+- GitHub read access restored; actual branch creation on `fix/customer-pin-release-20261016` succeeded, proving repository write access. Base main: `078f661156f473802a675cdd2982d161e547a9ff`.
+- Recovered the latest Work Handoff ZIP and compared against current source. Existing HelpSheet already contains 86 questions / 21 topics with Persian search and four-language controls: preserved it rather than introducing the bundled duplicate HelpView. Updated existing account FAQ to explain no-SMS phone signup, PIN option and unavailable phone-only recovery.
+- Added optional six-digit customer PIN with common/repeated/sequential codes rejected; Persian/Arabic PIN digits supported. Kept existing 8+ letter/number option, exact legacy phone password bytes, and email/admin/Google policies. A shared customer-ID failure budget (10 / 15 minutes) prevents switching between username and mobile to evade it; identifier 5/min and IP 30/min remain, identifier 30/hour added. No schema change, customer data, credentials or frozen /t/01..28 touched.
+- Local: type-check, 12 focused Vue checks (FAQ count/search/signup guidance, image preparation and home media targets), production Vite build and diff whitespace checks PASS. PHP runtime is unavailable locally; added unit and four authentication regressions to GitHub PR CI and code-deploy gates. Server tests MUST pass before merge; do not infer their result from frontend checks.
+- Selected root remains Test29; revision `2026-10-16-customer-pin-help-release` requests guarded frontend/root publication after merge. Existing deployment safety, backup and no-delete rules preserved.
+- OPEN: CI, merge and post-merge deployment evidence; original failing phone image, live authenticated signup/profile, Baghdad network and device/visual acceptance. Issue #29 remains open. Do not claim live repair from branch publication alone.
+
 ## P0 batches 1+2 merged — 2026-10-16; live publication and handset acceptance still OPEN
 
 - Batch 1 PR #30 merged as dcbe3e85: camera image picker + byte validation, native-HEIC-to-WebP where browser-supported, no early old Test26 Home images, fingerprinted public Home index cache, customer-owned business fields in canonical profile. Focused PHP 97/959 and Vue 23/23, TS/build PASS. Upload with the customer's actual camera photo is NOT verified; HEIC lacking browser decoding still fails safely rather than bypassing server validation.

@@ -101,4 +101,67 @@ class CustomerPhoneRegistrationTest extends TestCase
         ])->assertUnprocessable();
         $this->assertDatabaseCount('customer_login_identities',0);
     }
+    public function test_customer_pin_supports_local_digits_and_rejects_predictable_codes(): void
+    {
+        $this->postJson('/api/auth/register', $this->form([
+            'password'=>'۵۸۳۹۲۱', 'password_confirmation'=>'٥٨٣٩٢١',
+        ]))->assertCreated();
+        $this->assertTrue(Hash::check('583921', User::query()->sole()->password));
+        $this->postJson('/api/customer/logout')->assertOk();
+        foreach (['baghdadshop', '+9647701234567'] as $identifier) {
+            $this->postJson('/api/auth/login', ['identifier'=>$identifier, 'password'=>'٥٨٣٩٢١'])->assertOk();
+            $this->postJson('/api/customer/logout')->assertOk();
+        }
+        foreach (['123456', '000000', '121212'] as $index=>$pin) {
+            $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.'.(150+$index)])
+                ->postJson('/api/auth/register', $this->form([
+                    'username'=>'otherbuyer', 'phone'=>'+9647809876543',
+                    'password'=>$pin, 'password_confirmation'=>$pin,
+                ]))->assertUnprocessable();
+        }
+        $this->assertDatabaseCount('users', 1);
+    }
+
+    public function test_failed_attempt_budget_is_shared_across_aliases_and_expires(): void
+    {
+        $this->postJson('/api/auth/register', $this->form([
+            'password'=>'583921', 'password_confirmation'=>'583921',
+        ]))->assertCreated();
+        $this->postJson('/api/customer/logout')->assertOk();
+        for ($i=0; $i<10; $i++) {
+            $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.'.(170+$i)])
+                ->postJson('/api/auth/login', [
+                    'identifier'=>$i%2 ? 'baghdadshop' : '+9647701234567',
+                    'password'=>'wrong',
+                ])->assertUnprocessable();
+            $this->travel(13)->seconds();
+        }
+        $this->postJson('/api/auth/login', ['identifier'=>'baghdadshop', 'password'=>'583921'])->assertUnprocessable();
+        $this->getJson('/api/customer/session')->assertUnauthorized();
+        $this->travel(901)->seconds();
+        $this->postJson('/api/auth/login', ['identifier'=>'+9647701234567', 'password'=>'583921'])->assertOk();
+    }
+
+    public function test_successful_login_clears_failure_budget_and_keeps_legacy_password_bytes(): void
+    {
+        $this->postJson('/api/auth/register', $this->form())->assertCreated();
+        $user=User::query()->sole();
+        $user->update(['password'=>'۵۸۳۹۲۱']);
+        $this->postJson('/api/customer/logout')->assertOk();
+        $key='customer-login-account:'.$user->id;
+        \Illuminate\Support\Facades\RateLimiter::hit($key, 900);
+        $this->postJson('/api/auth/login', ['identifier'=>'baghdadshop', 'password'=>'۵۸۳۹۲۱'])->assertOk();
+        $this->assertSame(0, \Illuminate\Support\Facades\RateLimiter::attempts($key));
+    }
+
+    public function test_per_identifier_minute_limit_still_applies_to_pin_accounts(): void
+    {
+        $this->postJson('/api/auth/register', $this->form())->assertCreated();
+        $this->postJson('/api/customer/logout')->assertOk();
+        for ($i=0; $i<5; $i++) {
+            $this->postJson('/api/auth/login', ['identifier'=>'baghdadshop', 'password'=>'wrong'])->assertUnprocessable();
+        }
+        $this->postJson('/api/auth/login', ['identifier'=>'baghdadshop', 'password'=>'Shop2026secure'])->assertStatus(429);
+    }
+
 }

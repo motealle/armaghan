@@ -108,7 +108,7 @@ async function googleInfo(){
       <label v-if="mode==='signin'" class="form-field">{{locale.t('loginIdentifier')}}<input v-model="email" type="text" autocomplete="username" dir="ltr" maxlength="255" required :disabled="busy"></label>
       <label class="form-field">{{locale.t('password')}}
         <span class="flex items-center gap-2">
-          <input v-model="password" :type="showPassword?'text':'password'" :autocomplete="mode==='register'?'new-password':'current-password'" dir="ltr" :minlength="mode==='register'?(signupMethod==='phone'?8:12):undefined" maxlength="255" required :disabled="busy">
+          <input v-model="password" :type="showPassword?'text':'password'" :autocomplete="mode==='register'?'new-password':'current-password'" dir="ltr" :minlength="mode==='register'?(signupMethod==='phone'?6:12):undefined" maxlength="255" required :disabled="busy">
           <button type="button" class="mini-action shrink-0" :disabled="busy" @click="showPassword=!showPassword">{{locale.t(showPassword?'hidePassword':'showPassword')}}</button>
         </span>
       </label>
