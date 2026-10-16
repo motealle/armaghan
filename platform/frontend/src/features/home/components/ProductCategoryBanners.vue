@@ -28,7 +28,7 @@ const visual=useVisualStyleStore()
         :data-style-id="`home.product-banner.${category.code}`"
         :data-style-label="`بنر ${locale.categoryName(category.code,category.name)}`"
       >
-        <SmartImage
+        <SmartImage v-if="homeMedia.ready"
           :data-style-id="`home.product-banner.${category.code}.media`"
           :data-style-label="`تصویر بنر ${locale.categoryName(category.code,category.name)}`"
           :src="homeMedia.resolve('banner.'+category.code,productBannerMedia[category.code]?.image??'')"
@@ -39,6 +39,7 @@ const visual=useVisualStyleStore()
           :label="locale.categoryName(category.code,category.name)"
           aspect="hero"
         />
+        <div v-else class="min-h-44 animate-pulse rounded-xl bg-[var(--c-surface-2)]" role="status" aria-label="در حال دریافت تصویر به‌روز"></div>
         <span class="test26-product-banner-shade"/>
         <span :data-style-id="`home.product-banner.${category.code}.copy`" :data-style-label="`متن بنر ${locale.categoryName(category.code,category.name)}`" class="test26-product-banner-copy">
           <b>{{locale.categoryName(category.code,category.name)}}</b>
