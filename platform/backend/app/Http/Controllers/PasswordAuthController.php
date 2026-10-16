@@ -5,6 +5,9 @@ use App\Enums\UserRole;
 use App\Models\Customer;
 use App\Models\AdminAuthState;
 use App\Models\User;
+use App\Models\CustomerLoginIdentity;
+use App\Support\CustomerPhone;
+use Illuminate\Support\Str;
 use App\Support\CustomerSession;
 use App\Services\TemporaryAdminAccessService;
 use Illuminate\Http\JsonResponse;
@@ -37,6 +40,19 @@ class PasswordAuthController extends Controller
             }
         } else {
             $user = $temporary->authenticate($data['identifier'], $data['password']);
+            // Never let a customer username shadow a reserved administrator alias.
+            if (! $user && ! array_key_exists(strtolower($data['identifier']), config('temporary-admin-access.aliases', []))) {
+                $phone = CustomerPhone::normalize($data['identifier']);
+                $username = $phone ? null : CustomerPhone::username($data['identifier']);
+                $identity = $phone
+                    ? CustomerLoginIdentity::query()->where('phone_e164', $phone)->first()
+                    : ($username ? CustomerLoginIdentity::query()->where('username', $username)->first() : null);
+                $candidate = $identity?->user;
+                // Equal work for existing and missing account; no account enumeration.
+                if (Hash::check($data['password'], $candidate?->password ?? '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.')) {
+                    $user = $candidate;
+                }
+            }
         }
 
         if (! $user || ! $user->active) {
@@ -64,12 +80,16 @@ class PasswordAuthController extends Controller
 
     public function register(Request $request): JsonResponse
     {
+        if ($request->exists('phone') || $request->exists('username')) {
+            return $this->registerPhone($request);
+        }
         $request->merge(['email' => strtolower(trim((string) $request->input('email')))]);
         $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'email' => ['required', 'email', 'max:255'],
             'password' => ['required', 'string', 'max:255', 'confirmed', Password::min(12)->letters()->numbers()]]);
         try {
             $customer = DB::transaction(function () use ($data): Customer {
-            if (in_array($data['email'], config('owner-access.google_admin_emails', []), true)
+            if (str_ends_with($data['email'], '@accounts.armaghan.invalid')
+                || in_array($data['email'], config('owner-access.google_admin_emails', []), true)
                 || User::query()->whereRaw('lower(email) = ?', [$data['email']])->exists()) {
                 throw ValidationException::withMessages(['email' => 'Registration unavailable.']);
             }
@@ -80,6 +100,52 @@ class PasswordAuthController extends Controller
             });
         } catch (\Illuminate\Database\UniqueConstraintViolationException) {
             throw ValidationException::withMessages(['email' => 'Registration unavailable.']);
+        }
+        CustomerSession::login($request, $customer);
+        return response()->json(['ok' => true], 201)->header('Cache-Control', 'no-store');
+    }
+
+    private function registerPhone(Request $request): JsonResponse
+    {
+        $username = CustomerPhone::username((string) $request->input('username', ''));
+        $phone = CustomerPhone::normalize((string) $request->input('phone', ''));
+        $request->merge(['username' => $username, 'phone' => $phone]);
+        $data = $request->validate([
+            'username' => ['required','string','regex:/^[a-z][a-z0-9._-]{2,31}$/D'],
+            'phone' => ['required','string','regex:/^\\+[1-9][0-9]{7,14}$/D'],
+            'name' => ['sometimes','nullable','string','max:255'],
+            'password' => ['required','string','max:255','confirmed', Password::min(8)->letters()->numbers()],
+        ]);
+        $reserved = array_merge(['admin','administrator','root','mot','amirau'], array_keys(config('temporary-admin-access.aliases', [])));
+        if (in_array($data['username'], $reserved, true)) {
+            throw ValidationException::withMessages(['username' => 'Registration unavailable.']);
+        }
+        try {
+            $customer = DB::transaction(function () use ($data): Customer {
+                // Do not link to a preexisting trade record by an UNVERIFIED phone.
+                if (CustomerLoginIdentity::query()->where('username', $data['username'])->orWhere('phone_e164', $data['phone'])->exists()) {
+                    throw ValidationException::withMessages(['username' => 'Registration unavailable.']);
+                }
+                // Users.email is non-null and unique in the legacy schema. Reserve a
+                // nondeliverable random internal identifier; never present it as email.
+                $user = User::create([
+                    'name' => trim((string) ($data['name'] ?? '')) ?: $data['username'],
+                    'email' => 'phone-'.Str::uuid().'@accounts.armaghan.invalid',
+                    'password' => $data['password'],
+                    'role' => UserRole::Customer,
+                    'active' => true,
+                ]);
+                CustomerLoginIdentity::create([
+                    'user_id' => $user->id,
+                    'username' => $data['username'],
+                    'phone_e164' => $data['phone'],
+                ]);
+                $customer = Customer::create(['user_id' => $user->id, 'active' => true, 'direct_link_enabled' => false]);
+                $customer->businessProfile()->create(['phone' => $data['phone']]);
+                return $customer;
+            });
+        } catch (\Illuminate\Database\UniqueConstraintViolationException) {
+            throw ValidationException::withMessages(['username' => 'Registration unavailable.']);
         }
         CustomerSession::login($request, $customer);
         return response()->json(['ok' => true], 201)->header('Cache-Control', 'no-store');

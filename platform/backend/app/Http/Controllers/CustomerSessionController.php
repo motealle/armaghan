@@ -93,7 +93,7 @@ class CustomerSessionController extends Controller
             'customer' => [
                 'id' => $customer->getKey(),
                 'name' => $customer->user?->name,
-                'email' => $customer->user?->email,
+                'email' => str_ends_with((string) $customer->user?->email, '@accounts.armaghan.invalid') ? null : $customer->user?->email,
                 'company_name' => $customer->company_name,
                 'whatsapp' => $customer->whatsapp,
                 'country_code' => $customer->country_code,
