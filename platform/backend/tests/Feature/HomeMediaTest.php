@@ -63,4 +63,28 @@ class HomeMediaTest extends TestCase {
   $this->getJson('/api/home-media/staging')->assertJsonMissingPath('images.capability.production');
  }
 
+ public function test_serialized_cache_round_trip_preserves_home_image_maps_without_php_class_metadata(): void {
+  config(['cache.default'=>'database','cache.serializable_classes'=>false]);
+  \Illuminate\Support\Facades\Cache::purge('database');
+  $this->actingAs(User::factory()->admin()->create());
+  $state=$this->getJson('/api/admin/home-media')->assertOk()->json();
+  $state=$this->upload('hero',$state);$id=$state['images'][0]['id'];
+  $this->postJson('/api/admin/home-media/publish/production',[
+   'revision'=>$state['revision'],'selection'=>[$id],
+  ])->assertOk();
+  $cold=$this->getJson('/api/home-media/production')->assertOk()->json();
+  $this->assertSame(['hero'],array_keys($cold['images']));
+  $this->assertSame(['hero'],array_keys($cold['srcsets']));
+  // A real serializing database cache catches regressions hidden by array-store tests.
+  $this->assertSame(1, \Illuminate\Support\Facades\DB::table('cache')->where('key','like','%home-index:v2:production:%')->count());
+  $warm=$this->getJson('/api/home-media/production')->assertOk();
+  $this->assertSame($cold,$warm->json());
+  $this->assertStringNotContainsString('__PHP_Incomplete_Class', $warm->getContent());
+  $empty=$this->getJson('/api/home-media/staging')->assertOk();
+  $this->assertSame('{}',json_encode(json_decode($empty->getContent())->images));
+  $emptyWarm=$this->getJson('/api/home-media/staging')->assertOk();
+  $this->assertSame($empty->getContent(),$emptyWarm->getContent());
+  $this->assertSame('{}',json_encode(json_decode($emptyWarm->getContent())->srcsets));
+ }
+
 }
