@@ -40,7 +40,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('admin-product-uploads', fn (Request $request) =>
             Limit::perMinute(30)->by('product-upload:'.($request->user()?->id ?? $request->ip())));
         RateLimiter::for('password-login', function (Request $request) {
-            $identifier = strtolower(trim((string) ($request->input('identifier') ?? $request->input('email') ?? '')));
+            $raw = trim((string) ($request->input('identifier') ?? $request->input('email') ?? ''));
+            $identifier = \App\Support\CustomerPhone::normalize($raw) ?? strtolower($raw);
             return [Limit::perMinute(30)->by('login-ip:'.$request->ip()),
                 Limit::perMinute(5)->by('login-account:'.hash('sha256', $identifier))];
         });
