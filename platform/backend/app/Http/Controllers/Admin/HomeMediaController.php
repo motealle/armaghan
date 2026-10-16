@@ -29,7 +29,7 @@ class HomeMediaController extends Controller {
   $fingerprint=hash('sha256',json_encode($media->map(
    fn($m)=>[$m->id,$m->getCustomProperty('target'),$m->custom_properties,$m->updated_at?->toISOString()]
   )->values()->all(),JSON_THROW_ON_ERROR));
-  $result=Cache::remember('home-index:'.$channel.':'.$fingerprint,3600,function()use($media){
+  $result=Cache::remember('home-index:v2:'.$channel.':'.$fingerprint,3600,function()use($media){
    $images=[];$srcsets=[];
    foreach($media as $m){
     $target=$m->getCustomProperty('target');
@@ -43,9 +43,11 @@ class HomeMediaController extends Controller {
     }
     if($candidates)$srcsets[$target]=implode(', ',array_values($candidates));
    }
-   return ['images'=>(object)$images,'srcsets'=>(object)$srcsets];
+   // Persist arrays only: Laravel 13 blocks object deserialization by default.
+   return ['images'=>$images,'srcsets'=>$srcsets];
   });
-  return $this->json($result);
+  // Cast at the HTTP boundary only, preserving JSON maps even when empty.
+  return $this->json(['images'=>(object)$result['images'],'srcsets'=>(object)$result['srcsets']]);
  }
  public function adminFile(Media $media,string $variant='original') {return $this->mediaFile($media,$variant,true);}
  public function publicFile(Media $media,string $variant='original') {
