@@ -2,6 +2,8 @@ import {createSSRApp,reactive} from 'vue'
 import {renderToString} from 'vue/server-renderer'
 import {beforeEach,expect,it,vi} from 'vitest'
 import type {AdminProduct,ProductFields} from '../services/adminApi'
+const prepare=vi.hoisted(()=>vi.fn())
+vi.mock('../services/productImageSubmission',async importOriginal=>({...await importOriginal<object>(),optimizeProductImage:prepare}))
 const api=vi.hoisted(()=>({create:vi.fn(),update:vi.fn()}))
 vi.mock('../services/adminApi',()=>({createAdminProduct:api.create,updateAdminProduct:api.update,fetchAdminProduct:vi.fn(),uploadAdminProductImage:vi.fn(),orderAdminProductImages:vi.fn(),deleteAdminProductImages:vi.fn()}))
 vi.mock('../store',()=>({useAdminStore:()=>({clear:vi.fn()})}))
@@ -10,7 +12,7 @@ vi.mock('vue-router',()=>({onBeforeRouteLeave:vi.fn()}))
 import Editor from './BackendProductEditor.vue'
 const fields:ProductFields={subcategory_id:1,code:'11001',name_fa:'Original',name_ar:null,name_en:'Original English',name_ku:null,availability:'available',active:true,sort_order:0,specifications:[]}
 const row:AdminProduct={...fields,id:77,revision:'first',tags:[],category_code:'1',subcategory_code:'11',media:[],specifications:[]}
-type Bindings={save:()=>Promise<void>;draft:{value:ProductFields};current:{value:AdminProduct|null};writesBlocked:{value:boolean}}
+type Bindings={save:()=>Promise<void>;draft:{value:ProductFields};current:{value:AdminProduct|null};writesBlocked:{value:boolean};saving:{value:boolean};upload:(event:Event)=>Promise<void>;pendingImages:{value:Array<{file:File;preview:string;prepared?:File;preparing?:boolean}>}}
 async function open(product:AdminProduct|null,mode:'edit'|'materialize',initial:ProductFields|null=null){
  let bindings:Bindings|undefined;const emit=vi.fn()
  await renderToString(createSSRApp({setup(){
@@ -67,4 +69,20 @@ it('ignores a second save while the first creation is in flight',async()=>{
  expect(api.create).toHaveBeenCalledTimes(1)
  resolve({product:row});await Promise.all([first,second])
  expect(bindings.current.value?.id).toBe(77)
+})
+
+it('prepares a HEIC preview before save while preserving the original pending file',async()=>{
+ const {bindings}=await open(structuredClone(row),'edit')
+ const source=new File(['synthetic'],'camera.heic',{type:'image/heic'})
+ const converted=new File(['converted'],'camera.webp',{type:'image/webp'})
+ const urls=vi.spyOn(URL,'createObjectURL').mockReturnValueOnce('blob:source').mockReturnValueOnce('blob:converted')
+ const revoke=vi.spyOn(URL,'revokeObjectURL').mockImplementation(()=>{})
+ let done!:(file:File)=>void;prepare.mockImplementation(()=>new Promise(resolve=>{done=resolve}))
+ const pending=bindings.upload({target:{files:[source],value:'camera.heic'}} as unknown as Event)
+ expect(bindings.saving.value).toBe(true)
+ expect(bindings.pendingImages.value[0]?.preparing).toBe(true)
+ done(converted);await pending
+ expect(bindings.saving.value).toBe(false)
+ expect(bindings.pendingImages.value[0]).toMatchObject({file:source,prepared:converted,preview:'blob:converted',preparing:false})
+ expect(revoke).toHaveBeenCalledWith('blob:source');expect(urls).toHaveBeenCalledWith(converted)
 })

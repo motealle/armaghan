@@ -14,7 +14,7 @@ const emit=defineEmits<{close:[];saved:[product:AdminProduct];persisted:[product
 const locale=useLocaleStore(),admin=useAdminStore()
 const draft=ref<ProductFields|null>(null),current=ref<AdminProduct|null>(null)
 const saving=ref(false),error=ref(''),note=ref(''),changed=ref(false),writesBlocked=ref(false)
-type PendingImage={file:File;preview:string}
+type PendingImage={file:File;preview:string;prepared?:File;preparing?:boolean}
 const pendingImages=ref<PendingImage[]>([])
 const selectedMediaIds=ref<number[]>([])
 const failedMediaIds=ref<number[]>([])
@@ -74,7 +74,7 @@ async function save(){
       current:target,dirty:dirty.value,files,
       persist:async()=>{const response=target?await updateAdminProduct(target.id,payload,target.revision):await createAdminProduct(payload);return response.product},
       persisted:(product)=>{current.value=product;draft.value=fields(product);guard.checkpoint();changed.value=true;persisted=true;emit('persisted',product)},
-      prepare:optimizeProductImage,
+      prepare:async(file)=>pendingImages.value.find(item=>item.file===file)?.prepared??optimizeProductImage(file),
       upload:uploadWithStaleRecovery,
       uploaded:(product,source)=>{current.value=product;const index=pendingImages.value.findIndex(item=>item.file===source);if(index>=0){URL.revokeObjectURL(pendingImages.value[index]!.preview);pendingImages.value.splice(index,1)};uploadProgress.value.done+=1;changed.value=true;guard.checkpoint();emit('persisted',product)},
     })
@@ -85,7 +85,7 @@ async function save(){
     if(persisted&&draft.value)note.value=locale.t('adminProductSavedImagePending')
   }finally{saving.value=false;uploadProgress.value={done:0,total:0}}
 }
-function upload(event:Event){
+async function upload(event:Event){
   const input=event.target as HTMLInputElement,files=Array.from(input.files??[]);input.value=''
   if(!files.length||saving.value||writesBlocked.value)return
   const remaining=Math.max(0,6-(current.value?.media.length??0)-pendingImages.value.length)
@@ -93,11 +93,23 @@ function upload(event:Event){
   if(valid.length!==files.length)error.value=locale.t('adminImageLimits')
   else error.value=''
   const existing=new Set(pendingImages.value.map(item=>item.file.name+'|'+item.file.size+'|'+item.file.lastModified))
-  for(const file of valid){
+  saving.value=true
+  try{for(const file of valid){
     const key=file.name+'|'+file.size+'|'+file.lastModified
     if(existing.has(key))continue
-    pendingImages.value.push({file,preview:URL.createObjectURL(file)});existing.add(key)
-  }
+    const needsPreviewConversion=!['image/jpeg','image/png','image/webp'].includes(file.type.toLowerCase())||/\.(heic|heif|avif|gif|bmp)$/i.test(file.name)
+    pendingImages.value.push({file,preview:URL.createObjectURL(file),preparing:needsPreviewConversion});existing.add(key)
+    const entry=pendingImages.value.at(-1)!
+    if(needsPreviewConversion){
+      try{
+        const prepared=await optimizeProductImage(file)
+        if(pendingImages.value.includes(entry)){
+          entry.prepared=prepared;URL.revokeObjectURL(entry.preview);entry.preview=URL.createObjectURL(prepared)
+        }
+      }catch(e){error.value=e instanceof ProductImagePreparationError?locale.t(e.key):locale.t('adminImagePreparationFailed')}
+      finally{entry.preparing=false}
+    }
+  }}finally{saving.value=false}
   note.value=''
 }
 function removePendingImage(index:number){
@@ -185,12 +197,13 @@ onBeforeUnmount(()=>{clearPendingImages();window.removeEventListener('beforeunlo
           <b class="text-xs">{{selectedMediaIds.length}} {{locale.t('selectedCount')}}</b>
           <button type="button" class="mini-action ms-auto text-rose-700" :disabled="saving||dirty" @click="deleteSelectedMedia"><Trash2 :size="15"/>{{locale.t('adminImageDeleteSelected')}}</button>
         </div>
-        <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small dir="ltr">{{(current?.media.length??0)+pendingImages.length}} / 6</small></span><input type="file" multiple accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" :disabled="writesBlocked||saving||(current?.media.length??0)+pendingImages.length>=6" @change="upload"></label>
+        <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small dir="ltr">{{(current?.media.length??0)+pendingImages.length}} / 6</small></span><input type="file" multiple accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,.gif,.bmp" :disabled="writesBlocked||saving||(current?.media.length??0)+pendingImages.length>=6" @change="upload"></label>
         <div v-if="pendingImages.length" class="mt-3 space-y-3 rounded-xl border border-[var(--c-border)] p-3">
           <p role="status" class="text-sm">{{locale.t('adminImagePending')}} · {{pendingImages.length}}</p>
           <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
             <article v-for="(item,index) in pendingImages" :key="item.preview" class="rounded-lg border border-[var(--c-border)] p-2">
-              <img :src="item.preview" :alt="item.file.name" class="aspect-[3/4] w-full rounded-md object-contain" loading="lazy">
+              <span v-if="item.preparing" role="status" class="flex aspect-[3/4] items-center justify-center text-sm">{{locale.t('adminLoading')}}</span>
+              <img v-else :src="item.preview" :alt="item.file.name" class="aspect-[3/4] w-full rounded-md object-contain" loading="lazy">
               <p class="mt-1 truncate text-[11px]" dir="auto">{{item.file.name}}</p>
               <p class="text-[10px] text-[var(--c-muted)]" dir="ltr">{{(item.file.size/1024/1024).toFixed(1)}} MB</p>
               <button type="button" class="mini-action mt-1 w-full" :disabled="saving" @click="removePendingImage(index)">{{locale.t('adminImageRemoveSelection')}}</button>

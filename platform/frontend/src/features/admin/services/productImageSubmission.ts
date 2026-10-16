@@ -1,8 +1,8 @@
 export const PRODUCT_IMAGE_SOURCE_MAX_BYTES=20*1024*1024
 export const PRODUCT_IMAGE_UPLOAD_MAX_BYTES=8*1024*1024
 const PRODUCT_IMAGE_TYPES=['image/jpeg','image/png','image/webp']
-const PRODUCT_IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','heic','heif']
-const PRODUCT_CAMERA_IMAGE_TYPES=[...PRODUCT_IMAGE_TYPES,'image/heic','image/heif','image/heic-sequence','image/heif-sequence']
+const PRODUCT_IMAGE_EXTENSIONS=['jpg','jpeg','png','webp','heic','heif','avif','gif','bmp']
+const PRODUCT_CAMERA_IMAGE_TYPES=[...PRODUCT_IMAGE_TYPES,'image/heic','image/heif','image/heic-sequence','image/heif-sequence','image/avif','image/gif','image/bmp','image/x-ms-bmp']
 
 function productImageExtension(file:File){return file.name.split('.').pop()?.toLowerCase()??''}
 function supportedProductImageInput(file:File){
@@ -29,9 +29,12 @@ async function canonicalProductImage(file:File){
   const webp=String.fromCharCode(...bytes.slice(0,4))==='RIFF'&&String.fromCharCode(...bytes.slice(8,12))==='WEBP'
   const brand=String.fromCharCode(...bytes.slice(4,12))
   const heif=brand.startsWith('ftyp')&&['heic','heix','hevc','hevx','mif1','msf1'].includes(brand.slice(4))
-  const type=png?'image/png':jpeg?'image/jpeg':webp?'image/webp':heif?'image/heic':null
+  const avif=brand.startsWith('ftyp')&&['avif','avis'].includes(brand.slice(4))
+  const gif=['GIF87a','GIF89a'].includes(String.fromCharCode(...bytes.slice(0,6)))
+  const bmp=bytes[0]===66&&bytes[1]===77
+  const type=png?'image/png':jpeg?'image/jpeg':webp?'image/webp':avif?'image/avif':gif?'image/gif':bmp?'image/bmp':heif?'image/heic':null
   if(!type)throw new ProductImagePreparationError('adminImageContentInvalid')
-  const extension=png?'png':jpeg?'jpg':webp?'webp':'heic'
+  const extension=type.split('/')[1]!.replace('jpeg','jpg')
   const base=file.name.replace(/\.[^.]+$/,'')||'product'
   return new File([file],base+'.'+extension,{type,lastModified:file.lastModified})
 }
@@ -63,15 +66,20 @@ export async function optimizeProductImage(file:File):Promise<File>{
   const canonical=await canonicalProductImage(file)
   // The server still decodes and validates uploads. If a mobile browser's decoder
   // refuses valid JPEG/PNG/WebP bytes, send the canonical original when <= 8 MiB.
-  // Never send HEIC/HEIF to the GD-only backend; it must be converted first.
+  // Noncanonical formats must be converted before the GD-only server sees them.
   let image:DecodedImage
   try{image=await decodeProductImage(canonical)}catch(error){
-    if(canonical.type!=='image/heic'&&validPreparedProductImage(canonical))return canonical
-    throw error
+    if(validPreparedProductImage(canonical))return canonical
+    if(canonical.type!=='image/heic')throw error
+    try{
+      const {decodeHeicToJpeg}=await import('./heicDecoder')
+      image=await decodeProductImage(await decodeHeicToJpeg(canonical))
+    }catch{throw new ProductImagePreparationError()}
   }
   try{
+    if(image.width*image.height>64_000_000)throw new ProductImagePreparationError('adminImageLimits')
     const scale=Math.min(1,1920/Math.max(image.width,image.height))
-    if(scale===1&&canonical.type!=='image/heic'&&canonical.size<=1_250_000)return canonical
+    if(scale===1&&validPreparedProductImage(canonical)&&canonical.size<=1_250_000)return canonical
     if(typeof document==='undefined')throw new ProductImagePreparationError()
     const width=Math.max(1,Math.round(image.width*scale)),height=Math.max(1,Math.round(image.height*scale))
     const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height
@@ -86,7 +94,7 @@ export async function optimizeProductImage(file:File):Promise<File>{
     const extension=blob.type==='image/jpeg'?'jpg':blob.type==='image/png'?'png':'webp'
     const prepared=new File([blob],canonical.name.replace(/\.[^.]+$/,'')+'.'+extension,{type:blob.type,lastModified:file.lastModified})
     // A resized image must not revert to an oversized original just because its bytes are smaller.
-    const result=scale===1&&canonical.type!=='image/heic'&&canonical.size<prepared.size?canonical:prepared
+    const result=scale===1&&validPreparedProductImage(canonical)&&canonical.size<prepared.size?canonical:prepared
     if(!validPreparedProductImage(result))throw new ProductImagePreparationError('adminImageLimits')
     return result
   }catch(error){

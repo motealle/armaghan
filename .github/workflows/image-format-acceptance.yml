@@ -1,0 +1,41 @@
+name: Image format acceptance
+on:
+  pull_request:
+    branches: [main]
+    paths: ['platform/frontend/**', 'platform/backend/tests/Feature/ImageFormatPipelineTest.php', '.github/workflows/image-format-acceptance.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  image-formats:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '24.15.0'}
+      - name: Install locked frontend dependencies
+        working-directory: platform/frontend
+        run: npm ci --no-audit --no-fund
+      - name: Install test browser
+        working-directory: platform/frontend
+        run: npx playwright install --with-deps chromium
+      - name: Convert eight real formats in Chromium without external photo services
+        working-directory: platform/frontend
+        run: npm run test:formats
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+          extensions: ctype,curl,dom,fileinfo,filter,hash,mbstring,openssl,pcre,pdo,session,tokenizer,xml,sqlite3,pdo_sqlite,gd,exif
+      - name: Prepare isolated Laravel test environment
+        working-directory: platform/backend
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+      - name: Upload browser outputs, persist and serve real product and Home media
+        working-directory: platform/backend
+        env:
+          ARMAGHAN_FORMAT_FIXTURE_DIR: ${{ github.workspace }}/.build/image-format-uploads
+        run: php artisan test tests/Feature/ImageFormatPipelineTest.php

@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { optimizeProductImage, validProductImage } from './productImageSubmission'
+vi.mock('./heicDecoder',()=>({decodeHeicToJpeg:vi.fn(async()=>{throw new Error('corrupt fixture')})}))
 const png=Uint8Array.from(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==','base64'))
 afterEach(()=>vi.unstubAllGlobals())
 function canvas(blob:Blob){const drawImage=vi.fn();vi.stubGlobal('document',{createElement:()=>({getContext:()=>({drawImage}),toBlob:(done:(value:Blob)=>void)=>done(blob)})});return drawImage}
