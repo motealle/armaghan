@@ -28,7 +28,7 @@ final class CustomerSimplePassword implements ValidationRule
         }
         // Preserve the original strong 8+ letter-and-digit option; do not weaken
         // existing email, Google, administrator or password-change policies.
-        if (mb_strlen($value) < 8 || preg_match('/\p{L}/u', $value) !== 1 || preg_match('/[0-9]/', $value) !== 1) {
+        if (mb_strlen($value) < 8 || preg_match('/\p{L}/u', $value) !== 1 || preg_match('/\p{N}/u', $value) !== 1) {
             $fail('رمز باید شش رقم غیرقابل‌حدس یا حداقل هشت نویسه شامل حرف و عدد باشد.');
         }
     }

@@ -10,7 +10,7 @@ class CustomerSimplePasswordTest extends TestCase
 {
     public function test_accepts_memorable_format_without_lowering_existing_strong_password_option(): void
     {
-        foreach (['583921', 'Shop2026secure'] as $input) {
+        foreach (['583921', 'Shop2026secure', 'فروشگاه۱۴۰۵', 'Shop٢٠٢٦secure'] as $input) {
             $result = Validator::make(['password'=>$input], ['password'=>[new CustomerSimplePassword()]]);
             $this->assertTrue($result->passes(), $input);
         }
