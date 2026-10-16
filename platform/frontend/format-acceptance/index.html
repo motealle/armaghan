@@ -2,7 +2,7 @@
 import {optimizeProductImage} from '/src/features/admin/services/productImageSubmission.ts'
 window.prepare=async(name,bytes,type)=>{
  const result=await optimizeProductImage(new File([new Uint8Array(bytes)],name,{type}));
- const bitmap=await createImageBitmap(result);const dimensions=[bitmap.width,bitmap.height];bitmap.close();
- return {name:result.name,type:result.type,dimensions,bytes:Array.from(new Uint8Array(await result.arrayBuffer()))}
+ const bitmap=await createImageBitmap(result);const dimensions=[bitmap.width,bitmap.height];const canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;const ctx=canvas.getContext('2d');ctx.drawImage(bitmap,0,0);const pixels=Array.from(ctx.getImageData(12,12,1,1).data);bitmap.close();
+ return {name:result.name,type:result.type,dimensions,pixels,bytes:Array.from(new Uint8Array(await result.arrayBuffer()))}
 }
 </script></body></html>

@@ -19,7 +19,7 @@ try{
   const name='sample.'+ext;const bytes=await readFile('format-acceptance/fixtures/'+name)
   assert.equal(createHash('sha256').update(bytes).digest('hex'),hashes[name])
   const result=await page.evaluate(async({name,bytes,type})=>window.prepare(name,bytes,type),{name,bytes:Array.from(bytes),type})
-  assert.ok(['image/jpeg','image/png','image/webp'].includes(result.type));assert.deepEqual(result.dimensions,[64,48]);assert.ok(result.bytes.length>0)
+  assert.ok(['image/jpeg','image/png','image/webp'].includes(result.type));assert.deepEqual(result.dimensions,[64,48]);assert.ok(result.bytes.length>0);assert.ok(result.pixels[0]>120&&result.pixels[1]>80&&result.pixels[2]<120&&result.pixels[3]===255,ext+': retained gold shape pixel')
   const target=ext+'-'+result.name;await writeFile(output+'/'+target,Buffer.from(result.bytes))
   manifest.push({source:ext,path:target,type:result.type});console.log(ext.toUpperCase()+': real browser decode, preparation and canonical output PASS')
  }
