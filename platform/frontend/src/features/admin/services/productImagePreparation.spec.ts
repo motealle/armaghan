@@ -35,12 +35,28 @@ describe('mobile product image preparation',()=>{
   const result=await optimizeProductImage(new File([png],'camera.png',{type:''}))
   expect(result.type).toBe('image/png');expect(result.name).toBe('camera.png');expect(revoke).toHaveBeenCalledWith('blob:fallback')
  })
- it('reports an undecodable image accurately and releases its temporary URL',async()=>{
+ it('falls back to server-side validation for a byte-confirmed small PNG when browser decoding is unavailable',async()=>{
   vi.stubGlobal('createImageBitmap',undefined)
   vi.spyOn(URL,'createObjectURL').mockReturnValue('blob:invalid');const revoke=vi.spyOn(URL,'revokeObjectURL').mockImplementation(()=>{})
   vi.stubGlobal('Image',class {onload:(()=>void)|null=null;onerror:(()=>void)|null=null;set src(value:string){if(value)queueMicrotask(()=>this.onerror?.())}})
-  await expect(optimizeProductImage(new File([png],'bad.png',{type:'image/png'}))).rejects.toMatchObject({key:'adminImageContentInvalid'})
+  const result=await optimizeProductImage(new File([png],'mobile-camera.png',{type:'image/png'}))
+  expect(result.type).toBe('image/png');expect(result.name).toBe('mobile-camera.png')
   expect(revoke).toHaveBeenCalledWith('blob:invalid')
+ })
+ it('accepts HEIC camera image from native decoder and converts to server-safe WebP',async()=>{
+  const heic=new File([new Uint8Array([0,0,0,24,102,116,121,112,104,101,105,99,0,0,0,0])],'IMG_0042.HEIC',{type:'image/heic'})
+  expect(validProductImage(heic)).toBe(true)
+  vi.stubGlobal('createImageBitmap',vi.fn(async()=>({width:800,height:1200,close:vi.fn()})))
+  canvas(new Blob([new Uint8Array(110)],{type:'image/webp'}))
+  const prepared=await optimizeProductImage(heic)
+  expect(prepared.name).toBe('IMG_0042.webp')
+  expect(prepared.type).toBe('image/webp')
+ })
+ it('does not forward undecodable HEIC straight to the JPEG/PNG/WebP-only backend',async()=>{
+  const heic=new File([new Uint8Array([0,0,0,24,102,116,121,112,104,101,105,99,0,0,0,0])],'IMG_0042.heic',{type:'image/heic'})
+  vi.stubGlobal('createImageBitmap',undefined)
+  vi.stubGlobal('Image',undefined)
+  await expect(optimizeProductImage(heic)).rejects.toMatchObject({key:'adminImagePreparationFailed'})
  })
  it('rejects disguised non-image bytes before decoding or uploading',async()=>{
   const bitmap=vi.fn();vi.stubGlobal('createImageBitmap',bitmap)
