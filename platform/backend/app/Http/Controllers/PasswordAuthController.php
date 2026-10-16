@@ -140,11 +140,11 @@ class PasswordAuthController extends Controller
                     'username' => $data['username'],
                     'phone_e164' => $data['phone'],
                 ]);
-                 $customer = Customer::create(['user_id' => $user->id, 'active' => true, 'direct_link_enabled' => false]);
+                $customer = Customer::create(['user_id' => $user->id, 'active' => true, 'direct_link_enabled' => false]);
                 $customer->businessProfile()->create(['phone' => $data['phone']]);
                 return $customer;
             });
-        } catch (\\Illuminate\\Database\\UniqueConstraintViolationException) {
+        } catch (\Illuminate\Database\UniqueConstraintViolationException) {
             throw ValidationException::withMessages(['username' => 'Registration unavailable.']);
         }
         CustomerSession::login($request, $customer);
