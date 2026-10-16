@@ -1,0 +1,1 @@
+Synthetic 64x48 color-shape fixtures generated for this project using Pillow and pillow-heif 1.3.0. No personal photographs. sample.heif uses the same valid HEIF container bytes as sample.heic to exercise both filename/MIME paths. GIF imports as a static first frame. Hashes are checked by the browser acceptance runner.

@@ -1,0 +1,8 @@
+<!doctype html><html><body><script type="module">
+import {optimizeProductImage} from '/src/features/admin/services/productImageSubmission.ts'
+window.prepare=async(name,bytes,type)=>{
+ const result=await optimizeProductImage(new File([new Uint8Array(bytes)],name,{type}));
+ const bitmap=await createImageBitmap(result);const dimensions=[bitmap.width,bitmap.height];bitmap.close();
+ return {name:result.name,type:result.type,dimensions,bytes:Array.from(new Uint8Array(await result.arrayBuffer()))}
+}
+</script></body></html>

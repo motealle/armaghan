@@ -17,7 +17,7 @@ const state=ref<Snapshot|null>(null),channel=ref(props.publicationChannel||publi
 const selected=computed(()=>Object.values(chosen.value).filter(id=>id>0))
 const quickApplyLabel=computed(()=>({fa:'نمایش همین تصویر روی سایت',en:'Use this image on site',ar:'استخدام هذه الصورة في الموقع',ku:'ئەم وێنەیە لە ماڵپەڕ پیشان بدە'})[locale.locale])
 const quickSavedLabel=computed(()=>({fa:'تصویر ذخیره شد و همین حالا روی سایت اعمال شد.',en:'Image saved and applied to the site.',ar:'تم حفظ الصورة وتطبيقها على الموقع.',ku:'وێنەکە پاشەکەوت و لە ماڵپەڕ جێبەجێ کرا.'})[locale.locale])
-const uploadHelp=computed(()=>({fa:'JPEG / PNG / WebP · تا ۲۰ مگابایت · بهینه‌سازی خودکار',en:'JPEG / PNG / WebP · up to 20 MB · automatic optimization',ar:'JPEG / PNG / WebP · حتى 20 MB · تحسين تلقائي',ku:'JPEG / PNG / WebP · تا 20 MB · باشترکردنی خۆکار'})[locale.locale])
+const uploadHelp=computed(()=>({fa:'JPEG / PNG / WebP / HEIC / HEIF / AVIF / GIF / BMP · تا ۲۰ مگابایت · بهینه‌سازی خودکار',en:'JPEG / PNG / WebP / HEIC / HEIF / AVIF / GIF / BMP · up to 20 MB · automatic optimization',ar:'JPEG / PNG / WebP / HEIC / HEIF / AVIF / GIF / BMP · حتى 20 MB · تحسين تلقائي',ku:'JPEG / PNG / WebP / HEIC / HEIF / AVIF / GIF / BMP · تا 20 MB · باشترکردنی خۆکار'})[locale.locale])
 function reset(){chosen.value=Object.fromEntries(targets.map(t=>[t,state.value?.images.find(m=>m.target===t&&m.channels.includes(channel.value))?.id??0]))}
 async function load(){try{state.value=await requestJson<Snapshot>('/api/admin/home-media');reset()}catch{error.value=w(16)}}
 watch(channel,reset);watch(()=>props.publicationChannel,value=>{if(value==='production'||value==='staging')channel.value=value});onMounted(load)
@@ -49,7 +49,7 @@ async function publish(){if(!state.value||busy.value)return;busy.value=true;erro
   <div v-if="state" class="grid gap-3 sm:grid-cols-2">
    <article v-for="target in visibleTargets" :key="target" class="rounded-xl border border-[var(--c-border)] p-3 space-y-2">
     <h3 class="text-sm font-bold">{{w(targetWord(target))}}</h3>
-    <label class="mini-action inline-flex cursor-pointer items-center">{{w(13)}}<input type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" :disabled="busy||!state" class="sr-only" @change="upload(target,$event)"></label>
+    <label class="mini-action inline-flex cursor-pointer items-center">{{w(13)}}<input type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,.gif,.bmp" :disabled="busy||!state" class="sr-only" @change="upload(target,$event)"></label>
     <select v-model.number="chosen[target]" :disabled="busy" class="field-input" :aria-label="w(targetWord(target))"><option :value="0">{{w(12)}}</option><option v-for="image in state.images.filter(m=>m.target===target)" :key="image.id" :value="image.id">#{{image.id}}</option></select>
     <img v-if="chosen[target]" :src="state.images.find(m=>m.id===chosen[target])?.url" :alt="w(targetWord(target))" class="w-full h-28 object-contain rounded-lg">
     <button v-if="props.quick&&chosen[target]" type="button" class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--c-primary)] px-4 text-sm font-black text-white" :disabled="busy" @click="publish">{{quickApplyLabel}}</button>

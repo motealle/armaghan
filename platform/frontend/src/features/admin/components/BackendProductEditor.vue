@@ -185,7 +185,7 @@ onBeforeUnmount(()=>{clearPendingImages();window.removeEventListener('beforeunlo
           <b class="text-xs">{{selectedMediaIds.length}} {{locale.t('selectedCount')}}</b>
           <button type="button" class="mini-action ms-auto text-rose-700" :disabled="saving||dirty" @click="deleteSelectedMedia"><Trash2 :size="15"/>{{locale.t('adminImageDeleteSelected')}}</button>
         </div>
-        <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small dir="ltr">{{(current?.media.length??0)+pendingImages.length}} / 6</small></span><input type="file" multiple accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" :disabled="writesBlocked||saving||(current?.media.length??0)+pendingImages.length>=6" @change="upload"></label>
+        <label class="form-field mt-3"><span class="flex items-center gap-2"><ImagePlus :size="16"/>{{locale.t('adminAddImage')}} <small dir="ltr">{{(current?.media.length??0)+pendingImages.length}} / 6</small></span><input type="file" multiple accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,.gif,.bmp" :disabled="writesBlocked||saving||(current?.media.length??0)+pendingImages.length>=6" @change="upload"></label>
         <div v-if="pendingImages.length" class="mt-3 space-y-3 rounded-xl border border-[var(--c-border)] p-3">
           <p role="status" class="text-sm">{{locale.t('adminImagePending')}} · {{pendingImages.length}}</p>
           <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
