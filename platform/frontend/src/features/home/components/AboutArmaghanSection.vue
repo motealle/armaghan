@@ -22,7 +22,7 @@ const visual=useVisualStyleStore()
         <p data-style-id="home.about.text" data-style-label="متن درباره ارمغان" data-editable-text="true">{{visual.resolveText('home.about.text',locale.locale,locale.t('aboutArmaghanText'))}}</p>
       </div>
       <div data-style-id="home.about.media" data-style-label="تصویر درباره ارمغان" class="test26-about-media relative">
-        <SmartImage
+        <SmartImage v-if="homeMedia.ready"
           :src="homeMedia.resolve('about',test26Media.about.image)"
           :srcset="homeMedia.srcset('about')"
           sizes="(min-width: 1280px) 1280px, 100vw"
@@ -31,6 +31,7 @@ const visual=useVisualStyleStore()
           :label="locale.t('aboutArmaghanImageAlt')"
           aspect="hero"
         />
+        <div v-else class="min-h-44 animate-pulse rounded-xl bg-[var(--c-surface-2)]" role="status" aria-label="در حال دریافت تصویر به‌روز"></div>
         <HomeMediaEditButton target="about" :label="locale.t('aboutArmaghanImageAlt')"/>
       </div>
     </div>
