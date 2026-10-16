@@ -109,6 +109,14 @@ export async function registerWithPassword(name:string,email:string,password:str
   await requestJson('/api/auth/register',{method:'POST',body:JSON.stringify({name,email,password,password_confirmation})})
 }
 
+// Customer-controlled phone/username signup without SMS. The backend normalizes,
+ // enforces uniqueness, hashes the password, and creates only a customer account.
+export async function registerWithPhone(username:string,phone:string,password:string):Promise<void>{
+  await requestJson('/api/auth/register',{method:'POST',body:JSON.stringify({
+    username,phone,password,password_confirmation:password,
+  })})
+}
+
 export async function consumeCustomerMagicLink(token:string):Promise<BackendCustomerSession>{
   const response=await requestJson<SessionResponse>('/api/customer/magic-link/consume',{
     method:'POST',
