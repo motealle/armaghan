@@ -94,7 +94,7 @@ async function save(){
       <div class="flex items-start gap-2"><LockKeyhole v-if="spec.locked" :size="16" class="shrink-0"/><SlidersHorizontal v-else :size="16" class="shrink-0"/><b class="text-xs">{{spec.labels[locale.locale]||spec.labels.fa}}</b></div>
       <label v-if="editing&&draft[spec.key]" class="mt-3 block">
        <span class="sr-only">{{spec.labels[locale.locale]||spec.labels.fa}} · {{languages[language]}}</span>
-       <textarea v-model="draft[spec.key]![language]" :lang="language" :dir="language==='en'?'ltr':'rtl'" :disabled="busy||conflict" maxlength="1000" rows="3" :placeholder="locale.t('specValuePlaceholder')" class="w-full resize-y rounded-lg border border-[var(--c-border)] bg-[var(--c-surface)] p-2 text-base leading-6 text-[var(--c-text)] focus:outline-2 focus:outline-[var(--c-primary)]"/>
+       <textarea v-model="draft[spec.key]![language]" :aria-label="(spec.labels[locale.locale]||spec.labels.fa)+' · '+languages[language]" :lang="language" :dir="language==='en'?'ltr':'rtl'" :disabled="busy||conflict" maxlength="1000" rows="3" :placeholder="locale.t('specValuePlaceholder')" class="w-full resize-y rounded-lg border border-[var(--c-border)] bg-[var(--c-surface)] p-2 text-base leading-6 text-[var(--c-text)] focus:outline-2 focus:outline-[var(--c-primary)]"/>
        <small v-if="language!=='fa'&&exactValue(spec,'fa')" class="mt-1 block break-words text-[10px]">{{locale.t('specPersianReference')}} {{exactValue(spec,'fa')}}</small>
       </label>
       <p v-else class="mt-2 whitespace-pre-wrap break-words text-sm text-[var(--c-text)]">{{shownValue(spec)||locale.t('specValueEmpty')}}</p>
