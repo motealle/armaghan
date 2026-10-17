@@ -42,7 +42,7 @@ try{
   await page.screenshot({path:'../../.build/quick-order-acceptance/table-'+width+'.png',fullPage:true})
   await row('12003').locator('[data-move=last]').click();await page.waitForFunction(()=>!Array.from(document.querySelectorAll('tbody code')).some(e=>e.textContent==='12003'));assert.equal(sorted().at(-1).id,3)
   await page.evaluate(()=>window.qa.mode('grid'))
-  const card=code=>page.locator('article.product-card').filter({has:page.locator('.product-code-pill bdi',{hasText:code})})
+  const card=code=>page.locator('article.product-card[data-product-code="'+code+'"]')
   await card('12008').locator('[data-move=first]:enabled').waitFor();await card('12008').locator('[data-move=first]').click()
   await page.waitForFunction(()=>window.qa.order()[1]==='12008');assert.equal(await page.locator('.pswp').count(),0);assert.equal(await page.getByRole('dialog').count(),0)
   const toolbar=card('12008').locator('[data-card-order]');const box=await toolbar.boundingBox(),media=await card('12008').locator('.product-card-media').boundingBox();assert.ok(box.y>=media.y&&box.y+box.height<=media.y+media.height+1)

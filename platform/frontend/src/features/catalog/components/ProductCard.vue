@@ -21,7 +21,7 @@ const visibleTitle=computed(()=>customerProductLabel(props.product,displaySubcat
 
 <template>
   <!-- Test 23 low-copy hierarchy stays intact; Test 27 derives customer labels centrally from subcategory/status. -->
-  <article data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--role-product-card-background)] shadow-sm">
+  <article :data-product-code="product.code" data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--role-product-card-background)] shadow-sm">
     <div data-style-id="product.media" data-style-label="بخش تصویر کارت محصول" class="product-card-media">
       <ProductMediaCarousel :product="product" :manager-controls="adminOrderable" />
       <div v-if="adminOrderable" class="absolute inset-x-0 bottom-1.5 z-50 flex justify-center" data-card-order><ProductQuickOrderActions :code="product.code"/></div>
