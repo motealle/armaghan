@@ -12,13 +12,19 @@ try{
   const page=await browser.newPage({viewport:{width,height:900}})
   page.setDefaultTimeout(15000);page.setDefaultNavigationTimeout(20000)
   page.on('pageerror',error=>console.log('BROWSER ERROR:',error.message))
-  let row={id:77,revision:'rev1',code:'12011',specifications:['ابعاد','طرح ظاهری','فرم محصول','مشخصات مدل','ترکیب رنگ','جنس','تعداد در پک'].map((label,i)=>({id:i+1,key:'spec'+i,labels:{fa:label,en:'Specification '+i,ar:null,ku:null},locked:i===0,value_text:i===5?'پنبه':null,values:{fa:i===5?'پنبه':null,en:null,ar:null,ku:null}}))}
-  const writes=[];let fail=false
+  let row={id:77,subcategory_id:1,revision:'rev1',code:'12011',specifications:['ابعاد','طرح ظاهری','فرم محصول','مشخصات مدل','ترکیب رنگ','جنس','تعداد در پک'].map((label,i)=>({id:i+1,key:'spec'+i,labels:{fa:label,en:'Specification '+i,ar:null,ku:null},locked:i===0,value_text:i===5?'پنبه':null,values:{fa:i===5?'پنبه':null,en:null,ar:null,ku:null}}))}
+  const writes=[];let fail=false;let initialized=width!==375;let schemaWrites=0
   await page.route('**/*',route=>route.request().url().startsWith('http://127.0.0.1:4198/')?route.continue():route.abort())
   await page.route('**/backend/**',async route=>{
    const request=route.request(),url=request.url()
    if(url.endsWith('/api/csrf-token'))return route.fulfill({json:{token:'synthetic-qa-token'}})
-   if(request.method()==='GET'&&url.endsWith('/products/77'))return route.fulfill({json:{product:row}})
+   if(request.method()==='GET'&&url.endsWith('/products/77'))return route.fulfill({json:{product:initialized?row:{...row,specifications:[]}}})
+   if(request.method()==='GET'&&url.endsWith('/product-taxonomy'))return route.fulfill({json:{subcategories:[{id:1,schema_revision:'empty',specifications:[]}]}})
+   if(request.method()==='PUT'&&url.endsWith('/product-taxonomy/1/specifications')){
+    const body=request.postDataJSON();assert.equal(body.acknowledged,true);assert.equal(body.definitions.length,7);assert.ok(body.definitions.every(d=>d.id===null));assert.equal(body.definitions[0].labels.fa,'ابعاد')
+    row.specifications=body.definitions.map((d,i)=>({...d,id:i+1,value_text:null,values:{fa:null,ar:null,en:null,ku:null}}));row.revision+='-schema';initialized=true;schemaWrites++
+    return route.fulfill({json:{subcategories:[]}})
+   }
    if(request.method()==='PATCH'&&url.endsWith('/products/77/specifications')){
     const body=request.postDataJSON();if(fail||body.revision!==row.revision)return route.fulfill({status:409,json:{message:'conflict'}})
     assert.ok(['fa','ar','en','ku'].includes(body.locale));assert.deepEqual(Object.keys(body).sort(),['locale','revision','specifications'])
@@ -40,13 +46,13 @@ try{
   assert.ok(await page.getByRole('textbox').evaluateAll(inputs=>inputs.every(input=>input.getBoundingClientRect().width>50)))
   await page.getByRole('button',{name:'ذخیره',exact:true}).click()
   await page.getByRole('status').filter({hasText:'تغییرات در سایت ذخیره شد.'}).waitFor()
-  assert.equal(writes.length,2);assert.equal(writes[1].revision,'rev1-next');assert.equal(row.specifications[5].values.fa,'کتان');assert.equal(row.specifications[5].values.en,'Linen')
+  assert.equal(writes.length,2);assert.equal(writes[1].revision,writes[0].revision+'-next');assert.equal(schemaWrites,width===375?1:0);assert.equal(row.specifications[5].values.fa,'کتان');assert.equal(row.specifications[5].values.en,'Linen')
   await page.evaluate(()=>window.qa.setLocale('en'));await page.getByText('Linen',{exact:true}).waitFor()
   await page.screenshot({path:'../../.build/spec-acceptance/read-en-'+width+'.png',fullPage:true})
   await page.getByRole('button',{name:'Edit specifications',exact:true}).click();await page.getByRole('textbox').first().fill('UNSAVED')
   fail=true;await page.getByRole('button',{name:'Save',exact:true}).click();await page.getByRole('alert').waitFor()
   assert.equal(await page.getByRole('textbox').first().inputValue(),'UNSAVED');assert.ok(await page.getByRole('button',{name:'Save',exact:true}).isDisabled())
   await page.evaluate(()=>window.qa.logout());assert.equal(await page.getByRole('button',{name:'Edit specifications',exact:true}).count(),0)
-  await page.close();console.log(width+'px: real Vue edit, locked value, language drafts, sequential save, public display, conflict retention and logout PASS')
+  await page.close();console.log(width+'px: real Vue edit, empty-category initialization, locked value, language drafts, sequential save, public display, conflict retention and logout PASS')
  }
 }finally{if(browser)await browser.close();server.kill('SIGTERM')}
