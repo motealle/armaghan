@@ -6,7 +6,7 @@ import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { useLocaleStore } from '@/stores/locale'
 import { useAdminStore } from '../store'
 import { productFailure, useProductDraftGuard } from '../services/productEditorSafety'
-import { ProductImagePreparationError, optimizeProductImage, submitProductImages, validProductImage } from '../services/productImageSubmission'
+import { ProductImagePreparationError, optimizeProductImage, retainProductImage, submitProductImages, validProductImage } from '../services/productImageSubmission'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
 import { createAdminProduct, updateAdminProduct, uploadAdminProductImage, orderAdminProductImages, deleteAdminProductImages, fetchAdminProduct, type AdminProduct, type AdminSubcategory, type ProductFields, type AdminSpecification } from '../services/adminApi'
 const props=withDefaults(defineProps<{open:boolean;product:AdminProduct|null;taxonomy:AdminSubcategory[];initial?:ProductFields|null;mode?:'create'|'edit'|'materialize'}>(),{initial:null})
@@ -14,7 +14,7 @@ const emit=defineEmits<{close:[];saved:[product:AdminProduct];persisted:[product
 const locale=useLocaleStore(),admin=useAdminStore()
 const draft=ref<ProductFields|null>(null),current=ref<AdminProduct|null>(null)
 const saving=ref(false),error=ref(''),note=ref(''),changed=ref(false),writesBlocked=ref(false)
-type PendingImage={file:File;preview:string;prepared?:File;preparing?:boolean}
+type PendingImage={file:File;preview:string;prepared?:File;preparing?:boolean;previewFailed?:boolean}
 const pendingImages=ref<PendingImage[]>([])
 const selectedMediaIds=ref<number[]>([])
 const failedMediaIds=ref<number[]>([])
@@ -86,7 +86,7 @@ async function save(){
   }finally{saving.value=false;uploadProgress.value={done:0,total:0}}
 }
 async function upload(event:Event){
-  const input=event.target as HTMLInputElement,files=Array.from(input.files??[]);input.value=''
+  const input=event.target as HTMLInputElement,files=Array.from(input.files??[])
   if(!files.length||saving.value||writesBlocked.value)return
   const remaining=Math.max(0,6-(current.value?.media.length??0)-pendingImages.value.length)
   const valid=files.filter(validProductImage).slice(0,remaining)
@@ -94,22 +94,29 @@ async function upload(event:Event){
   else error.value=''
   const existing=new Set(pendingImages.value.map(item=>item.file.name+'|'+item.file.size+'|'+item.file.lastModified))
   saving.value=true
-  try{for(const file of valid){
-    const key=file.name+'|'+file.size+'|'+file.lastModified
-    if(existing.has(key))continue
-    const needsPreviewConversion=!['image/jpeg','image/png','image/webp'].includes(file.type.toLowerCase())||/\.(heic|heif|avif|gif|bmp)$/i.test(file.name)
-    pendingImages.value.push({file,preview:URL.createObjectURL(file),preparing:needsPreviewConversion});existing.add(key)
-    const entry=pendingImages.value.at(-1)!
-    if(needsPreviewConversion){
+  const retained:File[]=[]
+  try{
+    // Snapshot every selected source before resetting the picker or starting a
+    // potentially lengthy conversion. Never retain only the gallery handle.
+    for(const source of valid){
+      const key=source.name+'|'+source.size+'|'+source.lastModified
+      if(existing.has(key))continue
+      try{retained.push(await retainProductImage(source));existing.add(key)}
+      catch(e){error.value=e instanceof ProductImagePreparationError?locale.t(e.key):locale.t('adminImageReadFailed')}
+    }
+    input.value=''
+    for(const file of retained){
+      pendingImages.value.push({file,preview:URL.createObjectURL(file),preparing:true})
+      const entry=pendingImages.value.at(-1)!
       try{
         const prepared=await optimizeProductImage(file)
         if(pendingImages.value.includes(entry)){
           entry.prepared=prepared;URL.revokeObjectURL(entry.preview);entry.preview=URL.createObjectURL(prepared)
         }
-      }catch(e){error.value=e instanceof ProductImagePreparationError?locale.t(e.key):locale.t('adminImagePreparationFailed')}
+      }catch(e){entry.previewFailed=true;error.value=e instanceof ProductImagePreparationError?locale.t(e.key):locale.t('adminImagePreparationFailed')}
       finally{entry.preparing=false}
     }
-  }}finally{saving.value=false}
+  }finally{input.value='';saving.value=false}
   note.value=''
 }
 function removePendingImage(index:number){
@@ -203,7 +210,8 @@ onBeforeUnmount(()=>{clearPendingImages();window.removeEventListener('beforeunlo
           <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
             <article v-for="(item,index) in pendingImages" :key="item.preview" class="rounded-lg border border-[var(--c-border)] p-2">
               <span v-if="item.preparing" role="status" class="flex aspect-[3/4] items-center justify-center text-sm">{{locale.t('adminLoading')}}</span>
-              <img v-else :src="item.preview" :alt="item.file.name" class="aspect-[3/4] w-full rounded-md object-contain" loading="lazy">
+              <span v-else-if="item.previewFailed" role="status" class="flex aspect-[3/4] items-center justify-center p-2 text-center text-sm">{{locale.t('adminImagePreviewFailed')}}</span>
+              <img v-else :src="item.preview" :alt="item.file.name" class="aspect-[3/4] w-full rounded-md object-contain" @error="item.previewFailed=true">
               <p class="mt-1 truncate text-[11px]" dir="auto">{{item.file.name}}</p>
               <p class="text-[10px] text-[var(--c-muted)]" dir="ltr">{{(item.file.size/1024/1024).toFixed(1)}} MB</p>
               <button type="button" class="mini-action mt-1 w-full" :disabled="saving" @click="removePendingImage(index)">{{locale.t('adminImageRemoveSelection')}}</button>

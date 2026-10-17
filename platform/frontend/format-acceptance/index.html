@@ -1,8 +1,23 @@
-<!doctype html><html><body><script type="module">
-import {optimizeProductImage} from '/src/features/admin/services/productImageSubmission.ts'
-window.prepare=async(name,bytes,type)=>{
- const result=await optimizeProductImage(new File([new Uint8Array(bytes)],name,{type}));
+<!doctype html><html><body><input id="picked" type="file" multiple><script type="module">
+import {optimizeProductImage,retainProductImage} from '/src/features/admin/services/productImageSubmission.ts'
+window.prepareFile=async(file)=>{
+ const result=await optimizeProductImage(file);
  const bitmap=await createImageBitmap(result);const dimensions=[bitmap.width,bitmap.height];const canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;const ctx=canvas.getContext('2d');ctx.drawImage(bitmap,0,0);const pixels=Array.from(ctx.getImageData(12,12,1,1).data);bitmap.close();
  return {name:result.name,type:result.type,dimensions,pixels,bytes:Array.from(new Uint8Array(await result.arrayBuffer()))}
+}
+window.prepare=(name,bytes,type)=>window.prepareFile(new File([new Uint8Array(bytes)],name,{type}));
+// Exercise a real browser file input, then release its selection before decode.
+window.prepareSelected=async()=>{
+ const input=document.querySelector('#picked');const source=input.files[0];
+ const retained=await retainProductImage(source);input.value='';
+ if(input.files.length)throw new Error('picker not cleared');
+ return window.prepareFile(retained)
+}
+window.largePng=async()=>{
+ const canvas=document.createElement('canvas');canvas.width=2048;canvas.height=1536;
+ const ctx=canvas.getContext('2d');const image=ctx.createImageData(canvas.width,canvas.height);let seed=42;
+ for(let i=0;i<image.data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)>>>0;image.data[i]=seed&255;image.data[i+1]=(seed>>>8)&255;image.data[i+2]=(seed>>>16)&255;image.data[i+3]=255}
+ ctx.putImageData(image,0,0);ctx.fillStyle='#ffb514';ctx.fillRect(0,0,128,128);
+ return canvas.toDataURL('image/png').split(',')[1]
 }
 </script></body></html>
