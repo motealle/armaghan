@@ -28,14 +28,14 @@ try{
   })
   await page.goto('http://127.0.0.1:4199/order-acceptance/index.html');await page.locator('[data-order-id="5"]').waitFor()
   await page.getByLabel('کد محصول را بنویسید',{exact:true}).fill('۱۲۰۰۳');await page.getByRole('button',{name:'پیدا کن',exact:true}).click()
-  await page.getByRole('button',{name:'ابتدا',exact:true}).click();assert.equal(writes,0)
+  await page.locator('[data-order-id="5"]').getByRole('button',{name:'ابتدا',exact:true}).click();assert.equal(writes,0)
   assert.equal(await page.locator('[data-order-id]').first().getAttribute('data-order-id'),'5')
   await page.screenshot({path:'../../.build/order-acceptance/edit-'+width+'.png',fullPage:true})
   assert.ok(await page.getByRole('dialog').evaluate(e=>e.scrollWidth<=e.clientWidth+1))
   await page.getByRole('button',{name:'ذخیره ترتیب',exact:true}).click();await page.getByRole('status').filter({hasText:'ترتیب نمایش در سایت ذخیره شد.'}).waitFor();assert.equal(writes,1)
   const order=await page.evaluate(()=>window.qa.publicOrder());assert.deepEqual(order.map(id=>id-1000000),[2,1,5,3,4])
   await page.getByRole('button',{name:'بستن',exact:true}).last().click();await page.evaluate(()=>window.qa.open());await page.locator('[data-order-id="5"]').waitFor();assert.equal(await page.locator('[data-order-id]').first().getAttribute('data-order-id'),'5')
-  await page.locator('[data-order-id="4"] button').first().click();await page.getByRole('button',{name:'ابتدا',exact:true}).click();fail=true
+  await page.locator('[data-order-id="4"] button').first().click();await page.locator('[data-order-id="4"]').getByRole('button',{name:'ابتدا',exact:true}).click();fail=true
   await page.getByRole('button',{name:'ذخیره ترتیب',exact:true}).click();await page.getByRole('alert').waitFor();assert.ok(await page.getByRole('button',{name:'ذخیره ترتیب',exact:true}).isDisabled());assert.equal(await page.locator('[data-order-id]').first().getAttribute('data-order-id'),'4')
   page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'دریافت مجدد',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-order-id]')?.getAttribute('data-order-id')==='5')
   await page.evaluate(()=>window.qa.setLocale('en'));await page.screenshot({path:'../../.build/order-acceptance/read-en-'+width+'.png',fullPage:true})

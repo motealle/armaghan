@@ -9,7 +9,7 @@ import { useDesignStore } from '@/stores/design'
 import { useLocaleStore } from '@/stores/locale'
 import { cardMediaSources, swipeDirection } from '../services/cardMedia'
 
-const props=defineProps<{product:Product}>()
+const props=withDefaults(defineProps<{product:Product;managerControls?:boolean}>(),{managerControls:false})
 const locale=useLocaleStore()
 const design=useDesignStore()
 const productName=computed(()=>locale.productName(props.product.code,props.product.name,props.product.names))
@@ -87,7 +87,7 @@ onBeforeUnmount(()=>{disposed=true;viewer?.destroy()})
     <template v-if="slides.length>1">
       <button type="button" class="product-media-control absolute left-1 top-1/2 z-40 grid h-11 w-11 -translate-y-1/2 place-items-center text-white" :aria-label="labels.prev" @click.stop="move(-1)"><ChevronLeft :size="22"/></button>
       <button type="button" class="product-media-control absolute right-1 top-1/2 z-40 grid h-11 w-11 -translate-y-1/2 place-items-center text-white" :aria-label="labels.next" @click.stop="move(1)"><ChevronRight :size="22"/></button>
-      <div class="pointer-events-none absolute inset-x-0 bottom-2 z-40 flex justify-center gap-1.5" aria-hidden="true"><span v-for="(_,i) in slides" :key="i" class="h-1.5 w-1.5 rounded-full shadow" :class="i===index?'bg-white':'bg-black/40'"/></div>
+      <div class="pointer-events-none absolute inset-x-0 z-40 flex justify-center gap-1.5" :class="managerControls?'bottom-14':'bottom-2'" aria-hidden="true"><span v-for="(_,i) in slides" :key="i" class="h-1.5 w-1.5 rounded-full shadow" :class="i===index?'bg-white':'bg-black/40'"/></div>
     </template>
   </div>
 </template>

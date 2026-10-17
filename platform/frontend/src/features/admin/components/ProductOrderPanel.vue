@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue'
-import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown, Search, Save, RefreshCw, ImageOff } from '@lucide/vue'
+import { Search, Save, RefreshCw, ImageOff } from '@lucide/vue'
+import ProductMoveButtons from './ProductMoveButtons.vue'
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { useLocaleStore } from '@/stores/locale'
 import { useAdminStore } from '../store'
@@ -75,8 +76,8 @@ async function save(){
       <span class="min-w-0 flex-1"><b class="block text-sm" dir="ltr">{{product.code}}</b><small class="block truncate text-[var(--c-muted)]">{{locale.subcategoryName(product.subcategory_code,product.label)}}</small></span>
       <span class="shrink-0 rounded-lg bg-[var(--c-surface-2)] px-2 py-1 text-xs">{{locale.t('orderPosition')}} {{index+1}}</span>
      </button>
-     <div v-if="selected===product.id" class="mt-2 grid grid-cols-4 gap-1 border-t border-[var(--c-border)] pt-2">
-      <button v-for="action in (['first','up','down','last'] as const)" :key="action" type="button" class="flex min-h-12 flex-col items-center justify-center gap-1 rounded-lg bg-[var(--c-surface-2)] text-xs disabled:opacity-40" :disabled="busy||conflict||(['first','up'].includes(action)?index===0:index===rows.length-1)" @click="move(product.id,action)"><component :is="{first:ChevronsUp,up:ArrowUp,down:ArrowDown,last:ChevronsDown}[action]" :size="17"/>{{locale.t('order'+action)}}</button>
+     <div class="mt-2 flex justify-end border-t border-[var(--c-border)] pt-2">
+      <ProductMoveButtons :first="index===0" :last="index===rows.length-1" :disabled="busy||conflict" @move="move(product.id,$event)"/>
      </div>
     </article>
    </div>

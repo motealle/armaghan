@@ -28,7 +28,9 @@ jobs:
         run: node scripts/verify-product-specifications.mjs
       - name: Verify product order in mobile tablet and desktop
         working-directory: platform/frontend
-        run: node scripts/verify-product-order.mjs
+        run: |
+          node scripts/verify-product-order.mjs
+          node scripts/verify-quick-product-order.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -36,6 +38,7 @@ jobs:
           path: |
             .build/spec-acceptance
             .build/order-acceptance
+            .build/quick-order-acceptance
           retention-days: 1
           if-no-files-found: ignore
       - uses: shivammathur/setup-php@v2
