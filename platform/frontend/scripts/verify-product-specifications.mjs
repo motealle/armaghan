@@ -10,6 +10,8 @@ try{
  await mkdir('../../.build/spec-acceptance',{recursive:true})
  for(const width of [375,768,1280]){
   const page=await browser.newPage({viewport:{width,height:900}})
+  page.setDefaultTimeout(15000);page.setDefaultNavigationTimeout(20000)
+  page.on('pageerror',error=>console.log('BROWSER ERROR:',error.message))
   let row={id:77,revision:'rev1',code:'12011',specifications:['ابعاد','طرح ظاهری','فرم محصول','مشخصات مدل','ترکیب رنگ','جنس','تعداد در پک'].map((label,i)=>({id:i+1,key:'spec'+i,labels:{fa:label,en:'Specification '+i,ar:null,ku:null},locked:i===0,value_text:i===5?'پنبه':null,values:{fa:i===5?'پنبه':null,en:null,ar:null,ku:null}}))}
   const writes=[];let fail=false
   await page.route('**/*',route=>route.request().url().startsWith('http://127.0.0.1:4198/')?route.continue():route.abort())
@@ -26,6 +28,8 @@ try{
    return route.abort()
   })
   await page.goto('http://127.0.0.1:4198/spec-acceptance/index.html')
+  await page.waitForFunction(()=>Boolean(window.qa))
+  console.log(width+'px: component mounted')
   const edit=page.getByRole('button',{name:'ویرایش مشخصات',exact:true});await edit.click()
   await page.getByRole('textbox').first().fill('۴۰ × ۶۰')
   await page.getByLabel('جنس · فارسی',{exact:true}).fill('کتان')
