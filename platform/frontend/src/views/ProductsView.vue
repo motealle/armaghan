@@ -23,6 +23,7 @@ const admin=useAdminStore()
 const {policy}=useResolvedAppearance()
 const adminEditorOpen=ref(false)
 const managerOpen=ref(false)
+const detailOpen=ref(false)
 const adminEditorBusy=ref(false)
 const adminEditorError=ref('')
 const editingCatalogId=ref<number|null>(null)
@@ -198,7 +199,7 @@ async function editFromManager(product:AdminProduct|null){
           <span class="text-[var(--c-muted)]">{{locale.t('desktopFilterHelp')}}</span>
         </div>
         <p v-if="adminEditorError" class="auth-error mb-3" role="alert">{{adminEditorError}}</p>
-        <ProductGrid v-if="filtered.length" :products="filtered" :admin-editable="!!admin.identity&&!adminEditorBusy&&catalog.syncState==='synced'" @edit="editFromCatalog" @specifications-saved="(id,product)=>adminProductPersisted(product,id)"/>
+        <ProductGrid v-if="filtered.length" :products="filtered" :admin-editable="!!admin.identity&&!adminEditorBusy&&catalog.syncState==='synced'" @edit="editFromCatalog" @specifications-saved="(id,product)=>adminProductPersisted(product,id)" @detail-open="detailOpen=$event"/>
         <div v-else class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">—</div>
       </div>
     </div>
@@ -213,7 +214,7 @@ async function editFromManager(product:AdminProduct|null){
       @saved="adminEditorSaved"
     />
     <button
-      v-if="admin.identity&&!managerOpen&&!adminEditorOpen"
+      v-if="admin.identity&&!managerOpen&&!adminEditorOpen&&!detailOpen"
       type="button"
       class="visual-editor-quick-launcher"
       :aria-label="locale.t('adminProducts')"
