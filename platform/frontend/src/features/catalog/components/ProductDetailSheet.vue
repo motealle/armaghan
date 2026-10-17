@@ -7,7 +7,7 @@ import BaseSheet from '@/components/ui/BaseSheet.vue'
 import { useLocaleStore } from '@/stores/locale'
 import { useAdminStore } from '@/features/admin/store'
 import { CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
-import { fetchAdminProduct, updateProductSpecifications, type AdminProduct } from '@/features/admin/services/adminApi'
+import { fetchAdminProduct, fetchProductTaxonomy, saveProductSpecificationSchema, updateProductSpecifications, type AdminProduct } from '@/features/admin/services/adminApi'
 import { customerProductLabel } from '../presentation'
 
 const props=withDefaults(defineProps<{open:boolean;product:Product|null;adminEditable?:boolean}>(),{adminEditable:false})
@@ -42,7 +42,22 @@ async function beginEdit(){
  if(!editing.value)language.value=locale.locale
  const id=props.product.backendId;busy.value=true;error.value='';note.value=''
  try{
-  const product=(await fetchAdminProduct(id)).product
+  let product=(await fetchAdminProduct(id)).product
+  if(!product.specifications.length){
+   const group=(await fetchProductTaxonomy()).subcategories.find(item=>item.id===product.subcategory_id)
+   if(!group)throw new Error('Product taxonomy unavailable')
+   if(!group.specifications.length){
+    const defaults=[...props.product.specs.locked.map(label=>({label,locked:true})),...props.product.specs.negotiable.map(label=>({label,locked:false}))]
+    const definitions=defaults.map((item,index)=>({id:null,key:'catalog_spec_'+index,locked:item.locked,labels:Object.fromEntries((Object.keys(languages) as Locale[]).map(lang=>{const text=locale.t('spec.'+item.label,lang);return [lang,text&&text!=='spec.'+item.label?text:lang==='fa'?item.label:null]})) as AdminProduct['specifications'][number]['labels']}))
+    if(definitions.length){
+     try{await saveProductSpecificationSchema(group,definitions)}catch(e){
+      // Another manager may have initialized the same empty category first.
+      if(!(e instanceof CustomerSessionApiError)||e.status!==409)throw e
+     }
+    }
+   }
+   product=(await fetchAdminProduct(id)).product
+  }
   if(!props.open||props.product?.backendId!==id||!canEdit.value)return
   row.value=product
   draft.value=Object.fromEntries(product.specifications.map(spec=>[spec.key,Object.fromEntries((Object.keys(languages) as Locale[]).map(lang=>[lang,exactValue(spec,lang)]))])) as typeof draft.value

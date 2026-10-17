@@ -3,12 +3,12 @@ import {renderToString} from 'vue/server-renderer'
 import {beforeEach,expect,it,vi} from 'vitest'
 import {products} from '@/data/catalog'
 import type {AdminProduct} from '@/features/admin/services/adminApi'
-const api=vi.hoisted(()=>({fetch:vi.fn(),save:vi.fn()}))
+const api=vi.hoisted(()=>({fetch:vi.fn(),save:vi.fn(),taxonomy:vi.fn(),schema:vi.fn()}))
 const state=vi.hoisted(()=>({identity:{name:'QA'} as object|null,locale:'fa'}))
 vi.mock('@/features/admin/store',()=>({useAdminStore:()=>({get identity(){return state.identity},clear:()=>{state.identity=null}})}))
 vi.mock('@/stores/locale',()=>({useLocaleStore:()=>({get locale(){return state.locale},t:(key:string)=>key,subcategoryName:()=>'',specLabel:(value:string)=>value})}))
 vi.mock('@/components/ui/BaseSheet.vue',()=>({default:{setup:(_:object,{slots}:{slots:{default:()=>unknown}})=>()=>h('div',slots.default() as never)}}))
-vi.mock('@/features/admin/services/adminApi',()=>({fetchAdminProduct:api.fetch,updateProductSpecifications:api.save}))
+vi.mock('@/features/admin/services/adminApi',()=>({fetchAdminProduct:api.fetch,updateProductSpecifications:api.save,fetchProductTaxonomy:api.taxonomy,saveProductSpecificationSchema:api.schema}))
 import Sheet from './ProductDetailSheet.vue'
 const row:AdminProduct={id:77,revision:'first',subcategory_id:1,code:'12011',name_fa:'پتو',name_ar:null,name_en:null,name_ku:null,availability:'available',active:true,sort_order:0,tags:[],media:[],category_code:'1',subcategory_code:'12',specifications:[{id:8,key:'fabric',locked:true,labels:{fa:'جنس',en:'Fabric',ar:null,ku:null},value_text:'پنبه',values:{fa:'پنبه',en:'Cotton',ar:null,ku:null}}]}
 const product={...products[0]!,backendId:77,specificationValues:row.specifications.map(s=>({...s,value_text:s.value_text??null}))}
@@ -40,4 +40,14 @@ it('leaves the view unchanged when canceling edits',async()=>{
  const {bindings}=await open();await bindings.beginEdit();bindings.draft.value.fabric!.fa='کتان'
  vi.stubGlobal('window',{confirm:()=>true});bindings.cancel();vi.unstubAllGlobals()
  expect(bindings.editing.value).toBe(false);expect(api.save).not.toHaveBeenCalled();expect(product.specificationValues[0]?.value_text).toBe('پنبه')
+})
+
+it('initializes only an empty server taxonomy from the visible default fields before editing',async()=>{
+ api.fetch.mockResolvedValueOnce({product:{...row,specifications:[]}}).mockResolvedValueOnce({product:structuredClone(row)})
+ const group={id:1,schema_revision:'empty-revision',specifications:[]}
+ api.taxonomy.mockResolvedValue({subcategories:[group]});api.schema.mockResolvedValue({})
+ const {bindings}=await open();await bindings.beginEdit()
+ expect(api.schema).toHaveBeenCalledWith(group,expect.arrayContaining([expect.objectContaining({id:null,key:'catalog_spec_0',locked:true})]))
+ expect(api.schema.mock.calls[0]?.[1]).toHaveLength(product.specs.locked.length+product.specs.negotiable.length)
+ expect(bindings.editing.value).toBe(true)
 })
