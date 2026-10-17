@@ -12,6 +12,17 @@ class ProductSpecValue extends Model
 {
     use HasFactory;
 
+    public function translations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ProductSpecTranslation::class);
+    }
+
+    public function localizedValues(): array
+    {
+        return ['fa' => $this->value_text, 'ar' => null, 'en' => null, 'ku' => null,
+            ...$this->translations->pluck('value_text', 'locale')->all()];
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

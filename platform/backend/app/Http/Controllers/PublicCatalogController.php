@@ -72,7 +72,7 @@ class PublicCatalogController extends Controller
             ->whereHas('subcategory', fn ($subcategory) => $subcategory
                 ->where('active', true)
                 ->whereHas('category', fn ($category) => $category->where('active', true)))
-            ->with(['subcategory.category', 'subcategory.specDefinitions', 'specValues', 'media']);
+            ->with(['subcategory.category', 'subcategory.specDefinitions', 'specValues.translations', 'media']);
 
         if (isset($validated['codes'])) {
             $query->whereIn('code', $validated['codes']);

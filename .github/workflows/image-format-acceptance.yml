@@ -22,6 +22,16 @@ jobs:
       - name: Convert eight real formats in Chromium without external photo services
         working-directory: platform/frontend
         run: npm run test:formats
+      - name: Verify inline specification editing in mobile tablet and desktop
+        working-directory: platform/frontend
+        run: node scripts/verify-product-specifications.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: specification-ui-checks
+          path: .build/spec-acceptance
+          retention-days: 1
+          if-no-files-found: ignore
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
