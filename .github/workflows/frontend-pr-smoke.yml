@@ -28,6 +28,6 @@ jobs:
       - name: Type-check
         run: npm run type-check
       - name: Targeted media and customer safety regression
-        run: npx vitest run src/features/help/guide.spec.ts src/features/admin/services/productImagePreparation.spec.ts src/features/admin/services/productImageSubmission.spec.ts src/features/admin/components/BackendProductEditor.spec.ts src/features/home-media/targets.spec.ts
+        run: npx vitest run src/features/catalog/components/ProductDetailSheet.spec.ts src/features/help/guide.spec.ts src/features/admin/services/productImagePreparation.spec.ts src/features/admin/services/productImageSubmission.spec.ts src/features/admin/components/BackendProductEditor.spec.ts src/features/home-media/targets.spec.ts
       - name: Verify production Vite bundling without deployment
         run: npx vite build

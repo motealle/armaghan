@@ -129,6 +129,37 @@ class ProductController extends Controller
         return $this->json(['product' => $this->snapshot($row->refresh()->load(['subcategory.category', 'media']))]);
     }
 
+    public function updateSpecifications(Request $request, Product $product): JsonResponse
+    {
+        $data = $request->validate([
+            'revision' => ['required', 'string', 'regex:/^[a-f0-9]{64}$/'],
+            'locale' => ['required', Rule::in(['fa', 'ar', 'en', 'ku'])],
+            'specifications' => ['present', 'array', 'max:100'],
+            'specifications.*' => ['required', 'array:definition_id,value_text'],
+            'specifications.*.definition_id' => ['required', 'integer', 'distinct'],
+            'specifications.*.value_text' => ['present', 'nullable', 'string', 'max:1000', 'not_regex:/<[^>]*>/u'],
+        ]);
+        $row = DB::transaction(function () use ($request, $product, $data) {
+            $row = $this->locked($product, $data['revision']);
+            $owned = $row->subcategory->specDefinitions()->pluck('id')->all();
+            foreach ($data['specifications'] as $spec) {
+                if (! in_array((int) $spec['definition_id'], $owned, true)) {
+                    throw ValidationException::withMessages(['specifications' => 'Specification does not belong to this subcategory.']);
+                }
+            }
+            foreach ($data['specifications'] as $spec) {
+                $value = trim($spec['value_text'] ?? '');
+                $value = $value === '' ? null : $value;
+                $saved = $row->specValues()->firstOrCreate(['spec_definition_id' => $spec['definition_id']]);
+                if ($data['locale'] === 'fa') $saved->update(['value_text' => $value]);
+                else $saved->translations()->updateOrCreate(['locale' => $data['locale']], ['value_text' => $value]);
+            }
+            $this->audit($request, $row, 'admin.product.specifications-updated', ['specifications']);
+            return $row;
+        });
+        return $this->json(['product' => $this->snapshot($row->refresh()->load(['subcategory.category', 'media']))]);
+    }
+
     public function upload(Request $request, Product $product): JsonResponse
     {
         $data = $request->validate(['revision' => ['required', 'string', 'regex:/^[a-f0-9]{64}$/'],
@@ -255,7 +286,7 @@ class ProductController extends Controller
         return hash('sha256', json_encode([$product->only(array_merge(['id', 'updated_at'], self::FIELDS)), $product->adminTags(),
             // Media has appended URL attributes; serializing a partial model would require its missing disk fields.
             $product->media()->where('collection_name', Product::MEDIA_COLLECTION)->orderBy('order_column')->orderBy('id')->get(['id', 'order_column', 'updated_at'])->map(fn ($m) => $m->only(['id', 'order_column', 'updated_at']))->all(),
-            $product->specValues()->orderBy('id')->get(['id', 'spec_definition_id', 'value_text', 'updated_at'])->toArray(),
+            $product->specValues()->with(['translations' => fn ($q) => $q->orderBy('locale')])->orderBy('id')->get(['id', 'spec_definition_id', 'value_text', 'updated_at'])->toArray(),
             $product->subcategory->specDefinitions()->orderBy('id')->get()->map(fn ($d) => $d->only(['id', 'key', 'label_fa', 'label_ar', 'label_en', 'label_ku', 'locked', 'sort_order']))->all()], JSON_THROW_ON_ERROR));
     }
 
@@ -281,9 +312,10 @@ class ProductController extends Controller
 
     private function specifications(Product $product): array
     {
+        $product->loadMissing('specValues.translations');
         $values = $product->specValues->keyBy('spec_definition_id');
         return $product->subcategory->specDefinitions->sortBy('sort_order')->values()->map(fn ($d) =>
-            array_merge($this->definition($d), ['value_text' => $values->get($d->id)?->value_text]))->all();
+            array_merge($this->definition($d), ['value_text' => $values->get($d->id)?->value_text, 'values' => $values->get($d->id)?->localizedValues() ?? ['fa' => null, 'ar' => null, 'en' => null, 'ku' => null]]))->all();
     }
 
     private function saveSpecifications(Product $product, array $specifications): void

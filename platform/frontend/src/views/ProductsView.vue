@@ -23,6 +23,7 @@ const admin=useAdminStore()
 const {policy}=useResolvedAppearance()
 const adminEditorOpen=ref(false)
 const managerOpen=ref(false)
+const detailOpen=ref(false)
 const adminEditorBusy=ref(false)
 const adminEditorError=ref('')
 const editingCatalogId=ref<number|null>(null)
@@ -76,16 +77,16 @@ async function editFromCatalog(product:Product){
     adminEditorError.value=locale.t('adminRequestFailed')
   }finally{adminEditorBusy.value=false}
 }
-function adminProductPersisted(product:AdminProduct){
-  if(editingCatalogId.value===null)return
+function adminProductPersisted(product:AdminProduct,localId=editingCatalogId.value){
+  if(localId===null)return
   const group=adminTaxonomy.value.find(item=>item.id===product.subcategory_id)
-  catalog.acceptBackendProduct(editingCatalogId.value,{
+  catalog.acceptBackendProduct(localId,{
     id:product.id,code:product.code,
     names:{fa:product.name_fa,ar:product.name_ar,en:product.name_en,ku:product.name_ku},
     availability:product.availability,sort_order:product.sort_order,
     category:{code:product.category_code,names:{fa:group?.category_name??null,ar:null,en:null,ku:null}},
     subcategory:{code:product.subcategory_code,names:{fa:group?.name??null,ar:null,en:null,ku:null}},
-    specifications:product.specifications.map(spec=>({key:spec.key,locked:spec.locked,labels:spec.labels,value_text:spec.value_text??null})),
+    specifications:product.specifications.map(spec=>({key:spec.key,locked:spec.locked,labels:spec.labels,value_text:spec.value_text??null,values:spec.values})),
     media:product.media.map(media=>({...media,id:String(media.id)})),
   })
 }
@@ -198,7 +199,7 @@ async function editFromManager(product:AdminProduct|null){
           <span class="text-[var(--c-muted)]">{{locale.t('desktopFilterHelp')}}</span>
         </div>
         <p v-if="adminEditorError" class="auth-error mb-3" role="alert">{{adminEditorError}}</p>
-        <ProductGrid v-if="filtered.length" :products="filtered" :admin-editable="!!admin.identity&&!adminEditorBusy&&catalog.syncState==='synced'" @edit="editFromCatalog"/>
+        <ProductGrid v-if="filtered.length" :products="filtered" :admin-editable="!!admin.identity&&!adminEditorBusy&&catalog.syncState==='synced'" @edit="editFromCatalog" @specifications-saved="(id,product)=>adminProductPersisted(product,id)" @detail-open="detailOpen=$event"/>
         <div v-else class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">—</div>
       </div>
     </div>
@@ -213,7 +214,7 @@ async function editFromManager(product:AdminProduct|null){
       @saved="adminEditorSaved"
     />
     <button
-      v-if="admin.identity&&!managerOpen&&!adminEditorOpen"
+      v-if="admin.identity&&!managerOpen&&!adminEditorOpen&&!detailOpen"
       type="button"
       class="visual-editor-quick-launcher"
       :aria-label="locale.t('adminProducts')"

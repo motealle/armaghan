@@ -32,7 +32,7 @@ export interface PublicCatalogProduct{
   code:string
   names:LocalizedNames
   availability:Product['availability']
-  specifications?:Array<{key:string;locked:boolean;labels:LocalizedNames;value_text:string|null}>
+  specifications?:Array<{key:string;locked:boolean;labels:LocalizedNames;value_text:string|null;values?:Partial<Record<'fa'|'ar'|'en'|'ku',string|null>>}>
   sort_order:number
   media?:PublicCatalogMedia[]
   category:null|{code:string;names:LocalizedNames}

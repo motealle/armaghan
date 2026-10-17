@@ -41,6 +41,7 @@ class PublicProductResource extends JsonResource
                 'key' => $d->key, 'locked' => $d->locked,
                 'labels' => ['fa' => $d->label_fa, 'ar' => $d->label_ar, 'en' => $d->label_en, 'ku' => $d->label_ku],
                 'value_text' => $this->specValues->firstWhere('spec_definition_id', $d->id)?->value_text,
+                'values' => $this->specValues->firstWhere('spec_definition_id', $d->id)?->localizedValues() ?? ['fa' => null, 'ar' => null, 'en' => null, 'ku' => null],
             ])->all() ?? [],
             'media' => $this->media
                 ->where('collection_name', Product::MEDIA_COLLECTION)

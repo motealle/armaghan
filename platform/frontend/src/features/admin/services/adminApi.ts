@@ -20,7 +20,7 @@ export const createAdminCustomer=(fields:CustomerFields)=>requestJson<{customer:
 export const updateAdminCustomer=(id:number,fields:Partial<CustomerFields>,revision:string)=>requestJson<{customer:AdminCustomer}>('/api/admin/customers/'+id,{method:'PATCH',body:JSON.stringify({...fields,revision})})
 
 export interface AdminMedia { id:number; url:string; thumb_url:string; detail_url:string }
-export interface AdminSpecification { id:number; key:string; locked:boolean; labels:{fa:string; ar:string|null; en:string|null; ku:string|null}; value_text?:string|null }
+export interface AdminSpecification { id:number; key:string; locked:boolean; labels:{fa:string; ar:string|null; en:string|null; ku:string|null}; value_text?:string|null; values?:{fa:string|null;ar:string|null;en:string|null;ku:string|null} }
 export interface ProductFields {
   specifications?:{definition_id:number;value_text:string|null}[];
   subcategory_id:number; code:string; name_fa:string; name_ar:string|null; name_en:string|null; name_ku:string|null;
@@ -70,3 +70,5 @@ export const prepareAccountBackup=(resource:AccountResource,row:{id:number;revis
 export const deleteBackedUpAccount=(backup:AccountBackup)=>requestJson('/api/admin/account-archives/'+backup.archive_id,{method:'DELETE',body:JSON.stringify({receipt:backup.receipt,backup_sha256:backup.backup_sha256,backup_downloaded:true})})
 export const restoreAccountArchive=(id:string)=>requestJson('/api/admin/account-archives/'+id+'/restore',{method:'POST',body:'{}'})
 export const importAccountBackup=(backup:string)=>requestJson('/api/admin/account-archives/import',{method:'POST',body:JSON.stringify({backup})})
+
+export const updateProductSpecifications=(product:AdminProduct,locale:'fa'|'ar'|'en'|'ku',specifications:{definition_id:number;value_text:string|null}[])=>requestJson<{product:AdminProduct}>('/api/admin/products/'+product.id+'/specifications',{method:'PATCH',body:JSON.stringify({revision:product.revision,locale,specifications})})

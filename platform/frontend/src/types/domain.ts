@@ -31,7 +31,7 @@ export interface Product {
   image?: string
   gallery?: string[]
   media?: Array<{card:string;thumb:string;detail:string;width?:number;height?:number}>
-  specificationValues?: Array<{key:string;locked:boolean;labels:ProductNames;value_text:string|null}>
+  specificationValues?: Array<{key:string;locked:boolean;labels:ProductNames;value_text:string|null;values?:Partial<Record<'fa'|'ar'|'en'|'ku',string|null>>}>
   specs: ProductSpecGroup
 }
 
