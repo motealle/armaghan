@@ -1,3 +1,19 @@
+## Product display ordering — verified production closeout 2026-10-17
+
+PR #39: https://github.com/motealle/armaghan/pull/39 ; source f9b58722ed0cdcf163a781345b95ee86970cb687 ; squash/main release 07d473b3a131675490cc428c7397c0912e8896f7.
+
+Delivered: real-manager-only “ترتیب نمایش محصولات” on Products, independent available/producible groups, Persian/Arabic-digit code jump, First/Up/Down/Last mobile controls, explicit server save, reload/conflict handling and unsaved-draft protection. Public catalog now carries server sort_order into public rank sorting; available remains first and favorite/share selection order is preserved. No schema/dependency changes, production ordering writes, or customer photo edits were performed by the agent.
+
+Validation: focused frontend15 tests; type-check; required build86 tests/21 files; immutable01–28 and guarded publication contracts PASS. PR workflows: Frontend PR focused check39033063024; Backend CI39033063029 (114 tests/1136 assertions); Image format acceptance39033063057 (all eight real photo formats,139 backend assertions; real Chromium ordering375/768/1280 and existing specification-editor acceptance PASS). Ordering browser checks include code jump, draft/no-premature-save, save/reopen, actual catalog adapter rank ordering against shuffled response, group separation, conflict retention/reload and logout. Reviewed375px and1280px screenshots. These are synthetic browser/isolated backend checks, not physical customer handset or authenticated production-write acceptance.
+
+Main release workflows: Backend CI39033357644; Backend Code Deploy39033357693; FTP Deploy39033357707. Final live verification recorded below.
+
+Customer usage: refresh https://armaghantrading.com/#/products ; sign in as a real manager; “ترتیب نمایش محصولات” → “قابل‌تولید” (or “موجود”) → find product code → select row → “ابتدا” / “بالا” / “پایین” / “انتها” → “ذخیره ترتیب”. Changes are public after save, regardless of model age. Hidden/inactive products are excluded until public again.
+
+Scope closeout: manual display-order request complete after verified release; customer’s actual handset photo issue29 remains separate and unverified. Earlier inline multilingual specification editor remains preserved. Historical “release pending” entry below is superseded by this closeout.
+
+All three main release workflows PASS. Independent HTTP reads: root references index-Gs71ZvqN.js with /t/29/ base; main JS302876 bytes SHA256 ebc563aafc3b9a658aa6f91459fe27d81e4d64484305242c73c0d437742e23d2; ProductOrderPanel-Cr9MSfOb.js8219 bytes SHA2565f4ef0442330f89d6d0c7d503f4e3e34e05196ce43700215d1c55bb7df73823a; index-PvhR5HhS.css130657 bytes SHA256f37b216a768f4affe0ee1cdb6a8386ca05e9bebfb52f10c39551ba2dae6b7a23. All bytes match local validated build. Guest /backend/api/admin/product-order401; public catalog200 with sort_order on all five sampled products. No production order mutation was attempted. Backend deploy job117398230730 and root deploy job117398826969 PASS; frozen snapshots preserved.
+
 ## Manager-controlled product display order — 2026-10-17; release pending
 
 Owner approved manual business-priority ordering after customer asked to place a valuable older producible model first and low-priority models last. Found existing admin sort_order saved on server but lost in public Product mapping; seeded/local merge order dominated cards. Add sortOrder mapping and stable rank/code sorting INSIDE availability groups, preserving available-first and combined made_to_order/unavailable producible group. Unranked fallback items keep stable order.
