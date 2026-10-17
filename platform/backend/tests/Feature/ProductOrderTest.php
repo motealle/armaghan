@@ -22,6 +22,7 @@ class ProductOrderTest extends TestCase {
   $this->assertSame(10,$a->fresh()->sort_order);$this->assertSame('Original 3',$d->fresh()->name_fa);$this->assertSame('made_to_order',$d->fresh()->availability->value);
   $public=$this->getJson('/api/catalog/products')->assertOk()->json('data');$byId=collect($public)->keyBy('id');
   $this->assertSame(0,$byId[$d->id]['sort_order']);$this->assertSame(1,$byId[$b->id]['sort_order']);$this->assertSame(2,$byId[$c->id]['sort_order']);
+  $this->assertSame([$a->id,$d->id,$b->id,$c->id],array_column($this->getJson('/api/admin/products')->assertOk()->json('products'),'id'));
   $this->assertDatabaseCount('products',4);
  }
  public function test_group_membership_and_revision_prevent_partial_foreign_or_concurrently_stale_reorders(): void {

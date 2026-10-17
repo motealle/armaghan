@@ -10,6 +10,7 @@ const BackendProductEditor=defineAsyncComponent(()=>import('@/features/admin/com
 const ProductOrderPanel=defineAsyncComponent(()=>import('@/features/admin/components/ProductOrderPanel.vue'))
 const BackendProductsPanel=defineAsyncComponent(()=>import('@/features/admin/components/BackendProductsPanel.vue'))
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
+import { useProductQuickOrder } from '@/features/admin/services/productQuickOrder'
 import { useAdminStore } from '@/features/admin/store'
 import { resolveCatalogProduct, fetchProductTaxonomy, type AdminProduct, type AdminSubcategory } from '@/features/admin/services/adminApi'
 import type { Product } from '@/types/domain'
@@ -21,6 +22,7 @@ const browseReady=ref(false)
 const catalog=useCatalogStore()
 const locale=useLocaleStore()
 const admin=useAdminStore()
+const quickOrder=useProductQuickOrder()
 const {policy}=useResolvedAppearance()
 const adminEditorOpen=ref(false)
 const managerOpen=ref(false)
@@ -202,11 +204,11 @@ async function editFromManager(product:AdminProduct|null){
         </div>
         <button v-if="admin.identity" type="button" class="mini-action mb-3" @click="orderOpen=true"><ArrowUpDown :size="17"/>{{locale.t('orderTitle')}}</button>
         <p v-if="adminEditorError" class="auth-error mb-3" role="alert">{{adminEditorError}}</p>
-        <ProductGrid v-if="filtered.length" :products="filtered" :admin-editable="!!admin.identity&&!adminEditorBusy&&catalog.syncState==='synced'" @edit="editFromCatalog" @specifications-saved="(id,product)=>adminProductPersisted(product,id)" @detail-open="detailOpen=$event"/>
+        <ProductGrid v-if="filtered.length" :products="filtered" :admin-orderable="!!admin.identity&&!adminEditorBusy&&catalog.syncState==='synced'" :admin-editable="!!admin.identity&&!adminEditorBusy&&catalog.syncState==='synced'" @edit="editFromCatalog" @specifications-saved="(id,product)=>adminProductPersisted(product,id)" @detail-open="detailOpen=$event"/>
         <div v-else class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">—</div>
       </div>
     </div>
-    <ProductOrderPanel v-if="orderOpen" :open="orderOpen" :initial-group="availability==='available'?'available':'producible'" @close="orderOpen=false" @saved="catalog.hydrateFromBackend(true)"/>
+    <ProductOrderPanel v-if="orderOpen" :open="orderOpen" :initial-group="availability==='available'?'available':'producible'" @close="orderOpen=false" @saved="catalog.hydrateFromBackend(true);quickOrder.reload()"/>
     <BackendProductEditor
       v-if="adminEditorOpen"
       :open="adminEditorOpen"

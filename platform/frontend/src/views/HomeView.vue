@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useAdminStore } from '@/features/admin/store'
+import { filterCatalogProducts } from '@/features/catalog/services/productFilters'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
 import AboutArmaghanSection from '@/features/home/components/AboutArmaghanSection.vue'
 import CapabilitiesSection from '@/features/home/components/CapabilitiesSection.vue'
@@ -10,6 +13,8 @@ import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 
 const catalog=useCatalogStore()
+const admin=useAdminStore()
+const recommended=computed(()=>filterCatalogProducts(catalog.items,{category:'all',subcategory:'all',availability:'all',query:''},p=>p.name,p=>p.subcategoryName).slice(0,6))
 const locale=useLocaleStore()
 const {policy}=useResolvedAppearance()
 function scrollProducts(){document.getElementById('product-categories')?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}
@@ -33,7 +38,7 @@ function scrollProducts(){document.getElementById('product-categories')?.scrollI
         </div>
         <RouterLink to="/products" class="shrink-0 text-xs font-extrabold text-[var(--c-primary)]">{{locale.t('allProducts')}}</RouterLink>
       </div>
-      <ProductGrid :products="catalog.items.slice(0,6)"/>
+      <ProductGrid :products="recommended" :admin-orderable="!!admin.identity&&catalog.syncState==='synced'"/>
     </section>
   </div>
 </template>

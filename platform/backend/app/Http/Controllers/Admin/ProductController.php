@@ -88,7 +88,7 @@ class ProductController extends Controller
         }
         if (isset($input['code'])) $query->where('code', $input['code']);
         if (! empty($input['subcategory_id'])) $query->where('subcategory_id', $input['subcategory_id']);
-        $page = $query->orderBy('sort_order')->orderBy('id')->paginate($input['per_page'] ?? 25);
+        $page = $query->orderByRaw("CASE WHEN availability = 'available' THEN 0 ELSE 1 END")->orderBy('sort_order')->orderBy('code')->orderBy('id')->paginate($input['per_page'] ?? 25);
 
         return $this->json(['products' => $page->getCollection()->map(fn ($p) => $this->snapshot($p))->all(),
             'page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total()]);

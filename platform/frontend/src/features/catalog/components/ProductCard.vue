@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ArrowDownRight, Heart, Menu, Pencil } from '@lucide/vue'
+import ProductQuickOrderActions from '@/features/admin/components/ProductQuickOrderActions.vue'
 import { computed } from 'vue'
 import type { Product } from '@/types/domain'
 import { useFavoritesStore } from '@/stores/favorites'
@@ -8,7 +9,7 @@ import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import ProductMediaCarousel from './ProductMediaCarousel.vue'
 import { customerProductLabel } from '../presentation'
 
-const props=withDefaults(defineProps<{product:Product;adminEditable?:boolean}>(),{adminEditable:false})
+const props=withDefaults(defineProps<{product:Product;adminEditable?:boolean;adminOrderable?:boolean}>(),{adminEditable:false,adminOrderable:false})
 const emit=defineEmits<{detail:[product:Product];whatsapp:[product:Product];edit:[product:Product]}>()
 const favorites=useFavoritesStore()
 const locale=useLocaleStore()
@@ -20,9 +21,10 @@ const visibleTitle=computed(()=>customerProductLabel(props.product,displaySubcat
 
 <template>
   <!-- Test 23 low-copy hierarchy stays intact; Test 27 derives customer labels centrally from subcategory/status. -->
-  <article data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--role-product-card-background)] shadow-sm">
+  <article :data-product-code="product.code" data-style-id="product.card" data-style-label="همه کارت‌های محصول" class="product-card relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--role-product-card-background)] shadow-sm">
     <div data-style-id="product.media" data-style-label="بخش تصویر کارت محصول" class="product-card-media">
-      <ProductMediaCarousel :product="product" />
+      <ProductMediaCarousel :product="product" :manager-controls="adminOrderable" />
+      <div v-if="adminOrderable" class="absolute inset-x-0 bottom-1.5 z-50 flex justify-center" data-card-order><ProductQuickOrderActions :code="product.code"/></div>
     </div>
     <div class="product-card-body">
       <div data-style-id="product.title" data-style-label="عنوان کارت محصول" class="product-card-title" :class="{unavailable:product.availability!=='available'}">{{visibleTitle}}</div>
