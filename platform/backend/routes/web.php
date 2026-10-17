@@ -124,6 +124,8 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
     Route::delete('/advanced-access', [\App\Http\Controllers\Admin\AdvancedAccessController::class, 'destroy']);
     Route::put('/product-taxonomy/{subcategory}/specifications', [\App\Http\Controllers\Admin\ProductController::class, 'saveSchema']);
     Route::get('/product-taxonomy', [\App\Http\Controllers\Admin\ProductController::class, 'taxonomy']);
+    Route::get('/product-order', [\App\Http\Controllers\Admin\ProductOrderController::class, 'index']);
+    Route::put('/product-order', [\App\Http\Controllers\Admin\ProductOrderController::class, 'update']);
     Route::get('/products', [\App\Http\Controllers\Admin\ProductController::class, 'index']);
     Route::post('/products', [\App\Http\Controllers\Admin\ProductController::class, 'store']);
     Route::get('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'show'])->whereNumber('product');

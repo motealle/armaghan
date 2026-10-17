@@ -185,6 +185,7 @@ export function mergeProduct(remote:PublicCatalogProduct,fallback?:Product):Prod
     ...(fallback?cloneCatalogValue(fallback):{}),
     id:fallback?.id??1_000_000+remote.id,
     backendId:remote.id,
+    sortOrder:remote.sort_order,
     code:remote.code,
     name,
     names,

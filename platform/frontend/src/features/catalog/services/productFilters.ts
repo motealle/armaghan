@@ -43,5 +43,9 @@ export function filterCatalogProducts(products:Product[],filters:ProductFilters,
     const group=product.availability==='available'?available:producible
     group.push(product)
   }
-  return available.concat(producible)
+  const order=(a:Product,b:Product)=>{
+    if(a.sortOrder===undefined&&b.sortOrder===undefined)return 0
+    return (a.sortOrder??0)-(b.sortOrder??0)||(a.code<b.code?-1:a.code>b.code?1:0)
+  }
+  return available.sort(order).concat(producible.sort(order))
 }

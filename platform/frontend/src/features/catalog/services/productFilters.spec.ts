@@ -36,3 +36,10 @@ it('round-trips the selected subcategory, category, search and availability thro
   expect(productFilterQuery({category:'all',subcategory:'all',availability:'all',query:''})).toEqual({})
   expect(readProductFilters({category:['1'],subcategory:'bad',availability:'bad',q:'x'.repeat(150)})).toEqual({category:'all',subcategory:'all',availability:'all',query:'x'.repeat(100)})
 })
+
+it('uses persisted display order within availability groups despite arbitrary local/seed order',()=>{
+ const items=[{...product(1,'made_to_order','12001'),sortOrder:2},{...product(2,'available','11002'),sortOrder:99},{...product(3,'unavailable','12003'),sortOrder:0},{...product(4,'available','11004'),sortOrder:1},{...product(5,'made_to_order','12002'),sortOrder:2}]
+ expect(apply(items).map(p=>p.id)).toEqual([4,2,3,1,5])
+ expect(apply(items,'',{availability:'made_to_order'}).map(p=>p.id)).toEqual([3,1,5])
+ expect(items.map(p=>p.id)).toEqual([1,2,3,4,5])
+})

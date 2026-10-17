@@ -1,3 +1,13 @@
+## Manager-controlled product display order — 2026-10-17; release pending
+
+Owner approved manual business-priority ordering after customer asked to place a valuable older producible model first and low-priority models last. Found existing admin sort_order saved on server but lost in public Product mapping; seeded/local merge order dominated cards. Add sortOrder mapping and stable rank/code sorting INSIDE availability groups, preserving available-first and combined made_to_order/unavailable producible group. Unranked fallback items keep stable order.
+
+Selected UX: explicit authenticated-manager Product display order entry above the product grid; two availability groups, compact actual-thumbnail/code rows, exact Persian/Arabic-digit code jump, select a row to reveal First/Up/Down/Last, explicit Save order, unsaved-close confirmation, reload and conflict feedback. Global ordering avoids misleading partial-page/filter reorders. Both group drafts survive tab switches; successful group writes become the retry baseline.
+
+New narrow active-admin-only GET/PUT order endpoint snapshots every active publicly visible member of each group, includes a group revision, and atomically accepts exactly a complete permutation. Reject missing/duplicate/foreign/inactive IDs, stale membership/status/order/name changes; only sort_order changes. No migration/dependency changes or production value/image changes by the agent. Existing legacy numeric ordering now affects public cards as well.
+
+Focused tests cover real server persistence/reload/public ranks, group isolation, stale/invalid permutations, role boundaries, adapter/rank sorting and pure move operations. Real Chromium acceptance at375/768/1280px checks code jump, staged movement, save/reopen, actual public adapter order despite shuffled server array, conflict retention/reload and logout. Screenshots require review. Type-check/build, frozen01–28, guarded backend code and Test29/root publication remain gates. No actual manager production write or physical handset acceptance is inferred from synthetic acceptance.
+
 ## Inline multilingual specifications published and verified — 2026-10-17
 
 - Delivered the requested same-sheet product-value editing: small authenticated-admin pencil below the header, original specification cards become text fields, globe + named language selector only in edit mode, current display language is the initial edit language, independent drafts, save/cancel and unsaved-close confirmation. Buyer negotiability does not lock out a manager. Floating Products launcher is hidden while details are open.
