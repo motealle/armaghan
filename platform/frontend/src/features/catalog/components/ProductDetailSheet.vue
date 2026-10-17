@@ -27,7 +27,7 @@ function exactValue(spec:{value_text?:string|null;values?:Partial<Record<Locale,
 function shownValue(spec:typeof specs.value[number]){return exactValue(spec,locale.locale)||exactValue(spec,'fa')}
 const dirty=computed(()=>row.value?.specifications.some(spec=>(Object.keys(languages) as Locale[]).some(lang=>(draft.value[spec.key]?.[lang]??'')!==exactValue(spec,lang)))??false)
 function reset(){editing.value=false;row.value=null;draft.value={};error.value='';note.value='';conflict.value=false;language.value=locale.locale}
-watch(()=>[props.open,props.product?.id] as const,()=>reset())
+watch([()=>props.open,()=>props.product?.id],()=>reset())
 watch(canEdit,value=>{if(!value)reset()})
 function close(){if(busy.value)return;if(dirty.value&&!window.confirm(locale.t('specDiscardChanges')))return;reset();emit('close')}
 function cancel(){if(busy.value)return;if(dirty.value&&!window.confirm(locale.t('specDiscardChanges')))return;reset()}

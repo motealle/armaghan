@@ -13,14 +13,15 @@ import Sheet from './ProductDetailSheet.vue'
 const row:AdminProduct={id:77,revision:'first',subcategory_id:1,code:'12011',name_fa:'پتو',name_ar:null,name_en:null,name_ku:null,availability:'available',active:true,sort_order:0,tags:[],media:[],category_code:'1',subcategory_code:'12',specifications:[{id:8,key:'fabric',locked:true,labels:{fa:'جنس',en:'Fabric',ar:null,ku:null},value_text:'پنبه',values:{fa:'پنبه',en:'Cotton',ar:null,ku:null}}]}
 const product={...products[0]!,backendId:77,specificationValues:row.specifications.map(s=>({...s,value_text:s.value_text??null}))}
 type Bindings={beginEdit:()=>Promise<void>;save:()=>Promise<void>;cancel:()=>void;draft:{value:Record<string,Record<string,string>>};language:{value:string};editing:{value:boolean};error:{value:string};conflict:{value:boolean}}
-async function open(){let bindings:Bindings|undefined;const emit=vi.fn();await renderToString(createSSRApp({setup(){bindings=(Sheet as unknown as {setup:(props:object,ctx:object)=>Bindings}).setup(reactive({open:true,product,adminEditable:true}),{expose:()=>{},emit});return()=>null}}));return {bindings:bindings!,emit}}
+async function open(){let bindings:Bindings|undefined;const emit=vi.fn();const props=reactive({open:true,product,adminEditable:true});await renderToString(createSSRApp({setup(){bindings=(Sheet as unknown as {setup:(props:object,ctx:object)=>Bindings}).setup(props,{expose:()=>{},emit});return()=>null}}));return {bindings:bindings!,emit,props}}
 beforeEach(()=>{state.identity={name:'QA'};state.locale='fa';api.fetch.mockResolvedValue({product:structuredClone(row)});api.save.mockReset()})
 it('shows the edit control only for a real administrator and persisted product',async()=>{
  let html=await renderToString(createSSRApp({render:()=>h(Sheet,{open:true,product,adminEditable:true})}));expect(html).toContain('aria-label="specEdit"')
  state.identity=null;html=await renderToString(createSSRApp({render:()=>h(Sheet,{open:true,product,adminEditable:true})}));expect(html).not.toContain('aria-label="specEdit"')
 })
 it('edits locked values and retains separate language drafts, using fresh revisions sequentially',async()=>{
- const {bindings,emit}=await open();await bindings.beginEdit()
+ const {bindings,emit,props}=await open();await bindings.beginEdit()
+ emit.mockImplementation((event,saved)=>{if(event==='saved')props.product={...product,specificationValues:saved.specifications}})
  bindings.draft.value.fabric!.fa='کتان';bindings.language.value='en';bindings.draft.value.fabric!.en='Linen';bindings.language.value='fa'
  expect(bindings.draft.value.fabric!.fa).toBe('کتان')
  api.save.mockImplementation(async(current:AdminProduct,lang:'fa'|'en',changes:{value_text:string}[])=>{const next=JSON.parse(JSON.stringify(current)) as AdminProduct;next.revision=current.revision+'-next';next.specifications[0]!.values![lang]=changes[0]!.value_text;if(lang==='fa')next.specifications[0]!.value_text=changes[0]!.value_text;return {product:next}})
