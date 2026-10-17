@@ -39,6 +39,7 @@ try{
    await page.waitForTimeout(100);assert.equal(writes,before+1);assert.deepEqual(sorted().slice(1).map(p=>p.id),expected)
    await row('12003').locator('[data-move=last]:enabled').waitFor()
   }
+  if(width===375)assert.ok(await page.locator('.data-table-shell').evaluate(e=>e.scrollWidth<=e.clientWidth+1))
   await page.screenshot({path:'../../.build/quick-order-acceptance/table-'+width+'.png',fullPage:true})
   await row('12003').locator('[data-move=last]').click();await page.waitForFunction(()=>!Array.from(document.querySelectorAll('tbody code')).some(e=>e.textContent==='12003'));assert.equal(sorted().at(-1).id,3)
   await page.evaluate(()=>window.qa.mode('grid'))

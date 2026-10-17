@@ -70,11 +70,11 @@ onMounted(()=>{void load();void quickOrder.reload()})
     <p v-if="loading" role="status">{{locale.t('adminLoading')}}</p><p v-if="error" class="auth-error" role="alert">{{error}}</p><p v-if="note" role="status" class="text-xs text-[var(--c-secondary)]">{{note}}</p>
     <ProductQuickOrderFeedback @reloaded="load(result.page)"/>
     <BulkStatusBar resource="products" :items="bulkRows" :busy="loading||bulkBusy||quickOrder.busy" @busy="bulkBusy=$event" @clear="checked=[]" @saved="bulkSaved"/>
-    <div class="data-table-shell"><table class="data-table">
+    <div class="data-table-shell"><table class="data-table product-manager-table">
       <thead><tr><th><input type="checkbox" :aria-label="locale.t('bulkSelectPage')" :checked="!!selectable.length&&checked.length===selectable.length" :indeterminate="checked.length>0&&checked.length<selectable.length" :disabled="bulkBusy||loading||bulkBusy||!selectable.length" @change="togglePage"></th><th>{{locale.t('productsTitle')}}</th><th>{{locale.t('codeLabel')}}</th><th>{{locale.t('categoryLabel')}}</th><th>{{locale.t('subcategoryLabel')}}</th><th>{{locale.t('statusLabel')}}</th><th>{{locale.t('actions')}}</th></tr></thead>
       <tbody><tr v-for="product in result.products" :key="product.id"><td><input v-model="checked" type="checkbox" :value="product.id" :aria-label="String(product.id)" :disabled="bulkBusy||loading||bulkBusy"></td>
         <td><button class="text-start font-bold" :disabled="bulkBusy||loading" @click="edit(product)">{{locale.subcategoryName(product.subcategory_code,'')}}</button></td>
-        <td><code class="text-[var(--c-primary)]">{{product.code}}</code><RecordTags :tags="product.tags"/></td>
+        <td><code class="text-[var(--c-primary)]">{{product.code}}</code><RecordTags :tags="product.tags"/><span class="mt-1 block text-[.65rem] text-[var(--c-muted)] md:hidden">{{locale.subcategoryName(product.subcategory_code,'')}}</span><span class="mt-0.5 block text-[.65rem] md:hidden">{{locale.t(!product.active?'adminInactive':product.availability==='available'?'available':'madeToOrder')}}</span></td>
         <td>{{locale.categoryName(product.category_code,'')}}</td><td>{{locale.subcategoryName(product.subcategory_code,'')}}</td>
         <td>{{locale.t(!product.active?'adminInactive':product.availability==='available'?'available':'madeToOrder')}}</td>
         <td><div class="flex items-center gap-1.5"><button type="button" class="grid h-10 w-9 shrink-0 place-items-center rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] text-[var(--c-primary)]" :aria-label="locale.t('editProduct')" :title="locale.t('editProduct')" :disabled="bulkBusy||loading||quickOrder.busy" @click="edit(product)"><Pencil :size="16"/></button><ProductQuickOrderActions :code="product.code" :disabled="bulkBusy||loading" @moved="reordered"/></div></td>
@@ -89,3 +89,12 @@ onMounted(()=>{void load();void quickOrder.reload()})
     <ProductEditorPanel v-if="!externalEditor" live :open="editorOpen" :product-id="selected?.id??null" :server-product="selected" :taxonomy="taxonomy" @close="editorOpen=false" @saved="saved"/>
   </section>
 </template>
+
+<style scoped>
+@media(max-width:767px){
+ .product-manager-table{min-width:0}
+ .product-manager-table th,.product-manager-table td{padding:.65rem .25rem}
+ .product-manager-table :is(th,td):nth-child(2),.product-manager-table :is(th,td):nth-child(4),.product-manager-table :is(th,td):nth-child(5),.product-manager-table :is(th,td):nth-child(6){display:none}
+ .product-manager-table :is(th,td):nth-child(3){min-width:4.5rem;overflow-wrap:anywhere}
+}
+</style>
