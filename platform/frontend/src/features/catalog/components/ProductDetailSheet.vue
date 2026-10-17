@@ -39,6 +39,7 @@ function failed(e:unknown){
 async function beginEdit(){
  if(!canEdit.value||busy.value||!props.product?.backendId)return
  if(dirty.value&&!window.confirm(locale.t('specDiscardChanges')))return
+ if(!editing.value)language.value=locale.locale
  const id=props.product.backendId;busy.value=true;error.value='';note.value=''
  try{
   const product=(await fetchAdminProduct(id)).product
@@ -65,7 +66,7 @@ async function save(){
    for(const spec of row.value.specifications)if(draft.value[spec.key])draft.value[spec.key]![lang]=exactValue(spec,lang)
    emit('saved',row.value)
   }
-  editing.value=false;note.value=locale.t('adminSaved')
+  editing.value=false;note.value='adminSaved'
  }catch(e){failed(e)}finally{busy.value=false}
 }
 </script>
@@ -74,7 +75,7 @@ async function save(){
  <BaseSheet :open="open" :title="title" @close="close">
   <template v-if="product">
    <div v-if="canEdit" class="mb-4 flex items-center justify-end gap-2" data-spec-toolbar>
-    <label class="flex min-h-11 min-w-0 items-center gap-2 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-xs">
+    <label v-if="editing" class="flex min-h-11 min-w-0 items-center gap-2 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-3 text-xs">
      <Globe :size="17" aria-hidden="true"/><span>{{locale.t('specTextLanguage')}}</span>
      <select v-model="language" :disabled="busy" :aria-label="locale.t('specTextLanguage')" class="min-h-11 min-w-0 bg-transparent font-bold" :dir="language==='en'?'ltr':'rtl'">
       <option v-for="(label,key) in languages" :key="key" :value="key">{{label}}</option>
@@ -108,7 +109,7 @@ async function save(){
     </div>
     <p v-if="editing&&!specs.length" class="my-3 text-sm">{{locale.t('adminSpecsEmpty')}}</p>
     <p v-if="error" role="alert" class="auth-error mt-3">{{error}}</p>
-    <p v-if="note" role="status" class="mt-3 rounded-xl bg-[var(--c-surface-2)] p-3 text-sm">{{note}}</p>
+    <p v-if="note" role="status" class="mt-3 rounded-xl bg-[var(--c-surface-2)] p-3 text-sm">{{locale.t(note)}}</p>
     <div v-if="editing" class="sticky bottom-0 mt-4 flex flex-wrap justify-end gap-2 border-t border-[var(--c-border)] bg-[var(--c-surface)] py-3">
      <button v-if="conflict" type="button" class="mini-action" :disabled="busy" @click="beginEdit"><RefreshCw :size="16"/>{{locale.t('specReload')}}</button>
      <button type="button" class="mini-action" :disabled="busy" @click="cancel">{{locale.t('cancel')}}</button>
