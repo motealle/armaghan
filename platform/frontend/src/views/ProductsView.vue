@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
-import { Check, ChevronLeft, Search, Pencil } from '@lucide/vue'
+import { Check, ChevronLeft, Search, Pencil, ArrowUpDown } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { readProductFilters, productFilterQuery, filterCatalogProducts } from '@/features/catalog/services/productFilters'
 import { useCatalogStore } from '@/stores/catalog'
 import { useLocaleStore } from '@/stores/locale'
 import ProductGrid from '@/features/catalog/components/ProductGrid.vue'
 const BackendProductEditor=defineAsyncComponent(()=>import('@/features/admin/components/BackendProductEditor.vue'))
+const ProductOrderPanel=defineAsyncComponent(()=>import('@/features/admin/components/ProductOrderPanel.vue'))
 const BackendProductsPanel=defineAsyncComponent(()=>import('@/features/admin/components/BackendProductsPanel.vue'))
 import AdaptivePanel from '@/components/ui/AdaptivePanel.vue'
 import { useAdminStore } from '@/features/admin/store'
@@ -23,6 +24,7 @@ const admin=useAdminStore()
 const {policy}=useResolvedAppearance()
 const adminEditorOpen=ref(false)
 const managerOpen=ref(false)
+const orderOpen=ref(false)
 const detailOpen=ref(false)
 const adminEditorBusy=ref(false)
 const adminEditorError=ref('')
@@ -198,11 +200,13 @@ async function editFromManager(product:AdminProduct|null){
           <span class="font-bold text-[var(--c-text)]">{{filtered.length}} {{locale.t('productCount')}}</span>
           <span class="text-[var(--c-muted)]">{{locale.t('desktopFilterHelp')}}</span>
         </div>
+        <button v-if="admin.identity" type="button" class="mini-action mb-3" @click="orderOpen=true"><ArrowUpDown :size="17"/>{{locale.t('orderTitle')}}</button>
         <p v-if="adminEditorError" class="auth-error mb-3" role="alert">{{adminEditorError}}</p>
         <ProductGrid v-if="filtered.length" :products="filtered" :admin-editable="!!admin.identity&&!adminEditorBusy&&catalog.syncState==='synced'" @edit="editFromCatalog" @specifications-saved="(id,product)=>adminProductPersisted(product,id)" @detail-open="detailOpen=$event"/>
         <div v-else class="rounded-2xl border border-dashed border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center text-sm text-[var(--c-muted)]">—</div>
       </div>
     </div>
+    <ProductOrderPanel v-if="orderOpen" :open="orderOpen" :initial-group="availability==='available'?'available':'producible'" @close="orderOpen=false" @saved="catalog.hydrateFromBackend(true)"/>
     <BackendProductEditor
       v-if="adminEditorOpen"
       :open="adminEditorOpen"
@@ -214,7 +218,7 @@ async function editFromManager(product:AdminProduct|null){
       @saved="adminEditorSaved"
     />
     <button
-      v-if="admin.identity&&!managerOpen&&!adminEditorOpen&&!detailOpen"
+      v-if="admin.identity&&!managerOpen&&!adminEditorOpen&&!detailOpen&&!orderOpen"
       type="button"
       class="visual-editor-quick-launcher"
       :aria-label="locale.t('adminProducts')"

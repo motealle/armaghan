@@ -72,3 +72,9 @@ export const restoreAccountArchive=(id:string)=>requestJson('/api/admin/account-
 export const importAccountBackup=(backup:string)=>requestJson('/api/admin/account-archives/import',{method:'POST',body:JSON.stringify({backup})})
 
 export const updateProductSpecifications=(product:AdminProduct,locale:'fa'|'ar'|'en'|'ku',specifications:{definition_id:number;value_text:string|null}[])=>requestJson<{product:AdminProduct}>('/api/admin/products/'+product.id+'/specifications',{method:'PATCH',body:JSON.stringify({revision:product.revision,locale,specifications})})
+
+export type ProductOrderGroup='available'|'producible'
+export interface OrderedProduct {id:number;code:string;subcategory_code:string;label:string;sort_order:number;thumb_url:string|null}
+export interface ProductOrderSnapshot {groups:Record<ProductOrderGroup,{revision:string;products:OrderedProduct[]}>}
+export const fetchProductOrder=()=>requestJson<ProductOrderSnapshot>('/api/admin/product-order')
+export const saveProductOrder=(group:ProductOrderGroup,revision:string,ids:number[])=>requestJson<ProductOrderSnapshot>('/api/admin/product-order',{method:'PUT',body:JSON.stringify({group,revision,ids})})
