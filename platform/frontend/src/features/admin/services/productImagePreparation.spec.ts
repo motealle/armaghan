@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { optimizeProductImage, validProductImage } from './productImageSubmission'
+import { optimizeProductImage, retainProductImage, validProductImage } from './productImageSubmission'
 vi.mock('./heicDecoder',()=>({decodeHeicToJpeg:vi.fn(async()=>{throw new Error('corrupt fixture')})}))
 const png=Uint8Array.from(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==','base64'))
 afterEach(()=>vi.unstubAllGlobals())
@@ -63,5 +63,31 @@ describe('mobile product image preparation',()=>{
   const bitmap=vi.fn();vi.stubGlobal('createImageBitmap',bitmap)
   await expect(optimizeProductImage(new File(['<svg/>'],'photo.png',{type:'image/png'}))).rejects.toMatchObject({key:'adminImageContentInvalid'})
   expect(bitmap).not.toHaveBeenCalled()
+ })
+})
+
+describe('provider-backed source retention',()=>{
+ it('copies the entire source, not a slice or a File wrapper',async()=>{
+  const source=new File([png],'camera.png',{type:'image/png',lastModified:42})
+  const sliced=vi.spyOn(source,'slice').mockImplementation(()=>{throw new Error('provider slice unavailable')})
+  const retained=await retainProductImage(source)
+  expect(sliced).not.toHaveBeenCalled();expect(retained).not.toBe(source)
+  expect(retained.lastModified).toBe(42)
+  expect(new Uint8Array(await retained.arrayBuffer())).toEqual(png)
+  expect(await retainProductImage(retained)).toBe(retained)
+ })
+ it('uses FileReader when a provider fails the arrayBuffer read',async()=>{
+  const source=new File([png],'camera.png',{type:'image/png'})
+  vi.spyOn(source,'arrayBuffer').mockRejectedValue(new Error('NotReadableError'))
+  const reader=vi.fn()
+  vi.stubGlobal('FileReader',class {result=png.buffer;onload:(()=>void)|null=null;readAsArrayBuffer(file:File){reader(file);queueMicrotask(()=>this.onload?.())}})
+  expect(new Uint8Array(await (await retainProductImage(source)).arrayBuffer())).toEqual(png)
+  expect(reader).toHaveBeenCalledWith(source)
+ })
+ it('rejects incomplete bytes with a read-specific error rather than a format error',async()=>{
+  const source=new File([png],'camera.png',{type:'image/png'})
+  vi.spyOn(source,'arrayBuffer').mockResolvedValue(new ArrayBuffer(0))
+  vi.stubGlobal('FileReader',class {result=new ArrayBuffer(1);onload:(()=>void)|null=null;readAsArrayBuffer(){queueMicrotask(()=>this.onload?.())}})
+  await expect(retainProductImage(source)).rejects.toMatchObject({key:'adminImageReadFailed'})
  })
 })

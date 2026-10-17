@@ -22,6 +22,37 @@ export function validPreparedProductImage(file:File){
   return PRODUCT_IMAGE_TYPES.includes(file.type.toLowerCase())&&file.size>0&&file.size<=PRODUCT_IMAGE_UPLOAD_MAX_BYTES
 }
 
+// Keep provider-backed files alive only until their bytes have been copied. A File
+// wrapper around another File may retain its backing store; ArrayBuffer does not.
+const retainedImages=new WeakSet<File>()
+export async function retainProductImage(file:File):Promise<File>{
+  if(retainedImages.has(file))return file
+  if(!validProductImage(file))throw new ProductImagePreparationError('adminImageLimits')
+  async function read(useReader:boolean):Promise<ArrayBuffer>{
+    return new Promise((resolve,reject)=>{
+      let reader:FileReader|undefined
+      const timer=setTimeout(()=>{reader?.abort();reject(new Error('image read timeout'))},15000)
+      const done=(bytes:ArrayBuffer)=>{clearTimeout(timer);bytes.byteLength===file.size?resolve(bytes):reject(new Error('incomplete image read'))}
+      const failed=(error:unknown)=>{clearTimeout(timer);reject(error)}
+      try{
+        if(useReader){
+          reader=new FileReader()
+          reader.onload=()=>reader?.result instanceof ArrayBuffer?done(reader.result):failed(new Error('invalid image read'))
+          reader.onerror=()=>failed(reader?.error);reader.onabort=()=>failed(new Error('image read aborted'))
+          reader.readAsArrayBuffer(file)
+        }else file.arrayBuffer().then(done,failed)
+      }catch(error){failed(error)}
+    })
+  }
+  let bytes:ArrayBuffer
+  try{bytes=await read(false)}catch{
+    try{bytes=await read(true)}catch{throw new ProductImagePreparationError('adminImageReadFailed')}
+  }
+  const retained=new File([bytes],file.name,{type:file.type,lastModified:file.lastModified})
+  retainedImages.add(retained)
+  return retained
+}
+
 async function canonicalProductImage(file:File){
   const bytes=new Uint8Array(await file.slice(0,16).arrayBuffer())
   const png=[137,80,78,71,13,10,26,10].every((value,index)=>bytes[index]===value)
@@ -63,6 +94,7 @@ async function decodeProductImage(file:File):Promise<DecodedImage>{
 
 export async function optimizeProductImage(file:File):Promise<File>{
   if(!validProductImage(file))throw new ProductImagePreparationError('adminImageLimits')
+  file=await retainProductImage(file)
   const canonical=await canonicalProductImage(file)
   // The server still decodes and validates uploads. If a mobile browser's decoder
   // refuses valid JPEG/PNG/WebP bytes, send the canonical original when <= 8 MiB.

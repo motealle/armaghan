@@ -21,7 +21,7 @@ async function open(product:AdminProduct|null,mode:'edit'|'materialize',initial:
  }}))
  return {bindings:bindings!,emit}
 }
-beforeEach(()=>{api.create.mockReset();api.update.mockReset()})
+beforeEach(()=>{api.create.mockReset();api.update.mockReset();prepare.mockReset()})
 it('edits and renames the same row on repeated saves, never calling create',async()=>{
  const {bindings,emit}=await open(structuredClone(row),'edit')
  bindings.draft.value.code='11199';bindings.draft.value.name_fa='Edited'
@@ -80,9 +80,26 @@ it('prepares a HEIC preview before save while preserving the original pending fi
  let done!:(file:File)=>void;prepare.mockImplementation(()=>new Promise(resolve=>{done=resolve}))
  const pending=bindings.upload({target:{files:[source],value:'camera.heic'}} as unknown as Event)
  expect(bindings.saving.value).toBe(true)
+ await vi.waitFor(()=>expect(prepare).toHaveBeenCalled())
  expect(bindings.pendingImages.value[0]?.preparing).toBe(true)
  done(converted);await pending
  expect(bindings.saving.value).toBe(false)
- expect(bindings.pendingImages.value[0]).toMatchObject({file:source,prepared:converted,preview:'blob:converted',preparing:false})
+ expect(bindings.pendingImages.value[0]).toMatchObject({prepared:converted,preview:'blob:converted',preparing:false})
  expect(revoke).toHaveBeenCalledWith('blob:source');expect(urls).toHaveBeenCalledWith(converted)
+})
+
+it('reads provider bytes before resetting the picker and retains a usable source for retry',async()=>{
+ const {bindings}=await open(structuredClone(row),'edit')
+ const source=new File(['provider-photo'],'camera.png',{type:'image/png'})
+ const originalRead=source.arrayBuffer.bind(source);let cleared=false
+ vi.spyOn(source,'arrayBuffer').mockImplementation(async()=>{await Promise.resolve();if(cleared)throw new Error('provider permission lost');return originalRead()})
+ const input={files:[source],get value(){return cleared?'':'camera.png'},set value(value:string){if(value==='')cleared=true}}
+ prepare.mockImplementation(async file=>file)
+ await bindings.upload({target:input} as unknown as Event)
+ expect(cleared).toBe(true)
+ const retained=bindings.pendingImages.value[0]!.file
+ expect(retained).not.toBe(source)
+ expect(await retained.text()).toBe('provider-photo')
+ expect(bindings.pendingImages.value[0]?.prepared).toBe(retained)
+ await expect(source.arrayBuffer()).rejects.toThrow('provider permission lost')
 })
