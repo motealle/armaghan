@@ -63,6 +63,7 @@ try{
   await preview.getByText('مشخصات سفارش در حال بررسی است',{exact:true}).waitFor()
   assert.equal(await preview.getByText('PRIVATE STAFF ONLY',{exact:true}).count(),0)
   assert.equal(await preview.locator('form,textarea,input,select').count(),0);assert.equal(writes.length,before)
+  await page.screenshot({path:`../../.build/tracking-acceptance/preview-${width}.png`,fullPage:true})
   await preview.getByRole('button',{name:'بستن',exact:true}).click()
   previewFail=true;await page.getByRole('button',{name:'نمایش از دید مشتری',exact:true}).click();await preview.getByRole('alert').waitFor();assert.equal(await preview.getByText('مشخصات سفارش در حال بررسی است',{exact:true}).count(),0);await preview.getByRole('button',{name:'بستن',exact:true}).click();previewFail=false
   await page.locator('.admin-tabs').getByRole('button',{name:'مشتری‌ها',exact:true}).click()
@@ -76,7 +77,7 @@ try{
   await page.evaluate(()=>window.qa.wizard())
   await page.getByRole('button',{name:'ثبت درخواست برای پیگیری',exact:true}).click()
   const progressLink=page.getByRole('link',{name:'مشاهده مراحل سفارش من',exact:true})
-  await progressLink.waitFor();assert.ok((await progressLink.getAttribute('href')).includes('order=AT-SYNTHETIC77'));const count=writes.length
+  await progressLink.waitFor();await page.screenshot({path:`../../.build/tracking-acceptance/wizard-${width}.png`,fullPage:true});assert.ok((await progressLink.getAttribute('href')).includes('order=AT-SYNTHETIC77'));const count=writes.length
   await page.evaluate(()=>window.qa.locale('ar'));await page.getByRole('link',{name:'عرض مراحل طلبي',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'تسجيل الطلب للمتابعة',exact:true}).count(),0)
   await page.evaluate(()=>window.qa.locale('fa'));await progressLink.click();await page.evaluate(()=>window.qa.mode('customer'))
   await page.getByRole('button',{name:/AT-SYNTHETIC77/}).waitFor();assert.equal(await page.getByRole('button',{name:/AT-SYNTHETIC77/}).getAttribute('aria-expanded'),'true');assert.equal(writes.length,count)

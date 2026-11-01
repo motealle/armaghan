@@ -62,7 +62,7 @@ onMounted(()=>load())
   <p v-if="!busy&&!error&&!page.orders.length" class="admin-surface rounded-2xl p-4 text-sm">{{words.empty}}</p>
   <article v-for="order in page.orders" :key="order.id" class="admin-surface rounded-2xl p-4">
     <button class="flex min-h-11 w-full items-center justify-between gap-2 text-start" :disabled="busy" :aria-expanded="selected===order.id" @click="open(order)"><b dir="ltr">{{order.reference}}</b><b>{{label(order.stage)}}</b></button>
-    <button v-if="admin" type="button" class="mini-action my-2" :disabled="busy" @click="preview(order)"><Eye :size="18" aria-hidden="true"/>{{copy.preview}}</button>
+    <button v-if="admin" type="button" class="mini-action my-2 order-customer-preview-action" :disabled="busy" @click="preview(order)"><Eye :size="18" aria-hidden="true"/>{{copy.preview}}</button>
     <p v-if="admin" class="mb-2 text-sm font-bold">{{locale.t('customerLabel')}}: {{order.customer_name||'—'}} · #{{order.customer_id}}</p><p class="text-sm">{{order.description}}</p><p v-if="admin" class="mt-2 text-xs">{{words.invoice}}: {{confirmation(order.invoice_confirmed_at)}} · {{words.deposit}}: {{confirmation(order.deposit_confirmed_at)}}</p>
     <div v-if="selected===order.id" class="mt-3 space-y-3">
       <CustomerOrderDetails v-if="!admin" :order="order"/>
@@ -81,3 +81,7 @@ onMounted(()=>load())
   <AdaptivePanel :open="previewOpen" :title="copy.preview" wide @close="closePreview"><div class="space-y-4" data-customer-order-preview><p class="rounded-xl bg-[var(--c-surface-2)] p-3 text-sm leading-7">{{copy.previewHelp}}</p><p v-if="previewBusy" role="status">{{locale.t('adminLoading')}}</p><p v-if="previewError" role="alert" class="auth-error">{{previewError}}</p><template v-if="previewOrder"><b dir="ltr">{{previewOrder.reference}}</b><h3 class="font-bold">{{label(previewOrder.stage)}}</h3><p class="text-sm">{{previewOrder.description}}</p><CustomerOrderDetails :order="previewOrder"/></template><button type="button" class="mini-action" @click="closePreview">{{locale.t('close')}}</button></div></AdaptivePanel>
 </section>
 </template>
+
+<style scoped>
+.order-customer-preview-action{min-height:2.75rem}
+</style>
