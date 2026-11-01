@@ -79,13 +79,13 @@ async function googleInfo(){
         </button>
       </div>
       <template v-if="(mode==='register'&&signupMethod==='phone')||(mode==='signin'&&phoneSignIn)">
-        <label class="form-field">{{locale.t('mobilePhone')}}
+        <div class="form-field"><label for="simple-mobile">{{locale.t('mobilePhone')}}</label>
           <span class="flex gap-2" dir="ltr">
             <input v-model="dialCode" list="phone-countries" class="!w-24 !shrink-0 !flex-none" type="tel" inputmode="tel" autocomplete="tel-country-code" maxlength="6" :aria-label="locale.t('callingCode')" :disabled="busy" required>
             <datalist id="phone-countries"><option value="+964">العراق</option><option value="+98">ایران</option><option value="+971">الإمارات</option><option value="+90">Türkiye</option></datalist>
-            <input v-model="phone" type="tel" inputmode="tel" :autocomplete="mode==='signin'?'username':'tel-national'" dir="ltr" placeholder="07… / 09…" maxlength="30" required :disabled="busy">
+            <input id="simple-mobile" v-model="phone" type="tel" inputmode="tel" :autocomplete="mode==='signin'?'username':'tel-national'" dir="ltr" placeholder="07… / 09…" maxlength="30" required :disabled="busy">
           </span>
-        </label>
+        </div>
         <p class="text-xs text-[var(--c-muted)]">{{locale.t('simplePhoneHelp')}}</p>
         <details v-if="mode==='register'" class="text-xs"><summary>{{locale.t('optionalUsername')}}</summary><label class="form-field mt-2">{{locale.t('username')}}<input v-model="username" autocomplete="username" maxlength="32" :disabled="busy"></label></details>
       </template>
@@ -95,12 +95,12 @@ async function googleInfo(){
       </template>
       <label v-if="mode==='signin'&&!phoneSignIn" class="form-field">{{locale.t('loginIdentifier')}}<input v-model="email" type="text" autocomplete="username" dir="ltr" maxlength="255" required :disabled="busy"></label>
       <button v-if="mode==='signin'" type="button" class="text-xs underline underline-offset-4" :disabled="busy" @click="phoneSignIn=!phoneSignIn;error=''">{{locale.t(phoneSignIn?'useOtherLogin':'usePhoneLogin')}}</button>
-      <label class="form-field">{{locale.t('password')}}
+      <div class="form-field"><label for="simple-password">{{locale.t('password')}}</label>
         <span class="flex items-center gap-2">
-          <input v-model="password" :type="showPassword?'text':'password'" :autocomplete="mode==='register'?'new-password':'current-password'" dir="ltr" :minlength="mode==='register'?(signupMethod==='phone'?4:12):undefined" maxlength="255" required :disabled="busy">
+          <input id="simple-password" v-model="password" :type="showPassword?'text':'password'" :autocomplete="mode==='register'?'new-password':'current-password'" dir="ltr" :minlength="mode==='register'?(signupMethod==='phone'?4:12):undefined" maxlength="255" required :disabled="busy">
           <button type="button" class="mini-action shrink-0" :disabled="busy" @click="showPassword=!showPassword">{{locale.t(showPassword?'hidePassword':'showPassword')}}</button>
         </span>
-      </label>
+      </div>
       <label v-if="mode==='register'&&signupMethod==='email'" class="form-field">{{locale.t('confirmPassword')}}<input v-model="confirmation" type="password" autocomplete="new-password" dir="ltr" required :disabled="busy"></label>
       <p v-if="mode==='register'" class="text-xs leading-6 text-[var(--c-muted)]">{{locale.t(signupMethod==='phone'?'phonePasswordRequirements':'passwordRequirements')}}</p>
       <p v-if="error" role="alert" class="auth-error">{{error}}</p>

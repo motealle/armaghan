@@ -39,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(MediaHasBeenAddedEvent::class, SanitizeProductMedia::class);
         RateLimiter::for('admin-product-uploads', fn (Request $request) =>
             Limit::perMinute(30)->by('product-upload:'.($request->user()?->id ?? $request->ip())));
+        RateLimiter::for('password-registration', fn (Request $request) =>
+            Limit::perMinute(5)->by('registration-ip:'.$request->ip()));
         RateLimiter::for('password-login', function (Request $request) {
             $raw = trim((string) ($request->input('identifier') ?? $request->input('email') ?? ''));
             $identifier = \App\Support\CustomerPhone::normalize($raw) ?? strtolower($raw);
