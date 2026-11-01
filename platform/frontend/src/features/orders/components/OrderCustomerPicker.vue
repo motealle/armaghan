@@ -29,10 +29,10 @@ onBeforeUnmount(()=>{request++})
 </script>
 <template>
  <div class="space-y-2" :aria-busy="busy">
-  <label class="form-field" :for="searchId">{{copy.search}}</label><div class="flex flex-wrap gap-2"><input :id="searchId" v-model="query" class="min-w-0 flex-1" maxlength="100" :disabled="disabled" @keydown.enter.prevent="load()"><button type="button" class="mini-action" :disabled="disabled||busy" @click="load()">{{locale.t('searchLabel')}}</button></div>
+  <label class="form-field" :for="searchId">{{copy.search}}</label><div class="flex flex-wrap gap-2"><input :id="searchId" v-model="query" class="min-h-11 min-w-0 flex-1 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-2 text-[var(--c-text)] outline-none focus:border-[var(--c-primary)]" maxlength="100" :disabled="disabled" @keydown.enter.prevent="load()"><button type="button" class="mini-action" :disabled="disabled||busy" @click="load()">{{locale.t('searchLabel')}}</button></div>
   <p v-if="error" class="auth-error" role="alert">{{error}}</p>
   <p v-if="busy" class="text-xs" role="status">{{locale.t('adminLoading')}}</p>
-  <label class="form-field">{{copy.choose}}<select :value="modelValue?.id??''" required :disabled="disabled||busy" @change="select"><option value="">—</option><option v-for="customer in choices" :key="customer.id" :value="customer.id">{{label(customer)}}</option></select></label>
+  <label class="form-field">{{copy.choose}}<select :aria-label="copy.choose" :value="modelValue?.id??''" required :disabled="disabled||busy" @change="select"><option value="">—</option><option v-for="customer in choices" :key="customer.id" :value="customer.id">{{label(customer)}}</option></select></label>
   <p v-if="!busy&&!error&&!result.customers.some(row=>row.active)" class="text-sm">{{copy.noCustomers}}</p>
   <div v-if="result.last_page>1" class="flex items-center justify-between gap-2 text-xs"><button type="button" class="mini-action" :disabled="disabled||busy||result.page<=1" @click="load(result.page-1)">{{locale.t('back')}}</button><span>{{result.page}} / {{result.last_page}}</span><button type="button" class="mini-action" :disabled="disabled||busy||result.page>=result.last_page" @click="load(result.page+1)">{{locale.t('adminNext')}}</button></div>
   <p v-if="modelValue" class="rounded-xl bg-[var(--c-surface-2)] p-3 text-sm"><b>{{copy.selected}}:</b> <bdi>{{label(modelValue)}}</bdi></p>

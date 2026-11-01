@@ -20,6 +20,9 @@ jobs:
       - name: Install test browser
         working-directory: platform/frontend
         run: npx playwright install --with-deps chromium
+      - name: Verify customer order guidance in mobile tablet and desktop
+        working-directory: platform/frontend
+        run: node scripts/verify-tracking-guidance.mjs
       - name: Convert eight real formats in Chromium without external photo services
         working-directory: platform/frontend
         run: npm run test:formats
@@ -32,7 +35,6 @@ jobs:
           node scripts/verify-product-order.mjs
           node scripts/verify-quick-product-order.mjs
           node scripts/verify-home-showcase.mjs
-          node scripts/verify-tracking-guidance.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
