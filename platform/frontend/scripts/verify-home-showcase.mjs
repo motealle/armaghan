@@ -30,7 +30,7 @@ try{
   })
   const base='http://127.0.0.1:4196/showcase-acceptance/index.html'
   await page.goto(base);await page.getByLabel('شماره موبایل',{exact:true}).fill('٠٧٧٠١٢٣٤٥٦٧');await page.getByLabel('رمز عبور',{exact:true}).fill('123456')
-  await page.getByRole('button',{name:'نمایش رمز',exact:true}).click();assert.equal(await page.getByLabel('رمز عبور',{exact:true}).getAttribute('type'),'text')
+  await page.getByRole('button',{name:'نمایش',exact:true}).click();assert.equal(await page.getByLabel('رمز عبور',{exact:true}).getAttribute('type'),'text')
   await page.screenshot({path:`../../.build/showcase-acceptance/login-${width}.png`,fullPage:true})
   await page.getByRole('button',{name:'ورود',exact:true}).click();await page.getByRole('dialog').waitFor({state:'hidden'});assert.equal(auth[0].identifier,'+9647701234567');assert.equal(auth[0].password,'123456')
   await page.reload();await page.getByRole('tab',{name:'ساخت حساب',exact:true}).click();await page.getByLabel('شماره موبایل',{exact:true}).fill('07701234567');await page.getByLabel('رمز عبور',{exact:true}).fill('123456');await page.getByRole('button',{name:'ایجاد حساب',exact:true}).click();await page.getByRole('dialog').waitFor({state:'hidden'});assert.equal(auth[1].username,'');assert.equal(auth[1].phone,'+9647701234567')
