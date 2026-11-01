@@ -23,7 +23,7 @@ import { useSessionStore } from '@/stores/session'
 
 import AdvancedAccessPanel from './AdvancedAccessPanel.vue'
 import {useVisualStyleStore} from '@/features/visual-editor/store'
-import {useRouter} from 'vue-router'
+import {useRoute,useRouter} from 'vue-router'
 import BackendUsersPanel from './BackendUsersPanel.vue'
 import BackendCustomersPanel from './BackendCustomersPanel.vue'
 const props=defineProps<{live?:boolean}>()
@@ -38,9 +38,12 @@ const locale=useLocaleStore()
 const visual=useVisualStyleStore()
 const router=useRouter()
 function editSite(){visual.setEnabled(true);router.push('/')}
-const activeTab=ref<AdminTab>('overview')
+const route=useRoute()
+const activeTab=ref<AdminTab>(typeof route.query.order==='string'?'orders':'overview')
+const orderCreate=ref(true)
 const orderCustomer=ref<AdminCustomer|null>(null)
-function registerOrder(customer:AdminCustomer){orderCustomer.value=customer;activeTab.value='orders'}
+function registerOrder(customer:AdminCustomer){orderCreate.value=true;orderCustomer.value=customer;activeTab.value='orders'}
+function viewOrders(customer:AdminCustomer){orderCreate.value=false;orderCustomer.value=customer;activeTab.value='orders'}
 function selectTab(tab:AdminTab){orderCustomer.value=null;activeTab.value=tab}
 const selectedCustomers=ref<number[]>([])
 const customerDetailId=ref<number|null>(null)
@@ -126,9 +129,9 @@ function inviteLead(id:string){
           <button v-for="tab in tabs.filter(item=>item.id!=='overview')" :key="tab.id" type="button" class="mini-action min-h-12 justify-start" @click="selectTab(tab.id)"><component :is="tab.icon" :size="18"/>{{tab.label}}</button>
         </div>
       </section>
-      <OrderTrackingPanel v-else-if="activeTab==='orders'" admin :initial-customer="orderCustomer"/>
+      <OrderTrackingPanel v-else-if="activeTab==='orders'" admin :initial-customer="orderCustomer" :start-create="orderCreate"/>
       <BackendUsersPanel v-else-if="activeTab==='users'"/>
-      <BackendCustomersPanel v-else-if="activeTab==='customers'" @request-order="registerOrder"/>
+      <BackendCustomersPanel v-else-if="activeTab==='customers'" @request-order="registerOrder" @view-orders="viewOrders"/>
       <BackendProductsPanel v-else-if="activeTab==='products'"/>
       <section v-else-if="activeTab==='content'" class="space-y-4"><div class="admin-surface rounded-2xl p-4"><p>{{locale.t('sharedVisualEditorHelp')}}</p><button class="mini-action mt-2" @click="editSite">{{locale.t('openVisualEditor')}}</button></div><HomeContentEditor live/><HomeMediaPanel/></section>
       <TranslationManager v-else-if="activeTab==='languages'" live/>

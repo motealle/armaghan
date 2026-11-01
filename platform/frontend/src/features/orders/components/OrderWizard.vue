@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {trackingCopy} from '@/features/orders/services/trackingCopy'
+import {ClipboardList,CheckCircle2} from '@lucide/vue'
 import {useResolvedAppearance} from '@/composables/useResolvedAppearance'
 import {createTrackedOrder} from '@/features/orders/services/trackingApi'
 import {useSessionStore} from '@/stores/session'
@@ -14,21 +16,25 @@ import { useLocaleStore } from '@/stores/locale'
 const {policy}=useResolvedAppearance()
 const wizard=useOrderWizardStore()
 const locale=useLocaleStore()
-const session=useSessionStore(),trackingBusy=ref(false),trackingReference=ref(''),trackingError=ref('')
+const session=useSessionStore(),trackingBusy=ref(false),trackingError=ref('')
+const trackingWords=computed(()=>trackingCopy[locale.locale])
+const trackingSignature=computed(()=>JSON.stringify([session.backendCustomer?.id,wizard.path,wizard.categoryCode,wizard.subcategoryCode,wizard.note]))
+const trackingReference=computed(()=>wizard.tracking?.signature===trackingSignature.value?wizard.tracking.reference:'')
 const paths=computed(()=>[
   {id:'custom' as const,label:locale.t('customProduction'),desc:locale.t('customProductionDesc'),icon:WandSparkles},
   {id:'brand' as const,label:locale.t('privateLabel'),desc:locale.t('privateLabelDesc'),icon:Tag},
   {id:'packaging' as const,label:locale.t('customPackaging'),desc:locale.t('customPackagingDesc'),icon:Box},
 ])
 const title=computed(()=>wizard.path?requestPathTitle(wizard.path,locale.locale):locale.t('productionTitle'))
-watch(()=>wizard.preview,()=>{trackingReference.value='';trackingError.value=''})
+watch(trackingSignature,()=>{trackingError.value=''})
 const lockedSpecs=computed(()=>wizard.specSource?.specs.locked.map(locale.specLabel)??[])
 const negotiableSpecs=computed(()=>wizard.specSource?.specs.negotiable.map(locale.specLabel)??[])
 const BackIcon=computed(()=>locale.direction==='ltr'?ArrowLeft:ArrowRight)
 async function registerTracking(){
  if(!session.backendAuthenticated||trackingBusy.value||trackingReference.value||!wizard.path)return
  trackingBusy.value=true;trackingError.value=''
- try{trackingReference.value=(await createTrackedOrder({request_path:wizard.path,description:wizard.preview.slice(0,4000)})).order.reference}
+ const signature=trackingSignature.value,customerId=session.backendCustomer?.id
+ try{const response=await createTrackedOrder({request_path:wizard.path,description:wizard.preview.slice(0,4000)});if(session.backendAuthenticated&&session.backendCustomer?.id===customerId)wizard.tracking={signature,reference:response.order.reference}}
  catch{trackingError.value=locale.t('adminRequestFailed')}finally{trackingBusy.value=false}
 }
 </script>
@@ -102,7 +108,12 @@ async function registerTracking(){
         <pre class="whitespace-pre-wrap font-sans text-xs leading-6 text-[var(--c-text)]">{{wizard.preview}}</pre>
       </div>
 
-      <div v-if="session.backendAuthenticated" class="space-y-2"><button type="button" class="mini-action w-full justify-center" :disabled="trackingBusy||!!trackingReference||!wizard.preview" @click="registerTracking">{{locale.locale==='fa'?'ثبت درخواست برای پیگیری':locale.locale==='ar'?'تسجيل الطلب للمتابعة':locale.locale==='ku'?'تۆمارکردن بۆ بەدواداچوون':'Register request for tracking'}}</button><RouterLink v-if="trackingReference" to="/tracking" class="block text-center font-bold text-[var(--c-secondary)]">{{trackingReference}} · {{locale.t('tracking')}}</RouterLink><p v-if="trackingError" role="alert" class="auth-error">{{trackingError}}</p></div>
+      <div v-if="session.backendAuthenticated" class="space-y-3">
+        <template v-if="trackingReference"><p role="status" class="rounded-xl bg-[var(--c-surface-2)] p-3 text-sm leading-7"><CheckCircle2 :size="18" class="inline" aria-hidden="true"/> {{trackingWords.registeredHelp}} <bdi class="block font-bold" dir="ltr">{{trackingReference}}</bdi></p><RouterLink :to="{path:'/tracking',query:{order:trackingReference}}" class="flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-[var(--c-primary)] px-4 py-3 font-extrabold text-white"><ClipboardList :size="22" aria-hidden="true"/>{{trackingWords.track}}</RouterLink></template>
+        <button v-else type="button" class="mini-action min-h-12 w-full justify-center" :disabled="trackingBusy||!wizard.preview" @click="registerTracking">{{locale.locale==='fa'?'ثبت درخواست برای پیگیری':locale.locale==='ar'?'تسجيل الطلب للمتابعة':locale.locale==='ku'?'تۆمارکردن بۆ بەدواداچوون':'Register request for tracking'}}</button>
+        <p v-if="trackingError" role="alert" class="auth-error">{{trackingError}}</p>
+      </div>
+      <p class="text-xs leading-6 text-[var(--c-muted)]">{{trackingWords.whatsappOnly}}</p>
       <a :href="wizard.whatsapp" target="_blank" rel="noopener" class="wa-primary flex min-h-14 items-center justify-center gap-2 rounded-xl px-4 text-sm font-extrabold">
         <WhatsAppIcon :size="28" tone="white"/> {{locale.t('continueWhatsApp')}}
       </a>

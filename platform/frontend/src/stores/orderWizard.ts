@@ -14,6 +14,7 @@ export const useOrderWizardStore = defineStore('order-wizard', () => {
   const categoryCode = ref<string | null>(null)
   const subcategoryCode = ref<string | null>(null)
   const note = ref('')
+  const tracking=ref<{signature:string;reference:string}|null>(null)
 
   const category = computed(() => catalog.categories.find((item) => item.code === categoryCode.value) ?? null)
   const subcategory = computed(() => category.value?.subcategories.find((item) => item.code === subcategoryCode.value) ?? null)
@@ -44,7 +45,7 @@ export const useOrderWizardStore = defineStore('order-wizard', () => {
     else if (step.value === 2) { categoryCode.value = null; step.value = 1 }
     else reset()
   }
-  function reset(): void { step.value = 0; path.value = null; categoryCode.value = null; subcategoryCode.value = null; note.value = '' }
+  function reset(): void { tracking.value=null;step.value = 0; path.value = null; categoryCode.value = null; subcategoryCode.value = null; note.value = '' }
 
-  return { step, path, categoryCode, subcategoryCode, note, category, subcategory, specSource, preview, whatsapp, choosePath, chooseCategory, chooseSubcategory, back, reset }
+  return { tracking, step, path, categoryCode, subcategoryCode, note, category, subcategory, specSource, preview, whatsapp, choosePath, chooseCategory, chooseSubcategory, back, reset }
 })

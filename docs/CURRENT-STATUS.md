@@ -1,3 +1,11 @@
+## Order customer view and connected tracking — 2026-11-01; release pending
+
+Current customer screenshots show the request wizard already issued a tracking reference. Improve that exact path rather than requiring a duplicate order: prominent View my order progress link with reference-aware lookup/automatic expansion; wizard keeps the successful reference across language changes and SPA return, scoped to the actual customer and semantic selection. Explicit Start over clears it. WhatsApp remains a separate conversation option, not the tracking destination.
+
+Managers have Customer orders beside Register order, with server-wide customer/reference filters, preserving authorization/pagination. Each order offers View as customer: protected GET endpoint reuses the exact customer projection, excludes private notes/draft quotes/private files/internal identity/revision, retains only public file links through the manager-authorized downloader, changes no session and writes no order. Shared progress/detail components render both real customer and manager preview. Failed/reopened previews clear old content; logout/unmount drops late responses. Current stage/payment guards remain unchanged. No real customer/order/payment write for testing.
+
+Focused server privacy/session/ownership/older-reference tests and actual-component browser acceptance are added. Local frontend type-check/build and guards pass; final PR checks and guarded backend/frontend/root publication pending. No schema/dependency changes, frozen01–28 and /vids untouched. See docs/ORDER-CUSTOMER-VIEW-20261101.md.
+
 ## Home placement and order guidance — verified production release 2026-11-01
 
 PR42 https://github.com/motealle/armaghan/pull/42 merged. Final source61710bc52f24ba4505f1ac4797184e5c31fcf767; squash/main runtime6fdb1a4c5673fba5c8730eed1c2051f394a185a9; source tree8a43301971be4847267abfa3f359aa13ace4b5c6. Supersedes the pending entry.

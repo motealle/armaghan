@@ -59,4 +59,28 @@ class OrderTrackingTest extends TestCase {
   $this->postJson('/api/admin/orders',['customer_id'=>$customer->id,'request_path'=>'simple','description'=>'Forged request'])->assertForbidden();
   $this->patchJson('/api/admin/orders/'.$row['id'],['revision'=>$row['revision'],'action'=>'note','note'=>'Unauthorized edit','visible_to_customer'=>false])->assertForbidden();
  }
+ public function test_admin_customer_view_matches_customer_projection_without_switching_session(): void {
+  $admin=User::factory()->admin()->create();$customer=Customer::create(['active'=>true]);$other=Customer::create(['active'=>true]);$this->actingAs($admin);$row=$this->createOrder($customer);
+  $row=$this->change($row,'note',['note'=>'Private staff note']);$row=$this->change($row,'stage',['stage'=>'review','note'=>'Public progress','visible_to_customer'=>true]);
+  $this->withSession([CustomerSession::KEY=>$other->id]);$before=\App\Models\ActivityLog::count();
+  $preview=$this->getJson('/api/admin/orders/'.$row['id'].'/customer-view')->assertOk()->assertHeader('Cache-Control','no-store, private')->assertJsonCount(2,'order.events')->assertJsonMissing(['note'=>'Private staff note'])->assertJsonMissingPath('order.revision')->assertJsonMissingPath('order.customer_id')->assertJsonMissingPath('order.customer_name')->json('order');
+  $this->assertAuthenticatedAs($admin);$this->assertSame($other->id,session(CustomerSession::KEY));$this->assertSame($before,\App\Models\ActivityLog::count());
+  $actual=$this->withSession([CustomerSession::KEY=>$customer->id])->getJson('/api/customer/orders?reference='.$row['reference'])->assertOk()->json('orders.0');$this->assertSame($actual,$preview);
+  $this->postJson('/api/admin/orders/'.$row['id'].'/customer-view',[])->assertMethodNotAllowed();
+ }
+ public function test_customer_view_rejects_guests_inactive_admins_and_protected_owner(): void {
+  $owner=User::factory()->admin()->create(['email'=>'motealle@gmail.com','email_verified_at'=>now()]);$customer=Customer::create(['user_id'=>$owner->id,'active'=>true]);$this->actingAs($owner);$row=$this->createOrder($customer);
+  $this->actingAs(User::factory()->admin()->create())->getJson('/api/admin/orders/'.$row['id'].'/customer-view')->assertForbidden();
+  $this->actingAs(User::factory()->admin()->inactive()->create())->getJson('/api/admin/orders/'.$row['id'].'/customer-view')->assertForbidden();
+  $this->actingAs(User::factory()->create())->getJson('/api/admin/orders/'.$row['id'].'/customer-view')->assertForbidden();
+  auth()->forgetGuards();$this->flushSession();$this->getJson('/api/admin/orders/'.$row['id'].'/customer-view')->assertUnauthorized();
+ }
+ public function test_reference_filters_reach_older_orders_and_never_cross_customer_ownership(): void {
+  $a=Customer::create(['active'=>true]);$b=Customer::create(['active'=>true]);$this->actingAs(User::factory()->admin()->create());$old=$this->createOrder($a);$other=$this->createOrder($b);
+  for($i=0;$i<26;$i++)TrackedOrder::create(['customer_id'=>$a->id,'reference'=>'AT-OLDERTEST'.$i,'request_path'=>'custom','description'=>'Later order','stage'=>'inquiry']);
+  $this->getJson('/api/admin/orders?customer_id='.$b->id)->assertOk()->assertJsonCount(1,'orders')->assertJsonPath('orders.0.id',$other['id']);
+  $this->getJson('/api/admin/orders?reference='.strtolower($old['reference']))->assertOk()->assertJsonCount(1,'orders')->assertJsonPath('orders.0.id',$old['id']);
+  $this->withSession([CustomerSession::KEY=>$b->id])->getJson('/api/customer/orders?reference='.$old['reference'])->assertOk()->assertJsonCount(0,'orders');
+  $this->getJson('/api/customer/orders?customer_id='.$a->id)->assertUnprocessable();
+ }
 }
