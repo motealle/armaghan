@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type {AdminCustomer} from '../services/adminApi'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 import HomeMediaPanel from '@/features/home-media/HomeMediaPanel.vue'
 import OrderTrackingPanel from '@/features/orders/components/OrderTrackingPanel.vue'
@@ -38,6 +39,9 @@ const visual=useVisualStyleStore()
 const router=useRouter()
 function editSite(){visual.setEnabled(true);router.push('/')}
 const activeTab=ref<AdminTab>('overview')
+const orderCustomer=ref<AdminCustomer|null>(null)
+function registerOrder(customer:AdminCustomer){orderCustomer.value=customer;activeTab.value='orders'}
+function selectTab(tab:AdminTab){orderCustomer.value=null;activeTab.value=tab}
 const selectedCustomers=ref<number[]>([])
 const customerDetailId=ref<number|null>(null)
 const customerDetailOpen=ref(false)
@@ -107,7 +111,7 @@ function inviteLead(id:string){
     <AdvancedAccessPanel v-if="live"/>
     <nav class="admin-surface rounded-2xl p-2" :aria-label="locale.t('adminOverview')">
       <div class="admin-tabs">
-        <button v-for="tab in tabs" :key="tab.id" class="admin-tab" :class="{active:activeTab===tab.id}" @click="activeTab=tab.id">
+        <button v-for="tab in tabs" :key="tab.id" class="admin-tab" :class="{active:activeTab===tab.id}" @click="selectTab(tab.id)">
           <component :is="tab.icon" :size="16" class="me-1 inline"/>{{tab.label}}
         </button>
       </div>
@@ -119,12 +123,12 @@ function inviteLead(id:string){
         <h2 class="text-lg font-black">{{locale.t('adminRealSession')}}</h2>
         <p class="mt-2 text-sm text-[var(--c-muted)]">{{locale.t('adminOverviewHelp')}}</p>
         <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <button v-for="tab in tabs.filter(item=>item.id!=='overview')" :key="tab.id" type="button" class="mini-action min-h-12 justify-start" @click="activeTab=tab.id"><component :is="tab.icon" :size="18"/>{{tab.label}}</button>
+          <button v-for="tab in tabs.filter(item=>item.id!=='overview')" :key="tab.id" type="button" class="mini-action min-h-12 justify-start" @click="selectTab(tab.id)"><component :is="tab.icon" :size="18"/>{{tab.label}}</button>
         </div>
       </section>
-      <OrderTrackingPanel v-else-if="activeTab==='orders'" admin/>
+      <OrderTrackingPanel v-else-if="activeTab==='orders'" admin :initial-customer="orderCustomer"/>
       <BackendUsersPanel v-else-if="activeTab==='users'"/>
-      <BackendCustomersPanel v-else-if="activeTab==='customers'"/>
+      <BackendCustomersPanel v-else-if="activeTab==='customers'" @request-order="registerOrder"/>
       <BackendProductsPanel v-else-if="activeTab==='products'"/>
       <section v-else-if="activeTab==='content'" class="space-y-4"><div class="admin-surface rounded-2xl p-4"><p>{{locale.t('sharedVisualEditorHelp')}}</p><button class="mini-action mt-2" @click="editSite">{{locale.t('openVisualEditor')}}</button></div><HomeContentEditor live/><HomeMediaPanel/></section>
       <TranslationManager v-else-if="activeTab==='languages'" live/>

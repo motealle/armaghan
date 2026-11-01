@@ -34,7 +34,6 @@ function scrollProducts(){document.getElementById('product-categories')?.scrollI
     <button v-if="policy.showProductBanners" type="button" class="catalog-jump w-full" @click="scrollProducts">{{locale.t('productsTitle')}} <span aria-hidden="true">↓</span></button>
 
     <AboutArmaghanSection v-if="policy.showAbout"/>
-    <WhyArmaghanSection v-if="policy.showWhy"/>
     <CapabilitiesSection v-if="policy.showCapabilities" @edit-settings="editShowcase"/>
     <ProductCategoryBanners v-if="policy.showProductBanners"/>
 
@@ -48,6 +47,7 @@ function scrollProducts(){document.getElementById('product-categories')?.scrollI
       </div>
       <ProductGrid :products="recommended" :admin-orderable="!!admin.identity&&catalog.syncState==='synced'"/>
     </section>
+    <WhyArmaghanSection v-if="policy.showWhy"/>
     <AdaptivePanel :open="showcaseOpen" title="ویرایش ویدئو و جزئیات صفحه اول" wide @close="showcaseOpen=false"><HomeContentEditor v-if="showcaseOpen&&admin.identity" live @image-request="showcaseOpen=false"/></AdaptivePanel>
   </div>
 </template>

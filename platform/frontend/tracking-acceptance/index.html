@@ -1,0 +1,9 @@
+<!doctype html><html lang="fa" dir="rtl"><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="app"></div><script type="module">
+import {createApp,h,ref} from 'vue';import {createPinia} from 'pinia';import {createRouter,createMemoryHistory} from 'vue-router';
+import Dashboard from '/src/features/admin/components/AdminDashboard.vue';import Tracking from '/src/features/orders/components/OrderTrackingPanel.vue';import Home from '/src/views/HomeView.vue';import Footer from '/src/components/layout/SiteFooter.vue';import {useAdminStore} from '/src/features/admin/store.ts';import {useLocaleStore} from '/src/stores/locale.ts';import {useAppearanceStore} from '/src/stores/appearance.ts';import '/src/styles/main.css';
+const app=createApp({setup(){const admin=useAdminStore(),locale=useLocaleStore(),appearance=useAppearanceStore(),mode=ref('admin');locale.setManual('fa');admin.identity={name:'Synthetic QA',email:'qa@example.invalid'};
+for(const profile of ['mobile','tablet','desktop'])appearance.updateProfile(profile,{homeProductGrid:'recommended-6',showAbout:true,showWhy:true,showCapabilities:true,showProductBanners:true});
+window.qa={mode:value=>mode.value=value,locale:value=>locale.setManual(value)};
+return()=>h('main',{style:'max-width:1100px;margin:auto;padding:12px'},mode.value==='home'?[h(Home),h(Footer)]:mode.value==='customer'?[h(Tracking)]:[h(Dashboard,{live:true})])}});
+app.use(createPinia());app.use(createRouter({history:createMemoryHistory(),routes:[{path:'/:pathMatch(.*)*',component:{render:()=>null}}]}));app.mount('#app');
+</script></body></html>
