@@ -13,6 +13,7 @@ use Tests\TestCase;
 class CustomerPhoneRegistrationTest extends TestCase
 {
     use RefreshDatabase;
+    protected function setUp(): void {parent::setUp();\Illuminate\Support\Facades\Cache::flush();}
 
     private function form(array $replace = []): array
     {

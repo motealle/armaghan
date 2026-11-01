@@ -129,7 +129,7 @@ class PasswordAuthController extends Controller
     {
         $phone = CustomerPhone::normalize((string) $request->input('phone', ''));
         $typedUsername = trim((string) $request->input('username', ''));
-        $username = $typedUsername === '' ? 'p'.preg_replace('/[^0-9]/', '', $phone ?? '') : CustomerPhone::username($typedUsername);
+        $username = $typedUsername === '' ? 'p'.strtolower(Str::random(20)) : CustomerPhone::username($typedUsername);
         $request->merge([
             'username' => $username, 'phone' => $phone,
             'password' => CustomerSimplePassword::normalizedPin($request->input('password')),
@@ -141,6 +141,7 @@ class PasswordAuthController extends Controller
             'name' => ['sometimes','nullable','string','max:255'],
             'password' => ['required','string','max:255','confirmed', new CustomerSimplePassword()],
         ]);
+        if ($typedUsername === '' && trim((string) ($data['name'] ?? '')) === '') $data['name'] = $data['phone'];
         $reserved = array_merge(['admin','administrator','root','mot','amirau'], array_keys(config('temporary-admin-access.aliases', [])));
         if (in_array($data['username'], $reserved, true)) {
             throw ValidationException::withMessages(['username' => 'Registration unavailable.']);
