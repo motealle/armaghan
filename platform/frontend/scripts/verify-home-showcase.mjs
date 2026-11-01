@@ -21,7 +21,7 @@ try{
    if(path.endsWith('/api/csrf-token'))return r.fulfill({json:{token:'synthetic-qa-token'}})
    if(path.endsWith('/api/auth/login')||path.endsWith('/api/auth/register')){auth.push({path,...req.postDataJSON()});return r.fulfill({status:path.endsWith('register')?201:200,json:{ok:true}})}
    if(path.endsWith('/api/customer/session'))return r.fulfill({json:{customer:{id:7,name:'QA',company_name:'QA',email:null,phone:'+9647701234567'}}})
-   if(path.endsWith('/api/admin/style-profile/draft')){const data=req.postDataJSON();if(conflict||data.expected_checksum!==snapshot().draft.checksum)return r.fulfill({status:409,json:{message:'changed'}});draft={styles:data.styles,texts:data.texts};revision++;return r.fulfill({json:{profile:snapshot().profile,draft:snapshot().draft}})}
+   if(path.endsWith('/api/admin/style-profile/draft')){const data=req.postDataJSON();if(conflict||data.expected_checksum!==snapshot().draft.checksum)return r.fulfill({status:409,json:{message:'changed'}});draft={styles:Object.fromEntries(Object.entries(data.styles).sort()),texts:Object.fromEntries(Object.entries(data.texts).sort())};revision++;return r.fulfill({json:{profile:snapshot().profile,draft:snapshot().draft}})}
    if(path.endsWith('/api/admin/style-profile/publish/staging')){published=structuredClone(draft);publishes++;return r.fulfill({status:201,json:{version:{id:publishes,number:publishes},channel:'staging'}})}
    if(path.endsWith('/api/admin/style-profile'))return r.fulfill({json:snapshot()})
    if(path.endsWith('/api/style-profile/staging'))return r.fulfill({json:{...published,schema:1,channel:'staging',checksum:String(revision).padStart(64,'0')}})

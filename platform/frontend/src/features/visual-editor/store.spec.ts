@@ -134,3 +134,11 @@ describe('visual style profile sanitization',()=>{
     expect(targetIsHidden(visual.profile,'home.about.title')).toBe(false)
   })
 })
+
+
+it('treats equal server profiles as equal despite normalized object-key ordering',()=>{
+ const a={schema:1 as const,styles:{'z':{hidden:false},'a':{hidden:true}},texts:{z:{fa:'hello',en:'world'},a:{fa:'text'}}}
+ const b={schema:1 as const,styles:{'a':{hidden:true},'z':{hidden:false}},texts:{a:{fa:'text'},z:{en:'world',fa:'hello'}}}
+ expect(visualProfilesEqual(a,b)).toBe(true)
+ expect(visualProfilesEqual(a,{...b,texts:{...b.texts,z:{en:'different',fa:'hello'}}})).toBe(false)
+})

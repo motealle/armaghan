@@ -70,7 +70,8 @@ export function sanitizeVisualStyleProfile(value:unknown):VisualStyleProfile{
 }
 
 export function visualProfilesEqual(a:VisualStyleProfile,b:VisualStyleProfile):boolean{
-  return JSON.stringify(a)===JSON.stringify(b)
+  const canonical=(value:unknown):unknown=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a<b?-1:a>b?1:0).map(([key,item])=>[key,canonical(item)])):value
+  return JSON.stringify(canonical(a))===JSON.stringify(canonical(b))
 }
 
 function readProfile():VisualStyleProfile{
