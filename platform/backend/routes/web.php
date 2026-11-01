@@ -113,6 +113,7 @@ Route::prefix('api/admin')->middleware(['active.admin', 'throttle:60,1'])->group
     Route::post('/home-media', [\App\Http\Controllers\Admin\HomeMediaController::class, 'upload'])->middleware('throttle:admin-product-uploads');
     Route::post('/home-media/publish/{channel}', [\App\Http\Controllers\Admin\HomeMediaController::class, 'publish'])->where('channel','staging|production');
     Route::get('/orders', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'index']);
+    Route::get('/orders/{order}/customer-view', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'customerView'])->whereNumber('order');
     Route::post('/orders', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'store']);
     Route::put('/orders/{order}/quote', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'commercial']);
     Route::post('/orders/{order}/documents', [\App\Http\Controllers\Admin\OrderTrackingController::class, 'uploadDocument'])->middleware('throttle:admin-product-uploads');

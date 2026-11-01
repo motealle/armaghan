@@ -14,12 +14,22 @@ class OrderTrackingController extends Controller {
     public const PATHS=['simple','available','unavailable','custom','brand','packaging'];
     private function admin(Request $request): bool { return $request->attributes->get('armaghan.customer') === null; }
     public function index(Request $request): JsonResponse {
-        $data=$request->validate(['page'=>['sometimes','integer','min:1']]);
+        $data=$request->validate(['page'=>['sometimes','integer','min:1'],'customer_id'=>[$this->admin($request)?'sometimes':'prohibited','integer','min:1'],'reference'=>['sometimes','nullable','string','max:40','regex:/^AT-[A-Z0-9]+$/i']]);
         $query=TrackedOrder::query();
         if (!$this->admin($request)) $query->where('customer_id',$request->attributes->get('armaghan.customer')->id);
         elseif (!$request->user()->isPrimaryOwner()) $query->whereNotIn('customer_id',Customer::whereHas('user',fn($q)=>$q->whereRaw('lower(email) = ?',[config('owner-access.primary_owner_email')]))->select('id'));
+        if(isset($data['customer_id'])) $query->where('customer_id',$data['customer_id']);
+        if(!empty($data['reference'])) $query->where('reference',strtoupper($data['reference']));
         $page=$query->orderByDesc('id')->paginate(25);
         return $this->json(['orders'=>$page->getCollection()->map(fn($o)=>$this->snapshot($o,$this->admin($request))),'page'=>$page->currentPage(),'last_page'=>$page->lastPage()]);
+    }
+    public function customerView(Request $request,TrackedOrder $order): JsonResponse {
+        $this->guardCustomer($request,Customer::findOrFail($order->customer_id));
+        // The customer's projection, without changing either authenticated session.
+        $data=$this->snapshot($order,false);
+        foreach($data['documents'] as &$document) $document['download_url']='/backend/api/admin/orders/'.$order->id.'/documents/'.$document['id'];
+        unset($document);
+        return $this->json(['order'=>$data]);
     }
     public function store(Request $request): JsonResponse {
         $admin=$this->admin($request);

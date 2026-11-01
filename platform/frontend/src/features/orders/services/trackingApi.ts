@@ -4,7 +4,13 @@ export type OrderStage=typeof orderStages[number]
 export interface OrderQuote {currency:string;items:{product_code?:string|null;description:string;quantity:number;unit_price_minor:number}[];subtotal_minor:number;shipping_minor:number;discount_minor:number;tax_minor:number;total_minor:number}
 export interface TrackedOrder {quote?:OrderQuote|null;documents?:{id:number;kind:string;visible_to_customer:boolean;download_url:string}[];id:number;reference:string;customer_id?:number;customer_name?:string|null;request_path:string;description:string;stage:OrderStage;invoice_confirmed_at:string|null;deposit_confirmed_at:string|null;revision?:string;events:{id:number;action:string;stage:OrderStage;note:string;visible_to_customer:boolean;created_at:string}[]}
 export interface OrderPage {orders:TrackedOrder[];page:number;last_page:number}
-export const fetchOrders=(admin=false,page=1)=>requestJson<OrderPage>((admin?'/api/admin/orders':'/api/customer/orders')+'?page='+page)
+export const fetchOrders=(admin=false,page=1,filter:{customerId?:number;reference?:string}={})=>{
+ const query=new URLSearchParams({page:String(page)})
+ if(admin&&filter.customerId)query.set('customer_id',String(filter.customerId))
+ if(filter.reference)query.set('reference',filter.reference.trim().toUpperCase())
+ return requestJson<OrderPage>((admin?'/api/admin/orders':'/api/customer/orders')+'?'+query)
+}
+export const fetchCustomerOrderView=(id:number)=>requestJson<{order:TrackedOrder}>('/api/admin/orders/'+id+'/customer-view')
 export async function createTrackedOrder(fields:{customer_id?:number;request_path:string;description:string},admin=false):Promise<{order:TrackedOrder}>{
  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify([admin,fields])))
  const fingerprint=Array.from(new Uint8Array(bytes)).map(v=>v.toString(16).padStart(2,'0')).join('')

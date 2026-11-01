@@ -15,7 +15,7 @@ import { CustomerSessionApiError } from '@/features/auth/services/customerSessio
 import { fetchAdminCustomers, createAdminCustomer, updateAdminCustomer, type AdminCustomer, type CustomerPage, type CustomerFields, customerBusinessDefaults } from '../services/adminApi'
 function customerContactUrl(phone:string|null){const digits=(phone||'').replace(/\D/g,'');return digits.length>=8&&digits.length<=15?'https://wa.me/'+digits:null}
 const deleteTarget=ref<{id:number;revision:string;label:string}|null>(null),recoveryBusy=ref(false)
-const emit=defineEmits<{'request-order':[customer:AdminCustomer]}>()
+const emit=defineEmits<{'request-order':[customer:AdminCustomer];'view-orders':[customer:AdminCustomer]}>()
 const locale=useLocaleStore()
 const admin=useAdminStore()
 const result=ref<CustomerPage>({customers:[],page:1,last_page:1,total:0})
@@ -103,6 +103,7 @@ onMounted(()=>load())
           <td>{{row.priority}}</td><td dir="ltr">{{row.whatsapp||'—'}}</td><td dir="ltr">{{row.contact_email||row.email||'—'}}</td>
           <td>{{locale.t(row.active?'active':'adminInactive')}}</td><td>
             <div class="admin-row-actions" role="group" :aria-label="locale.t('actions')">
+              <button type="button" class="mini-action" :disabled="loading||saving||bulkBusy||recoveryBusy||accountBusy" @click="emit('view-orders',row)"><ClipboardList :size="18" aria-hidden="true"/>{{trackingCopy[locale.locale].customerOrders}}</button>
               <button v-if="row.active" type="button" class="mini-action" :disabled="loading||saving||bulkBusy||recoveryBusy||accountBusy" @click="emit('request-order',row)"><ClipboardList :size="18" aria-hidden="true"/>{{trackingCopy[locale.locale].newOrder}}</button>
               <button type="button" class="mini-action" :disabled="loading||saving||bulkBusy||recoveryBusy||accountBusy" :aria-label="locale.t(row.pinned?'customerUnpin':'customerPin')" :title="locale.t(row.pinned?'customerUnpin':'customerPin')" :aria-pressed="!!row.pinned" @click="togglePin(row)"><PinOff v-if="row.pinned" :size="18" aria-hidden="true"/><Pin v-else :size="18" aria-hidden="true"/></button>
               <a v-if="customerContactUrl(row.whatsapp)" :href="customerContactUrl(row.whatsapp)!" target="_blank" rel="noopener noreferrer" class="mini-action customer-whatsapp-action" :aria-label="locale.t('contactCustomer')" :title="locale.t('contactCustomer')"><WhatsAppIcon :size="19" tone="white" aria-hidden="true"/></a>
