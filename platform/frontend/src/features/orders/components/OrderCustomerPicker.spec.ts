@@ -26,7 +26,7 @@ it('normalizes localized phone search and ignores an older search response',asyn
  api.fetch.mockReturnValueOnce(new Promise<CustomerPage>(r=>{resolve=r})).mockResolvedValueOnce({customers:[row(9)],page:1,last_page:1,total:1})
  panel.query.value='٠٧٧٠ ١٢٣-٤٥٦٧'
  const old=panel.load()
- expect(api.fetch).toHaveBeenNthCalledWith(1,1,'07701234567')
+ expect(api.fetch).toHaveBeenNthCalledWith(1,1,'7701234567')
  panel.query.value='new name'
  await panel.load()
  resolve({customers:[row(1)],page:1,last_page:1,total:1});await old

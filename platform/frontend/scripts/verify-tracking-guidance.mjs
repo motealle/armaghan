@@ -39,7 +39,7 @@ try{
   await page.getByLabel('جست‌وجوی مشتری با نام یا شماره موبایل',{exact:true}).fill('٠٧٧٠ ١٢٣-٤٥٦٧')
   await page.getByRole('button',{name:'جستجو',exact:true}).click()
   await page.waitForFunction(()=>!document.querySelector('select')?.disabled)
-  assert.ok(searches.includes('07701234567'));assert.equal(await page.getByLabel('انتخاب مشتری',{exact:true}).inputValue(),'77')
+  assert.ok(searches.includes('7701234567'));assert.equal(await page.getByLabel('انتخاب مشتری',{exact:true}).inputValue(),'77')
   await page.getByLabel('شرح درخواست (قابل مشاهده برای مشتری)',{exact:true}).fill('سفارش آزمایشی کنترل مسیر؛ داده واقعی نیست')
   await page.getByRole('button',{name:'ثبت درخواست برای پیگیری',exact:true}).click()
   await page.getByRole('button',{name:/AT-SYNTHETIC77/}).waitFor()

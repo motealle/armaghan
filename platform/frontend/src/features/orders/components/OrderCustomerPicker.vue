@@ -19,7 +19,7 @@ function select(event:Event){emit('update:modelValue',choices.value.find(row=>ro
 async function load(page=1){
  const id=++request;busy.value=true;error.value=''
  const raw=inputDigits(query.value.trim())
- const search=/^[+\d\s().-]+$/.test(raw)?raw.replace(/[\s().-]/g,''):raw
+ const search=/^[+\d\s().-]+$/.test(raw)?raw.replace(/\D/g,'').replace(/^00/,'').replace(/^(964|98|90|971)0(?=\d)/,'$1').replace(/^0+/,''):raw
  try{const response=await fetchAdminCustomers(page,search);if(id===request)result.value=response}
  catch{if(id===request){result.value={customers:[],page:1,last_page:1,total:0};error.value=locale.t('adminRequestFailed')}}
  finally{if(id===request)busy.value=false}
