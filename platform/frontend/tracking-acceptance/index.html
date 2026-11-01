@@ -1,4 +1,4 @@
-<!doctype html><html lang="fa" dir="rtl"><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="app"></div><script type="module">
+<!doctype html><html lang="fa" dir="rtl"><head><base href="/"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="app"></div><script type="module">
 import {createApp,h,ref} from 'vue';import {createPinia} from 'pinia';import {createRouter,createMemoryHistory} from 'vue-router';
 import Wizard from '/src/features/orders/components/OrderWizard.vue';import {useOrderWizardStore} from '/src/stores/orderWizard.ts';import {useSessionStore} from '/src/stores/session.ts';
 import Dashboard from '/src/features/admin/components/AdminDashboard.vue';import Tracking from '/src/features/orders/components/OrderTrackingPanel.vue';import Home from '/src/views/HomeView.vue';import Footer from '/src/components/layout/SiteFooter.vue';import {useAdminStore} from '/src/features/admin/store.ts';import {useLocaleStore} from '/src/stores/locale.ts';import {useAppearanceStore} from '/src/stores/appearance.ts';import '/src/styles/main.css';
