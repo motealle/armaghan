@@ -1,3 +1,11 @@
+## Home placement and order guidance — 2026-11-01; publication pending
+
+Home Why Armaghan now follows all three product-category banners and the optional recommended grid as the last content section before the existing footer. Visibility controls and translations remain intact.
+
+Ordinary manager Customers rows now offer Register order, opening the existing order flow with that exact active customer ID preselected. Order customer selection shows mobile numbers, supports localized-digit search and all result pages, preserves selection across searches, ignores late responses and warns for a CRM record with no login account. Four-language on-screen guidance distinguishes signup from an order, manager stage edits from customer viewing, current-stage visibility from private-note visibility, and actual invoice/deposit confirmations before production. Successful creation opens the new order immediately. No fake customer order or payment was created in production; existing backend authorization, revisions, private-note filtering and payment prerequisites are unchanged. No backend/schema/dependency change.
+
+Local type-check/build, 103 existing release tests and 3 focused customer-selection/customer-table tests PASS; frozen01–28, Test29 auth/editor, root and FTP guards PASS. Browser acceptance at375/768/1280 is added to the existing Chromium job; results and publication remain pending. Video service research only: Cloudflare Stream/Bunny Stream support URL ingestion and transcoding; no external paid account, video upload, replacement or provider migration was performed. Original /vids files unchanged. See docs/HOME-ORDER-GUIDANCE-20261101.md.
+
 ## Simple entry and editable home showcase — verified release 2026-11-01
 
 PR #41 https://github.com/motealle/armaghan/pull/41 ; final source7e005d9edb20d93f9adedcd9e44d1f0cacf79db8 ; merged release e9f528985f8061b757b862dc29a97b1ba3506732. Supersedes pending entries below.
