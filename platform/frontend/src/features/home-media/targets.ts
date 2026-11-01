@@ -1,4 +1,5 @@
 export const homeImageTargets = [
+  { id:'home.capability.trade.official.media', target:'document.official', labels:{fa:'مدارک رسمی',en:'Official documents',ar:'الوثائق الرسمية',ku:'بەڵگەنامە فەرمییەکان'} },
   { id:'hero.media', target:'hero', labels:{fa:'تصویر اصلی',en:'Hero',ar:'الصورة الرئيسية',ku:'وێنەی سەرەکی'} },
   { id:'home.about.media', target:'about', labels:{fa:'درباره',en:'About',ar:'عن الشركة',ku:'دەربارە'} },
   { id:'home.capability.production.media', target:'capability.production', labels:{fa:'تولید',en:'Production',ar:'الإنتاج',ku:'بەرهەمهێنان'} },

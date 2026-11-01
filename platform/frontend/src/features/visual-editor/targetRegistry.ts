@@ -47,6 +47,12 @@ const bannerTargets:VisualTargetDefinition[]=Object.entries(bannerLabels).flatMa
 ])
 
 export const visualTargetGroups:VisualTargetGroup[]=[
+ {id:'showcase',label:'ویدئو و جزئیات توانمندی‌ها',targets:[
+  {id:'home.videos',label:'نمایش ویدئوهای معرفی',kind:'section'},
+  {id:'home.videos.title',label:'عنوان ویدئوها',kind:'title',textEditable:true},
+  ...Object.entries(capabilityLabels).flatMap(([group,label])=>Array.from({length:group==='production'?7:8},(_,i):VisualTargetDefinition=>({id:`home.capability.${group}.detail.${i+1}`,label:`جزئیات ${label} ${i+1}`,kind:'text',textEditable:true}))),
+  {id:'home.capability.trade.official.media',label:'عکس مدارک رسمی',kind:'media',styleControls:['imageFit']},
+ ]},
   {
     id:'home',
     label:'صفحه خانه',

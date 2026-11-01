@@ -1,3 +1,9 @@
+Security release adjustment (2026-11-01): dependency audit identified GHSA-mhf7-xp6r-6qrc and CVE-2026-45070 in the existing lock. Read-only resolver41294560617 used Composer to update exactly livewire/livewire4.4.7→4.4.8 and symfony/mime7.4.19→7.4.22; no other package or content-hash changed. No schema changes. Release must use guarded additive dependency lane with snapshot/rollback, not code-only deployment. Temporary resolver workflow removed. Registration throttle now has its own five-per-minute bucket so ordinary session/logout requests cannot exhaust signup. Visual profile comparison now ignores object-key order after server normalization.
+
+## Simple customer entry and home showcase — 2026-11-01; release pending
+
+Phone+simple-password login/signup, optional numeric/local username, direct three-language MP4 carousel below Hero, reversible capability detail flags/text, official-document photo and optional safe Aparat sources are implemented; tests/release pending. See docs/HOME-SIMPLIFICATION-20261101.md for policy, exact visibility defaults, read-only progressive-play probes and acceptance scope. Existing accounts/admin boundaries and frozen01–28 remain preserved; no schema/dependency drift or customer production writes.
+
 ## Connected inline product ordering — production closeout 2026-10-17
 
 PR #40 https://github.com/motealle/armaghan/pull/40 ; final source b5d21d5a819ba51d8cf92bf5bfcfb4eb7d064a41 ; main release 096d175ac94734dc99f694481ca41aa988c13591.

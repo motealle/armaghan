@@ -125,4 +125,12 @@ class CustomAdminUsersTest extends TestCase
         }
     }
 
+    public function test_customer_account_can_use_simple_password_without_changing_admin_creation_policy(): void
+    {
+        $this->actingAs(User::factory()->admin()->create());
+        $row=$this->postJson('/api/admin/users',$this->fields(['password'=>'123456','password_confirmation'=>'123456']))->assertCreated()->json('user');
+        $this->assertTrue(Hash::check('123456',User::findOrFail($row['id'])->password));
+        $this->postJson('/api/admin/users',$this->fields(['email'=>'second@example.test','role'=>'admin','password'=>'123456','password_confirmation'=>'123456']))->assertUnprocessable();
+    }
+
 }

@@ -13,6 +13,7 @@ use Tests\TestCase;
 class CustomerPhoneRegistrationTest extends TestCase
 {
     use RefreshDatabase;
+    protected function setUp(): void {parent::setUp();\Illuminate\Support\Facades\Cache::flush();}
 
     private function form(array $replace = []): array
     {
@@ -60,7 +61,7 @@ class CustomerPhoneRegistrationTest extends TestCase
     {
         $this->postJson('/api/auth/register', $this->form(['username'=>'mot']))->assertUnprocessable();
         $this->postJson('/api/auth/register', $this->form(['phone'=>'07701234567']))->assertUnprocessable();
-        $this->postJson('/api/auth/register', $this->form(['password'=>'abc123','password_confirmation'=>'abc123']))->assertUnprocessable();
+        $this->postJson('/api/auth/register', $this->form(['password'=>'abc','password_confirmation'=>'abc']))->assertUnprocessable();
         $this->assertDatabaseCount('users',0);
 
         $this->postJson('/api/auth/register', $this->form())->assertCreated();
@@ -101,7 +102,7 @@ class CustomerPhoneRegistrationTest extends TestCase
         ])->assertUnprocessable();
         $this->assertDatabaseCount('customer_login_identities',0);
     }
-    public function test_customer_pin_supports_local_digits_and_rejects_predictable_codes(): void
+    public function test_customer_pin_supports_local_digits_and_simple_codes(): void
     {
         $this->postJson('/api/auth/register', $this->form([
             'password'=>'۵۸۳۹۲۱', 'password_confirmation'=>'٥٨٣٩٢١',
@@ -115,11 +116,11 @@ class CustomerPhoneRegistrationTest extends TestCase
         foreach (['123456', '000000', '121212'] as $index=>$pin) {
             $this->withServerVariables(['REMOTE_ADDR'=>'192.0.2.'.(150+$index)])
                 ->postJson('/api/auth/register', $this->form([
-                    'username'=>'otherbuyer', 'phone'=>'+9647809876543',
+                    'username'=>'otherbuyer'.$index, 'phone'=>'+964780987654'.$index,
                     'password'=>$pin, 'password_confirmation'=>$pin,
-                ]))->assertUnprocessable();
+                ]))->assertCreated();
         }
-        $this->assertDatabaseCount('users', 1);
+        $this->assertDatabaseCount('users', 4);
     }
 
     public function test_failed_attempt_budget_is_shared_across_aliases_and_expires(): void
@@ -162,6 +163,19 @@ class CustomerPhoneRegistrationTest extends TestCase
             $this->postJson('/api/auth/login', ['identifier'=>'baghdadshop', 'password'=>'wrong'])->assertUnprocessable();
         }
         $this->postJson('/api/auth/login', ['identifier'=>'baghdadshop', 'password'=>'Shop2026secure'])->assertStatus(429);
+    }
+
+    public function test_phone_only_registration_needs_no_username_and_simple_numeric_aliases_remain_usable(): void
+    {
+        $form=$this->form(['password'=>'۱۲۳۴۵۶','password_confirmation'=>'123456']);unset($form['username']);
+        $this->postJson('/api/auth/register',$form)->assertCreated();
+        $this->assertTrue(Hash::check('123456',User::query()->sole()->password));
+        $this->postJson('/api/customer/logout')->assertOk();
+        $this->postJson('/api/auth/login',['identifier'=>'+۹۶۴۰۷۷۰۱۲۳۴۵۶۷','password'=>'١٢٣٤٥٦'])->assertOk();
+        $this->postJson('/api/customer/logout')->assertOk();
+        $this->postJson('/api/auth/register',$this->form(['username'=>'۱۲۳۴۵۶','phone'=>'+989121234567','password'=>'123456','password_confirmation'=>'123456']))->assertCreated();
+        $this->postJson('/api/customer/logout')->assertOk();
+        $this->postJson('/api/auth/login',['identifier'=>'123456','password'=>'۱۲۳۴۵۶'])->assertOk();
     }
 
 }

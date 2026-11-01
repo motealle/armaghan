@@ -37,6 +37,7 @@ class PasswordAuthController extends Controller
             $candidate = User::query()->whereRaw('lower(email) = ?', [$email])->first();
             // Equal hashing work for a missing account. This is an unusable dummy hash.
             $valid = Hash::check($data['password'], $candidate?->password ?? '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.');
+            if (! $valid && $candidate?->role === UserRole::Customer) $valid = Hash::check(CustomerSimplePassword::normalizedPin($data['password']), $candidate->password);
             if ($valid) {
                 $user = $candidate;
             }
@@ -126,19 +127,21 @@ class PasswordAuthController extends Controller
 
     private function registerPhone(Request $request): JsonResponse
     {
-        $username = CustomerPhone::username((string) $request->input('username', ''));
         $phone = CustomerPhone::normalize((string) $request->input('phone', ''));
+        $typedUsername = trim((string) $request->input('username', ''));
+        $username = $typedUsername === '' ? 'p'.strtolower(Str::random(20)) : CustomerPhone::username($typedUsername);
         $request->merge([
             'username' => $username, 'phone' => $phone,
             'password' => CustomerSimplePassword::normalizedPin($request->input('password')),
             'password_confirmation' => CustomerSimplePassword::normalizedPin($request->input('password_confirmation')),
         ]);
         $data = $request->validate([
-            'username' => ['required','string','regex:/^[a-z][a-z0-9._-]{2,31}$/D'],
+            'username' => ['required','string','regex:/^[\p{L}\p{N}][\p{L}\p{N}._-]{0,31}$/uD'],
             'phone' => ['required','string','regex:/^\\+[1-9][0-9]{7,14}$/D'],
             'name' => ['sometimes','nullable','string','max:255'],
             'password' => ['required','string','max:255','confirmed', new CustomerSimplePassword()],
         ]);
+        if ($typedUsername === '' && trim((string) ($data['name'] ?? '')) === '') $data['name'] = $data['phone'];
         $reserved = array_merge(['admin','administrator','root','mot','amirau'], array_keys(config('temporary-admin-access.aliases', [])));
         if (in_array($data['username'], $reserved, true)) {
             throw ValidationException::withMessages(['username' => 'Registration unavailable.']);
@@ -203,13 +206,13 @@ class PasswordAuthController extends Controller
         $user = $this->currentUser($request);
         $passwordRules = $user->isActiveAdmin()
             ? ['required', 'string', 'max:255', 'confirmed']
-            : ['required', 'string', 'max:255', 'confirmed', Password::min(12)->letters()->numbers()];
+            : ['required', 'string', 'max:255', 'confirmed', new CustomerSimplePassword()];
         $data = $request->validate(['password' => $passwordRules,
             'current_password' => ['nullable', 'string', 'max:255']]);
-        if (! $user->isActiveAdmin() && ! $this->recentGoogle($request, $user) && ! Hash::check($data['current_password'] ?? '', $user->password)) {
+        if (! $user->isActiveAdmin() && ! $this->recentGoogle($request, $user) && ! (Hash::check($data['current_password'] ?? '', $user->password) || Hash::check(CustomerSimplePassword::normalizedPin($data['current_password'] ?? ''), $user->password))) {
             throw ValidationException::withMessages(['current_password' => 'رمز فعلی درست نیست؛ یا دوباره با گوگل وارد شوید.']);
         }
-        $user->update(['password' => $data['password']]);
+        $user->update(['password' => $user->isActiveAdmin() ? $data['password'] : CustomerSimplePassword::normalizedPin($data['password'])]);
         if ($user->isActiveAdmin()) {
             AdminAuthState::query()->updateOrCreate(['user_id' => $user->id], ['password_configured_at' => now()]);
         }

@@ -26,6 +26,7 @@ export function useVisualProfileSync(
   visual:VisualStoreLike,
   enabled:Ref<boolean>,
   channel:Ref<StyleProfileChannel>=ref(typeof window!=='undefined'&&(window.location.pathname==='/'||window.location.pathname==='/index.html')?'production':'staging'),
+  autoSave=true,
 ){
   const state=ref<VisualSyncState>('checking')
   const authenticated=ref(false)
@@ -124,6 +125,7 @@ export function useVisualProfileSync(
   }
 
   async function saveNow(force=false){
+    if(saveTimer!==undefined){window.clearTimeout(saveTimer);saveTimer=undefined}
     if(!enabled.value||!authenticated.value||(state.value==='conflict'&&!force))return false
     saveController?.abort()
     const controller=new AbortController()
@@ -170,7 +172,7 @@ export function useVisualProfileSync(
   }
 
   function queueSave(){
-    if(!enabled.value||!initialized.value||!authenticated.value||state.value==='conflict')return
+    if(!autoSave||!enabled.value||!initialized.value||!authenticated.value||state.value==='conflict')return
     if(saveTimer!==undefined)window.clearTimeout(saveTimer)
     saveTimer=window.setTimeout(()=>{void saveNow()},900)
   }

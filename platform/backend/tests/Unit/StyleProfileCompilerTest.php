@@ -69,4 +69,11 @@ class StyleProfileCompilerTest extends TestCase
             ],
         ], []);
     }
+    public function test_explicit_visible_flag_survives_compile_for_default_off_details(): void
+    {
+        $value=(new \App\Services\StyleProfileCompiler())->prepare(['home.capability.trade.detail.1'=>['hidden'=>false]],[]);
+        $this->assertFalse($value['styles']['home.capability.trade.detail.1']['hidden']);
+        $this->assertStringContainsString('display:revert!important',$value['css']);
+    }
+
 }

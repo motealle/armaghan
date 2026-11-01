@@ -73,6 +73,15 @@ class SaveStyleProfileDraftRequest extends FormRequest
                 }
             }
 
+            foreach (['home.videos.file'=>'local','home.videos.aparat'=>'aparat'] as $key=>$method) {
+                $texts=$this->input('texts', []);
+                $values=is_array($texts) ? ($texts[$key] ?? []) : [];
+                foreach (is_array($values) ? $values : [] as $locale=>$value) {
+                    if (is_string($value) && $value !== '' && ! \App\Support\HomeVideoSource::$method($value)) {
+                        $validator->errors()->add('texts', 'Video source must be a local /vids MP4 path or a valid HTTPS Aparat video URL.');
+                    }
+                }
+            }
             if (strlen($this->getContent()) > 262_144) {
                 $validator->errors()->add('profile', 'Style profile payload is too large.');
             }

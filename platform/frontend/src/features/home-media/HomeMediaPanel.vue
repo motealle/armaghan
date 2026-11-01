@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {showcaseWords} from '@/features/home/services/showcase'
 import {computed,onMounted,ref,watch} from 'vue'
 import {requestJson} from '@/features/auth/services/customerSessionApi'
 import {useLocaleStore} from '@/stores/locale'
@@ -8,9 +9,10 @@ const props=withDefaults(defineProps<{target?:string;publicationChannel?:string;
 const locale=useLocaleStore(),publicMedia=useHomeMediaStore()
 const words={fa:['تصاویر صفحه خانه','تصویر اصلی','درباره ارمغان','توانمندی تولید','آماده‌سازی صادرات','اسناد و تجارت','بنر نوزادی','بنر بچگانه','بنر زنانه','نسخه آزمایشی','صفحه اصلی','انتشار تصاویر','تصویر پیش‌فرض','بارگذاری تصویر','تصاویر ذخیره شدند؛ برای نمایش عمومی انتشار را بزنید.','تصاویر منتشر شدند.','عملیات انجام نشد؛ دوباره بارگذاری کنید.'],en:['Home images','Hero','About','Production','Export','Trade','Baby banner','Kids banner','Women banner','Test version','Main site','Publish images','Default image','Upload image','Saved; publish to show publicly.','Images published.','Action failed; reload and retry.'],ar:['صور الصفحة الرئيسية','الصورة الرئيسية','عن الشركة','الإنتاج','التصدير','التجارة','بانر الرضع','بانر الأطفال','بانر النساء','نسخة تجريبية','الموقع الرئيسي','نشر الصور','الصورة الافتراضية','رفع صورة','تم الحفظ؛ انشر لإظهار الصور.','تم نشر الصور.','تعذرت العملية؛ أعد التحميل.'],ku:['وێنەکانی ماڵەوە','وێنەی سەرەکی','دەربارە','بەرهەمهێنان','هەناردە','بازرگانی','ساوا','منداڵان','ژنان','تاقیکردنەوە','ماڵپەڕی سەرەکی','بڵاوکردنەوە','وێنەی بنەڕەتی','بارکردنی وێنە','پاشەکەوت کرا؛ بڵاوی بکەرەوە.','بڵاوکرایەوە.','سەرکەوتوو نەبوو؛ نوێ بکەرەوە.']}
 const w=(i:number)=>words[locale.locale][i]??''
-const targets=['hero','about','capability.production','capability.export','capability.trade','banner.1','banner.2','banner.3']
+const targets=['hero','about','capability.production','capability.export','capability.trade','banner.1','banner.2','banner.3','document.official']
 const visibleTargets=computed(()=>props.target&&targets.includes(props.target)?[props.target]:targets)
 const targetWord=(target:string)=>targets.indexOf(target)+1
+const labelOf=(target:string)=>target==='document.official'?showcaseWords(locale.locale).official:w(targetWord(target))
 interface Image {id:number;target:string;url:string;channels:string[]}
 interface Snapshot {revision:string;images:Image[]}
 const state=ref<Snapshot|null>(null),channel=ref(props.publicationChannel||publicMedia.channel),chosen=ref<Record<string,number>>({}),busy=ref(false),message=ref(''),error=ref('')
@@ -48,13 +50,13 @@ async function publish(){if(!state.value||busy.value)return;busy.value=true;erro
   <p v-if="message" role="status">{{message}}</p><p v-if="error" role="alert" class="text-red-700">{{error}}</p>
   <div v-if="state" class="grid gap-3 sm:grid-cols-2">
    <article v-for="target in visibleTargets" :key="target" class="rounded-xl border border-[var(--c-border)] p-3 space-y-2">
-    <h3 class="text-sm font-bold">{{w(targetWord(target))}}</h3>
+    <h3 class="text-sm font-bold">{{labelOf(target)}}</h3>
     <label class="mini-action inline-flex cursor-pointer items-center">{{w(13)}}<input type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,.gif,.bmp" :disabled="busy||!state" class="sr-only" @change="upload(target,$event)"></label>
-    <select v-model.number="chosen[target]" :disabled="busy" class="field-input" :aria-label="w(targetWord(target))"><option :value="0">{{w(12)}}</option><option v-for="image in state.images.filter(m=>m.target===target)" :key="image.id" :value="image.id">#{{image.id}}</option></select>
-    <img v-if="chosen[target]" :src="state.images.find(m=>m.id===chosen[target])?.url" :alt="w(targetWord(target))" class="w-full h-28 object-contain rounded-lg">
+    <select v-model.number="chosen[target]" :disabled="busy" class="field-input" :aria-label="labelOf(target)"><option :value="0">{{w(12)}}</option><option v-for="image in state.images.filter(m=>m.target===target)" :key="image.id" :value="image.id">#{{image.id}}</option></select>
+    <img v-if="chosen[target]" :src="state.images.find(m=>m.id===chosen[target])?.url" :alt="labelOf(target)" class="w-full h-28 object-contain rounded-lg">
     <button v-if="props.quick&&chosen[target]" type="button" class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--c-primary)] px-4 text-sm font-black text-white" :disabled="busy" @click="publish">{{quickApplyLabel}}</button>
     <div class="flex gap-2 overflow-x-auto pb-1">
-      <button v-for="image in state.images.filter(m=>m.target===target)" :key="image.id" type="button" class="shrink-0 rounded-lg border-2 p-1" :class="chosen[target]===image.id?'border-[var(--c-primary)]':'border-transparent'" :disabled="busy" :aria-label="`${w(targetWord(target))} ${image.id}`" :aria-pressed="chosen[target]===image.id" @click="chosen[target]=image.id"><img :src="image.url" alt="" loading="lazy" decoding="async" class="h-16 w-20 object-contain"></button>
+      <button v-for="image in state.images.filter(m=>m.target===target)" :key="image.id" type="button" class="shrink-0 rounded-lg border-2 p-1" :class="chosen[target]===image.id?'border-[var(--c-primary)]':'border-transparent'" :disabled="busy" :aria-label="`${labelOf(target)} ${image.id}`" :aria-pressed="chosen[target]===image.id" @click="chosen[target]=image.id"><img :src="image.url" alt="" loading="lazy" decoding="async" class="h-16 w-20 object-contain"></button>
     </div>
    </article>
   </div>

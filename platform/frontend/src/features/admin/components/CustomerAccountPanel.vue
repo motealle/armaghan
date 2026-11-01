@@ -34,9 +34,9 @@ async function save(){
       <p class="text-sm text-[var(--c-muted)]">{{locale.t('customerAccountHelp')}}</p>
       <label class="form-field">{{locale.t('fullName')}}<input v-model="name" required maxlength="255" autocomplete="off" :disabled="busy"></label>
       <label class="form-field">{{locale.t('email')}}<input v-model="email" type="email" required maxlength="255" dir="ltr" autocomplete="off" :disabled="busy"></label>
-      <label class="form-field">{{locale.t('password')}}<input v-model="password" type="password" required minlength="12" maxlength="255" autocomplete="new-password" :disabled="busy"></label>
-      <label class="form-field">{{locale.t('confirmPassword')}}<input v-model="confirmation" type="password" required minlength="12" maxlength="255" autocomplete="new-password" :disabled="busy"></label>
-      <p class="text-xs">{{locale.t('adminPasswordRules')}}</p>
+      <label class="form-field">{{locale.t('password')}}<input v-model="password" type="password" required minlength="4" maxlength="255" autocomplete="new-password" :disabled="busy"></label>
+      <label class="form-field">{{locale.t('confirmPassword')}}<input v-model="confirmation" type="password" required minlength="4" maxlength="255" autocomplete="new-password" :disabled="busy"></label>
+      <p class="text-xs">{{locale.t('phonePasswordRequirements')}}</p>
       <label class="flex items-start gap-2 text-sm"><input v-model="acknowledged" type="checkbox" required :disabled="busy">{{locale.t('customerAccountConfirm')}}</label>
       <p v-if="error" role="alert" class="auth-error">{{error}}</p>
       <div class="flex justify-end gap-2"><button type="button" class="mini-action" :disabled="busy" @click="close">{{locale.t('cancel')}}</button><button class="mini-action" :disabled="busy||!acknowledged">{{locale.t(busy?'adminLoading':'customerCreateAccount')}}</button></div>

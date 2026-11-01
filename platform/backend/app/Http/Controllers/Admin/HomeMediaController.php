@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class HomeMediaController extends Controller {
- public const TARGETS=['hero','about','capability.production','capability.export','capability.trade','banner.1','banner.2','banner.3'];
+ public const TARGETS=['hero','about','capability.production','capability.export','capability.trade','banner.1','banner.2','banner.3','document.official'];
  public function __construct(private StyleProfileService $profiles) {}
  private function json(array $data,int $status=200) {return response()->json($data,$status)->header('Cache-Control','no-store, private');}
  private function revision(StyleProfile $profile): string {return hash('sha256',json_encode($profile->media()->where('collection_name',StyleProfile::MEDIA_COLLECTION)->orderBy('id')->get(['id','custom_properties','updated_at'])->map(fn($m)=>$m->only(['id','custom_properties','updated_at']))->all(),JSON_THROW_ON_ERROR));}
@@ -33,7 +33,7 @@ class HomeMediaController extends Controller {
    $images=[];$srcsets=[];
    foreach($media as $m){
     $target=$m->getCustomProperty('target');
-    $variant=$target==='hero'||str_starts_with($target,'banner.')?'detail':'card';
+    $variant=$target==='hero'||str_starts_with($target,'banner.')||str_starts_with($target,'document.')?'detail':'card';
     $images[$target]=route('home-media.file',['media'=>$m->id,'variant'=>$variant]);
     $size=@getimagesize($m->getPath());$sourceWidth=is_array($size)?(int)$size[0]:0;
     $candidates=[];
@@ -77,7 +77,7 @@ class HomeMediaController extends Controller {
   return $this->json($this->snapshot($profile->fresh()),201);
  }
  public function publish(Request $request,string $channel) {
-  $data=$request->validate(['revision'=>['required','regex:/^[a-f0-9]{64}$/'],'selection'=>['present','array','max:8'],'selection.*'=>['required','integer','distinct']]);
+  $data=$request->validate(['revision'=>['required','regex:/^[a-f0-9]{64}$/'],'selection'=>['present','array','max:9'],'selection.*'=>['required','integer','distinct']]);
   $profile=$this->profiles->ensureDefault($request->user());
   DB::transaction(function()use($request,$profile,$data,$channel){
    $profile=StyleProfile::lockForUpdate()->findOrFail($profile->id);abort_unless(hash_equals($this->revision($profile),$data['revision']),409);

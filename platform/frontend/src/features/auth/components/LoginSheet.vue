@@ -7,6 +7,7 @@ import { useAdminStore } from '@/features/admin/store'
 import { useLocaleStore } from '@/stores/locale'
 import { registerWithPassword, registerWithPhone, signInWithPassword, CustomerSessionApiError } from '@/features/auth/services/customerSessionApi'
 import BaseModal from '@/components/ui/BaseModal.vue'
+import { phoneIdentifier } from '../services/simpleLogin'
 import GoogleGIcon from '@/components/icons/GoogleGIcon.vue'
 
 const props=defineProps<{open:boolean}>()
@@ -20,6 +21,7 @@ const email=ref('')
 const username=ref('')
 const phone=ref('')
 const dialCode=ref('+964')
+const phoneSignIn=ref(true)
 const signupMethod=ref<'phone'|'email'>('phone')
 const showPassword=ref(false)
 const password=ref('')
@@ -29,18 +31,7 @@ const error=ref('')
 const busy=ref(false)
 const title=computed(()=>locale.t(mode.value==='register'?'register':'loginTitle'))
 watch(()=>props.open,()=>{mode.value='signin';signupMethod.value='phone';error.value='';password.value='';confirmation.value='';showPassword.value=false})
-function normalizeInputDigits(input:string):string{
-  return input.replace(/[۰-۹٠-٩]/g,letter=>{
-    const n='۰۱۲۳۴۵۶۷۸۹'.indexOf(letter)
-    return String(n>=0?n:'٠١٢٣٤٥٦٧٨٩'.indexOf(letter))
-  })
-}
-function fullPhone():string{
-  const typed=normalizeInputDigits(phone.value.trim()).replace(/[\s().-]+/g,'')
-  if(typed.startsWith('+'))return typed
-  if(typed.startsWith('00'))return '+'+typed.slice(2)
-  return dialCode.value+typed.replace(/^0+/,'')
-}
+function fullPhone(){return phoneIdentifier(phone.value,dialCode.value)}
 async function submit(){
   if(busy.value)return
   error.value='';busy.value=true
@@ -52,7 +43,7 @@ async function submit(){
         await registerWithPassword(name.value.trim(),email.value.trim(),password.value,confirmation.value)
       }
     }else{
-      const result=await signInWithPassword(email.value.trim(),password.value)
+      const result=await signInWithPassword(phoneSignIn.value?fullPhone():email.value.trim(),password.value)
       if(result.redirect==='/backend/admin'){await admin.hydrate();password.value='';emit('close');router.push('/admin');return}
     }
     if(!await session.hydrateFromBackend())throw new Error('Session unavailable')
@@ -87,39 +78,37 @@ async function googleInfo(){
           {{locale.t(signupMethod==='phone'?'registerWithEmail':'registerWithPhone')}}
         </button>
       </div>
-      <template v-if="mode==='register'&&signupMethod==='phone'">
-        <label class="form-field">{{locale.t('username')}}<input v-model="username" autocomplete="username" dir="ltr" maxlength="32" minlength="3" pattern="[A-Za-z][A-Za-z0-9._-]{2,31}" required :disabled="busy"></label>
-        <p class="text-xs text-[var(--c-muted)]">{{locale.t('phoneUsernameHelp')}}</p>
-        <label class="form-field">{{locale.t('mobilePhone')}}
-          <span class="flex gap-2">
-            <select v-model="dialCode" class="field-input w-28 shrink-0" :disabled="busy" aria-label="Country calling code" dir="ltr">
-              <option value="+964">+964 🇮🇶</option><option value="+98">+98 🇮🇷</option>
-              <option value="+971">+971 🇦🇪</option><option value="+90">+90 🇹🇷</option>
-            </select>
-            <input v-model="phone" type="tel" inputmode="tel" autocomplete="tel-national" dir="ltr" placeholder="07… / 09…" maxlength="30" required :disabled="busy">
+      <template v-if="(mode==='register'&&signupMethod==='phone')||(mode==='signin'&&phoneSignIn)">
+        <div class="form-field"><label for="simple-mobile">{{locale.t('mobilePhone')}}</label>
+          <span class="flex gap-2" dir="ltr">
+            <input v-model="dialCode" list="phone-countries" class="!w-24 !shrink-0 !flex-none" type="tel" inputmode="tel" autocomplete="tel-country-code" maxlength="6" :aria-label="locale.t('callingCode')" :disabled="busy" required>
+            <datalist id="phone-countries"><option value="+964">العراق</option><option value="+98">ایران</option><option value="+971">الإمارات</option><option value="+90">Türkiye</option></datalist>
+            <input id="simple-mobile" v-model="phone" type="tel" inputmode="tel" :autocomplete="mode==='signin'?'username':'tel-national'" dir="ltr" placeholder="07… / 09…" maxlength="30" required :disabled="busy">
           </span>
-        </label>
-        <p class="text-xs text-[var(--c-muted)]">{{locale.t('phoneUnverifiedHelp')}}</p>
+        </div>
+        <p class="text-xs text-[var(--c-muted)]">{{locale.t('simplePhoneHelp')}}</p>
+        <details v-if="mode==='register'" class="text-xs"><summary>{{locale.t('optionalUsername')}}</summary><label class="form-field mt-2">{{locale.t('username')}}<input v-model="username" autocomplete="username" maxlength="32" :disabled="busy"></label></details>
       </template>
       <template v-if="mode==='register'&&signupMethod==='email'">
         <label class="form-field">{{locale.t('fullName')}}<input v-model="name" autocomplete="name" maxlength="255" required :disabled="busy"></label>
         <label class="form-field">{{locale.t('email')}}<input v-model="email" type="email" autocomplete="email" dir="ltr" maxlength="255" required :disabled="busy"></label>
       </template>
-      <label v-if="mode==='signin'" class="form-field">{{locale.t('loginIdentifier')}}<input v-model="email" type="text" autocomplete="username" dir="ltr" maxlength="255" required :disabled="busy"></label>
-      <label class="form-field">{{locale.t('password')}}
+      <label v-if="mode==='signin'&&!phoneSignIn" class="form-field">{{locale.t('loginIdentifier')}}<input v-model="email" type="text" autocomplete="username" dir="ltr" maxlength="255" required :disabled="busy"></label>
+      <button v-if="mode==='signin'" type="button" class="text-xs underline underline-offset-4" :disabled="busy" @click="phoneSignIn=!phoneSignIn;error=''">{{locale.t(phoneSignIn?'useOtherLogin':'usePhoneLogin')}}</button>
+      <div class="form-field"><label for="simple-password">{{locale.t('password')}}</label>
         <span class="flex items-center gap-2">
-          <input v-model="password" :type="showPassword?'text':'password'" :autocomplete="mode==='register'?'new-password':'current-password'" dir="ltr" :minlength="mode==='register'?(signupMethod==='phone'?6:12):undefined" maxlength="255" required :disabled="busy">
+          <input id="simple-password" v-model="password" :type="showPassword?'text':'password'" :autocomplete="mode==='register'?'new-password':'current-password'" dir="ltr" :minlength="mode==='register'?(signupMethod==='phone'?4:12):undefined" maxlength="255" required :disabled="busy">
           <button type="button" class="mini-action shrink-0" :disabled="busy" @click="showPassword=!showPassword">{{locale.t(showPassword?'hidePassword':'showPassword')}}</button>
         </span>
-      </label>
+      </div>
       <label v-if="mode==='register'&&signupMethod==='email'" class="form-field">{{locale.t('confirmPassword')}}<input v-model="confirmation" type="password" autocomplete="new-password" dir="ltr" required :disabled="busy"></label>
       <p v-if="mode==='register'" class="text-xs leading-6 text-[var(--c-muted)]">{{locale.t(signupMethod==='phone'?'phonePasswordRequirements':'passwordRequirements')}}</p>
       <p v-if="error" role="alert" class="auth-error">{{error}}</p>
       <button class="auth-primary" :disabled="busy"><component :is="mode==='register'?UserPlus:LogIn" :size="19"/>{{locale.t(mode==='register'?'createAccount':'signIn')}}</button>
-      <button type="button" class="flex min-h-11 w-full items-center justify-center gap-3 rounded-xl border border-[#747775] bg-white px-4 text-sm font-medium text-[#1f1f1f] shadow-sm" data-backend-endpoint="/backend/auth/google/redirect" :disabled="busy" @click="googleInfo"><GoogleGIcon/><span>{{locale.t('google')}}</span></button>
     </form>
-    <RouterLink class="mini-action mt-4" to="/admin" @click="emit('close')">{{locale.t('adminOverview')}}</RouterLink>
-
-    <p class="mt-2 text-xs leading-6 text-[var(--c-muted)]">{{locale.t('adminSignInHelp')}}</p>
+    <details class="mt-4 text-xs"><summary>{{locale.t('otherLoginMethods')}}</summary>
+      <button type="button" class="flex min-h-11 w-full items-center justify-center gap-3 rounded-xl border border-[#747775] bg-white px-4 text-sm font-medium text-[#1f1f1f] shadow-sm" data-backend-endpoint="/backend/auth/google/redirect" :disabled="busy" @click="googleInfo"><GoogleGIcon/><span>{{locale.t('google')}}</span></button>
+    <RouterLink class="mini-action mt-3" to="/admin" @click="emit('close')">{{locale.t('adminOverview')}}</RouterLink>
+    </details>
   </BaseModal>
 </template>
