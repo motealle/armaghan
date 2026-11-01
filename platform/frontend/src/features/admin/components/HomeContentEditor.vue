@@ -71,7 +71,7 @@ function syncDrafts(){
 }
 watch(target,syncDrafts,{immediate:true})
 async function saveAll(){
-  validation.value=''
+  validation.value='';saved.value=false
   if(props.live){
    for(const clip of clips){const item=videoDrafts[clip.id]!;if(!localVideo(item.file)||(item.aparat&&!aparatEmbed(item.aparat))||(item.useAparat&&!aparatEmbed(item.aparat))){validation.value='مسیر فایل باید داخل /vids و با پسوند mp4 باشد؛ برای آپارات، لینک معتبر همان ویدئو را درج کنید.';return}}
    for(const item of capabilityDetails)visual.patchStyle(item.id,{hidden:!visible[item.id]})
@@ -79,8 +79,7 @@ async function saveAll(){
    for(const clip of clips){const item=videoDrafts[clip.id]!;visual.setText('home.videos.file',clip.id,item.file);visual.setText('home.videos.aparat',clip.id,item.aparat);visual.patchStyle(`home.videos.${clip.id}.aparat`,{hidden:!item.useAparat})}
   }
   for(const item of fields)override(item.key,drafts[item.key]??'')
-  saved.value=props.live?await sync.saveNow():true
-  if(props.live&&saved.value){await sync.publishStaging();saved.value=sync.state.value==='synced'}
+  if(props.live){const stored=await sync.saveNow();if(stored){await sync.publishStaging();saved.value=sync.state.value==='synced'}}else saved.value=true
 }
 async function reset(key:string){
   clearOverride(key)

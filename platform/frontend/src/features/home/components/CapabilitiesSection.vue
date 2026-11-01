@@ -68,7 +68,7 @@ const selected=computed(()=>capabilities.find(item=>item.id===selectedId.value)?
         <ul>
           <template v-for="item in capabilityDetails.filter(d=>d.group===selected!.id)" :key="item.id"><li v-if="isShown(visual.profile,item.id,item.defaultHidden)" :data-style-id="item.id" data-editable-text="true">{{visual.resolveText(item.id,locale.locale,locale.t(item.key))}}</li></template>
         </ul>
-        <div v-if="selected.id==='trade'&&isShown(visual.profile,'home.capability.trade.detail.2')" data-style-id="home.capability.trade.official.media" class="relative min-h-16 rounded-xl border border-[var(--c-border)] p-3">
+        <div v-if="selected.id==='trade'&&isShown(visual.profile,'home.capability.trade.detail.2')&&(homeMedia.images['document.official']||admin.identity)" data-style-id="home.capability.trade.official.media" class="relative min-h-16 rounded-xl border border-[var(--c-border)] p-3">
           <a v-if="homeMedia.images['document.official']" :href="homeMedia.images['document.official']" target="_blank" rel="noopener"><img :src="homeMedia.images['document.official']" :alt="showcaseWords(locale.locale).official" class="mx-auto max-h-[70vh] w-full object-contain" loading="lazy"></a>
           <HomeMediaEditButton @edit="selectedId=null" target="document.official" :label="showcaseWords(locale.locale).official"/>
         </div>
