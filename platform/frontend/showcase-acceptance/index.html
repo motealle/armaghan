@@ -1,0 +1,10 @@
+<!doctype html><html lang="fa" dir="rtl"><head><base href="/"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="app"></div><script type="module">
+import{createApp,h,ref}from'vue';import{createPinia}from'pinia';import{createRouter,createMemoryHistory}from'vue-router';
+import Login from '/src/features/auth/components/LoginSheet.vue';import Home from '/src/views/HomeView.vue';import Editor from '/src/features/admin/components/HomeContentEditor.vue';import{useAdminStore}from'/src/features/admin/store.ts';import{useLocaleStore}from'/src/stores/locale.ts';import{useVisualStyleStore}from'/src/features/visual-editor/store.ts';import{useAppearanceStore}from'/src/stores/appearance.ts';import'/src/styles/main.css';
+const pinia=createPinia(),router=createRouter({history:createMemoryHistory(),routes:[{path:'/:pathMatch(.*)*',component:{render:()=>null}}]});
+const app=createApp({setup(){const initial=new URLSearchParams(location.search).get('mode')||'login';const mode=ref(initial),login=ref(true),admin=useAdminStore(),locale=useLocaleStore(),visual=useVisualStyleStore(),appearance=useAppearanceStore();locale.setManual('fa');
+for(const p of ['mobile','tablet','desktop'])appearance.updateProfile(p,{showAbout:false,showWhy:false,showProductBanners:false});
+if(initial==='editor')admin.identity={name:'Synthetic QA',email:'qa@example.invalid'};
+window.qa={mode:value=>mode.value=value,locale:value=>locale.setManual(value),visual,admin,loadPublic:async()=>{const value=await(await fetch('/backend/api/style-profile/staging')).json();visual.replaceProfile({schema:1,styles:value.styles,texts:value.texts})}};
+return()=>h('main',{style:'max-width:1100px;margin:auto;padding:12px'},[mode.value==='login'?h(Login,{open:login.value,onClose:()=>login.value=false}):mode.value==='editor'?h(Editor,{live:true}):h(Home)])}});app.use(pinia);app.use(router);app.mount('#app');if(new URLSearchParams(location.search).get('mode')==='home')window.qa.loadPublic();
+</script></body></html>

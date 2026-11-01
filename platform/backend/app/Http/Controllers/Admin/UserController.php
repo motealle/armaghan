@@ -45,10 +45,11 @@ class UserController extends Controller
         $request->merge(['email' => strtolower(trim((string) $request->input('email')))]);
         $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'email' => ['required', 'email', 'max:255'],
             'role' => ['required', 'in:admin,customer'], 'active' => ['required', 'boolean'],
-            'password' => ['required', 'string', 'max:255', 'confirmed', Password::min(12)->letters()->numbers()],
+            'password' => ['required', 'string', 'max:255', 'confirmed', $request->input('role') === 'customer' ? new \App\Rules\CustomerSimplePassword() : Password::min(12)->letters()->numbers()],
             'customer_id' => ['required_with:customer_revision', 'integer', 'min:1'],
             'customer_revision' => ['required_with:customer_id', 'string', 'regex:/^[a-f0-9]{64}$/'],
             'email_verified_at' => ['prohibited'], 'is_owner' => ['prohibited'], 'user_id' => ['prohibited']]);
+        if ($data['role'] === 'customer') $data['password'] = \App\Rules\CustomerSimplePassword::normalizedPin($data['password']);
         abort_if($data['role'] === 'admin' && ! $request->user()->isPrimaryOwner(), 403);
         // Reserved Google identities must prove ownership through Google, never
         // through an administrator choosing someone else's mailbox/password.

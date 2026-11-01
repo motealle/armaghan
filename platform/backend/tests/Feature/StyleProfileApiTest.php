@@ -259,4 +259,20 @@ class StyleProfileApiTest extends TestCase
 
         $this->assertSame(1, ActivityLog::query()->where('action', 'style_profile.published')->count());
     }
+    public function test_showcase_flags_text_and_video_sources_publish_with_explicit_visible_override(): void
+    {
+        $this->actingAs(User::factory()->admin()->create());
+        $state=$this->getJson('/api/admin/style-profile')->assertOk()->json();
+        $payload=['expected_checksum'=>$state['draft']['checksum'],'styles'=>['home.capability.production.detail.1'=>['hidden'=>false]],
+            'texts'=>['home.capability.production.detail.2'=>['fa'=>'ظرفیت تولید: ۵۰۰۰ عدد'],'home.videos.file'=>['fa'=>'/vids/farsi.mp4'],'home.videos.aparat'=>['ar'=>'https://www.aparat.com/v/abc123']]];
+        $saved=$this->putJson('/api/admin/style-profile/draft',$payload)->assertOk()->json();
+        $this->assertFalse($saved['draft']['styles']['home.capability.production.detail.1']['hidden']);
+        $this->postJson('/api/admin/style-profile/publish/production',['expected_checksum'=>$saved['draft']['checksum']])->assertCreated();
+        $public=$this->getJson('/api/style-profile/production')->assertOk()->json();
+        $this->assertSame('ظرفیت تولید: ۵۰۰۰ عدد',$public['texts']['home.capability.production.detail.2']['fa']);
+        $this->assertFalse($public['styles']['home.capability.production.detail.1']['hidden']);
+        $payload['expected_checksum']=$saved['draft']['checksum'];$payload['texts']['home.videos.aparat']['ar']='https://evil.test/v/abc';
+        $this->putJson('/api/admin/style-profile/draft',$payload)->assertUnprocessable();
+    }
+
 }

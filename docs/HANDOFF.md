@@ -1,3 +1,7 @@
+## Simple customer entry and home showcase — 2026-11-01; release pending
+
+Phone+simple-password login/signup, optional numeric/local username, direct three-language MP4 carousel below Hero, reversible capability detail flags/text, official-document photo and optional safe Aparat sources are implemented; tests/release pending. See docs/HOME-SIMPLIFICATION-20261101.md for policy, exact visibility defaults, read-only progressive-play probes and acceptance scope. Existing accounts/admin boundaries and frozen01–28 remain preserved; no schema/dependency drift or customer production writes.
+
 ## Connected inline product ordering — production closeout 2026-10-17
 
 PR #40 https://github.com/motealle/armaghan/pull/40 ; final source b5d21d5a819ba51d8cf92bf5bfcfb4eb7d064a41 ; main release 096d175ac94734dc99f694481ca41aa988c13591.

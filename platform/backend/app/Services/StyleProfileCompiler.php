@@ -77,8 +77,8 @@ class StyleProfileCompiler
                 $declarations[] = '--editor-media-position:'.$x.'% '.$y.'%';
             }
 
-            if (($style['hidden'] ?? false) === true) {
-                $declarations[] = 'display:none!important';
+            if (array_key_exists('hidden', $style)) {
+                $declarations[] = $style['hidden'] ? 'display:none!important' : 'display:revert!important';
             }
 
             if ($declarations !== []) {
@@ -142,8 +142,8 @@ class StyleProfileCompiler
                 $entry[$key] = $style[$key];
             }
 
-            if (($style['hidden'] ?? false) === true) {
-                $entry['hidden'] = true;
+            if (array_key_exists('hidden', $style) && is_bool($style['hidden'])) {
+                $entry['hidden'] = $style['hidden'];
             }
 
             if ($entry !== []) {

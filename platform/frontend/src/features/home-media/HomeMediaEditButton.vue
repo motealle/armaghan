@@ -5,9 +5,10 @@ import { useHomeMediaStore } from './store'
 import { useLocaleStore } from '@/stores/locale'
 
 const props=defineProps<{target:string;label:string}>()
+const emit=defineEmits<{edit:[]}>()
 const admin=useAdminStore(),homeMedia=useHomeMediaStore(),locale=useLocaleStore()
 const editText=()=>({fa:'ویرایش عکس',en:'Edit image',ar:'تعديل الصورة',ku:'دەستکاری وێنە'})[locale.locale]
-function edit(){homeMedia.requestEdit(props.target)}
+function edit(){emit('edit');homeMedia.requestEdit(props.target)}
 </script>
 
 <template>

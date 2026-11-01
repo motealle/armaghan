@@ -87,4 +87,14 @@ class HomeMediaTest extends TestCase {
   $this->assertSame('{}',json_encode(json_decode($emptyWarm->getContent())->srcsets));
  }
 
+ public function test_official_document_photo_uses_real_protected_upload_and_explicit_publication(): void {
+  $this->actingAs(User::factory()->admin()->create());$state=$this->getJson('/api/admin/home-media')->assertOk()->json();
+  $state=$this->upload('document.official',$state);$id=$state['images'][0]['id'];
+  $this->getJson('/api/home-media/production')->assertJsonMissingPath('images.document.official');
+  $this->postJson('/api/admin/home-media/publish/production',['revision'=>$state['revision'],'selection'=>[$id]])->assertOk();
+  $images=$this->getJson('/api/home-media/production')->assertOk()->json('images');
+  $this->assertArrayHasKey('document.official',$images);$this->assertStringContainsString('/detail',$images['document.official']);
+  $this->get(parse_url($images['document.official'],PHP_URL_PATH))->assertOk();
+ }
+
 }
